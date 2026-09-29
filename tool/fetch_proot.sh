@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # Download Termux PRoot (and its shared-library deps) for Android jniLibs.
 #
-# OpenMinis pinned Termux proot 5.1.107-70. That build has rolled off
-# https://packages.termux.dev/apt/termux-main/pool/main/p/proot/ — the
-# current package is 5.1.107.92, which is dynamically linked against
+# OpenMinis pinned Termux proot 5.1.107-70. The rolling package pool
+# now serves 5.1.107.95, which is dynamically linked against
 # libtalloc and libandroid-shmem.
 #
 # Layout written:
@@ -31,7 +30,7 @@ JNI_LIBS="$REPO_ROOT/android/app/src/main/jniLibs"
 TERMUX_POOL="${TERMUX_POOL:-https://packages.termux.dev/apt/termux-main/pool/main}"
 
 # Rolling Termux versions. Override with env vars if the pool moves again.
-PROOT_VERSION="${PROOT_VERSION:-5.1.107.92}"
+PROOT_VERSION="${PROOT_VERSION:-5.1.107.95}"
 TALLOC_VERSION="${TALLOC_VERSION:-2.4.3}"
 SHMEM_VERSION="${SHMEM_VERSION:-0.7}"
 
@@ -169,27 +168,13 @@ trap cleanup EXIT
 echo "Fetching Termux proot ${PROOT_VERSION} (+ libtalloc ${TALLOC_VERSION}, libandroid-shmem ${SHMEM_VERSION})"
 echo "Pool: $TERMUX_POOL"
 
-# Keep using the pinned release and its reviewed ELF checksums. The rolling
-# Termux pool removes old package versions, so consult archived mirrors only
-# when the primary pool no longer serves this exact version.
-ARCHIVE_POOLS=(
-  "https://mirrors.krnk.org/apt/termux/termux-main/pool/main"
-  "https://mirrors4.qlu.edu.cn/termux/apt/termux-main/pool/main"
-)
-found_pool=""
-for candidate in "$TERMUX_POOL" "${ARCHIVE_POOLS[@]}"; do
-  if curl -fsI --retry 2 --retry-delay 2 --max-time 15 \
-      "${candidate}/p/proot/proot_${PROOT_VERSION}_aarch64.deb" >/dev/null; then
-    found_pool="$candidate"
-    break
-  fi
-done
-if [[ -z "$found_pool" ]]; then
-  echo "error: pinned proot_${PROOT_VERSION} is unavailable from the primary pool and archives." >&2
+# Fail fast if the current pinned release disappears from the rolling pool.
+# Binary SHA-256 checks below must be updated and reviewed with each version bump.
+if ! curl -fsI --retry 2 --retry-delay 2 --max-time 15 \
+    "${TERMUX_POOL}/p/proot/proot_${PROOT_VERSION}_aarch64.deb" >/dev/null; then
+  echo "error: pinned proot_${PROOT_VERSION} not available in the main pool" >&2
   exit 1
 fi
-TERMUX_POOL="$found_pool"
-echo "Selected pinned-package pool: $TERMUX_POOL"
 for pair in "${ABIS[@]}"; do
   termux_arch="${pair%%:*}"
   android_abi="${pair##*:}"
