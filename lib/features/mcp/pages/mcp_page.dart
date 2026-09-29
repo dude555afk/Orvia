@@ -671,8 +671,8 @@ Future<void> _showOrviaMcpPresets(BuildContext context) async {
                   final preset = orviaMcpPresets[index];
                   final alreadyAdded = mcp.servers.any(
                     (server) =>
-                        server.url.trim().replaceFirst(RegExp(r'/
-                        preset.url.trim().replaceFirst(RegExp(r'/$'), ''),
+                        server.url.trim().replaceAll(RegExp(r'/+'), '') ==
+                        preset.url.trim().replaceAll(RegExp(r'/+'), ''),
                   );
                   return ListTile(
                     title: Text(preset.name),
@@ -691,39 +691,10 @@ Future<void> _showOrviaMcpPresets(BuildContext context) async {
                                 transport: McpTransportType.http,
                                 url: preset.url,
                               );
-                              if (sheetContext.mounted)
+                              if (sheetContext.mounted) {
                                 Navigator.of(sheetContext).pop();
+                              }
                             },
-                      child: Text(alreadyAdded ? 'Added' : 'Add'),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-), '') ==
-                        preset.url.trim().replaceFirst(RegExp(r'/$'), ''),
-                  );
-                  return ListTile(
-                    title: Text(preset.name),
-                    subtitle: Text(preset.requiresAuth
-                        ? '${preset.description} · Authentication required'
-                        : preset.description),
-                    trailing: TextButton(
-                      onPressed: alreadyAdded ? null : () async {
-                        await mcp.addServer(
-                          name: preset.name,
-                          enabled: false,
-                          transport: McpTransportType.http,
-                          url: preset.url,
-                        );
-                        if (sheetContext.mounted) Navigator.of(sheetContext).pop();
-                      },
                       child: Text(alreadyAdded ? 'Added' : 'Add'),
                     ),
                   );
