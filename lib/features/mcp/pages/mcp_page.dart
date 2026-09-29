@@ -644,7 +644,6 @@ class _AnimatedPressColor extends StatelessWidget {
   }
 }
 
-
 /// Starter servers remain disabled until the user reviews their configuration.
 /// In particular, selecting a catalogue item never starts an OAuth flow or
 /// silently transmits conversation content to an external service.
@@ -661,7 +660,9 @@ Future<void> _showOrviaMcpPresets(BuildContext context) async {
           children: [
             const ListTile(
               title: Text('Explore MCP servers'),
-              subtitle: Text('Optional presets from Kai. Endpoints are not verified live. Review and enable each connection yourself.'),
+              subtitle: Text(
+                'Optional presets from Kai. Endpoints are not verified live. Review and enable each connection yourself.',
+              ),
             ),
             Expanded(
               child: ListView.builder(
@@ -669,7 +670,43 @@ Future<void> _showOrviaMcpPresets(BuildContext context) async {
                 itemBuilder: (context, index) {
                   final preset = orviaMcpPresets[index];
                   final alreadyAdded = mcp.servers.any(
-                    (server) => server.url.trim().replaceFirst(RegExp(r'/$'), '') ==
+                    (server) =>
+                        server.url.trim().replaceFirst(RegExp(r'/
+                        preset.url.trim().replaceFirst(RegExp(r'/$'), ''),
+                  );
+                  return ListTile(
+                    title: Text(preset.name),
+                    subtitle: Text(
+                      preset.requiresAuth
+                          ? '${preset.description} · Authentication required'
+                          : preset.description,
+                    ),
+                    trailing: TextButton(
+                      onPressed: alreadyAdded
+                          ? null
+                          : () async {
+                              await mcp.addServer(
+                                name: preset.name,
+                                enabled: false,
+                                transport: McpTransportType.http,
+                                url: preset.url,
+                              );
+                              if (sheetContext.mounted)
+                                Navigator.of(sheetContext).pop();
+                            },
+                      child: Text(alreadyAdded ? 'Added' : 'Add'),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+), '') ==
                         preset.url.trim().replaceFirst(RegExp(r'/$'), ''),
                   );
                   return ListTile(
