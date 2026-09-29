@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter_edge_tts/flutter_edge_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
 enum NetworkTtsKind {
+  edgeNeural,
   openai,
   gemini,
   azure,
@@ -23,6 +25,8 @@ enum NetworkTtsKind {
 
 String networkTtsKindDisplayName(NetworkTtsKind k) {
   switch (k) {
+    case NetworkTtsKind.edgeNeural:
+      return 'Edge Neural (keyless)';
     case NetworkTtsKind.openai:
       return 'OpenAI';
     case NetworkTtsKind.gemini:
@@ -86,6 +90,13 @@ abstract class TtsServiceOptions {
     final name = (json['name'] ?? '').toString();
     final id = (json['id'] ?? '').toString();
     switch (type) {
+      case 'edge_neural':
+        return EdgeNeuralTtsOptions(
+          id: id.isEmpty ? null : id,
+          enabled: enabled,
+          name: name.isEmpty ? 'Edge Neural' : name,
+          voice: (json['voice'] ?? 'en-US-AriaNeural').toString(),
+        );
       case 'openai':
         return OpenAiTtsOptions(
           id: id.isEmpty ? null : id,
@@ -281,6 +292,28 @@ int _toInt(dynamic v, int def) {
   if (v is int) return v;
   if (v is num) return v.toInt();
   return int.tryParse(v.toString()) ?? def;
+}
+
+/// Uses Microsoft's unofficial, keyless Read Aloud service. Connections are
+/// not IP-anonymous, and service availability/limits are not guaranteed.
+class EdgeNeuralTtsOptions extends TtsServiceOptions {
+  final String voice;
+
+  EdgeNeuralTtsOptions({
+    super.id,
+    required super.enabled,
+    required super.name,
+    this.voice = 'en-US-AriaNeural',
+  }) : super(kind: NetworkTtsKind.edgeNeural);
+
+  @override
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'enabled': enabled,
+    'name': name,
+    'kind': 'edge_neural',
+    'voice': voice,
+  };
 }
 
 class OpenAiTtsOptions extends TtsServiceOptions {
@@ -781,6 +814,8 @@ const Map<String, List<int>> fishAudioSampleRates = <String, List<int>>{
 int networkTtsMaxCharsPerRequest(TtsServiceOptions options) =>
     options is GroqTtsOptions ? GroqTtsOptions.maxCharsPerRequest : 220;
 
+typedef EdgeTtsSynthesizer = Future<Uint8List> Function(String text, String voice);
+
 typedef QwenAudioWebSocketConnector =
     Future<WebSocket> Function(String url, {Map<String, dynamic>? headers});
 
@@ -791,10 +826,18 @@ class NetworkTtsService {
     http.Client? client,
     FutureOr<bool> Function()? cancelled,
     QwenAudioWebSocketConnector? qwenAudioWebSocketConnector,
+    EdgeTtsSynthesizer? edgeTtsSynthesizer,
   }) async {
     final c = client ?? http.Client();
     try {
       switch (options.kind) {
+        case NetworkTtsKind.edgeNeural:
+          return await _edgeNeuralSpeech(
+            options as EdgeNeuralTtsOptions,
+            text,
+            cancelled,
+            edgeTtsSynthesizer,
+          );
         case NetworkTtsKind.openai:
           return await _openAiSpeech(
             options as OpenAiTtsOptions,
@@ -881,6 +924,33 @@ class NetworkTtsService {
           c.close();
         } catch (_) {}
       }
+    }
+  }
+
+  static Future<NetworkTtsResult> _edgeNeuralSpeech(
+    EdgeNeuralTtsOptions opt,
+    String text,
+    FutureOr<bool> Function()? cancelled,
+    EdgeTtsSynthesizer? synthesizer,
+  ) async {
+    if (await (cancelled?.call() ?? false)) throw _Cancelled();
+    final voice = opt.voice.trim().isEmpty ? 'en-US-AriaNeural' : opt.voice.trim();
+    final audio = await (synthesizer ?? _synthesizeEdgeNeural)(text, voice);
+    if (await (cancelled?.call() ?? false)) throw _Cancelled();
+    if (audio.isEmpty) throw const FormatException('Edge Neural returned empty audio.');
+    return NetworkTtsResult(bytes: audio, mime: 'audio/mpeg');
+  }
+
+  static Future<Uint8List> _synthesizeEdgeNeural(String text, String voice) async {
+    final tts = FlutterEdgeTts(
+      voice: voice,
+      outputFormat: EdgeTtsOutputFormat.audio24Khz96KbitrateMonoMp3,
+    );
+    try {
+      final result = await tts.synthesize(text);
+      return Uint8List.fromList(result.audioBytes);
+    } finally {
+      await tts.close();
     }
   }
 

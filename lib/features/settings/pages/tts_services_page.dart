@@ -1105,12 +1105,14 @@ class _NetworkTtsEditorPageState extends State<_NetworkTtsEditorPage> {
                           controller: _nameCtl,
                           hint: networkTtsKindDisplayName(_kind),
                         ),
-                        _TtsEditorTextField(
+                        if (_kind != NetworkTtsKind.edgeNeural)
+                          _TtsEditorTextField(
                           label: l10n.ttsServicesFieldApiKeyLabel,
                           controller: _apiKeyCtl,
                           obscure: true,
                         ),
-                        _TtsEditorTextField(
+                        if (_kind != NetworkTtsKind.edgeNeural)
+                          _TtsEditorTextField(
                           label: _kind == NetworkTtsKind.qwenAudio
                               ? l10n.ttsServicesFieldWorkspaceIdLabel
                               : l10n.ttsServicesFieldBaseUrlLabel,
@@ -1122,7 +1124,8 @@ class _NetworkTtsEditorPageState extends State<_NetworkTtsEditorPage> {
                               : _defaultBaseUrl(_kind),
                         ),
                         if (_kind != NetworkTtsKind.xai &&
-                            _kind != NetworkTtsKind.azure)
+                            _kind != NetworkTtsKind.azure &&
+                            _kind != NetworkTtsKind.edgeNeural)
                           _TtsEditorTextField(
                             label: l10n.ttsServicesFieldModelLabel,
                             controller: _modelCtl,
@@ -1412,7 +1415,8 @@ class _NetworkTtsEditorPageState extends State<_NetworkTtsEditorPage> {
 
   void _submit() {
     final l10n = AppLocalizations.of(context)!;
-    if (_apiKeyCtl.text.trim().isEmpty) {
+    if (_kind != NetworkTtsKind.edgeNeural &&
+        _apiKeyCtl.text.trim().isEmpty) {
       showAppSnackBar(
         context,
         message: l10n.ttsServicesValidationApiKeyRequired,
@@ -1533,6 +1537,8 @@ class _NetworkTtsEditorPageState extends State<_NetworkTtsEditorPage> {
     final rawVoice = _voiceCtl.text.trim();
     final voice = rawVoice.isEmpty ? _defaultVoice(_kind) : rawVoice;
     switch (_kind) {
+      case NetworkTtsKind.edgeNeural:
+        return EdgeNeuralTtsOptions(id: initial?.id, enabled: true, name: name, voice: voice);
       case NetworkTtsKind.openai:
         return OpenAiTtsOptions(
           id: initial?.id,
@@ -2230,6 +2236,7 @@ Widget _sheetDivider(BuildContext context) {
 }
 
 const List<NetworkTtsKind> _networkTtsKinds = [
+  NetworkTtsKind.edgeNeural,
   NetworkTtsKind.openai,
   NetworkTtsKind.gemini,
   NetworkTtsKind.azure,
@@ -2245,6 +2252,7 @@ const List<NetworkTtsKind> _networkTtsKinds = [
 ];
 
 String _apiKeyOf(TtsServiceOptions? option) {
+  if (option is EdgeNeuralTtsOptions) return '';
   if (option is OpenAiTtsOptions) return option.apiKey;
   if (option is GeminiTtsOptions) return option.apiKey;
   if (option is AzureTtsOptions) return option.apiKey;
@@ -2291,6 +2299,7 @@ String _modelOf(TtsServiceOptions? option) {
 }
 
 String _voiceOf(TtsServiceOptions? option) {
+  if (option is EdgeNeuralTtsOptions) return option.voice;
   if (option is OpenAiTtsOptions) return option.voice;
   if (option is GeminiTtsOptions) return option.voiceName;
   if (option is AzureTtsOptions) return option.voice;
@@ -2308,6 +2317,8 @@ String _voiceOf(TtsServiceOptions? option) {
 
 String _defaultBaseUrl(NetworkTtsKind k) {
   switch (k) {
+    case NetworkTtsKind.edgeNeural:
+      return '';
     case NetworkTtsKind.openai:
       return 'https://api.openai.com/v1';
     case NetworkTtsKind.gemini:
@@ -2337,6 +2348,8 @@ String _defaultBaseUrl(NetworkTtsKind k) {
 
 String _defaultModel(NetworkTtsKind k) {
   switch (k) {
+    case NetworkTtsKind.edgeNeural:
+      return '';
     case NetworkTtsKind.openai:
       return 'gpt-4o-mini-tts';
     case NetworkTtsKind.gemini:
@@ -2366,6 +2379,8 @@ String _defaultModel(NetworkTtsKind k) {
 
 String _defaultVoice(NetworkTtsKind k) {
   switch (k) {
+    case NetworkTtsKind.edgeNeural:
+      return 'en-US-AriaNeural';
     case NetworkTtsKind.openai:
       return 'alloy';
     case NetworkTtsKind.gemini:
@@ -2395,6 +2410,8 @@ String _defaultVoice(NetworkTtsKind k) {
 
 String _voiceLabelFor(NetworkTtsKind k, AppLocalizations l10n) {
   switch (k) {
+    case NetworkTtsKind.edgeNeural:
+      return l10n.ttsServicesFieldVoiceLabel;
     case NetworkTtsKind.openai:
       return l10n.ttsServicesFieldVoiceLabel;
     case NetworkTtsKind.gemini:

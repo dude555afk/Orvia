@@ -1171,6 +1171,7 @@ Future<TtsServiceOptions?> _showNetworkDialog(
                               label: l10n.ttsServicesDialogProviderType,
                               value: networkTtsKindDisplayName(kind),
                               options: [
+                                networkTtsKindDisplayName(NetworkTtsKind.edgeNeural),
                                 networkTtsKindDisplayName(
                                   NetworkTtsKind.openai,
                                 ),
@@ -1199,6 +1200,9 @@ Future<TtsServiceOptions?> _showNetworkDialog(
                               onSelected: (picked) {
                                 final previousKind = kind;
                                 setState(() {
+                                  if (picked == networkTtsKindDisplayName(NetworkTtsKind.edgeNeural)) {
+                                    kind = NetworkTtsKind.edgeNeural;
+                                  }
                                   if (picked ==
                                       networkTtsKindDisplayName(
                                         NetworkTtsKind.openai,
@@ -1320,13 +1324,15 @@ Future<TtsServiceOptions?> _showNetworkDialog(
                               hint: networkTtsKindDisplayName(kind),
                             ),
                             const SizedBox(height: 6),
-                            _InputRow(
+                            if (kind != NetworkTtsKind.edgeNeural)
+                              _InputRow(
                               label: l10n.ttsServicesFieldApiKeyLabel,
                               controller: apiKeyCtl,
                               obscure: true,
                             ),
                             const SizedBox(height: 6),
-                            _InputRow(
+                            if (kind != NetworkTtsKind.edgeNeural)
+                              _InputRow(
                               label: kind == NetworkTtsKind.qwenAudio
                                   ? l10n.ttsServicesFieldWorkspaceIdLabel
                                   : l10n.ttsServicesFieldBaseUrlLabel,
@@ -1339,7 +1345,8 @@ Future<TtsServiceOptions?> _showNetworkDialog(
                             ),
                             const SizedBox(height: 6),
                             if (kind != NetworkTtsKind.xai &&
-                                kind != NetworkTtsKind.azure) ...[
+                                kind != NetworkTtsKind.azure &&
+                                kind != NetworkTtsKind.edgeNeural) ...[
                               _InputRow(
                                 label: l10n.ttsServicesFieldModelLabel,
                                 controller: modelCtl,
@@ -1667,7 +1674,7 @@ Future<TtsServiceOptions?> _showNetworkDialog(
                               final voice = rawVoice.isEmpty
                                   ? _defaultVoice(kind)
                                   : rawVoice;
-                              if (apiKey.isEmpty ||
+                              if ((kind != NetworkTtsKind.edgeNeural && apiKey.isEmpty) ||
                                   (kind == NetworkTtsKind.azure &&
                                       !isValidAzureTtsEndpoint(base))) {
                                 return;
@@ -1712,7 +1719,14 @@ Future<TtsServiceOptions?> _showNetworkDialog(
                                   return;
                                 }
                               }
-                              if (kind == NetworkTtsKind.openai) {
+                              if (kind == NetworkTtsKind.edgeNeural) {
+                                result = EdgeNeuralTtsOptions(
+                                  id: initial?.id,
+                                  enabled: true,
+                                  name: name,
+                                  voice: voice,
+                                );
+                              } else if (kind == NetworkTtsKind.openai) {
                                 result = OpenAiTtsOptions(
                                   id: initial?.id,
                                   enabled: true,
@@ -1983,6 +1997,8 @@ Future<TtsServiceOptions?> _showNetworkDialog(
 
 String _defaultBaseUrl(NetworkTtsKind k) {
   switch (k) {
+    case NetworkTtsKind.edgeNeural:
+      return '';
     case NetworkTtsKind.openai:
       return 'https://api.openai.com/v1';
     case NetworkTtsKind.gemini:
@@ -2012,6 +2028,8 @@ String _defaultBaseUrl(NetworkTtsKind k) {
 
 String _defaultModel(NetworkTtsKind k) {
   switch (k) {
+    case NetworkTtsKind.edgeNeural:
+      return '';
     case NetworkTtsKind.openai:
       return 'gpt-4o-mini-tts';
     case NetworkTtsKind.gemini:
@@ -2041,6 +2059,8 @@ String _defaultModel(NetworkTtsKind k) {
 
 String _defaultVoice(NetworkTtsKind k) {
   switch (k) {
+    case NetworkTtsKind.edgeNeural:
+      return 'en-US-AriaNeural';
     case NetworkTtsKind.openai:
       return 'alloy';
     case NetworkTtsKind.gemini:
@@ -2070,6 +2090,8 @@ String _defaultVoice(NetworkTtsKind k) {
 
 String _voiceLabelFor(NetworkTtsKind k, AppLocalizations l10n) {
   switch (k) {
+    case NetworkTtsKind.edgeNeural:
+      return l10n.ttsServicesFieldVoiceLabel;
     case NetworkTtsKind.openai:
       return l10n.ttsServicesFieldVoiceLabel;
     case NetworkTtsKind.gemini:

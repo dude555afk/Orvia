@@ -8,6 +8,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('TtsServiceOptions', () {
+    test('Edge Neural config round-trips without credentials', () {
+      final edge = TtsServiceOptions.fromJson({
+        'kind': 'edge_neural', 'enabled': true, 'voice': 'en-GB-SoniaNeural',
+      });
+      expect(edge, isA<EdgeNeuralTtsOptions>());
+      expect((edge as EdgeNeuralTtsOptions).voice, 'en-GB-SoniaNeural');
+      expect(edge.toJson().containsKey('apiKey'), isFalse);
+      expect(TtsServiceOptions.fromJson(edge.toJson()).kind, NetworkTtsKind.edgeNeural);
+    });
+
     test('deserializes RikkaHub-aligned provider defaults', () {
       final qwen = TtsServiceOptions.fromJson({
         'kind': 'qwen',
@@ -231,6 +241,27 @@ void main() {
   });
 
   group('NetworkTtsService', () {
+    test('keyless Edge synthesis uses chosen voice and MP3 payload', () async {
+      final edge = EdgeNeuralTtsOptions(enabled: true, name: 'Edge', voice: 'en-US-AriaNeural');
+      final audio = Uint8List.fromList(<int>[0x49, 0x44, 0x33, 0x03]);
+      String? receivedVoice;
+      final result = await NetworkTtsService.synthesize(
+        options: edge, text: 'Hello there',
+        edgeTtsSynthesizer: (text, voice) async {
+          expect(text, 'Hello there');
+          receivedVoice = voice;
+          return audio;
+        },
+      );
+      expect(receivedVoice, 'en-US-AriaNeural');
+      expect(result.mime, 'audio/mpeg');
+      expect(result.bytes, audio);
+      await expectLater(NetworkTtsService.synthesize(
+        options: edge, text: 'Cancelled', cancelled: () => true,
+        edgeTtsSynthesizer: (_, _) async => throw StateError('Should not call'),
+      ), throwsA(isA<Exception>()));
+    });
+
     test('Azure sends escaped SSML and returns MP3 audio', () async {
       late HttpRequest captured;
       late String requestBody;
