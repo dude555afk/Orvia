@@ -95,28 +95,68 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "版本号: $VERSION"
 
-      # 如果有签名密钥，写入密钥文件
-      - name: 🔑 写入签名密钥
-        if: ${{ env.SIGN_KEYSTORE_BASE64 != '' }}
+      # Fail closed: public release APKs must never be silently unsigned.
+      - name: 🔑 Configure Android release signing
+        shell: bash
         env:
           SIGN_KEYSTORE_BASE64: ${{ secrets.SIGN_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          echo "$SIGN_KEYSTORE_BASE64" | base64 --decode > android/app/key.jks
-          echo "storeFile=key.jks" >> android/key.properties
-          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
-          echo "✅ 签名配置已写入"
+          set -euo pipefail
+          for name in SIGN_KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Missing Android release signing secret: $name"
+              exit 1
+            fi
+          done
+          printf '%s' "$SIGN_KEYSTORE_BASE64" | base64 --decode > android/app/key.jks
+          test -s android/app/key.jks
+          {
+            printf 'storeFile=key.jks\n'
+            printf 'storePassword=%s\n' "$KEYSTORE_PASSWORD"
+            printf 'keyAlias=%s\n' "$KEY_ALIAS"
+            printf 'keyPassword=%s\n' "$KEY_PASSWORD"
+          } > android/key.properties
+          chmod 600 android/app/key.jks android/key.properties
 
-      - name: 🏗️ 构建 APK
+      - name: 🏗️ Build signed release APKs
         run: flutter build apk --release --split-per-abi
 
-      - name: 📦 重命名 APK
+      - name: 🔍 Verify release signatures
+        shell: bash
         run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          if [ -z "$SDK_ROOT" ]; then
+            echo "::error::Android SDK directory not set"
+            exit 1
+          fi
+          APKSIGNER="$(find "$SDK_ROOT/build-tools" -type f -name apksigner | sort -V | tail -n 1)"
+          if [ -z "$APKSIGNER" ]; then
+            echo "::error::apksigner not found"
+            exit 1
+          fi
+          shopt -s nullglob
+          apks=(build/app/outputs/flutter-apk/app-*-release.apk)
+          if [ "${#apks[@]}" -eq 0 ]; then
+            echo "::error::No release APKs found"
+            exit 1
+          fi
+          for apk in "${apks[@]}"; do
+            "$APKSIGNER" verify --verbose "$apk"
+            sha256sum "$apk"
+          done
+
+      - name: 📦 Rename signed APKs
+        shell: bash
+        run: |
+          set -euo pipefail
           cd build/app/outputs/flutter-apk
           for file in app-*-release.apk; do
             abi=$(echo "$file" | sed -E 's/app-(.*)-release\.apk/\1/')
-            mv "$file" "Kelivo_android_${VERSION}_${abi}.apk"
+            mv "$file" "Orvia_android_${VERSION}_${abi}.apk"
           done
 
       - name: 🚀 发布到 Release
@@ -125,25 +165,25 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.release_tag }}
           name: ${{ github.event.inputs.release_tag }}
-          files: build/app/outputs/flutter-apk/Kelivo_android_*.apk
+          files: build/app/outputs/flutter-apk/Orvia_android_*.apk
 
       - name: 📤 上传构建产物 (arm64-v8a)
         uses: actions/upload-artifact@v4
         with:
           name: Android-arm64-v8a
-          path: build/app/outputs/flutter-apk/Kelivo_android_*_arm64-v8a.apk
+          path: build/app/outputs/flutter-apk/Orvia_android_*_arm64-v8a.apk
 
       - name: 📤 上传构建产物 (armeabi-v7a)
         uses: actions/upload-artifact@v4
         with:
           name: Android-armeabi-v7a
-          path: build/app/outputs/flutter-apk/Kelivo_android_*_armeabi-v7a.apk
+          path: build/app/outputs/flutter-apk/Orvia_android_*_armeabi-v7a.apk
 
       - name: 📤 上传构建产物 (x86_64)
         uses: actions/upload-artifact@v4
         with:
           name: Android-x86_64
-          path: build/app/outputs/flutter-apk/Kelivo_android_*_x86_64.apk
+          path: build/app/outputs/flutter-apk/Orvia_android_*_x86_64.apk
 
   # iOS 构建
   ios:
