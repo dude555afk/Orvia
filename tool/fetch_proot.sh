@@ -169,17 +169,27 @@ trap cleanup EXIT
 echo "Fetching Termux proot ${PROOT_VERSION} (+ libtalloc ${TALLOC_VERSION}, libandroid-shmem ${SHMEM_VERSION})"
 echo "Pool: $TERMUX_POOL"
 
-# The historical OpenMinis pin is documented; fail clearly if someone overrides
-# to a version the pool no longer serves.
-if ! curl -fsI --retry 5 --retry-delay 2 --retry-all-errors \
-    "${TERMUX_POOL}/p/proot/proot_${PROOT_VERSION}_aarch64.deb" >/dev/null; then
-  echo "error: proot_${PROOT_VERSION} is not on the Termux pool." >&2
-  echo "  Tried: ${TERMUX_POOL}/p/proot/proot_${PROOT_VERSION}_aarch64.deb" >&2
-  echo "  OpenMinis used 5.1.107-70; that package has rolled off." >&2
-  echo "  Set PROOT_VERSION to a version listed at ${TERMUX_POOL}/p/proot/" >&2
+# Keep using the pinned release and its reviewed ELF checksums. The rolling
+# Termux pool removes old package versions, so consult archived mirrors only
+# when the primary pool no longer serves this exact version.
+ARCHIVE_POOLS=(
+  "https://mirrors.krnk.org/apt/termux/termux-main/pool/main"
+  "https://mirrors4.qlu.edu.cn/termux/apt/termux-main/pool/main"
+)
+found_pool=""
+for candidate in "$TERMUX_POOL" "${ARCHIVE_POOLS[@]}"; do
+  if curl -fsI --retry 2 --retry-delay 2 --max-time 15 \
+      "${candidate}/p/proot/proot_${PROOT_VERSION}_aarch64.deb" >/dev/null; then
+    found_pool="$candidate"
+    break
+  fi
+done
+if [[ -z "$found_pool" ]]; then
+  echo "error: pinned proot_${PROOT_VERSION} is unavailable from the primary pool and archives." >&2
   exit 1
 fi
-
+TERMUX_POOL="$found_pool"
+echo "Selected pinned-package pool: $TERMUX_POOL"
 for pair in "${ABIS[@]}"; do
   termux_arch="${pair%%:*}"
   android_abi="${pair##*:}"
