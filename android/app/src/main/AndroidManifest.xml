@@ -38,7 +38,7 @@
          startup gate rejects. Kelivo ships its own backup (WebDAV/S3/local
          export), so system backup is disabled. -->
     <application
-        android:label="Kelivo"
+        android:label="Orvia"
         android:name=".KelivoApplication"
         android:appCategory="productivity"
         android:allowBackup="false"
