@@ -21,6 +21,8 @@ sealed class MessagePart {
         return ReasoningPart(payload);
       case 'tool_call':
         return ToolCallPart(payload);
+      case 'dynamic_ui':
+        return DynamicUiPart(payload);
       case 'image':
         return ImagePart.fromPayload(payload);
       case 'file':
@@ -113,6 +115,32 @@ final class ToolCallPart extends MessagePart {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ToolCallPart && payloadJson == other.payloadJson;
+
+  @override
+  int get hashCode => payloadJson.hashCode;
+}
+
+
+/// Kairon's interactive kai-ui payload, preserved as raw JSON so message
+/// versioning, branching, editing and export can carry it losslessly.
+///
+/// Rendering is intentionally separate from persistence. Unknown/new node
+/// fields survive round-trips even when this build does not understand them.
+final class DynamicUiPart extends MessagePart {
+  const DynamicUiPart(this.payloadJson);
+
+  final String payloadJson;
+
+  @override
+  String get kind => 'dynamic_ui';
+
+  @override
+  String encodePayload() => payloadJson;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DynamicUiPart && payloadJson == other.payloadJson;
 
   @override
   int get hashCode => payloadJson.hashCode;
