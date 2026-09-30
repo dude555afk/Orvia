@@ -56,6 +56,7 @@ import 'timeline_projection.dart';
 import 'timeline_visibility.dart';
 import 'citation_sources_sheet.dart';
 import 'chat_surface.dart';
+import 'dynamic_ui_view.dart';
 import 'collapsible_user_text.dart';
 import 'chat_suggestion_bubbles.dart';
 import 'token_display_widget.dart';
@@ -1059,6 +1060,7 @@ class ChatMessageWidget extends StatefulWidget {
   final ValueChanged<String>? onSuggestionTap;
   final Future<void> Function(ToolUIPart part, AskUserResult result)?
   onRecoveredAskUserAnswer;
+  final DynamicUiCallback? onDynamicUiCallback;
 
   /// When null, follows [SettingsProvider.showThinkingCards].
   final bool? showThinkingCards;
@@ -1113,6 +1115,7 @@ class ChatMessageWidget extends StatefulWidget {
     this.suggestions = const <String>[],
     this.onSuggestionTap,
     this.onRecoveredAskUserAnswer,
+    this.onDynamicUiCallback,
     this.showThinkingCards,
     this.showToolCards,
     this.onInlineImageAspect,
@@ -2822,6 +2825,9 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
       isDark: isDark,
       alignEnd: false,
     );
+    final dynamicUiParts = widget.message.parts
+        .whereType<DynamicUiPart>()
+        .toList(growable: false);
 
     return ChatSurfaceTheme(
       palette: fg,
@@ -2896,6 +2902,15 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
 
             if (mediaPreview != null) ...[
               mediaPreview,
+              const SizedBox(height: 8),
+            ],
+
+            for (final part in dynamicUiParts) ...[
+              DynamicUiView(
+                payloadJson: part.payloadJson,
+                interactive: !widget.message.isStreaming,
+                onCallback: widget.onDynamicUiCallback,
+              ),
               const SizedBox(height: 8),
             ],
 
