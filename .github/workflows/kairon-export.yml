@@ -1,0 +1,41 @@
+name: Export Orvia for Kairon migration
+
+on:
+  push:
+    branches:
+      - migration/kairon-export
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: migration/kairon-export
+          fetch-depth: 1
+
+      - name: Pack source tree into text chunks
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .migration-export
+          mkdir -p .migration-export
+          tar             --exclude='.git'             --exclude='.migration-export'             --exclude='.github/workflows/kairon-export.yml'             -czf /tmp/orvia-source.tar.gz .
+          base64 -w0 /tmp/orvia-source.tar.gz > /tmp/orvia-source.b64
+          split -b 450000 -d -a 4 /tmp/orvia-source.b64 .migration-export/part-
+          sha256sum /tmp/orvia-source.tar.gz | awk '{print $1}' > .migration-export/archive.sha256
+          wc -c /tmp/orvia-source.tar.gz | awk '{print $1}' > .migration-export/archive.bytes
+          find .migration-export -maxdepth 1 -type f -name 'part-*' | sort | sed 's#^./##' > .migration-export/parts.txt
+
+      - name: Commit export payload
+        shell: bash
+        run: |
+          git config user.name "Orvia Migration Export"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .migration-export
+          git commit -m "Export Orvia source for Kairon migration"
+          git push origin HEAD:migration/kairon-export
