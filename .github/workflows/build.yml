@@ -50,7 +50,7 @@ on:
       - '.github/workflows/build.yml'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: build-${{ github.ref }}
   cancel-in-progress: ${{ github.event.inputs.publish_release != 'true' }}
 
 jobs:

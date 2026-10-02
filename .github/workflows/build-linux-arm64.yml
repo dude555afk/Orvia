@@ -50,7 +50,7 @@ on:
       - '.github/workflows/build-linux-arm64.yml'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: build-linux-arm64-${{ github.ref }}
   cancel-in-progress: ${{ github.event.inputs.publish_release != 'true' }}
 
 jobs:

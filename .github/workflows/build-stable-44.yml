@@ -55,7 +55,7 @@ on:
       - '.github/workflows/build-stable-44.yml'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: build-stable-44-${{ github.ref }}
   cancel-in-progress: ${{ github.event.inputs.publish_release != 'true' }}
 
 jobs:

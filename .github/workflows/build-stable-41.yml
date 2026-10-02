@@ -60,7 +60,7 @@ on:
         type: boolean
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: build-stable-41-${{ github.ref }}
   cancel-in-progress: ${{ github.event.inputs.publish_release != 'true' }}
 
 jobs:
