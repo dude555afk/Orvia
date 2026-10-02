@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.dude555afk.orvia"
+    namespace = "com.psyche.kelivo"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "28.2.13676358"
     compileOptions {

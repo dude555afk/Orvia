@@ -49,9 +49,13 @@ on:
       - 'pubspec.yaml'
       - '.github/workflows/build.yml'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event.inputs.publish_release != 'true' }}
+
 jobs:
   android:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.build_android == 'false' && github.event_name != 'workflow_dispatch' || github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_android != 'false') }}
     name: 构建 Android
     runs-on: ubuntu-latest
     permissions: write-all
@@ -180,7 +184,10 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.release_tag }}
           name: ${{ github.event.inputs.release_tag }}
-          files: build/app/outputs/flutter-apk/Orvia_android_*.apk
+          files: |
+            build/app/outputs/flutter-apk/Orvia_android_*_arm64-v8a.apk
+            build/app/outputs/flutter-apk/Orvia_android_*_armeabi-v7a.apk
+            build/app/outputs/flutter-apk/Orvia_android_*_x86_64.apk
 
       - name: 📤 上传构建产物 (arm64-v8a)
         if: ${{ github.event.inputs.publish_release == 'true' }}
@@ -205,7 +212,7 @@ jobs:
 
   # iOS 构建
   ios:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.build_ios == 'false' && github.event_name != 'workflow_dispatch' || github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_ios != 'false') }}
     name: 构建 iOS
     runs-on: macos-latest
     permissions: write-all
@@ -275,7 +282,7 @@ jobs:
 
   # macOS 构建
   macos:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.build_mac == 'false' && github.event_name != 'workflow_dispatch' || github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_mac != 'false') }}
     name: 构建 macOS
     runs-on: macos-latest
     permissions: write-all
@@ -318,9 +325,9 @@ jobs:
             --icon-size 100 \
             --app-drop-link 600 185 \
             "Orvia_macos_${VERSION}.dmg" \
-            "build/macos/Build/Products/Release/orvia.app" || true
+            "build/macos/Build/Products/Release/kelivo.app" || true
           if [ ! -f "Orvia_macos_${VERSION}.dmg" ]; then
-            hdiutil create -volname Orvia -srcfolder build/macos/Build/Products/Release/orvia.app -ov -format UDZO Orvia_macos_${VERSION}.dmg
+            hdiutil create -volname Orvia -srcfolder build/macos/Build/Products/Release/kelivo.app -ov -format UDZO Orvia_macos_${VERSION}.dmg
           fi
 
       - name: 🚀 发布到 Release
@@ -339,7 +346,7 @@ jobs:
 
   # Windows 构建
   windows:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.build_windows == 'false' && github.event_name != 'workflow_dispatch' || github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_windows != 'false') }}
     name: 构建 Windows
     runs-on: windows-latest
     permissions: write-all
@@ -442,7 +449,7 @@ jobs:
           #define MyAppName "Orvia"
           #define MyAppVersion "$env:VERSION"
           #define MyAppPublisher "Orvia"
-          #define MyAppExeName "orvia.exe"
+          #define MyAppExeName "kelivo.exe"
 
           [Setup]
           AppId={{A7B8C9D0-E1F2-4A5B-8C9D-0E1F2A3B4C5D}}
@@ -505,7 +512,7 @@ jobs:
 
   # Linux 构建
   linux:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.build_linux == 'false' && github.event_name != 'workflow_dispatch' || github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_linux != 'false') }}
     name: 构建 Linux
     runs-on: ubuntu-22.04
     permissions: write-all
@@ -519,6 +526,10 @@ jobs:
       - name: 🔧 安装依赖
         run: |
           sudo apt-get update
+          mapfile -t unwind_conflicts < <(dpkg-query -W -f='${binary:Package} ${db:Status-Status}\n' 'libunwind-*-dev' 2>/dev/null | awk '$2 == "installed" {print $1}' || true)
+          if [ "${#unwind_conflicts[@]}" -gt 0 ]; then
+            sudo apt-get remove -y "${unwind_conflicts[@]}"
+          fi
           sudo apt-get install -y \
             clang cmake ninja-build pkg-config libgtk-3-dev \
             libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
@@ -570,14 +581,14 @@ jobs:
           HERE=${SELF%/*}
           export PATH="${HERE}/usr/bin:${PATH}"
           export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
-          exec "${HERE}/usr/bin/orvia" "$@"
+          exec "${HERE}/usr/bin/kelivo" "$@"
           EOF
           chmod +x AppDir/AppRun
           
           cat > AppDir/orvia.desktop << EOF
           [Desktop Entry]
           Name=Orvia
-          Exec=orvia
+          Exec=kelivo
           Icon=orvia
           Type=Application
           Categories=Utility;
@@ -606,7 +617,7 @@ jobs:
           cp -r build/linux/x64/release/bundle/* deb/opt/orvia/
           
           mkdir -p deb/usr/bin
-          ln -s /opt/orvia/orvia deb/usr/bin/orvia
+          ln -s /opt/orvia/kelivo deb/usr/bin/kelivo
           
           cat > deb/DEBIAN/control << EOF
           Package: orvia
@@ -623,7 +634,7 @@ jobs:
           cat > deb/usr/share/applications/orvia.desktop << EOF
           [Desktop Entry]
           Name=Orvia
-          Exec=/opt/orvia/orvia
+          Exec=/opt/orvia/kelivo
           Icon=orvia
           Type=Application
           Categories=Utility;
@@ -639,12 +650,12 @@ jobs:
           fi
           install -Dm644 "$ICON_SOURCE" deb/usr/share/icons/hicolor/256x256/apps/orvia.png
           
-          cat > deb/opt/orvia/orvia.sh << 'EOF'
+          cat > deb/opt/orvia/kelivo.sh << 'EOF'
           #!/bin/bash
           cd "$(dirname "$0")"
-          ./orvia "$@"
+          ./kelivo "$@"
           EOF
-          chmod +x deb/opt/orvia/orvia.sh
+          chmod +x deb/opt/orvia/kelivo.sh
           
           dpkg-deb --build deb Orvia_linux_${VERSION}_amd64.deb
       - name: 📦 创建 RPM 包
@@ -685,13 +696,13 @@ jobs:
           cp -r * %{buildroot}/opt/orvia/
           
           mkdir -p %{buildroot}/usr/bin
-          ln -s /opt/orvia/orvia %{buildroot}/usr/bin/orvia
+          ln -s /opt/orvia/kelivo %{buildroot}/usr/bin/kelivo
           
           mkdir -p %{buildroot}/usr/share/applications
           cat > %{buildroot}/usr/share/applications/orvia.desktop << 'DESKTOPEOF'
           [Desktop Entry]
           Name=Orvia
-          Exec=/opt/orvia/orvia
+          Exec=/opt/orvia/kelivo
           Icon=orvia
           Type=Application
           Categories=Utility;
@@ -702,7 +713,7 @@ jobs:
           
           %files
           /opt/orvia/*
-          /usr/bin/orvia
+          /usr/bin/kelivo
           /usr/share/applications/orvia.desktop
           /usr/share/icons/hicolor/256x256/apps/orvia.png
           
