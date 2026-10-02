@@ -1,62 +1,57 @@
 name: Flutter Multi-Platform Build Master
 
 env:
-  # 使用 master 分支，不需要指定固定版本
   FLUTTER_CHANNEL: 'master'
 
 on:
-  # 手动触发
   workflow_dispatch:
     inputs:
-      # 选择构建的平台
       build_android:
         description: '构建 Android'
         required: false
         default: true
         type: boolean
-
       build_ios:
         description: '构建 iOS'
         required: false
         default: true
         type: boolean
-
       build_mac:
         description: '构建 macOS'
         required: false
         default: true
         type: boolean
-
       build_windows:
         description: '构建 Windows'
         required: false
         default: true
         type: boolean
-
       build_linux:
         description: '构建 Linux'
         required: false
         default: true
         type: boolean
-
-      # 是否发布到 Release（默认不发布）
       publish_release:
         description: '发布到 Release'
         required: false
         default: false
         type: boolean
-
-      # Release 标签（只有选择发布时才需要填写）
       release_tag:
         description: 'Release 标签（如 v1.0.0）'
         required: false
         default: ''
         type: string
+  push:
+    branches: [ main ]
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'pubspec.yaml'
+      - '.github/workflows/build.yml'
 
 jobs:
-  # Android 构建
   android:
-    if: ${{ github.event.inputs.build_android == 'true' }}
+    if: ${{ github.event.inputs.build_android != 'false' }}
     name: 构建 Android
     runs-on: ubuntu-latest
     permissions: write-all
@@ -95,8 +90,25 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "版本号: $VERSION"
 
+      - name: 🔨 Build debug APK (no signing required)
+        run: flutter build apk --debug
+
+      - name: 📦 Rename debug APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd build/app/outputs/flutter-apk
+          mv app-debug.apk Orvia_android_${VERSION}_debug.apk
+
+      - name: 📤 上传 Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-debug
+          path: build/app/outputs/flutter-apk/Orvia_android_*_debug.apk
+
       # Fail closed: public release APKs must never be silently unsigned.
       - name: 🔑 Configure Android release signing
+        if: ${{ github.event.inputs.publish_release == 'true' }}
         shell: bash
         env:
           SIGN_KEYSTORE_BASE64: ${{ secrets.SIGN_KEYSTORE_BASE64 }}
@@ -122,9 +134,11 @@ jobs:
           chmod 600 android/app/key.jks android/key.properties
 
       - name: 🏗️ Build signed release APKs
+        if: ${{ github.event.inputs.publish_release == 'true' }}
         run: flutter build apk --release --split-per-abi
 
       - name: 🔍 Verify release signatures
+        if: ${{ github.event.inputs.publish_release == 'true' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -150,6 +164,7 @@ jobs:
           done
 
       - name: 📦 Rename signed APKs
+        if: ${{ github.event.inputs.publish_release == 'true' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -168,18 +183,21 @@ jobs:
           files: build/app/outputs/flutter-apk/Orvia_android_*.apk
 
       - name: 📤 上传构建产物 (arm64-v8a)
+        if: ${{ github.event.inputs.publish_release == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Android-arm64-v8a
           path: build/app/outputs/flutter-apk/Orvia_android_*_arm64-v8a.apk
 
       - name: 📤 上传构建产物 (armeabi-v7a)
+        if: ${{ github.event.inputs.publish_release == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Android-armeabi-v7a
           path: build/app/outputs/flutter-apk/Orvia_android_*_armeabi-v7a.apk
 
       - name: 📤 上传构建产物 (x86_64)
+        if: ${{ github.event.inputs.publish_release == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Android-x86_64
@@ -187,7 +205,7 @@ jobs:
 
   # iOS 构建
   ios:
-    if: ${{ github.event.inputs.build_ios == 'true' }}
+    if: ${{ github.event.inputs.build_ios != 'false' }}
     name: 构建 iOS
     runs-on: macos-latest
     permissions: write-all
@@ -257,7 +275,7 @@ jobs:
 
   # macOS 构建
   macos:
-    if: ${{ github.event.inputs.build_mac == 'true' }}
+    if: ${{ github.event.inputs.build_mac != 'false' }}
     name: 构建 macOS
     runs-on: macos-latest
     permissions: write-all
@@ -301,7 +319,6 @@ jobs:
             --app-drop-link 600 185 \
             "Orvia_macos_${VERSION}.dmg" \
             "build/macos/Build/Products/Release/orvia.app" || true
-          # 如果 create-dmg 失败，使用简单方式
           if [ ! -f "Orvia_macos_${VERSION}.dmg" ]; then
             hdiutil create -volname Orvia -srcfolder build/macos/Build/Products/Release/orvia.app -ov -format UDZO Orvia_macos_${VERSION}.dmg
           fi
@@ -322,7 +339,7 @@ jobs:
 
   # Windows 构建
   windows:
-    if: ${{ github.event.inputs.build_windows == 'true' }}
+    if: ${{ github.event.inputs.build_windows != 'false' }}
     name: 构建 Windows
     runs-on: windows-latest
     permissions: write-all
@@ -382,7 +399,6 @@ jobs:
       - name: 📦 创建安装程序
         shell: pwsh
         run: |
-          # 语言文件检测（中文语言包在部分 Runner 缺失，避免编译失败）
           $zhLangCompiler = "C:\\Program Files (x86)\\Inno Setup 6\\Languages\\ChineseSimplified.isl"
           $zhLangLocalDir = Join-Path (Get-Location) "Languages"
           $zhLangLocal = Join-Path $zhLangLocalDir "ChineseSimplified.isl"
@@ -422,7 +438,6 @@ jobs:
             }
           }
 
-          # 创建 Inno Setup 脚本
           $issContent = @"
           #define MyAppName "Orvia"
           #define MyAppVersion "$env:VERSION"
@@ -462,10 +477,8 @@ jobs:
           Filename: "{app}\{#MyAppExeName}"; Description: "启动 {#MyAppName}"; Flags: nowait postinstall skipifsilent
           "@
           
-          # 使用 UTF-8 BOM 以确保中文字符在 Inno Setup 中正确解析
           $issContent | Out-File -FilePath "installer.iss" -Encoding utf8BOM
           
-          # 编译安装程序
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer.iss"
 
       - name: 🚀 发布到 Release
@@ -492,7 +505,7 @@ jobs:
 
   # Linux 构建
   linux:
-    if: ${{ github.event.inputs.build_linux == 'true' }}
+    if: ${{ github.event.inputs.build_linux != 'false' }}
     name: 构建 Linux
     runs-on: ubuntu-22.04
     permissions: write-all
@@ -543,17 +556,14 @@ jobs:
 
       - name: 📦 创建 AppImage
         run: |
-          # 下载 appimagetool
           wget -O appimagetool "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
           chmod +x appimagetool
           
-          # 创建 AppDir 结构
           mkdir -p AppDir/usr/bin
           mkdir -p AppDir/usr/lib
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
           cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
           
-          # 创建 AppRun 脚本
           cat > AppDir/AppRun << 'EOF'
           #!/bin/bash
           SELF=$(readlink -f "$0")
@@ -564,7 +574,6 @@ jobs:
           EOF
           chmod +x AppDir/AppRun
           
-          # 创建 desktop 文件
           cat > AppDir/orvia.desktop << EOF
           [Desktop Entry]
           Name=Orvia
@@ -585,25 +594,20 @@ jobs:
           install -Dm644 "$ICON_SOURCE" AppDir/orvia.png
           install -Dm644 "$ICON_SOURCE" "AppDir/usr/share/icons/hicolor/256x256/apps/orvia.png"
           
-          # 构建 AppImage
           ARCH=x86_64 ./appimagetool AppDir Orvia_linux_${VERSION}.AppImage
 
       - name: 📦 创建 DEB 包
         run: |
-          # 创建 DEB 目录结构
           mkdir -p deb/DEBIAN
           mkdir -p deb/opt/orvia
           mkdir -p deb/usr/share/applications
           mkdir -p deb/usr/share/icons/hicolor/256x256/apps
           
-          # 复制文件
           cp -r build/linux/x64/release/bundle/* deb/opt/orvia/
           
-          # 创建 /usr/bin 软链接
           mkdir -p deb/usr/bin
           ln -s /opt/orvia/orvia deb/usr/bin/orvia
           
-          # 创建 control 文件
           cat > deb/DEBIAN/control << EOF
           Package: orvia
           Version: ${VERSION_NUMBER}
@@ -616,7 +620,6 @@ jobs:
            A Flutter application for Linux
           EOF
           
-          # 创建 desktop 文件
           cat > deb/usr/share/applications/orvia.desktop << EOF
           [Desktop Entry]
           Name=Orvia
@@ -636,7 +639,6 @@ jobs:
           fi
           install -Dm644 "$ICON_SOURCE" deb/usr/share/icons/hicolor/256x256/apps/orvia.png
           
-          # 创建启动脚本
           cat > deb/opt/orvia/orvia.sh << 'EOF'
           #!/bin/bash
           cd "$(dirname "$0")"
@@ -644,14 +646,11 @@ jobs:
           EOF
           chmod +x deb/opt/orvia/orvia.sh
           
-          # 构建 DEB 包
           dpkg-deb --build deb Orvia_linux_${VERSION}_amd64.deb
       - name: 📦 创建 RPM 包
         run: |
-          # 创建 RPM 构建目录
           mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
-          # 创建源码目录
           mkdir -p orvia-${VERSION_NUMBER}
           cp -r build/linux/x64/release/bundle/* orvia-${VERSION_NUMBER}/
           ICON_SOURCE="linux/orvia.png"
@@ -665,7 +664,6 @@ jobs:
           cp "$ICON_SOURCE" orvia-${VERSION_NUMBER}/orvia.png
           tar -czf ~/rpmbuild/SOURCES/orvia-${VERSION_NUMBER}.tar.gz orvia-${VERSION_NUMBER}
           
-          # 创建 spec 文件
           cat > ~/rpmbuild/SPECS/orvia.spec << EOF
           Name:           orvia
           Version:        ${VERSION_NUMBER}
@@ -674,7 +672,7 @@ jobs:
           License:        MIT
           Source0:        %{name}-%{version}.tar.gz
           BuildArch:      x86_64
-          Requires:       gtk3, libstdc++ >= 6, mesa-libGLU, gstreamer1, gstreamer1-plugins-base, glib2, glibc
+          Requires:       gtk3, libstdc++ >= 6, mesa-libGLU, gstreamer1, gstreamer1-plugins-base1.0-0, glib2, glibc
           
           %description
           A Flutter application for Linux
@@ -713,7 +711,6 @@ jobs:
           - Initial RPM release
           EOF
           
-          # 构建 RPM
           rpmbuild -bb ~/rpmbuild/SPECS/orvia.spec
           cp ~/rpmbuild/RPMS/x86_64/orvia-${VERSION_NUMBER}-1.*.rpm Orvia_linux_${VERSION}.rpm
       - name: 🔍 RPM 元数据（调试）
