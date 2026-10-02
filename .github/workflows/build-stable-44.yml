@@ -7,42 +7,42 @@ on:
   workflow_dispatch:
     inputs:
       build_android:
-        description: '构建 Android'
+        description: 'Build Android'
         required: false
         default: true
         type: boolean
       build_ios:
-        description: '构建 iOS'
+        description: 'Build iOS'
         required: false
         default: true
         type: boolean
       build_mac:
-        description: '构建 macOS'
+        description: 'Build macOS'
         required: false
         default: true
         type: boolean
       build_windows:
-        description: '构建 Windows'
+        description: 'Build Windows'
         required: false
         default: true
         type: boolean
       build_linux:
-        description: '构建 Linux'
+        description: 'Build Linux'
         required: false
         default: true
         type: boolean
       publish_release:
-        description: '发布到 Release'
+        description: 'Publish to Release'
         required: false
         default: false
         type: boolean
       release_tag:
-        description: 'Release 标签（如 v1.0.0）'
+        description: 'Release tag (e.g. v1.0.0)'
         required: false
         default: ''
         type: string
       prerelease:
-        description: '是否为预发布版本 (Pre-release)'
+        description: 'Mark as pre-release'
         required: false
         default: false
         type: boolean
@@ -61,24 +61,24 @@ concurrency:
 jobs:
   android:
     if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_android != 'false') }}
-    name: 构建 Android
+    name: Build Android
     runs-on: ubuntu-latest
     permissions: write-all
 
     steps:
-      - name: 📦 检出代码
+      - name: 📦 Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: ☕ 配置 Java 环境
+      - name: ☕ Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
           cache: 'gradle'
 
-      - name: 🐦 安装 Flutter
+      - name: 🐦 Install Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -92,7 +92,7 @@ jobs:
           cat > lib/secrets/fallback.dart <<'EOF'
           const String siliconflowFallbackKey = '${{ secrets.SILICONFLOW_KEY }}';
           EOF
-      - name: 📝 获取版本号
+      - name: 📝 Get version
         id: version
         run: |
           VERSION=$(grep 'version:' pubspec.yaml | sed 's/version: //' | tr -d ' ')
@@ -101,7 +101,7 @@ jobs:
             VERSION="${VERSION}_${SHORT_SHA}"
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "版本号: $VERSION"
+          echo "Version: $VERSION"
       - name: 🔨 Build debug APK (no signing required)
         run: flutter build apk --debug
 
@@ -109,13 +109,13 @@ jobs:
         run: |
           cd build/app/outputs/flutter-apk
           mv app-debug.apk Orvia_android_${VERSION}_debug.apk
-      - name: 📤 上传 Debug APK
+      - name: 📤 Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: Android-debug
           path: build/app/outputs/flutter-apk/Orvia_android_*_debug.apk
 
-      # 如果有签名密钥，写入密钥文件
+      # Write signing key files when signing secrets are available
       - name: 🔑 Configure Android release signing
         if: ${{ github.event.inputs.publish_release == 'true' }}
         shell: bash
@@ -142,11 +142,11 @@ jobs:
           } > android/key.properties
           chmod 600 android/app/key.jks android/key.properties
 
-      - name: 🏗️ 构建 APK
+      - name: 🏗️ Build APK
         if: ${{ github.event.inputs.publish_release == 'true' }}
         run: flutter build apk --release --split-per-abi
 
-      - name: 📦 重命名 APK
+      - name: 📦 Rename APK
         if: ${{ github.event.inputs.publish_release == 'true' }}
         run: |
           cd build/app/outputs/flutter-apk
@@ -154,7 +154,7 @@ jobs:
             abi=$(echo "$file" | sed -E 's/app-(.*)-release\.apk/\1/')
             mv "$file" "Orvia_android_${VERSION}_${abi}.apk"
           done
-      - name: 🚀 发布到 Release
+      - name: 🚀 Publish to Release
         if: ${{ github.event.inputs.publish_release == 'true' && github.event.inputs.release_tag != '' }}
         uses: softprops/action-gh-release@v2
         with:
@@ -166,41 +166,41 @@ jobs:
             build/app/outputs/flutter-apk/Orvia_android_*_armeabi-v7a.apk
             build/app/outputs/flutter-apk/Orvia_android_*_x86_64.apk
 
-      - name: 📤 上传构建产物 (arm64-v8a)
+      - name: 📤 Upload build artifact (arm64-v8a)
         if: ${{ github.event.inputs.publish_release == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Android-arm64-v8a
           path: build/app/outputs/flutter-apk/Orvia_android_*_arm64-v8a.apk
 
-      - name: 📤 上传构建产物 (armeabi-v7a)
+      - name: 📤 Upload build artifact (armeabi-v7a)
         if: ${{ github.event.inputs.publish_release == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Android-armeabi-v7a
           path: build/app/outputs/flutter-apk/Orvia_android_*_armeabi-v7a.apk
 
-      - name: 📤 上传构建产物 (x86_64)
+      - name: 📤 Upload build artifact (x86_64)
         if: ${{ github.event.inputs.publish_release == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Android-x86_64
           path: build/app/outputs/flutter-apk/Orvia_android_*_x86_64.apk
 
-  # iOS 构建
+  # iOS build
   ios:
     if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_ios != 'false') }}
-    name: 构建 iOS
+    name: Build iOS
     runs-on: macos-latest
     permissions: write-all
 
     steps:
-      - name: 📦 检出代码
+      - name: 📦 Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: 🐦 安装 Flutter
+      - name: 🐦 Install Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -214,7 +214,7 @@ jobs:
           cat > lib/secrets/fallback.dart <<'EOF'
           const String siliconflowFallbackKey = '${{ secrets.SILICONFLOW_KEY }}';
           EOF
-      - name: 📝 获取版本号
+      - name: 📝 Get version
         id: version
         run: |
           VERSION=$(grep 'version:' pubspec.yaml | sed 's/version: //' | tr -d ' ')
@@ -223,15 +223,15 @@ jobs:
             VERSION="${VERSION}_${SHORT_SHA}"
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "版本号: $VERSION"
-      - name: 🏗️ 构建 iOS (无签名)
+          echo "Version: $VERSION"
+      - name: 🏗️ Build iOS (unsigned)
         run: |
           flutter build ios --release --no-codesign
           cd build/ios/iphoneos
           mkdir Payload
           cp -r Runner.app Payload/
           zip -r ../../../Orvia_ios_${VERSION}.ipa Payload
-      - name: 🚀 发布到 Release
+      - name: 🚀 Publish to Release
         if: ${{ github.event.inputs.publish_release == 'true' && github.event.inputs.release_tag != '' }}
         uses: softprops/action-gh-release@v2
         with:
@@ -240,26 +240,26 @@ jobs:
           prerelease: ${{ github.event.inputs.prerelease }}
           files: Orvia_ios_*.ipa
 
-      - name: 📤 上传构建产物
+      - name: 📤 Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: iOS-IPA
           path: Orvia_ios_*.ipa
 
-  # macOS 构建
+  # macOS build
   macos:
     if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_mac != 'false') }}
-    name: 构建 macOS
+    name: Build macOS
     runs-on: macos-latest
     permissions: write-all
 
     steps:
-      - name: 📦 检出代码
+      - name: 📦 Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: 🐦 安装 Flutter
+      - name: 🐦 Install Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -273,7 +273,7 @@ jobs:
           cat > lib/secrets/fallback.dart <<'EOF'
           const String siliconflowFallbackKey = '${{ secrets.SILICONFLOW_KEY }}';
           EOF
-      - name: 📝 获取版本号
+      - name: 📝 Get version
         run: |
           VERSION=$(grep 'version:' pubspec.yaml | sed 's/version: //' | tr -d ' ')
           if [ "${{ github.event.inputs.publish_release }}" != "true" ]; then
@@ -281,10 +281,10 @@ jobs:
             VERSION="${VERSION}_${SHORT_SHA}"
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: 🏗️ 构建 macOS
+      - name: 🏗️ Build macOS
         run: flutter build macos --release
 
-      - name: 📦 创建 DMG
+      - name: 📦 Create DMG
         run: |
           brew install create-dmg
           create-dmg \
@@ -298,7 +298,7 @@ jobs:
           if [ ! -f "Orvia_macos_${VERSION}.dmg" ]; then
             hdiutil create -volname Orvia -srcfolder build/macos/Build/Products/Release/kelivo.app -ov -format UDZO Orvia_macos_${VERSION}.dmg
           fi
-      - name: 🚀 发布到 Release
+      - name: 🚀 Publish to Release
         if: ${{ github.event.inputs.publish_release == 'true' && github.event.inputs.release_tag != '' }}
         uses: softprops/action-gh-release@v2
         with:
@@ -307,29 +307,29 @@ jobs:
           prerelease: ${{ github.event.inputs.prerelease }}
           files: Orvia_macos_*.dmg
 
-      - name: 📤 上传构建产物
+      - name: 📤 Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: macOS-DMG
           path: Orvia_macos_*.dmg
 
-  # Windows 构建
+  # Windows build
   windows:
     if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_windows != 'false') }}
-    name: 构建 Windows
+    name: Build Windows
     runs-on: windows-latest
     permissions: write-all
 
     steps:
-      - name: 📦 检出代码
+      - name: 📦 Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: 🔧 安装最新 CMake
+      - name: 🔧 Install latest CMake
         uses: lukka/get-cmake@latest
 
-      - name: 🐦 安装 Flutter
+      - name: 🐦 Install Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -343,17 +343,17 @@ jobs:
           cat > lib/secrets/fallback.dart <<'EOF'
           const String siliconflowFallbackKey = '${{ secrets.SILICONFLOW_KEY }}';
           EOF
-      - name: 🔧 获取依赖
+      - name: 🔧 Get dependencies
         run: flutter pub get
 
-      - name: 🔍 验证 CMake 版本
+      - name: 🔍 Verify CMake version
         shell: pwsh
         run: |
-          Write-Host "检查 CMake 版本..."
+          Write-Host "Checking CMake version..."
           cmake --version
           $cmakeVersion = (cmake --version | Select-String "cmake version" | ForEach-Object { $_.ToString() })
-          Write-Host "当前 CMake: $cmakeVersion"
-      - name: 📝 获取版本号
+          Write-Host "Current CMake: $cmakeVersion"
+      - name: 📝 Get version
         shell: pwsh
         run: |
           $version = (Select-String -Path pubspec.yaml -Pattern "version:" | ForEach-Object { $_.Line.Split(":")[1].Trim() })
@@ -362,18 +362,18 @@ jobs:
             $version = "$version`_$shortSha"
           }
           echo "VERSION=$version" >> $env:GITHUB_ENV
-          Write-Host "版本号: $version"
-      - name: 🏗️ 构建 Windows
+          Write-Host "Version: $version"
+      - name: 🏗️ Build Windows
         run: flutter build windows --release
 
-      - name: 📦 打包 ZIP
+      - name: 📦 Package ZIP
         shell: pwsh
         run: |
           Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath "Orvia_windows_$env:VERSION.zip"
-      - name: 🔧 安装 Inno Setup
+      - name: 🔧 Install Inno Setup
         run: choco install innosetup -y
 
-      - name: 📦 创建安装程序
+      - name: 📦 Create installer
         shell: pwsh
         run: |
           $zhLangCompiler = "C:\\Program Files (x86)\\Inno Setup 6\\Languages\\ChineseSimplified.isl"
@@ -381,20 +381,20 @@ jobs:
           $zhLangLocal = Join-Path ($zhLangLocalDir, "ChineseSimplified.isl")
           $languagesBlock = $null
           if (Test-Path $zhLangCompiler) {
-            Write-Host "✅ 检测到中文语言文件: $zhLangCompiler"
+            Write-Host "✅ Chinese language file found: $zhLangCompiler"
             $languagesBlock = @"
           [Languages]
           Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
           Name: "english"; MessagesFile: "compiler:Default.isl"
           "@
           } else {
-            Write-Host "⚠️ 未在 Inno Setup 安装目录找到中文语言文件，尝试下载到本地项目..."
+            Write-Host "⚠️ Chinese language file not found in the Inno Setup directory; trying a local download..."
             try {
               New-Item -ItemType Directory -Force -Path $zhLangLocalDir | Out-Null
               $uri = 'https://raw.githubusercontent.com/jrsoftware/issrc/main/Files/Languages/ChineseSimplified.isl'
               Invoke-WebRequest -Uri $uri -OutFile $zhLangLocal -UseBasicParsing -TimeoutSec 60
               if (Test-Path $zhLangLocal) {
-                Write-Host "✅ 已下载中文语言文件: $zhLangLocal"
+                Write-Host "✅ Downloaded Chinese language file: $zhLangLocal"
                 $languagesBlock = @"
           [Languages]
           Name: "chinesesimplified"; MessagesFile: "$zhLangLocal"
@@ -402,10 +402,10 @@ jobs:
           "@
               }
             } catch {
-              Write-Host "⚠️ 下载中文语言文件失败: $($_.Exception.Message)"
+              Write-Host "⚠️ Failed to download Chinese language file: $($_.Exception.Message)"
             }
             if (-not $languagesBlock) {
-              Write-Host "ℹ️ 将仅包含英文安装向导"
+              Write-Host "ℹ️ Installer will use English only"
               $languagesBlock = @"
           [Languages]
           Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -435,21 +435,21 @@ jobs:
           UninstallDisplayIcon={app}\{#MyAppExeName}
           $languagesBlock
           [Tasks]
-          Name: "desktopicon"; Description: "创建桌面快捷方式"; GroupDescription: "附加图标:"
+          Name: "desktopicon"; Description: "Create desktop shortcut"; GroupDescription: "Additional icons:"
           [Files]
           Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
           [Icons]
           Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-          Name: "{group}\卸载 {#MyAppName}"; Filename: "{uninstallexe}"
+          Name: "{group}\Uninstall {#MyAppName}"; Filename: "{uninstallexe}"
           Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
           [Run]
-          Filename: "{app}\{#MyAppExeName}"; Description: "启动 {#MyAppName}"; Flags: nowait postinstall skipifsilent
+          Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
           "@
           
           $issContent | Out-File -FilePath "installer.iss" -Encoding utf8BOM
           
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer.iss"
-      - name: 🚀 发布到 Release
+      - name: 🚀 Publish to Release
         if: ${{ github.event.inputs.publish_release == 'true' && github.event.inputs.release_tag != '' }}
         uses: softprops/action-gh-release@v2
         with:
@@ -459,32 +459,32 @@ jobs:
           files: |
             Orvia_windows_*.zip
             Orvia_windows_*_setup.exe
-      - name: 📤 上传构建产物 (ZIP)
+      - name: 📤 Upload build artifact (ZIP)
         uses: actions/upload-artifact@v4
         with:
           name: Windows-ZIP
           path: Orvia_windows_*.zip
 
-      - name: 📤 上传构建产物 (Installer)
+      - name: 📤 Upload build artifact (Installer)
         uses: actions/upload-artifact@v4
         with:
           name: Windows-Installer
           path: Orvia_windows_*_setup.exe
 
-  # Linux 构建
+  # Linux build
   linux:
     if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_linux != 'false') }}
-    name: 构建 Linux
+    name: Build Linux
     runs-on: ubuntu-22.04
     permissions: write-all
 
     steps:
-      - name: 📦 检出代码
+      - name: 📦 Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: 🔧 安装依赖
+      - name: 🔧 Install dependencies
         run: |
           sudo apt-get update
           mapfile -t unwind_conflicts < <(dpkg-query -W -f='${binary:Package} ${db:Status-Status}\n' 'libunwind-*-dev' 2>/dev/null | awk '$2 == "installed" {print $1}' || true)
@@ -497,7 +497,7 @@ jobs:
             gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
             rpm patchelf libfuse2 file \
             libkeybinder-3.0-dev libayatana-appindicator3-dev
-      - name: 🐦 安装 Flutter
+      - name: 🐦 Install Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -511,7 +511,7 @@ jobs:
           cat > lib/secrets/fallback.dart <<'EOF'
           const String siliconflowFallbackKey = '${{ secrets.SILICONFLOW_KEY }}';
           EOF
-      - name: 📝 获取版本号
+      - name: 📝 Get version
         run: |
           RAW_VERSION=$(grep 'version:' pubspec.yaml | sed 's/version: //' | tr -d ' ')
           VERSION=$RAW_VERSION
@@ -521,14 +521,14 @@ jobs:
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "VERSION_NUMBER=$(echo $RAW_VERSION | cut -d'+' -f1)" >> $GITHUB_ENV
-      - name: 🏗️ 构建 Linux
+      - name: 🏗️ Build Linux
         run: flutter build linux --release
 
-      - name: 📦 打包 tar.gz
+      - name: 📦 Package tar.gz
         run: |
           cd build/linux/x64/release/bundle
           tar -czf ../../../../../Orvia_linux_${VERSION}.tar.gz .
-      - name: 📦 创建 AppImage
+      - name: 📦 Create AppImage
         run: |
           wget -O appimagetool "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
           chmod +x appimagetool
@@ -569,7 +569,7 @@ jobs:
           install -Dm644 "$ICON_SOURCE" "AppDir/usr/share/icons/hicolor/256x256/apps/orvia.png"
           
           ARCH=x86_64 ./appimagetool AppDir Orvia_linux_${VERSION}.AppImage
-      - name: 📦 创建 DEB 包
+      - name: 📦 Create DEB package
         run: |
           mkdir -p deb/DEBIAN
           mkdir -p deb/opt/orvia
@@ -620,7 +620,7 @@ jobs:
           chmod +x deb/opt/orvia/kelivo.sh
           
           dpkg-deb --build deb Orvia_linux_${VERSION}_amd64.deb
-      - name: 📦 创建 RPM 包
+      - name: 📦 Create RPM package
         run: |
           mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
@@ -686,7 +686,7 @@ jobs:
           
           rpmbuild -bb ~/rpmbuild/SPECS/orvia.spec
           cp ~/rpmbuild/RPMS/x86_64/orvia-${VERSION_NUMBER}-1.*.rpm Orvia_linux_${VERSION}.rpm
-      - name: 🔍 RPM 元数据（调试）
+      - name: 🔍 RPM metadata (debug)
         shell: bash
         run: |
           set -euxo pipefail
@@ -696,7 +696,7 @@ jobs:
           rpm -qp --info "${RPM_FILE}" | tee rpm-info.txt
           rpm -qp --requires "${RPM_FILE}" | tee rpm-requires.txt
           rpm -qp --provides "${RPM_FILE}" | tee rpm-provides.txt
-      - name: 📤 上传 RPM 元数据（调试）
+      - name: 📤 Upload RPM metadata (debug)
         uses: actions/upload-artifact@v4
         with:
           name: Linux-RPM-Metadata
@@ -705,13 +705,13 @@ jobs:
             rpm-info.txt
             rpm-requires.txt
             rpm-provides.txt
-      - name: 🧪 Fedora 43 安装测试
+      - name: 🧪 Fedora 43 install test
         shell: bash
         run: |
           set -euxo pipefail
           RPM_FILE="Orvia_linux_${VERSION}.rpm"
           docker run --rm -v "${PWD}:/work" -w /work fedora:43 bash -lc "dnf -y install ./${RPM_FILE}"
-      - name: 🚀 发布到 Release
+      - name: 🚀 Publish to Release
         if: ${{ github.event.inputs.publish_release == 'true' && github.event.inputs.release_tag != '' }}
         uses: softprops/action-gh-release@v2
         with:
@@ -723,25 +723,25 @@ jobs:
             Orvia_linux_*.AppImage
             Orvia_linux_*_amd64.deb
             Orvia_linux_*.rpm
-      - name: 📤 上传构建产物 (tar.gz)
+      - name: 📤 Upload build artifact (tar.gz)
         uses: actions/upload-artifact@v4
         with:
           name: Linux-tar.gz
           path: Orvia_linux_*.tar.gz
 
-      - name: 📤 上传构建产物 (AppImage)
+      - name: 📤 Upload build artifact (AppImage)
         uses: actions/upload-artifact@v4
         with:
           name: Linux-AppImage
           path: Orvia_linux_*.AppImage
 
-      - name: 📤 上传构建产物 (DEB)
+      - name: 📤 Upload build artifact (DEB)
         uses: actions/upload-artifact@v4
         with:
           name: Linux-DEB
           path: Orvia_linux_*_amd64.deb
 
-      - name: 📤 上传构建产物 (RPM)
+      - name: 📤 Upload build artifact (RPM)
         uses: actions/upload-artifact@v4
         with:
           name: Linux-RPM
