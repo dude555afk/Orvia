@@ -56,7 +56,7 @@ on:
 
 jobs:
   android:
-    if: ${{ github.event.inputs.build_android != 'false' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.build_android == 'false' && github.event_name != 'workflow_dispatch' || github.event_name == 'push' }}
     name: 构建 Android
     runs-on: ubuntu-latest
     permissions: write-all
@@ -167,7 +167,7 @@ jobs:
 
   # iOS 构建
   ios:
-    if: ${{ github.event.inputs.build_ios != 'false' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.build_ios == 'false' && github.event_name != 'workflow_dispatch' || github.event_name == 'push' }}
     name: 构建 iOS
     runs-on: macos-latest
     permissions: write-all
@@ -226,7 +226,7 @@ jobs:
 
   # macOS 构建
   macos:
-    if: ${{ github.event.inputs.build_mac != 'false' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.build_mac == 'false' && github.event_name != 'workflow_dispatch' || github.event_name == 'push' }}
     name: 构建 macOS
     runs-on: macos-latest
     permissions: write-all
@@ -293,7 +293,7 @@ jobs:
 
   # Windows 构建
   windows:
-    if: ${{ github.event.inputs.build_windows != 'false' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.build_windows == 'false' && github.event_name != 'workflow_dispatch' || github.event_name == 'push' }}
     name: 构建 Windows
     runs-on: windows-latest
     permissions: write-all
@@ -356,7 +356,7 @@ jobs:
         run: |
           $zhLangCompiler = "C:\\Program Files (x86)\\Inno Setup 6\\Languages\\ChineseSimplified.isl"
           $zhLangLocalDir = Join-Path (Get-Location) "Languages"
-          $zhLangLocal = Join-Path $zhLangLocalDir "ChineseSimplified.isl"
+          $zhLangLocal = Join-Path ($zhLangLocalDir, "ChineseSimplified.isl")
           $languagesBlock = $null
           if (Test-Path $zhLangCompiler) {
             Write-Host "✅ 检测到中文语言文件: $zhLangCompiler"
@@ -426,7 +426,7 @@ jobs:
           
           $issContent | Out-File -FilePath "installer.iss" -Encoding utf8BOM
           
-          & "C:\Program Files (x86)\\Inno Setup 6\ISCC.exe" "installer.iss"
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer.iss"
       - name: 🚀 发布到 Release
         if: ${{ github.event.inputs.publish_release == 'true' && github.event.inputs.release_tag != '' }}
         uses: softprops/action-gh-release@v2
@@ -451,7 +451,7 @@ jobs:
 
   # Linux 构建
   linux:
-    if: ${{ github.event.inputs.build_linux != 'false' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.build_linux == 'false' && github.event_name != 'workflow_dispatch' || github.event_name == 'push' }}
     name: 构建 Linux
     runs-on: ubuntu-22.04
     permissions: write-all
@@ -532,7 +532,7 @@ jobs:
           EOF
           
           ICON_SOURCE="linux/orvia.png"
-          if [ !f "$ICON_SOURCE" ]; then
+          if [ ! -f "$ICON_SOURCE" ]; then
             ICON_SOURCE="assets/app_icon.png"
           fi
           if [ ! -f "$ICON_SOURCE" ]; then
@@ -577,7 +577,7 @@ jobs:
           EOF
 
           ICON_SOURCE="linux/orvia.png"
-          if [ !f "$ICON_SOURCE" ]; then
+          if [ ! -f "$ICON_SOURCE" ]; then
             ICON_SOURCE="assets/app_icon.png"
           fi
           if [ ! -f "$ICON_SOURCE" ]; then
@@ -601,10 +601,10 @@ jobs:
           mkdir -p orvia-${VERSION_NUMBER}
           cp -r build/linux/x64/release/bundle/* orvia-${VERSION_NUMBER}/
           ICON_SOURCE="linux/orvia.png"
-          if [ !f "$ICON_SOURCE" ]; then
+          if [ ! -f "$ICON_SOURCE" ]; then
             ICON_SOURCE="assets/app_icon.png"
           fi
-          if [ !f "$ICON_SOURCE" ]; then
+          if [ ! -f "$ICON_SOURCE" ]; then
             echo "❌ Icon source not found"
             exit 1
           fi
