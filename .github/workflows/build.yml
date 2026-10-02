@@ -239,7 +239,7 @@ jobs:
           cd build/ios/iphoneos
           mkdir Payload
           cp -r Runner.app Payload/
-          zip -r ../../../Kelivo_ios_${VERSION}.ipa Payload
+          zip -r ../../../Orvia_ios_${VERSION}.ipa Payload
 
       - name: 🚀 发布到 Release
         if: ${{ github.event.inputs.publish_release == 'true' && github.event.inputs.release_tag != '' }}
@@ -247,13 +247,13 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.release_tag }}
           name: ${{ github.event.inputs.release_tag }}
-          files: Kelivo_ios_*.ipa
+          files: Orvia_ios_*.ipa
 
       - name: 📤 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           name: iOS-IPA
-          path: Kelivo_ios_*.ipa
+          path: Orvia_ios_*.ipa
 
   # macOS 构建
   macos:
@@ -294,16 +294,16 @@ jobs:
         run: |
           brew install create-dmg
           create-dmg \
-            --volname "Kelivo" \
+            --volname "Orvia" \
             --window-pos 200 120 \
             --window-size 800 400 \
             --icon-size 100 \
             --app-drop-link 600 185 \
-            "Kelivo_macos_${VERSION}.dmg" \
-            "build/macos/Build/Products/Release/kelivo.app" || true
+            "Orvia_macos_${VERSION}.dmg" \
+            "build/macos/Build/Products/Release/orvia.app" || true
           # 如果 create-dmg 失败，使用简单方式
-          if [ ! -f "Kelivo_macos_${VERSION}.dmg" ]; then
-            hdiutil create -volname Kelivo -srcfolder build/macos/Build/Products/Release/kelivo.app -ov -format UDZO Kelivo_macos_${VERSION}.dmg
+          if [ ! -f "Orvia_macos_${VERSION}.dmg" ]; then
+            hdiutil create -volname Orvia -srcfolder build/macos/Build/Products/Release/orvia.app -ov -format UDZO Orvia_macos_${VERSION}.dmg
           fi
 
       - name: 🚀 发布到 Release
@@ -312,13 +312,13 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.release_tag }}
           name: ${{ github.event.inputs.release_tag }}
-          files: Kelivo_macos_*.dmg
+          files: Orvia_macos_*.dmg
 
       - name: 📤 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           name: macOS-DMG
-          path: Kelivo_macos_*.dmg
+          path: Orvia_macos_*.dmg
 
   # Windows 构建
   windows:
@@ -374,7 +374,7 @@ jobs:
       - name: 📦 打包 ZIP
         shell: pwsh
         run: |
-          Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath "Kelivo_windows_$env:VERSION.zip"
+          Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath "Orvia_windows_$env:VERSION.zip"
 
       - name: 🔧 安装 Inno Setup
         run: choco install innosetup -y
@@ -424,10 +424,10 @@ jobs:
 
           # 创建 Inno Setup 脚本
           $issContent = @"
-          #define MyAppName "Kelivo"
+          #define MyAppName "Orvia"
           #define MyAppVersion "$env:VERSION"
-          #define MyAppPublisher "Psyche"
-          #define MyAppExeName "kelivo.exe"
+          #define MyAppPublisher "Orvia"
+          #define MyAppExeName "orvia.exe"
 
           [Setup]
           AppId={{A7B8C9D0-E1F2-4A5B-8C9D-0E1F2A3B4C5D}}
@@ -437,7 +437,7 @@ jobs:
           DefaultDirName={autopf}\{#MyAppName}
           DefaultGroupName={#MyAppName}
           OutputDir=.
-          OutputBaseFilename=Kelivo_windows_{#MyAppVersion}_setup
+          OutputBaseFilename=Orvia_windows_{#MyAppVersion}_setup
           Compression=lzma2
           SolidCompression=yes
           WizardStyle=modern
@@ -475,20 +475,20 @@ jobs:
           tag_name: ${{ github.event.inputs.release_tag }}
           name: ${{ github.event.inputs.release_tag }}
           files: |
-            Kelivo_windows_*.zip
-            Kelivo_windows_*_setup.exe
+            Orvia_windows_*.zip
+            Orvia_windows_*_setup.exe
 
       - name: 📤 上传构建产物 (ZIP)
         uses: actions/upload-artifact@v4
         with:
           name: Windows-ZIP
-          path: Kelivo_windows_*.zip
+          path: Orvia_windows_*.zip
 
       - name: 📤 上传构建产物 (Installer)
         uses: actions/upload-artifact@v4
         with:
           name: Windows-Installer
-          path: Kelivo_windows_*_setup.exe
+          path: Orvia_windows_*_setup.exe
 
   # Linux 构建
   linux:
@@ -539,7 +539,7 @@ jobs:
       - name: 📦 打包 tar.gz
         run: |
           cd build/linux/x64/release/bundle
-          tar -czf ../../../../../Kelivo_linux_${VERSION}.tar.gz .
+          tar -czf ../../../../../Orvia_linux_${VERSION}.tar.gz .
 
       - name: 📦 创建 AppImage
         run: |
@@ -560,21 +560,21 @@ jobs:
           HERE=${SELF%/*}
           export PATH="${HERE}/usr/bin:${PATH}"
           export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
-          exec "${HERE}/usr/bin/kelivo" "$@"
+          exec "${HERE}/usr/bin/orvia" "$@"
           EOF
           chmod +x AppDir/AppRun
           
           # 创建 desktop 文件
-          cat > AppDir/kelivo.desktop << EOF
+          cat > AppDir/orvia.desktop << EOF
           [Desktop Entry]
-          Name=Kelivo
-          Exec=kelivo
-          Icon=kelivo
+          Name=Orvia
+          Exec=orvia
+          Icon=orvia
           Type=Application
           Categories=Utility;
           EOF
           
-          ICON_SOURCE="linux/kelivo.png"
+          ICON_SOURCE="linux/orvia.png"
           if [ ! -f "$ICON_SOURCE" ]; then
             ICON_SOURCE="assets/app_icon.png"
           fi
@@ -582,51 +582,51 @@ jobs:
             echo "❌ Icon source not found"
             exit 1
           fi
-          install -Dm644 "$ICON_SOURCE" AppDir/kelivo.png
-          install -Dm644 "$ICON_SOURCE" "AppDir/usr/share/icons/hicolor/256x256/apps/kelivo.png"
+          install -Dm644 "$ICON_SOURCE" AppDir/orvia.png
+          install -Dm644 "$ICON_SOURCE" "AppDir/usr/share/icons/hicolor/256x256/apps/orvia.png"
           
           # 构建 AppImage
-          ARCH=x86_64 ./appimagetool AppDir Kelivo_linux_${VERSION}.AppImage
+          ARCH=x86_64 ./appimagetool AppDir Orvia_linux_${VERSION}.AppImage
 
       - name: 📦 创建 DEB 包
         run: |
           # 创建 DEB 目录结构
           mkdir -p deb/DEBIAN
-          mkdir -p deb/opt/kelivo
+          mkdir -p deb/opt/orvia
           mkdir -p deb/usr/share/applications
           mkdir -p deb/usr/share/icons/hicolor/256x256/apps
           
           # 复制文件
-          cp -r build/linux/x64/release/bundle/* deb/opt/kelivo/
+          cp -r build/linux/x64/release/bundle/* deb/opt/orvia/
           
           # 创建 /usr/bin 软链接
           mkdir -p deb/usr/bin
-          ln -s /opt/kelivo/kelivo deb/usr/bin/kelivo
+          ln -s /opt/orvia/orvia deb/usr/bin/orvia
           
           # 创建 control 文件
           cat > deb/DEBIAN/control << EOF
-          Package: kelivo
+          Package: orvia
           Version: ${VERSION_NUMBER}
           Section: utils
           Priority: optional
           Architecture: amd64
-          Maintainer: Psyche <your@email.com>
+          Maintainer: Orvia <orvia@example.com>
           Depends: libgtk-3-0, libstdc++6, libglu1-mesa, libgstreamer1.0-0, libgstreamer-plugins-base1.0-0, libglib2.0-0, libc6
-          Description: Kelivo Application
+          Description: Orvia Application
            A Flutter application for Linux
           EOF
           
           # 创建 desktop 文件
-          cat > deb/usr/share/applications/kelivo.desktop << EOF
+          cat > deb/usr/share/applications/orvia.desktop << EOF
           [Desktop Entry]
-          Name=Kelivo
-          Exec=/opt/kelivo/kelivo
-          Icon=kelivo
+          Name=Orvia
+          Exec=/opt/orvia/orvia
+          Icon=orvia
           Type=Application
           Categories=Utility;
           EOF
 
-          ICON_SOURCE="linux/kelivo.png"
+          ICON_SOURCE="linux/orvia.png"
           if [ ! -f "$ICON_SOURCE" ]; then
             ICON_SOURCE="assets/app_icon.png"
           fi
@@ -634,27 +634,27 @@ jobs:
             echo "❌ Icon source not found"
             exit 1
           fi
-          install -Dm644 "$ICON_SOURCE" deb/usr/share/icons/hicolor/256x256/apps/kelivo.png
+          install -Dm644 "$ICON_SOURCE" deb/usr/share/icons/hicolor/256x256/apps/orvia.png
           
           # 创建启动脚本
-          cat > deb/opt/kelivo/kelivo.sh << 'EOF'
+          cat > deb/opt/orvia/orvia.sh << 'EOF'
           #!/bin/bash
           cd "$(dirname "$0")"
-          ./kelivo "$@"
+          ./orvia "$@"
           EOF
-          chmod +x deb/opt/kelivo/kelivo.sh
+          chmod +x deb/opt/orvia/orvia.sh
           
           # 构建 DEB 包
-          dpkg-deb --build deb Kelivo_linux_${VERSION}_amd64.deb
+          dpkg-deb --build deb Orvia_linux_${VERSION}_amd64.deb
       - name: 📦 创建 RPM 包
         run: |
           # 创建 RPM 构建目录
           mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
           # 创建源码目录
-          mkdir -p kelivo-${VERSION_NUMBER}
-          cp -r build/linux/x64/release/bundle/* kelivo-${VERSION_NUMBER}/
-          ICON_SOURCE="linux/kelivo.png"
+          mkdir -p orvia-${VERSION_NUMBER}
+          cp -r build/linux/x64/release/bundle/* orvia-${VERSION_NUMBER}/
+          ICON_SOURCE="linux/orvia.png"
           if [ ! -f "$ICON_SOURCE" ]; then
             ICON_SOURCE="assets/app_icon.png"
           fi
@@ -662,15 +662,15 @@ jobs:
             echo "❌ Icon source not found"
             exit 1
           fi
-          cp "$ICON_SOURCE" kelivo-${VERSION_NUMBER}/kelivo.png
-          tar -czf ~/rpmbuild/SOURCES/kelivo-${VERSION_NUMBER}.tar.gz kelivo-${VERSION_NUMBER}
+          cp "$ICON_SOURCE" orvia-${VERSION_NUMBER}/orvia.png
+          tar -czf ~/rpmbuild/SOURCES/orvia-${VERSION_NUMBER}.tar.gz orvia-${VERSION_NUMBER}
           
           # 创建 spec 文件
-          cat > ~/rpmbuild/SPECS/kelivo.spec << EOF
-          Name:           kelivo
+          cat > ~/rpmbuild/SPECS/orvia.spec << EOF
+          Name:           orvia
           Version:        ${VERSION_NUMBER}
           Release:        1%{?dist}
-          Summary:        Kelivo Application
+          Summary:        Orvia Application
           License:        MIT
           Source0:        %{name}-%{version}.tar.gz
           BuildArch:      x86_64
@@ -683,46 +683,46 @@ jobs:
           %setup -q
           
           %install
-          mkdir -p %{buildroot}/opt/kelivo
-          cp -r * %{buildroot}/opt/kelivo/
+          mkdir -p %{buildroot}/opt/orvia
+          cp -r * %{buildroot}/opt/orvia/
           
           mkdir -p %{buildroot}/usr/bin
-          ln -s /opt/kelivo/kelivo %{buildroot}/usr/bin/kelivo
+          ln -s /opt/orvia/orvia %{buildroot}/usr/bin/orvia
           
           mkdir -p %{buildroot}/usr/share/applications
-          cat > %{buildroot}/usr/share/applications/kelivo.desktop << 'DESKTOPEOF'
+          cat > %{buildroot}/usr/share/applications/orvia.desktop << 'DESKTOPEOF'
           [Desktop Entry]
-          Name=Kelivo
-          Exec=/opt/kelivo/kelivo
-          Icon=kelivo
+          Name=Orvia
+          Exec=/opt/orvia/orvia
+          Icon=orvia
           Type=Application
           Categories=Utility;
           DESKTOPEOF
 
           mkdir -p %{buildroot}/usr/share/icons/hicolor/256x256/apps
-          cp kelivo.png %{buildroot}/usr/share/icons/hicolor/256x256/apps/kelivo.png
+          cp orvia.png %{buildroot}/usr/share/icons/hicolor/256x256/apps/orvia.png
           
           %files
-          /opt/kelivo/*
-          /usr/bin/kelivo
-          /usr/share/applications/kelivo.desktop
-          /usr/share/icons/hicolor/256x256/apps/kelivo.png
+          /opt/orvia/*
+          /usr/bin/orvia
+          /usr/share/applications/orvia.desktop
+          /usr/share/icons/hicolor/256x256/apps/orvia.png
           
           %changelog
-          * $(date "+%a %b %d %Y") Psyche <your@email.com> - ${VERSION_NUMBER}-1
+          * $(date "+%a %b %d %Y") Orvia <orvia@example.com> - ${VERSION_NUMBER}-1
           - Initial RPM release
           EOF
           
           # 构建 RPM
-          rpmbuild -bb ~/rpmbuild/SPECS/kelivo.spec
-          cp ~/rpmbuild/RPMS/x86_64/kelivo-${VERSION_NUMBER}-1.*.rpm Kelivo_linux_${VERSION}.rpm
+          rpmbuild -bb ~/rpmbuild/SPECS/orvia.spec
+          cp ~/rpmbuild/RPMS/x86_64/orvia-${VERSION_NUMBER}-1.*.rpm Orvia_linux_${VERSION}.rpm
       - name: 🔍 RPM 元数据（调试）
         shell: bash
         run: |
           set -euxo pipefail
-          RPM_FILE="Kelivo_linux_${VERSION}.rpm"
+          RPM_FILE="Orvia_linux_${VERSION}.rpm"
           echo "RPM file: ${RPM_FILE}"
-          cp -f ~/rpmbuild/SPECS/kelivo.spec rpm-spec.spec
+          cp -f ~/rpmbuild/SPECS/orvia.spec rpm-spec.spec
           rpm -qp --info "${RPM_FILE}" | tee rpm-info.txt
           rpm -qp --requires "${RPM_FILE}" | tee rpm-requires.txt
           rpm -qp --provides "${RPM_FILE}" | tee rpm-provides.txt
@@ -739,7 +739,7 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          RPM_FILE="Kelivo_linux_${VERSION}.rpm"
+          RPM_FILE="Orvia_linux_${VERSION}.rpm"
           docker run --rm -v "${PWD}:/work" -w /work fedora:43 bash -lc "dnf -y install ./${RPM_FILE}"
       - name: 🚀 发布到 Release
         if: ${{ github.event.inputs.publish_release == 'true' && github.event.inputs.release_tag != '' }}
@@ -749,30 +749,30 @@ jobs:
           name: ${{ github.event.inputs.release_tag }}
           prerelease: ${{ github.event.inputs.prerelease }}
           files: |
-            Kelivo_linux_*.tar.gz
-            Kelivo_linux_*.AppImage
-            Kelivo_linux_*_amd64.deb
-            Kelivo_linux_*.rpm
+            Orvia_linux_*.tar.gz
+            Orvia_linux_*.AppImage
+            Orvia_linux_*_amd64.deb
+            Orvia_linux_*.rpm
       - name: 📤 上传构建产物 (tar.gz)
         uses: actions/upload-artifact@v4
         with:
           name: Linux-tar.gz
-          path: Kelivo_linux_*.tar.gz
+          path: Orvia_linux_*.tar.gz
 
       - name: 📤 上传构建产物 (AppImage)
         uses: actions/upload-artifact@v4
         with:
           name: Linux-AppImage
-          path: Kelivo_linux_*.AppImage
+          path: Orvia_linux_*.AppImage
 
       - name: 📤 上传构建产物 (DEB)
         uses: actions/upload-artifact@v4
         with:
           name: Linux-DEB
-          path: Kelivo_linux_*_amd64.deb
+          path: Orvia_linux_*_amd64.deb
 
       - name: 📤 上传构建产物 (RPM)
         uses: actions/upload-artifact@v4
         with:
           name: Linux-RPM
-          path: Kelivo_linux_*.rpm
+          path: Orvia_linux_*.rpm
