@@ -2,7 +2,7 @@
 # Download Termux PRoot (and its shared-library deps) for Android jniLibs.
 #
 # OpenMinis pinned Termux proot 5.1.107-70. The rolling package pool
-# now serves 5.1.107.92, which is dynamically linked against
+# now serves 5.1.107.95, which is dynamically linked against
 # libtalloc and libandroid-shmem.
 #
 # Layout written:
@@ -27,10 +27,10 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CHECKSUMS_FILE="$SCRIPT_DIR/proot_checksums.txt"
 JNI_LIBS="$REPO_ROOT/android/app/src/main/jniLibs"
 
-TERMUX_POOL="${TERMUX_POOL:-https://termux.librehat.com/apt/termux-main/pool/main}"
+TERMUX_POOL="${TERMUX_POOL:-https://mirrors.krnk.org/apt/termux/termux-main/pool/main}"
 
 # Rolling Termux versions. Override with env vars if the pool moves again.
-PROOT_VERSION="${PROOT_VERSION:-5.1.107.92}"
+PROOT_VERSION="${PROOT_VERSION:-5.1.107.95}"
 TALLOC_VERSION="${TALLOC_VERSION:-2.4.3}"
 SHMEM_VERSION="${SHMEM_VERSION:-0.7}"
 
@@ -234,11 +234,7 @@ for pair in "${ABIS[@]}"; do
 done
 
 echo ""
-if [[ "${UPDATE_PROOT_CHECKSUMS:-0}" == "1" ]]; then
-  echo "Checksum generation mode: skipping committed checksum verification."
-else
-  verify_checksums
-fi
+verify_checksums
 echo "Checksums match $CHECKSUMS_FILE"
 
 echo ""
