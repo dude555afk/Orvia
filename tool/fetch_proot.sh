@@ -165,6 +165,35 @@ TMPDIR_FETCH="$(mktemp -d "${TMPDIR:-/tmp}/kelivo-proot.XXXXXX")"
 cleanup() { rm -rf "$TMPDIR_FETCH"; }
 trap cleanup EXIT
 
+VENDORED_RUNTIME="${VENDORED_RUNTIME:-$SCRIPT_DIR/vendor/orvia-proot-runtime.tar.xz}"
+
+if [[ -f "$VENDORED_RUNTIME" && "${FORCE_PROOT_NETWORK_FETCH:-0}" != "1" ]]; then
+  echo "Using vendored, hash-pinned Orvia PRoot runtime: $VENDORED_RUNTIME"
+  vendor_dir="$TMPDIR_FETCH/vendor"
+  mkdir -p "$vendor_dir"
+  tar -xJf "$VENDORED_RUNTIME" -C "$vendor_dir"
+
+  for pair in "${ABIS[@]}"; do
+    android_abi="${pair##*:}"
+    src_dir="$vendor_dir/lib/$android_abi"
+    dest_dir="$JNI_LIBS/$android_abi"
+    mkdir -p "$dest_dir"
+
+    for so in libproot_exec.so libproot_loader.so libtalloc.so libandroid-shmem.so; do
+      src="$src_dir/$so"
+      if [[ ! -f "$src" || ! -s "$src" ]]; then
+        echo "error: vendored runtime missing: $src" >&2
+        exit 1
+      fi
+      copy_elf "$src" "$dest_dir/$so"
+    done
+  done
+
+  verify_checksums
+  echo "Vendored runtime checksums match $CHECKSUMS_FILE"
+  exit 0
+fi
+
 echo "Fetching Termux proot ${PROOT_VERSION} (+ libtalloc ${TALLOC_VERSION}, libandroid-shmem ${SHMEM_VERSION})"
 echo "Pool: $TERMUX_POOL"
 
