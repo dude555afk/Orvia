@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/orvia-logo.png" alt="Orvia orbital logo" width="144" height="144" />
+
 # Orvia
 
 **An open-source AI chat and workspace app built on Kelivo.**
