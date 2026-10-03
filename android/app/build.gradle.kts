@@ -25,10 +25,20 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // Flutter controls APK ABI filtering, including --split-per-abi.
+        // CI's ARM64 preview must not build extra 32-bit/x86 native libraries.
+        // Keep all ABIs available for normal local builds and full releases.
+        if (System.getenv("ORVIA_PREVIEW_ARM64_ONLY") == "true") {
+            ndk {
+                abiFilters += "arm64-v8a"
+            }
+        }
         externalNativeBuild {
             cmake {
-                abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
+                abiFilters += if (System.getenv("ORVIA_PREVIEW_ARM64_ONLY") == "true") {
+                    listOf("arm64-v8a")
+                } else {
+                    listOf("armeabi-v7a", "arm64-v8a", "x86_64")
+                }
             }
         }
     }

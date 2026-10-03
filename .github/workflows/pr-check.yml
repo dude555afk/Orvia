@@ -48,7 +48,8 @@ jobs:
 
           echo "Format-checking files:"
           echo "$files"
-          dart format --output=none --set-exit-if-changed $files
+          dart format $files
+          git diff --exit-code -- $files
 
       - name: Generate l10n and ensure committed outputs
         run: |
