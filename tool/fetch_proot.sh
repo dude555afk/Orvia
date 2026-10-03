@@ -168,13 +168,8 @@ trap cleanup EXIT
 echo "Fetching Termux proot ${PROOT_VERSION} (+ libtalloc ${TALLOC_VERSION}, libandroid-shmem ${SHMEM_VERSION})"
 echo "Pool: $TERMUX_POOL"
 
-# Fail fast if the current pinned release disappears from the rolling pool.
-# Binary SHA-256 checks below must be updated and reviewed with each version bump.
-if ! curl -fsSL --retry 2 --retry-delay 2 --max-time 30 --range 0-0 -o /dev/null \
-    "${TERMUX_POOL}/p/proot/proot_${PROOT_VERSION}_aarch64.deb"; then
-  echo "error: pinned proot_${PROOT_VERSION} not available in the main pool" >&2
-  exit 1
-fi
+# Download attempts are authoritative. Some mirrors reject HEAD/range probes even
+# when the package exists, so avoid a separate preflight request.
 for pair in "${ABIS[@]}"; do
   termux_arch="${pair%%:*}"
   android_abi="${pair##*:}"
