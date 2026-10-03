@@ -1,8 +1,8 @@
-package com.psyche.kelivo.scheduled
+package com.dude555afk.orvia.scheduled
 
 import android.app.AlarmManager
 import android.content.Context
-import com.psyche.kelivo.KelivoApplication
+import com.dude555afk.orvia.OrviaApplication
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.StandardMethodCodec
@@ -19,7 +19,7 @@ import java.nio.ByteBuffer
 import java.time.LocalDate
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [28], application = KelivoApplication::class)
+@Config(sdk = [28], application = OrviaApplication::class)
 class ScheduledTasksTest {
     private class Messenger : BinaryMessenger {
         var handler: BinaryMessenger.BinaryMessageHandler? = null
@@ -37,7 +37,7 @@ class ScheduledTasksTest {
             return result
         }
     }
-    private val app get() = RuntimeEnvironment.getApplication() as KelivoApplication
+    private val app get() = RuntimeEnvironment.getApplication() as OrviaApplication
     private val prefs get() = app.getSharedPreferences("kelivo_scheduled_tasks", Context.MODE_PRIVATE)
     private fun task(id: String = "a", enabled: Boolean = true) = mapOf(
         "id" to id, "name" to "Morning", "prompt" to "Hello", "assistantId" to "assistant",

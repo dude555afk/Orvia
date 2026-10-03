@@ -1,4 +1,4 @@
-package com.psyche.kelivo.background
+package com.dude555afk.orvia.background
 
 import android.app.Activity
 import android.app.AppOpsManager
@@ -9,10 +9,10 @@ import android.os.Looper
 import android.os.PowerManager
 import android.view.View
 import android.widget.LinearLayout
-import com.psyche.kelivo.KelivoApplication
-import com.psyche.kelivo.DeviceLocalToolsHandler
+import com.dude555afk.orvia.OrviaApplication
+import com.dude555afk.orvia.DeviceLocalToolsHandler
 import org.json.JSONObject
-import com.psyche.kelivo.workspace.WorkspacePlugin
+import com.dude555afk.orvia.workspace.WorkspacePlugin
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.StandardMethodCodec
@@ -32,7 +32,7 @@ import java.nio.ByteBuffer
 import java.time.Duration
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [28], application = KelivoApplication::class)
+@Config(sdk = [28], application = OrviaApplication::class)
 class BackgroundRuntimeTest {
     private class Messenger : BinaryMessenger {
         val handlers = mutableMapOf<String, BinaryMessenger.BinaryMessageHandler>()
@@ -58,7 +58,7 @@ class BackgroundRuntimeTest {
         }
     }
 
-    private val app get() = RuntimeEnvironment.getApplication() as KelivoApplication
+    private val app get() = RuntimeEnvironment.getApplication() as OrviaApplication
 
     @Test fun grantedScreenTimeToolRunsAfterItsActivityIsDestroyed() {
         val messenger = Messenger()

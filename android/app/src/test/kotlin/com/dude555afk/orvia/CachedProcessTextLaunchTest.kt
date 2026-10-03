@@ -1,4 +1,4 @@
-package com.psyche.kelivo
+package com.dude555afk.orvia
 
 import android.content.Intent
 import android.os.Bundle

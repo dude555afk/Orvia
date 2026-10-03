@@ -1,4 +1,4 @@
-package com.psyche.kelivo.scheduled
+package com.dude555afk.orvia.scheduled
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
