@@ -27,7 +27,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CHECKSUMS_FILE="$SCRIPT_DIR/proot_checksums.txt"
 JNI_LIBS="$REPO_ROOT/android/app/src/main/jniLibs"
 
-TERMUX_POOL="${TERMUX_POOL:-https://packages.termux.dev/apt/termux-main/pool/main}"
+TERMUX_POOL="${TERMUX_POOL:-https://termux.librehat.com/apt/termux-main/pool/main}"
 
 # Rolling Termux versions. Override with env vars if the pool moves again.
 PROOT_VERSION="${PROOT_VERSION:-5.1.107.92}"
@@ -170,8 +170,8 @@ echo "Pool: $TERMUX_POOL"
 
 # Fail fast if the current pinned release disappears from the rolling pool.
 # Binary SHA-256 checks below must be updated and reviewed with each version bump.
-if ! curl -fsI --retry 2 --retry-delay 2 --max-time 15 \
-    "${TERMUX_POOL}/p/proot/proot_${PROOT_VERSION}_aarch64.deb" >/dev/null; then
+if ! curl -fsSL --retry 2 --retry-delay 2 --max-time 30 --range 0-0 -o /dev/null \
+    "${TERMUX_POOL}/p/proot/proot_${PROOT_VERSION}_aarch64.deb"; then
   echo "error: pinned proot_${PROOT_VERSION} not available in the main pool" >&2
   exit 1
 fi
