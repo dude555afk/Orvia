@@ -27,7 +27,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CHECKSUMS_FILE="$SCRIPT_DIR/proot_checksums.txt"
 JNI_LIBS="$REPO_ROOT/android/app/src/main/jniLibs"
 
-TERMUX_POOL="${TERMUX_POOL:-https://mirrors.krnk.org/apt/termux/termux-main/pool/main}"
+TERMUX_POOL="${TERMUX_POOL:-https://packages.termux.dev/apt/termux-main/pool/main}"
 
 # Rolling Termux versions. Override with env vars if the pool moves again.
 PROOT_VERSION="${PROOT_VERSION:-5.1.107.95}"
