@@ -15,4 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Fetch and verify pinned Termux binaries
+        env:
+          UPDATE_PROOT_CHECKSUMS: '1'
         run: bash tool/fetch_proot.sh
