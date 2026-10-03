@@ -1,4 +1,4 @@
-package com.psyche.kelivo.workspace
+package com.dude555afk.orvia.workspace
 
 import android.content.Context
 import android.content.Intent
@@ -25,7 +25,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowContentResolver
-import com.psyche.kelivo.IncomingShareHandler
+import com.dude555afk.orvia.IncomingShareHandler
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.Implementation
 import org.robolectric.annotation.Implements

@@ -1,4 +1,4 @@
-package com.psyche.kelivo.workspace
+package com.dude555afk.orvia.workspace
 
 import org.junit.Assert.*
 import org.junit.Rule
