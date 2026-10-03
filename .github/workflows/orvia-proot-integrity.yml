@@ -1,0 +1,18 @@
+name: Orvia PRoot Integrity
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch and verify pinned Termux binaries
+        run: bash tool/fetch_proot.sh

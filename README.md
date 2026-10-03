@@ -4,7 +4,7 @@
 
 # Orvia
 
-**An open-source AI chat and workspace app built on Kelivo.**
+**An open-source AI chat and workspace app with Orvia-first branding and integrations.**
 
 Bring your own models, customize your conversations, and connect tools through MCP.
 
@@ -37,10 +37,10 @@ Track implementation and verification in [issue #1](https://github.com/dude555af
 | Work | Status |
 | --- | --- |
 | Imported Flutter foundation | Present in this repository |
-| Orvia identity and optional MCP starter catalogue | Proposed in [PR #2](https://github.com/dude555afk/Orvia/pull/2); not merged |
-| Android Kotlin package migration | Proposed in [PR #3](https://github.com/dude555afk/Orvia/pull/3); not merged |
+| Orvia identity and optional MCP starter catalogue | Integrated in the bootstrap consolidation |
+| Android Kotlin package migration | Integrated in the bootstrap consolidation, including JNI namespace |
 | Complete branding, icons, splash, and release metadata | Still part of the bootstrap roadmap |
-| Regional default services and strings | Audit individually while retaining multilingual support |
+| Regional default services and strings | Chinese first-party localization/resources removed; English is the supported UI locale |
 | Tool-loop and permission review | Roadmap work |
 | Native email setup, inbox, threads, drafts, and replies | Planned; sending and deletion require confirmation |
 | CI and Android debug APK | Must be verified on the combined migration before bootstrap is complete |
