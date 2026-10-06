@@ -17,7 +17,7 @@ void main() {
       await env.saveVariable(
         const EnvironmentVariable(
           name: ' API_KEY ',
-          value: ' 密钥\n"abc" ',
+          value: ' \u5BC6\u94A5\n"abc" ',
           note: ' service ',
         ),
       );
@@ -33,7 +33,7 @@ void main() {
       expect(restored.variables.single.name, 'NEW_KEY');
       expect(restored.variables.single.value, 'new-secret');
       expect(restored.privacyMode, isFalse);
-      expect(snapshot.variables, {'API_KEY': ' 密钥\n"abc" '});
+      expect(snapshot.variables, {'API_KEY': ' \u5BC6\u94A5\n"abc" '});
       expect(snapshot.privacyMode, isTrue);
       await restored.deleteVariable('NEW_KEY');
       final reloaded = EnvironmentProvider(preferences: harness.preferences);
