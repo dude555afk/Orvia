@@ -25,7 +25,7 @@ void main() {
     File databaseFile(Directory root) =>
         File(p.join(root.path, AppDatabase.databaseFileName));
 
-    test('首次安装创建带 identity 的数据库与 receipt', () async {
+    test('\u9996\u6B21\u5B89\u88C5\u521B\u5EFA\u5E26 identity \u7684\u6570\u636E\u5E93\u4E0E receipt', () async {
       final receipt = await DatabaseInstallationGate.ensureReady(
         appDataDirectory: directory,
       );
@@ -43,7 +43,7 @@ void main() {
       );
     });
 
-    test('残留的 publish 临时文件不会阻塞首次安装', () async {
+    test('\u6B8B\u7559\u7684 publish \u4E34\u65F6\u6587\u4EF6\u4E0D\u4F1A\u963B\u585E\u9996\u6B21\u5B89\u88C5', () async {
       // Simulate a crash between temp creation and rename during a previous
       // publish attempt, using the legacy fixed temp name. The leftover must
       // not brick the next launch and should be swept.
@@ -72,7 +72,7 @@ void main() {
       expect(receiptCount, 1);
     });
 
-    test('identity 一致的重复启动不改 receipt', () async {
+    test('identity \u4E00\u81F4\u7684\u91CD\u590D\u542F\u52A8\u4E0D\u6539 receipt', () async {
       final first = await DatabaseInstallationGate.ensureReady(
         appDataDirectory: directory,
       );
@@ -84,7 +84,7 @@ void main() {
       expect(second.databaseId, first.databaseId);
     });
 
-    test('升级时 adoption 已有有效数据库且不清空数据', () async {
+    test('\u5347\u7EA7\u65F6 adoption \u5DF2\u6709\u6709\u6548\u6570\u636E\u5E93\u4E14\u4E0D\u6E05\u7A7A\u6570\u636E', () async {
       final repository = ChatDatabaseRepository.open(
         file: databaseFile(directory),
       );
@@ -128,7 +128,7 @@ void main() {
       }
     });
 
-    test('已有 receipt 但数据库缺失时拒绝且不创建空库', () async {
+    test('\u5DF2\u6709 receipt \u4F46\u6570\u636E\u5E93\u7F3A\u5931\u65F6\u62D2\u7EDD\u4E14\u4E0D\u521B\u5EFA\u7A7A\u5E93', () async {
       await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
       await databaseFile(directory).delete();
 
@@ -145,7 +145,7 @@ void main() {
       expect(await databaseFile(directory).exists(), isFalse);
     });
 
-    test('损坏数据库在无 receipt 升级场景也拒绝且不覆盖', () async {
+    test('\u635F\u574F\u6570\u636E\u5E93\u5728\u65E0 receipt \u5347\u7EA7\u573A\u666F\u4E5F\u62D2\u7EDD\u4E14\u4E0D\u8986\u76D6', () async {
       final file = databaseFile(directory);
       await file.writeAsString('not a sqlite database');
 
@@ -162,7 +162,7 @@ void main() {
       expect(await file.readAsString(), 'not a sqlite database');
     });
 
-    test('高于当前 schema 的数据库拒绝 down migration', () async {
+    test('\u9AD8\u4E8E\u5F53\u524D schema \u7684\u6570\u636E\u5E93\u62D2\u7EDD down migration', () async {
       final file = databaseFile(directory);
       final raw = sqlite.sqlite3.open(file.path);
       raw.userVersion = AppDatabase.currentSchemaVersion + 1;
@@ -180,7 +180,7 @@ void main() {
       );
     });
 
-    test('损坏 installation receipt 时拒绝打开数据库', () async {
+    test('\u635F\u574F installation receipt \u65F6\u62D2\u7EDD\u6253\u5F00\u6570\u636E\u5E93', () async {
       await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
       final receipt = directory.listSync().whereType<File>().singleWhere(
         (file) =>
@@ -194,7 +194,7 @@ void main() {
       );
     });
 
-    test('未授权的数据库 identity 替换被拒绝', () async {
+    test('\u672A\u6388\u6743\u7684\u6570\u636E\u5E93 identity \u66FF\u6362\u88AB\u62D2\u7EDD', () async {
       await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
       final originalReceipt = await DatabaseInstallationGate.read(
         appDataDirectory: directory,
@@ -234,7 +234,7 @@ void main() {
       );
     });
 
-    test('identity 替换不以全库 FK 扫描阻塞启动门', () async {
+    test('identity \u66FF\u6362\u4E0D\u4EE5\u5168\u5E93 FK \u626B\u63CF\u963B\u585E\u542F\u52A8\u95E8', () async {
       await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
       final replacementRoot = await Directory.systemTemp.createTemp(
         'kelivo_database_replacement_corrupt_',
@@ -270,7 +270,7 @@ void main() {
       );
     });
 
-    test('已验证 restore 可轮换 database identity 并保留 installation', () async {
+    test('\u5DF2\u9A8C\u8BC1 restore \u53EF\u8F6E\u6362 database identity \u5E76\u4FDD\u7559 installation', () async {
       final original = await DatabaseInstallationGate.ensureReady(
         appDataDirectory: directory,
       );
@@ -297,7 +297,7 @@ void main() {
       expect(updated.databaseId, replacement.databaseId);
     });
 
-    test('废弃的 session receipt 不参与启动判定', () async {
+    test('\u5E9F\u5F03\u7684 session receipt \u4E0D\u53C2\u4E0E\u542F\u52A8\u5224\u5B9A', () async {
       await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
       final sessionFile = File(
         p.join(directory.path, '.database_session_receipt.json'),
@@ -314,7 +314,7 @@ void main() {
     });
 
     group('recoveryActionFor', () {
-      test('database_schema_too_new 映射为升级提示', () async {
+      test('database_schema_too_new \u6620\u5C04\u4E3A\u5347\u7EA7\u63D0\u793A', () async {
         final action = await DatabaseInstallationGate.recoveryActionFor(
           appDataDirectory: directory,
           error: StateError('database_schema_too_new'),
@@ -324,7 +324,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.promptUpgrade);
       });
 
-      test('与数据库无关的错误不触发恢复', () async {
+      test('\u4E0E\u6570\u636E\u5E93\u65E0\u5173\u7684\u9519\u8BEF\u4E0D\u89E6\u53D1\u6062\u590D', () async {
         final action = await DatabaseInstallationGate.recoveryActionFor(
           appDataDirectory: directory,
           error: StateError('filesystem'),
@@ -334,7 +334,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.none);
       });
 
-      test('已有 receipt 的损坏库不自动重建', () async {
+      test('\u5DF2\u6709 receipt \u7684\u635F\u574F\u5E93\u4E0D\u81EA\u52A8\u91CD\u5EFA', () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
 
         final action = await DatabaseInstallationGate.recoveryActionFor(
@@ -346,7 +346,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.none);
       });
 
-      test('无法解析的 receipt 同样阻止自动重建', () async {
+      test('\u65E0\u6CD5\u89E3\u6790\u7684 receipt \u540C\u6837\u963B\u6B62\u81EA\u52A8\u91CD\u5EFA', () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
         final receipt = directory.listSync().whereType<File>().singleWhere(
           (file) => p
@@ -364,7 +364,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.none);
       });
 
-      test('无 receipt 且 Hive 源在时引导重迁移', () async {
+      test('\u65E0 receipt \u4E14 Hive \u6E90\u5728\u65F6\u5F15\u5BFC\u91CD\u8FC1\u79FB', () async {
         await databaseFile(directory).writeAsString('not a sqlite database');
 
         final action = await DatabaseInstallationGate.recoveryActionFor(
@@ -376,7 +376,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.promptRemigration);
       });
 
-      test('原始 sqlite 错误仅在可重迁移时引导', () async {
+      test('\u539F\u59CB sqlite \u9519\u8BEF\u4EC5\u5728\u53EF\u91CD\u8FC1\u79FB\u65F6\u5F15\u5BFC', () async {
         final rawError = sqlite.SqliteException(
           extendedResultCode: 11,
           message: 'database disk image is malformed',
@@ -397,7 +397,7 @@ void main() {
         expect(withoutHive, DatabaseRecoveryAction.none);
       });
 
-      test('首启半成品库（userVersion=0）可自动重建', () async {
+      test('\u9996\u542F\u534A\u6210\u54C1\u5E93（userVersion=0）\u53EF\u81EA\u52A8\u91CD\u5EFA', () async {
         final raw = sqlite.sqlite3.open(databaseFile(directory).path);
         raw.close();
 
@@ -410,7 +410,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.rebuildAutomatically);
       });
 
-      test('列出改名副本时按时间倒序并算上整个 family', () async {
+      test('\u5217\u51FA\u6539\u540D\u526F\u672C\u65F6\u6309\u65F6\u95F4\u5012\u5E8F\u5E76\u7B97\u4E0A\u6574\u4E2A family', () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
         final base = databaseFile(directory);
         await File('${base.path}-wal').writeAsBytes(List<int>.filled(32, 7));
@@ -431,14 +431,14 @@ void main() {
         expect(copies, hasLength(1));
         expect(copies.single.displacedAt, isNotNull);
         expect(await copies.single.file.exists(), isTrue);
-        // -wal 也算进去，不然显示的大小会小于真正占的空间。
+        // -wal \u4E5F\u7B97\u8FDB\u53BB，\u4E0D\u7136\u663E\u793A\u7684\u5927\u5C0F\u4F1A\u5C0F\u4E8E\u771F\u6B63\u5360\u7684\u7A7A\u95F4。
         expect(
           copies.single.bytes,
           greaterThan(await copies.single.file.length()),
         );
       });
 
-      test('删除单份改名副本会连 sidecar 一起清掉', () async {
+      test('\u5220\u9664\u5355\u4EFD\u6539\u540D\u526F\u672C\u4F1A\u8FDE sidecar \u4E00\u8D77\u6E05\u6389', () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
         final base = databaseFile(directory);
         await File('${base.path}-wal').writeAsBytes(List<int>.filled(32, 7));
@@ -474,7 +474,7 @@ void main() {
         );
       });
 
-      test('拒绝伪造的 stamp', () async {
+      test('\u62D2\u7EDD\u4F2A\u9020\u7684 stamp', () async {
         await expectLater(
           DatabaseInstallationGate.deleteDisplacedDatabase(
             appDataDirectory: directory,
@@ -484,7 +484,7 @@ void main() {
         );
       });
 
-      test('无法读取 userVersion 的文件不自动重建', () async {
+      test('\u65E0\u6CD5\u8BFB\u53D6 userVersion \u7684\u6587\u4EF6\u4E0D\u81EA\u52A8\u91CD\u5EFA', () async {
         // "Unreadable right now" is also what a healthy database looks like
         // while the OS denies the read, so it may never authorise a delete.
         await databaseFile(directory).writeAsString('not a sqlite database');
@@ -498,7 +498,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.none);
       });
 
-      test('存在非空 WAL 时不自动重建', () async {
+      test('\u5B58\u5728\u975E\u7A7A WAL \u65F6\u4E0D\u81EA\u52A8\u91CD\u5EFA', () async {
         final raw = sqlite.sqlite3.open(databaseFile(directory).path);
         raw.close();
         await File(
@@ -514,7 +514,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.none);
       });
 
-      test('存在用户文件时不自动重建', () async {
+      test('\u5B58\u5728\u7528\u6237\u6587\u4EF6\u65F6\u4E0D\u81EA\u52A8\u91CD\u5EFA', () async {
         final raw = sqlite.sqlite3.open(databaseFile(directory).path);
         raw.close();
         final images = Directory(p.join(directory.path, 'images'));
@@ -530,7 +530,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.none);
       });
 
-      test('存在本地副本时不自动重建', () async {
+      test('\u5B58\u5728\u672C\u5730\u526F\u672C\u65F6\u4E0D\u81EA\u52A8\u91CD\u5EFA', () async {
         final raw = sqlite.sqlite3.open(databaseFile(directory).path);
         raw.close();
         final snapshots = Directory(
@@ -553,7 +553,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.none);
       });
 
-      test('空的用户目录不算使用痕迹', () async {
+      test('\u7A7A\u7684\u7528\u6237\u76EE\u5F55\u4E0D\u7B97\u4F7F\u7528\u75D5\u8FF9', () async {
         final raw = sqlite.sqlite3.open(databaseFile(directory).path);
         raw.close();
         await Directory(p.join(directory.path, 'images')).create();
@@ -568,7 +568,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.rebuildAutomatically);
       });
 
-      test('先前的 displaced 副本阻止再次自动重建', () async {
+      test('\u5148\u524D\u7684 displaced \u526F\u672C\u963B\u6B62\u518D\u6B21\u81EA\u52A8\u91CD\u5EFA', () async {
         final raw = sqlite.sqlite3.open(databaseFile(directory).path);
         raw.close();
         await File(
@@ -586,7 +586,7 @@ void main() {
         expect(action, DatabaseRecoveryAction.none);
       });
 
-      test('已建 schema 的库即使无 receipt 也不自动重建', () async {
+      test('\u5DF2\u5EFA schema \u7684\u5E93\u5373\u4F7F\u65E0 receipt \u4E5F\u4E0D\u81EA\u52A8\u91CD\u5EFA', () async {
         final repository = ChatDatabaseRepository.open(
           file: databaseFile(directory),
         );
@@ -623,7 +623,7 @@ void main() {
               .toList()
             ..sort();
 
-      test('替换残缺库并签发新 receipt', () async {
+      test('\u66FF\u6362\u6B8B\u7F3A\u5E93\u5E76\u7B7E\u53D1\u65B0 receipt', () async {
         final file = databaseFile(directory);
         await file.writeAsString('not a sqlite database');
         await File('${file.path}-wal').writeAsString('stale wal');
@@ -642,7 +642,7 @@ void main() {
         );
       });
 
-      test('默认保留整套旧库而不是删除', () async {
+      test('\u9ED8\u8BA4\u4FDD\u7559\u6574\u5957\u65E7\u5E93\u800C\u4E0D\u662F\u5220\u9664', () async {
         final file = databaseFile(directory);
         await file.writeAsString('not a sqlite database');
         await File('${file.path}-wal').writeAsString('stale wal');
@@ -667,7 +667,7 @@ void main() {
         );
       });
 
-      test('preserveDisplacedCopy=false 不留副本并清掉旧副本', () async {
+      test('preserveDisplacedCopy=false \u4E0D\u7559\u526F\u672C\u5E76\u6E05\u6389\u65E7\u526F\u672C', () async {
         final file = databaseFile(directory);
         await file.writeAsString('not a sqlite database');
         await File(
@@ -683,7 +683,7 @@ void main() {
         expect(displacedNames(directory), isEmpty);
       });
 
-      test('副本代数有上限，但最旧的那代永远保留', () async {
+      test('\u526F\u672C\u4EE3\u6570\u6709\u4E0A\u9650，\u4F46\u6700\u65E7\u7684\u90A3\u4EE3\u6C38\u8FDC\u4FDD\u7559', () async {
         // The oldest generation holds what was on disk before anything started
         // displacing; a retrying caller must not be able to walk it off the
         // end of the window.
@@ -719,12 +719,12 @@ void main() {
       });
     });
 
-    group('迁移前副本的清扫', () {
+    group('\u8FC1\u79FB\u524D\u526F\u672C\u7684\u6E05\u626B', () {
       File backupFor(File database) => File(
         '${database.path}${ChatDatabaseRepository.premigrationBackupPrefix}1',
       );
 
-      test('数据库健康时删除副本', () async {
+      test('\u6570\u636E\u5E93\u5065\u5EB7\u65F6\u5220\u9664\u526F\u672C', () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
         final file = databaseFile(directory);
         final backup = backupFor(file);
@@ -735,7 +735,7 @@ void main() {
         expect(await backup.exists(), isFalse);
       });
 
-      test('数据库缺失时用副本恢复，而不是把副本删掉', () async {
+      test('\u6570\u636E\u5E93\u7F3A\u5931\u65F6\u7528\u526F\u672C\u6062\u590D，\u800C\u4E0D\u662F\u628A\u526F\u672C\u5220\u6389', () async {
         final receipt = await DatabaseInstallationGate.ensureReady(
           appDataDirectory: directory,
         );
@@ -758,7 +758,7 @@ void main() {
         );
       });
 
-      test('数据库损坏时同样用副本恢复', () async {
+      test('\u6570\u636E\u5E93\u635F\u574F\u65F6\u540C\u6837\u7528\u526F\u672C\u6062\u590D', () async {
         final receipt = await DatabaseInstallationGate.ensureReady(
           appDataDirectory: directory,
         );
@@ -780,7 +780,7 @@ void main() {
         );
       });
 
-      test('结构缺失（quick_check 仍 ok）时不删副本，而是回滚', () async {
+      test('\u7ED3\u6784\u7F3A\u5931（quick_check \u4ECD ok）\u65F6\u4E0D\u5220\u526F\u672C，\u800C\u662F\u56DE\u6EDA', () async {
         // A migration that commits but leaves the schema incomplete is
         // physically sound, so quick_check passes. Deleting the copy here
         // would throw away the only way back moments before
@@ -828,7 +828,7 @@ void main() {
         }
       });
 
-      test('空库（userVersion 0）算损坏而不是未知版本', () async {
+      test('\u7A7A\u5E93（userVersion 0）\u7B97\u635F\u574F\u800C\u4E0D\u662F\u672A\u77E5\u7248\u672C', () async {
         final receipt = await DatabaseInstallationGate.ensureReady(
           appDataDirectory: directory,
         );
@@ -848,7 +848,7 @@ void main() {
         expect(await backup.exists(), isFalse);
       });
 
-      test('降级运行时不拿旧副本覆盖更高版本的数据库', () async {
+      test('\u964D\u7EA7\u8FD0\u884C\u65F6\u4E0D\u62FF\u65E7\u526F\u672C\u8986\u76D6\u66F4\u9AD8\u7248\u672C\u7684\u6570\u636E\u5E93', () async {
         // A newer build migrated the database and crashed before deleting its
         // copy; this older build must not mistake "version I do not know" for
         // "damaged" and roll the user back.
@@ -897,7 +897,7 @@ void main() {
         expect(receipt.databaseId, isNotEmpty);
       });
 
-      test('回滚不删除被覆盖的库，而是留副本', () async {
+      test('\u56DE\u6EDA\u4E0D\u5220\u9664\u88AB\u8986\u76D6\u7684\u5E93，\u800C\u662F\u7559\u526F\u672C', () async {
         // classifyInstalledDatabase reports "unusable" for a file it merely
         // failed to open, so the rollback must stay reversible.
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
@@ -932,7 +932,7 @@ void main() {
         );
       });
 
-      test('回滚反复失败也不会挤掉用户原始数据那一代', () async {
+      test('\u56DE\u6EDA\u53CD\u590D\u5931\u8D25\u4E5F\u4E0D\u4F1A\u6324\u6389\u7528\u6237\u539F\u59CB\u6570\u636E\u90A3\u4E00\u4EE3', () async {
         // A rollback whose backup is itself unusable throws before deleting
         // the backup, so the sweep repeats on every launch and displaces
         // again each time. Generation 1 is the user's only real copy.
@@ -960,7 +960,7 @@ void main() {
         expect(surviving, contains('ORIGINAL USER DATA'));
       });
 
-      test('多个副本且数据库不可用时拒绝猜测', () async {
+      test('\u591A\u4E2A\u526F\u672C\u4E14\u6570\u636E\u5E93\u4E0D\u53EF\u7528\u65F6\u62D2\u7EDD\u731C\u6D4B', () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
         final file = databaseFile(directory);
         final first = backupFor(file);
