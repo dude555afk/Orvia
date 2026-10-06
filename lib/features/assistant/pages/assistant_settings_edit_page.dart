@@ -940,7 +940,7 @@ class _SegTabBarState extends State<_SegTabBar> {
             final double rowWidth =
                 segWidth * widget.tabs.length + gap * (widget.tabs.length - 1);
 
-            final Color shellBg = context.appColors.surfaceCard; // 白底胶囊，无边框阴影
+            final Color shellBg = context.appColors.surfaceCard; // \u767D\u5E95\u80F6\u56CA，\u65E0\u8FB9\u6846\u9634\u5F71
 
             List<Widget> children = [];
             for (int index = 0; index < widget.tabs.length; index++) {
@@ -952,17 +952,17 @@ class _SegTabBarState extends State<_SegTabBar> {
                   child: _TactileRow(
                     onTap: () => widget.controller.animateTo(index),
                     builder: (pressed) {
-                      // 背景不随按压变化：仅选中时有浅主题底色，未选中透明
+                      // \u80CC\u666F\u4E0D\u968F\u6309\u538B\u53D8\u5316：\u4EC5\u9009\u4E2D\u65F6\u6709\u6D45\u4E3B\u9898\u5E95\u8272，\u672A\u9009\u4E2D\u900F\u660E
                       final Color baseBg = selected
                           ? cs.primary.withValues(alpha: 0.14)
                           : Colors.transparent;
-                      final Color bg = baseBg; // 不叠加遮罩，不改变底色
+                      final Color bg = baseBg; // \u4E0D\u53E0\u52A0\u906E\u7F69，\u4E0D\u6539\u53D8\u5E95\u8272
 
-                      // 仅文字在按压时变浅并有渐变
+                      // \u4EC5\u6587\u5B57\u5728\u6309\u538B\u65F6\u53D8\u6D45\u5E76\u6709\u6E10\u53D8
                       final Color baseTextColor = selected
                           ? cs
-                                .primary // 选中文字：主题色
-                          : cs.onSurface.withValues(alpha: 0.82); // 未选中：深灰
+                                .primary // \u9009\u4E2D\u6587\u5B57：\u4E3B\u9898\u8272
+                          : cs.onSurface.withValues(alpha: 0.82); // \u672A\u9009\u4E2D：\u6DF1\u7070
                       final Color targetTextColor = pressed
                           ? Color.lerp(
                                   baseTextColor,
@@ -979,7 +979,7 @@ class _SegTabBarState extends State<_SegTabBar> {
                           color: bg,
                           borderRadius: BorderRadius.circular(
                             innerRadius,
-                          ), // 选中块圆角
+                          ), // \u9009\u4E2D\u5757\u5706\u89D2
                         ),
                         alignment: Alignment.center,
                         child: Padding(
