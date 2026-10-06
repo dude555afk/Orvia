@@ -79,11 +79,11 @@ class IncomingShareHandlerTest {
     }
 
     @Test fun copiesFilesWithSafeNamesAndKeepsDuplicateNamesDistinct() {
-        provider.name = "../图片.png"
+        provider.name = "../\u56FE\u7247.png"
         val payload = IncomingShareHandler.copyShare(context, share(uri("one"), uri("two")), output, "test")
         val files = payload.getJSONArray("files")
         assertEquals(2, files.length())
-        assertEquals("图片.png", files.getJSONObject(0).getString("name"))
+        assertEquals("\u56FE\u7247.png", files.getJSONObject(0).getString("name"))
         val first = File(files.getJSONObject(0).getString("path"))
         val second = File(files.getJSONObject(1).getString("path"))
         assertNotEquals(first, second)
@@ -162,11 +162,11 @@ class IncomingShareHandlerTest {
 
     @Test fun limitsTheAttachmentCountAndPreservesSharedText() {
         val intent = share(*(0..32).map { uri("file$it") }.toTypedArray())
-        intent.putExtra(Intent.EXTRA_TEXT, "说明 https://example.com/")
+        intent.putExtra(Intent.EXTRA_TEXT, "\u8BF4\u660E https://example.com/")
         val payload = IncomingShareHandler.copyShare(context, intent, output, "test")
         assertEquals(32, payload.getJSONArray("files").length())
         assertEquals(1, payload.getInt("failedFiles"))
-        assertEquals("说明 https://example.com/", payload.getString("text"))
+        assertEquals("\u8BF4\u660E https://example.com/", payload.getString("text"))
     }
 
     @Test fun coldInboxSurvivesHandlerRecreationUntilExplicitlyAcknowledged() {
