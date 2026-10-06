@@ -35,7 +35,7 @@ const List<LanguageOption> supportedLanguages = [
   LanguageOption(
     code: 'ja',
     displayName: 'Japanese',
-    nativeName: '日本語',
+    nativeName: 'Japanese',
     flag: '🇯🇵',
   ),
   LanguageOption(
@@ -131,7 +131,7 @@ Future<LanguageOption?> showLanguageSelector(BuildContext context) async {
       onTap: () => selected = const LanguageOption(
         code: '__clear__',
         displayName: 'Clear Translation',
-        nativeName: '清空翻译',
+        nativeName: 'Clear translation',
         flag: '',
       ),
       danger: true,
@@ -211,7 +211,7 @@ class _LanguageSelectSheetState extends State<_LanguageSelectSheet> {
                               const LanguageOption(
                                 code: '__clear__',
                                 displayName: 'Clear Translation',
-                                nativeName: '清空翻译',
+                                nativeName: 'Clear translation',
                                 flag: '',
                               ),
                             );
