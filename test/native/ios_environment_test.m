@@ -30,7 +30,7 @@ int main(void) {
         NSMutableDictionary *env = [@{
             @"PATH": @"/workspace/.venv/bin:/usr/bin:/bin",
             @"TOKEN": [@"x" stringByPaddingToLength:16000 withString:@"x" startingAtIndex:0],
-            @"UNICODE": @"密钥=\"value\"\nwith newline 🐱",
+            @"UNICODE": @"\u5BC6\u94A5=\"value\"\nwith newline 🐱",
             @"EMPTY": @"",
         } mutableCopy];
         for (int i = 0; i < 100; i++) {
@@ -51,7 +51,7 @@ int main(void) {
         check(data == nil && error == KelivoISHEnvironmentErrorTooLarge, "oversized value accepted");
         data = KelivoISHEncodeEnvironment(@{@"K": atLimit, @"A": @""}, &error);
         check(data == nil && error == KelivoISHEnvironmentErrorTooLarge, "oversized aggregate accepted");
-        NSString *unicode = [@"中" stringByPaddingToLength:50000 withString:@"中" startingAtIndex:0];
+        NSString *unicode = [@"\u4E2D" stringByPaddingToLength:50000 withString:@"\u4E2D" startingAtIndex:0];
         data = KelivoISHEncodeEnvironment(@{@"K": unicode}, &error);
         check(data == nil && error == KelivoISHEnvironmentErrorTooLarge, "limit counted characters instead of UTF-8 bytes");
 
