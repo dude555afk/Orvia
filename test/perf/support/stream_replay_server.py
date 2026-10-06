@@ -5,9 +5,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 import json, threading, time
 barrier = threading.Barrier(1)
-reasoning_seed = ('正在分析长文本，保留 Markdown **粗体**、中文和 English。\n\n' * 1800)
-reasoning_delta = '继续分析上下文并核对事实。'
-text_delta = '正文持续输出，保留 **Markdown** 和文字选择。 '
+reasoning_seed = ('\u6B63\u5728\u5206\u6790\u957F\u6587\u672C\uFF0C\u4FDD\u7559 Markdown **\u7C97\u4F53**\u3001\u4E2D\u6587\u548C English\u3002\n\n' * 1800)
+reasoning_delta = '\u7EE7\u7EED\u5206\u6790\u4E0A\u4E0B\u6587\u5E76\u6838\u5BF9\u4E8B\u5B9E\u3002'
+text_delta = '\u6B63\u6587\u6301\u7EED\u8F93\u51FA\uFF0C\u4FDD\u7559 **Markdown** \u548C\u6587\u5B57\u9009\u62E9\u3002 '
 def frame(delta):
     return ('data: ' + json.dumps({'id':'replay','object':'chat.completion.chunk','choices':[{'index':0,'delta':delta,'finish_reason':None}]},ensure_ascii=False) + '\n\n').encode()
 reason_wire = frame({'reasoning_content':reasoning_delta})
