@@ -1,0 +1,47 @@
+name: Format Orvia PR Once
+
+on:
+  push:
+    branches:
+      - fix/complete-orvia-bootstrap
+    paths:
+      - .github/workflows/format-pr-branch.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/complete-orvia-bootstrap
+          fetch-depth: 0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+          cache: true
+
+      - name: Format changed Dart files and commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMR origin/main...HEAD -- '*.dart')
+          if [ "${#files[@]}" -gt 0 ]; then
+            dart format "${files[@]}"
+          fi
+          if git diff --quiet; then
+            echo "No formatting changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- '*.dart'
+          git commit -m "style: format Orvia cleanup changes"
+          git push origin HEAD:fix/complete-orvia-bootstrap
