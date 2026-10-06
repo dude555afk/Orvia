@@ -883,7 +883,7 @@ void main() {
             TextPart('\u6211\u67E5\u4E00\u4E0B'),
             ToolCallPart('{"id":"local_1","name":"lookup","arguments":{}}'),
             ToolCallPart('{"id":"srv_1","name":"search_web","server":true}'),
-            TextPart('" '\u7ED3' '\u679C' '\u662F' r" X'),
+            TextPart('\u7ED3\u679C\u662F X'),
           ],
         ),
         const [
@@ -910,11 +910,11 @@ void main() {
         jsonDecode((persisted.parts[2] as ToolCallPart).payloadJson)['server'],
         isTrue,
       );
-      expect((persisted.parts[0] as TextPart).text, '" '\u6211' '\u67E5' '\u4E00' '\u4E0B' r"');
-      expect((persisted.parts[3] as TextPart).text, '" '\u7ED3' '\u679C' '\u662F' r" X');
+      expect((persisted.parts[0] as TextPart).text, '\u6211\u67E5\u4E00\u4E0B');
+      expect((persisted.parts[3] as TextPart).text, '\u7ED3\u679C\u662F X');
     });
 
-    test('" '\u591A' '\u4F59' r" toolEvents " '\u63D2' '\u5728' '\u6700' '\u540E' '\u4E00' '\u4E2A' '\u5DE5' '\u5177' '\u5361' '\u4E4B' '\u540E' '\u800C' '\u4E0D' '\u662F' '\u5168' '\u6587' '\u672B' '\u5C3E' r"', () async {
+    test('\u591A\u4F59 toolEvents \u63D2\u5728\u6700\u540E\u4E00\u4E2A\u5DE5\u5177\u5361\u4E4B\u540E\u800C\u4E0D\u662F\u5168\u6587\u672B\u5C3E', () async {
       await repository.updateStreamingCheckpoint(
         ChatMessage(
           id: 'streaming',
@@ -922,7 +922,7 @@ void main() {
           conversationId: 'conversation',
           isStreaming: true,
           parts: const [
-            TextPart('" '\u6211' '\u67E5' '\u4E00' '\u4E0B' r"'),
+            TextPart('\u6211\u67E5\u4E00\u4E0B'),
             ToolCallPart('{"id":"local_1","name":"lookup"}'),
             TextPart('\u7ED3\u679C\u662F X'),
           ],
@@ -1134,7 +1134,7 @@ void main() {
       expect(payload['server'], isTrue);
     });
 
-    test('" '\u666E' '\u901A' '\u5DE5' '\u5177' '\u7684' r" items " '\u4E0D' '\u88AB' '\u5F53' '\u6210' '\u641C' '\u7D22' '\u5F15' '\u7528' '\u5408' '\u5E76' r"', () async {
+    test('\u666E\u901A\u5DE5\u5177\u7684 items \u4E0D\u88AB\u5F53\u6210\u641C\u7D22\u5F15\u7528\u5408\u5E76', () async {
       await repository.updateStreamingCheckpoint(
         ChatMessage(
           id: 'streaming',
