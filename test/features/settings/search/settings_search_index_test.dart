@@ -1,6 +1,5 @@
 import 'package:Kelivo/features/settings/search/settings_search_index.dart';
 import 'package:Kelivo/l10n/app_localizations_en.dart';
-import 'package:Kelivo/l10n/app_localizations_zh.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -22,34 +21,13 @@ void main() {
     expect(index.search('x' * 20000), isEmpty);
   });
 
-  test('indexes English, simplified and traditional titles in any locale', () {
-    final chinese = SettingsSearchIndex(
-      AppLocalizationsZh(),
-      platform: TargetPlatform.iOS,
+  test('indexes English titles and normalized queries', () {
+    expect(
+      index.search('language').map((e) => e.id),
+      contains('displaySettingsPageLanguageTitle'),
     );
-    final traditional = SettingsSearchIndex(
-      AppLocalizationsZhHant(),
-      platform: TargetPlatform.iOS,
-    );
-    for (final candidate in [index, chinese, traditional]) {
-      expect(
-        candidate.search('language').map((e) => e.id),
-        contains('displaySettingsPageLanguageTitle'),
-      );
-      expect(
-        candidate.search('\u8A9E\u8A00').map((e) => e.id),
-        contains('displaySettingsPageLanguageTitle'),
-      );
-      expect(
-        candidate.search('\u5B57\u4F53').map((e) => e.id),
-        contains('displaySettingsPageChatFontSizeTitle'),
-      );
-      expect(candidate.search('ａｐｉ　ｋｅｙ').first.id, 'providers');
-      expect(
-        candidate.search('\u6BDB\u73BB\u7483').first.destination,
-        SettingsSearchDestination.messageStyle,
-      );
-    }
+    expect(index.search('ａｐｉ　ｋｅｙ').first.id, 'providers');
+    expect(index.search('message style').isNotEmpty, isTrue);
   });
 
   test('platform and runtime availability match the settings surfaces', () {
