@@ -11446,7 +11446,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get googleFontsDownloading => 'Downloading font…';
 
   @override
-  String get googleFontsPreview => 'The quick brown fox 0123456789 · 字体预览';
+  String get googleFontsPreview => 'The quick brown fox 0123456789 · Font preview';
 
   @override
   String get googleFontsLicense => 'Font license';
