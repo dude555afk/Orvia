@@ -1830,7 +1830,7 @@ class MessageBuilderService {
       if (relevantChats.isNotEmpty) {
         final sb = StringBuffer();
         sb.writeln('<recent_chats>');
-        sb.writeln('这是用户最近的一些对话标题和摘要，你可以参考这些内容了解用户偏好和关注点');
+        sb.writeln('These are some of the user's recent conversation titles and summaries. Use them as context for the user's preferences and interests.');
         for (final c in relevantChats) {
           sb.writeln('<conversation>');
           // Format: timestamp: title || summary
@@ -1855,7 +1855,7 @@ class MessageBuilderService {
   }
 
   String _formatCurrentHour(DateTime now) {
-    return '${now.year}年${now.month}月${now.day}日的${now.hour}点';
+    return '${now.year}-${now.month}-${now.day} at ${now.hour}:00';
   }
 
   /// Inject search tool usage prompt into apiMessages.
