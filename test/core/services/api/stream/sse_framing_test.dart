@@ -97,15 +97,15 @@ void main() {
     'recovers adjacent JSON data records without blank delimiters',
     () async {
       final events = await parse(
-        'data: {"choices":[{"delta":{"content":"*被"}}]}\n'
-        'data: {"choices":[{"delta":{"content":"甜*\\n\\n*懒懒地、"}}]}\n'
+        'data: {"choices":[{"delta":{"content":"*\u88AB"}}]}\n'
+        'data: {"choices":[{"delta":{"content":"\u751C*\\n\\n*\u61D2\u61D2\u5730、"}}]}\n'
         'data: [DONE]\n\n',
         recoverAdjacentJsonDataRecords: true,
       );
 
       expect(events.map((event) => event.data), <String>[
-        '{"choices":[{"delta":{"content":"*被"}}]}',
-        '{"choices":[{"delta":{"content":"甜*\\n\\n*懒懒地、"}}]}',
+        '{"choices":[{"delta":{"content":"*\u88AB"}}]}',
+        '{"choices":[{"delta":{"content":"\u751C*\\n\\n*\u61D2\u61D2\u5730、"}}]}',
         '[DONE]',
       ]);
     },
@@ -630,9 +630,9 @@ void main() {
 
   test('byte stream entry point decodes UTF-8', () async {
     final events = await parseSseEvents(
-      Stream<List<int>>.value(utf8.encode('data: 你好\n\n')),
+      Stream<List<int>>.value(utf8.encode('data: \u4F60\u597D\n\n')),
     ).toList();
-    expect(events.single.data, '你好');
+    expect(events.single.data, '\u4F60\u597D');
   });
 
   test('strips a leading UTF-8 BOM', () async {
