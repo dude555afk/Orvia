@@ -72,7 +72,7 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
   bool _showApiKey = false; // toggle visibility
   bool _multiKeyEnabled = false; // single/multi key mode
 
-  // 模型选择模式相关
+  // \u6A21\u578B\u9009\u62E9\u6A21\u5F0F\u76F8\u5173
   bool _isSelectionMode = false;
   final Set<String> _selectedModels = {};
   bool _isDetecting = false;
@@ -142,7 +142,7 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
         'DeepSeek',
         'Tensdaq',
         'AIhubmix',
-        '随想AI中转站',
+        '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
         'MaruCode',
         'Aliyun',
         'Zhipu AI',
@@ -613,8 +613,8 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
     }
   }
 
-  // 后台预热 LobeHub 图标缓存（彩色优先，失败回退单色），不阻塞 UI。
-  // 顺序需与 ProviderAvatar._resolveLobehubPath 保持一致，避免缓存键不一致。
+  // \u540E\u53F0\u9884\u70ED LobeHub \u56FE\u6807\u7F13\u5B58（\u5F69\u8272\u4F18\u5148，\u5931\u8D25\u56DE\u9000\u5355\u8272），\u4E0D\u963B\u585E UI。
+  // \u987A\u5E8F\u9700\u4E0E ProviderAvatar._resolveLobehubPath \u4FDD\u6301\u4E00\u81F4，\u907F\u514D\u7F13\u5B58\u952E\u4E0D\u4E00\u81F4。
   void _prewarmLobehubIcon(String n) {
     if (n.isEmpty) return;
     Future.microtask(() async {
@@ -635,7 +635,7 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final icons = BrandAssets.selectableIcons;
 
-    // 若当前头像为 LobeHub 自定义图标，预热缓存，使弹窗与详情页头像无需等待下载。
+    // ' '\u82E5' '\u5F53' '\u524D' '\u5934' '\u50CF' '\u4E3A' r' LobeHub ' '\u81EA' '\u5B9A' '\u4E49' '\u56FE' '\u6807' r'，' '\u9884' '\u70ED' '\u7F13' '\u5B58' r'，' '\u4F7F' '\u5F39' '\u7A97' '\u4E0E' '\u8BE6' '\u60C5' '\u9875' '\u5934' '\u50CF' '\u65E0' '\u9700' '\u7B49' '\u5F85' '\u4E0B' '\u8F7D' r'。
     final current = settings.getProviderConfig(widget.keyName);
     if (current.avatarType == 'lobehub' &&
         (current.avatarValue ?? '').isNotEmpty) {
@@ -876,13 +876,13 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '革命性竞价 AI MaaS 平台，价格由市场供需决定，告别高成本固定定价。',
+                  '\u9769\u547D\u6027\u7ADE\u4EF7 AI MaaS \u5E73\u53F0，\u4EF7\u683C\u7531\u5E02\u573A\u4F9B\u9700\u51B3\u5B9A，\u544A\u522B\u9AD8\u6210\u672C\u56FA\u5B9A\u5B9A\u4EF7。',
                   style: TextStyle(color: cs.onSurface.withValues(alpha: 0.8)),
                 ),
                 const SizedBox(height: 6),
                 Text.rich(
                   TextSpan(
-                    text: '官网：',
+                    text: '\u5B98\u7F51：',
                     style: TextStyle(
                       color: cs.onSurface.withValues(alpha: 0.8),
                     ),
@@ -931,13 +931,13 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '已内置硅基流动的免费模型，无需 API Key。若需更强大的模型，请申请并在此配置你自己的 API Key。',
+                  '\u5DF2\u5185\u7F6E\u7845\u57FA\u6D41\u52A8\u7684\u514D\u8D39\u6A21\u578B，\u65E0\u9700 API Key。\u82E5\u9700\u66F4\u5F3A\u5927\u7684\u6A21\u578B，\u8BF7\u7533\u8BF7\u5E76\u5728\u6B64\u914D\u7F6E\u4F60\u81EA\u5DF1\u7684 API Key。',
                   style: TextStyle(color: cs.onSurface.withValues(alpha: 0.8)),
                 ),
                 const SizedBox(height: 6),
                 Text.rich(
                   TextSpan(
-                    text: '官网：',
+                    text: '\u5B98\u7F51：',
                     style: TextStyle(
                       color: cs.onSurface.withValues(alpha: 0.8),
                     ),
@@ -972,7 +972,7 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
           ),
           const SizedBox(height: 12),
         ],
-        if (widget.keyName.toLowerCase() == '随想ai中转站') ...[
+        if (widget.keyName.toLowerCase() == '\u968F\u60F3ai\u4E2D\u8F6C\u7AD9') ...[
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
@@ -984,13 +984,13 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '可靠高效的 API 中继服务，提供 Claude、Codex、Gemini 等中继服务。注重隐私·无数据倒卖·无模型掺水，充值额度 1:1，按量付费。多线路冗余、跨区域容灾、自动故障切换，长链路 SSE 不中断。',
+                  '\u53EF\u9760\u9AD8\u6548\u7684 API \u4E2D\u7EE7\u670D\u52A1，\u63D0\u4F9B Claude、Codex、Gemini \u7B49\u4E2D\u7EE7\u670D\u52A1。\u6CE8\u91CD\u9690\u79C1·\u65E0\u6570\u636E\u5012\u5356·\u65E0\u6A21\u578B\u63BA\u6C34，\u5145\u503C\u989D\u5EA6 1:1，\u6309\u91CF\u4ED8\u8D39。\u591A\u7EBF\u8DEF\u5197\u4F59、\u8DE8\u533A\u57DF\u5BB9\u707E、\u81EA\u52A8\u6545\u969C\u5207\u6362，\u957F\u94FE\u8DEF SSE \u4E0D\u4E2D\u65AD。',
                   style: TextStyle(color: cs.onSurface.withValues(alpha: 0.8)),
                 ),
                 const SizedBox(height: 6),
                 Text.rich(
                   TextSpan(
-                    text: '官网：',
+                    text: '\u5B98\u7F51：',
                     style: TextStyle(
                       color: cs.onSurface.withValues(alpha: 0.8),
                     ),
@@ -1037,13 +1037,13 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '偶尔做做慈善的小破站 API，自营号池，主要提供 Codex、Claude Code、GPT Image 等主流模型。支持 Websocket 协议，明码标价(Codex 0.25x, CC 1.5x)，透明汇率(1:1)，新用户注册送 2 刀。',
+                  '\u5076\u5C14\u505A\u505A\u6148\u5584\u7684\u5C0F\u7834\u7AD9 API，\u81EA\u8425\u53F7\u6C60，\u4E3B\u8981\u63D0\u4F9B Codex、Claude Code、GPT Image \u7B49\u4E3B\u6D41\u6A21\u578B。\u652F\u6301 Websocket \u534F\u8BAE，\u660E\u7801\u6807\u4EF7(Codex 0.25x, CC 1.5x)，\u900F\u660E\u6C47\u7387(1:1)，\u65B0\u7528\u6237\u6CE8\u518C\u9001 2 \u5200。',
                   style: TextStyle(color: cs.onSurface.withValues(alpha: 0.8)),
                 ),
                 const SizedBox(height: 6),
                 Text.rich(
                   TextSpan(
-                    text: '官网：',
+                    text: '\u5B98\u7F51：',
                     style: TextStyle(
                       color: cs.onSurface.withValues(alpha: 0.8),
                     ),
@@ -1080,7 +1080,7 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
           ),
           const SizedBox(height: 12),
         ],
-        // 顶部管理分组标题（左侧缩进以对齐卡片内容）
+        // \u9876\u90E8\u7BA1\u7406\u5206\u7EC4\u6807\u9898（\u5DE6\u4FA7\u7F29\u8FDB\u4EE5\u5BF9\u9F50\u5361\u7247\u5185\u5BB9）
         Padding(
           padding: const EdgeInsets.only(left: 12),
           child: Text(
@@ -1506,7 +1506,7 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
               list.insert(newIndex, item);
               setState(() {});
               final settings = context.read<SettingsProvider>();
-              // 使用 Future.microtask 来异步执行，避免阻塞回调
+              // \u4F7F\u7528 Future.microtask \u6765\u5F02\u6B65\u6267\u884C，\u907F\u514D\u963B\u585E\u56DE\u8C03
               Future.microtask(() async {
                 final latest = settings.getProviderConfig(
                   widget.keyName,
@@ -3233,7 +3233,7 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
       defaultName: widget.displayName,
     );
 
-    // 顺序检测,防止并发导致API被封锁
+    // \u987A\u5E8F\u68C0\u6D4B,\u9632\u6B62\u5E76\u53D1\u5BFC\u81F4API\u88AB\u5C01\u9501
     for (final modelId in modelsToTest) {
       if (mounted) {
         setState(() {
