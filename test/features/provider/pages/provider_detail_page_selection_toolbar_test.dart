@@ -83,7 +83,7 @@ Future<void> _pumpSelectedToolbar(
   );
   await tester.pumpAndSettle();
 
-  await tester.tap(find.text('模型'));
+  await tester.tap(find.text('\u6A21\u578B'));
   await tester.pumpAndSettle();
   await tester.tap(find.byIcon(Lucide.CheckSquare).first);
   await tester.pumpAndSettle();
@@ -104,11 +104,11 @@ void main() {
 
       await _pumpSelectedToolbar(tester, width: 400);
 
-      final detectText = find.text('检测');
-      expect(find.text('全不选'), findsOneWidget);
+      final detectText = find.text('\u68C0\u6D4B');
+      expect(find.text('\u5168\u4E0D\u9009'), findsOneWidget);
       expect(detectText, findsOneWidget);
       expect(tester.getSize(detectText).width, greaterThan(20));
-      expect(find.text('删除'), findsNothing);
+      expect(find.text('\u5220\u9664'), findsNothing);
       expect(find.byIcon(Lucide.HeartPulse), findsOneWidget);
       expect(find.byIcon(Lucide.Trash2), findsWidgets);
       expect(tester.takeException(), isNull);
@@ -141,12 +141,12 @@ void main() {
 
     await _pumpSelectedToolbar(tester, width: 320);
 
-    expect(find.text('使用流式'), findsNothing);
+    expect(find.text('\u4F7F\u7528\u6D41\u5F0F'), findsNothing);
 
     await tester.longPress(find.byIcon(Lucide.SquareEqual));
     await tester.pumpAndSettle();
 
-    expect(find.text('使用流式'), findsOneWidget);
+    expect(find.text('\u4F7F\u7528\u6D41\u5F0F'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

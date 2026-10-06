@@ -780,10 +780,13 @@ void main() {
   ) async {
     await tester.pumpWidget(tavilySearchUsageCardPreview());
 
-    expect(find.text('账户用量'), findsOneWidget);
-    expect(find.text('查询用量'), findsNothing);
-    expect(find.text('剩余 750 额度'), findsOneWidget);
-    expect(find.text('已使用 250 / 1,000 额度'), findsOneWidget);
+    expect(find.text('\u8D26\u6237\u7528\u91CF'), findsOneWidget);
+    expect(find.text('\u67E5\u8BE2\u7528\u91CF'), findsNothing);
+    expect(find.text('\u5269\u4F59 750 \u989D\u5EA6'), findsOneWidget);
+    expect(
+      find.text('\u5DF2\u4F7F\u7528 250 / 1,000 \u989D\u5EA6'),
+      findsOneWidget,
+    );
 
     final queryAction = find.byKey(
       const ValueKey('search-service-usage-query'),
@@ -793,14 +796,17 @@ void main() {
       find.descendant(of: queryAction, matching: find.byIcon(Lucide.RefreshCw)),
       findsOneWidget,
     );
-    expect(tester.widget<Tooltip>(queryAction).message, '查询用量');
+    expect(
+      tester.widget<Tooltip>(queryAction).message,
+      '\u67E5\u8BE2\u7528\u91CF',
+    );
 
     final progress = tester.widget<LinearProgressIndicator>(
       find.byKey(const ValueKey('tavily-usage-progress')),
     );
     expect(progress.value, 0.25);
 
-    final titleCenter = tester.getCenter(find.text('账户用量'));
+    final titleCenter = tester.getCenter(find.text('\u8D26\u6237\u7528\u91CF'));
     final queryCenter = tester.getCenter(queryAction);
     expect((titleCenter.dy - queryCenter.dy).abs(), lessThan(4));
     expect(queryCenter.dx, greaterThan(titleCenter.dx));
@@ -811,7 +817,7 @@ void main() {
   ) async {
     await tester.pumpWidget(linkUpSearchUsageCardPreview());
 
-    expect(find.text('余额 123.46'), findsOneWidget);
+    expect(find.text('\u4F59\u989D 123.46'), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsNothing);
   });
 

@@ -1817,11 +1817,11 @@ void main() {
         final after = (apiAfter.first['content'] ?? '').toString();
 
         expect(after, before);
-        expect(before, contains('## 长期记忆'));
+        expect(before, contains('## \u957F\u671F\u8BB0\u5FC6'));
         expect(before, contains(MemoryPrompts.rulesPastConversationRecallZh));
         expect(before, isNot(contains('<memories>')));
         expect(before, isNot(contains('<recent_chats>')));
-        expect(before, isNot(contains('当前时间是')));
+        expect(before, isNot(contains('\u5F53\u524D\u65F6\u95F4\u662F')));
       },
     );
 
@@ -1846,7 +1846,7 @@ void main() {
 
         final content = (api.first['content'] ?? '').toString();
         expect(content, contains(MemoryPrompts.rulesPastConversationRecallZh));
-        expect(content, isNot(contains('## 长期记忆')));
+        expect(content, isNot(contains('## \u957F\u671F\u8BB0\u5FC6')));
       },
     );
 

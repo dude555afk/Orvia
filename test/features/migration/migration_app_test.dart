@@ -253,8 +253,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(AppSnackBarOverlay), findsOneWidget);
-    expect(find.text('对话'), findsOneWidget);
-    expect(find.text('消息'), findsOneWidget);
+    expect(find.text('\u5BF9\u8BDD'), findsOneWidget);
+    expect(find.text('\u6D88\u606F'), findsOneWidget);
     expect(find.byType(HiveToSqliteMigrationPage), findsOneWidget);
     final restartButton = find.byIcon(Lucide.RefreshCw);
     expect(restartButton, findsOneWidget);
@@ -271,7 +271,12 @@ void main() {
     expect(restartCall?.method, 'restartApp');
     expect(restartCall?.arguments, containsPair('mode', 'process'));
     expect(reportedErrors, hasLength(1));
-    expect(find.text('Kelivo 无法自动重启，请完全关闭后重新打开。'), findsOneWidget);
+    expect(
+      find.text(
+        'Kelivo \u65E0\u6CD5\u81EA\u52A8\u91CD\u542F，\u8BF7\u5B8C\u5168\u5173\u95ED\u540E\u91CD\u65B0\u6253\u5F00。',
+      ),
+      findsOneWidget,
+    );
 
     await tester.pump(const Duration(seconds: 4));
     await tester.pumpAndSettle();

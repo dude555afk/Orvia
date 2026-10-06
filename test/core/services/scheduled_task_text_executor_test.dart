@@ -52,7 +52,7 @@ class _LocalOAuthClient implements HttpClient {
 void main() {
   for (final template in <String?>[
     null,
-    '只说正文。时间 {{scheduled_time}}，时差 {{utc_offset}}。Use tools.',
+    '\u53EA\u8BF4\u6B63\u6587。\u65F6\u95F4 {{scheduled_time}}，\u65F6\u5DEE {{utc_offset}}。Use tools.',
     '',
   ]) {
     test(

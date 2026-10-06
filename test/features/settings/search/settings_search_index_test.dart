@@ -37,16 +37,16 @@ void main() {
         contains('displaySettingsPageLanguageTitle'),
       );
       expect(
-        candidate.search('語言').map((e) => e.id),
+        candidate.search('\u8A9E\u8A00').map((e) => e.id),
         contains('displaySettingsPageLanguageTitle'),
       );
       expect(
-        candidate.search('字体').map((e) => e.id),
+        candidate.search('\u5B57\u4F53').map((e) => e.id),
         contains('displaySettingsPageChatFontSizeTitle'),
       );
       expect(candidate.search('ａｐｉ　ｋｅｙ').first.id, 'providers');
       expect(
-        candidate.search('毛玻璃').first.destination,
+        candidate.search('\u6BDB\u73BB\u7483').first.destination,
         SettingsSearchDestination.messageStyle,
       );
     }

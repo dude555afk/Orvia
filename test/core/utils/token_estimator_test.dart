@@ -24,11 +24,11 @@ void main() {
         ('Hello\nworld', 3),
         ('Hello,\nworld', 3),
         ('こんにちはみなさん', 7),
-        ('人工智能技术发展迅速', 9),
+        ('\u4EBA\u5DE5\u667A\u80FD\u6280\u672F\u53D1\u5C55\u8FC5\u901F', 9),
         ('안녕하세요반갑습니다', 7),
-        ('你好', 2),
-        ('你好hello', 7),
-        ('你好世界', 4),
+        ('\u4F60\u597D', 2),
+        ('\u4F60\u597Dhello', 7),
+        ('\u4F60\u597D\u4E16\u754C', 4),
         ('function add(a, b) {\n  return a + b;\n}', 15),
         ('{"name":"kelivo","count":12}', 9),
         ('Café über uns', 4),
@@ -45,8 +45,8 @@ void main() {
 
     test('digit grouping and long ASCII runs', () {
       expect(estimateTokens('a' * 1000), 143);
-      expect(estimateTokens('中' * 400), 348);
-      expect(estimateTokens('${'中' * 200}${'a' * 400}'), 522);
+      expect(estimateTokens('\u4E2D' * 400), 348);
+      expect(estimateTokens('${'\u4E2D' * 200}${'a' * 400}'), 522);
     });
   });
 
@@ -152,7 +152,7 @@ void main() {
       'The quick brown fox jumps over the lazy dog.',
       'function add(a, b) {\n  return a + b;\n}',
       '{"name":"kelivo","count":12}',
-      '人工智能技术发展迅速',
+      '\u4EBA\u5DE5\u667A\u80FD\u6280\u672F\u53D1\u5C55\u8FC5\u901F',
       'こんにちはみなさん',
     ];
 

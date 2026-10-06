@@ -240,7 +240,7 @@ void main() {
             ),
             DocumentAttachment(
               path: docx.path,
-              fileName: '报告.docx',
+              fileName: '\u62A5\u544A.docx',
               mime: '*/*',
             ),
           ],
@@ -276,7 +276,7 @@ void main() {
       final image = File(p.join(root.path, 'photo'))
         ..writeAsBytesSync([1, 2, 3]);
       final upload = Directory(p.join(root.path, 'upload'))..createSync();
-      final existing = File(p.join(upload.path, '文件.txt'))
+      final existing = File(p.join(upload.path, '\u6587\u4EF6.txt'))
         ..writeAsStringSync('keep');
       final input = await service.prepare([
         IncomingShare(
@@ -285,12 +285,12 @@ void main() {
           files: [
             DocumentAttachment(
               path: source.path,
-              fileName: '../文件.txt',
+              fileName: '../\u6587\u4EF6.txt',
               mime: 'text/plain',
             ),
             DocumentAttachment(
               path: image.path,
-              fileName: '图片.PNG',
+              fileName: '\u56FE\u7247.PNG',
               mime: 'image/png',
             ),
           ],
@@ -298,9 +298,9 @@ void main() {
         const IncomingShare(id: '2', text: 'https://example.com', files: []),
       ], uploadDirectory: upload);
       expect(input.text, 'first\n\nhttps://example.com');
-      expect(input.documents.single.fileName, '文件(1).txt');
+      expect(input.documents.single.fileName, '\u6587\u4EF6(1).txt');
       expect(input.documents.single.mime, 'text/plain');
-      expect(p.basename(input.imagePaths.single), '图片.PNG');
+      expect(p.basename(input.imagePaths.single), '\u56FE\u7247.PNG');
       expect(existing.readAsStringSync(), 'keep');
       source.deleteSync();
       image.deleteSync();

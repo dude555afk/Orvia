@@ -109,11 +109,14 @@ void main() {
     final l10n = await AppLocalizations.delegate.load(const Locale('zh'));
     await _openRulesEditor(tester, l10n.memoryPromptEditRulesTitle);
 
-    await tester.enterText(find.byType(TextField), '自定义规则');
+    await tester.enterText(
+      find.byType(TextField),
+      '\u81EA\u5B9A\u4E49\u89C4\u5219',
+    );
     await tester.tap(find.byTooltip(l10n.memoryPromptEditSave));
     await tester.pumpAndSettle();
 
-    expect(settings.memoryRulesPromptZh, '自定义规则');
+    expect(settings.memoryRulesPromptZh, '\u81EA\u5B9A\u4E49\u89C4\u5219');
     expect(settings.memoryRulesPromptEn, MemoryPrompts.rulesEn);
   });
 
@@ -133,11 +136,17 @@ void main() {
     final field = tester.widget<TextField>(find.byType(TextField));
     expect(field.controller!.text, MemoryPrompts.legacyRulesZh);
 
-    await tester.enterText(find.byType(TextField), '自定义旧版规则');
+    await tester.enterText(
+      find.byType(TextField),
+      '\u81EA\u5B9A\u4E49\u65E7\u7248\u89C4\u5219',
+    );
     await tester.tap(find.byTooltip(l10n.memoryPromptEditSave));
     await tester.pumpAndSettle();
 
-    expect(settings.legacyMemoryPromptZh, '自定义旧版规则');
+    expect(
+      settings.legacyMemoryPromptZh,
+      '\u81EA\u5B9A\u4E49\u65E7\u7248\u89C4\u5219',
+    );
     expect(settings.legacyMemoryPromptEn, MemoryPrompts.legacyRulesEn);
   });
 

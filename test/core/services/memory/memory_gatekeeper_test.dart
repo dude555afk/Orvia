@@ -48,7 +48,7 @@ void main() {
         overrideEn: 'EN',
       );
       expect(prompt, 'CUSTOM GATE hello');
-      expect(prompt, isNot(contains('分析以下对话')));
+      expect(prompt, isNot(contains('\u5206\u6790\u4EE5\u4E0B\u5BF9\u8BDD')));
     });
 
     test('falls back to built-in when override empty', () {

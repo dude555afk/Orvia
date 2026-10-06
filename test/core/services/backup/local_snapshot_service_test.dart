@@ -90,74 +90,86 @@ void main() {
       );
     }
 
-    test('升级后的第一次启动不立刻开跑，只是记下时间', () async {
-      // 装了这个版本的所有用户都没有备份记录。若不给宽限期，每个人都会在
-      // 更新后第一次启动的第 8 秒吃一次完整 vacuum + 打包——大库上就是几分钟。
-      await businessPreferences.remove(
-        LocalSnapshotPreferences.firstObservedAtKey,
-      );
-      final service = build();
+    test(
+      '\u5347\u7EA7\u540E\u7684\u7B2C\u4E00\u6B21\u542F\u52A8\u4E0D\u7ACB\u523B\u5F00\u8DD1，\u53EA\u662F\u8BB0\u4E0B\u65F6\u95F4',
+      () async {
+        // \u88C5\u4E86\u8FD9\u4E2A\u7248\u672C\u7684\u6240\u6709\u7528\u6237\u90FD\u6CA1\u6709\u5907\u4EFD\u8BB0\u5F55。\u82E5\u4E0D\u7ED9\u5BBD\u9650\u671F，\u6BCF\u4E2A\u4EBA\u90FD\u4F1A\u5728
+        // \u66F4\u65B0\u540E\u7B2C\u4E00\u6B21\u542F\u52A8\u7684\u7B2C 8 \u79D2\u5403\u4E00\u6B21\u5B8C\u6574 vacuum + \u6253\u5305——\u5927\u5E93\u4E0A\u5C31\u662F\u51E0\u5206\u949F。
+        await businessPreferences.remove(
+          LocalSnapshotPreferences.firstObservedAtKey,
+        );
+        final service = build();
 
-      final first = await service.runIfDue(now: DateTime.utc(2026, 5, 1));
+        final first = await service.runIfDue(now: DateTime.utc(2026, 5, 1));
 
-      expect(
-        (first as LocalSnapshotSkipped).reason,
-        LocalSnapshotSkipReason.notDue,
-      );
-      expect(packCount, 0);
-      expect(preferences.readState().firstObservedAt, isNotNull);
+        expect(
+          (first as LocalSnapshotSkipped).reason,
+          LocalSnapshotSkipReason.notDue,
+        );
+        expect(packCount, 0);
+        expect(preferences.readState().firstObservedAt, isNotNull);
 
-      // 宽限期内再检查也不动手。
-      final second = await service.runIfDue(
-        now: DateTime.utc(2026, 5, 1, 0, 5),
-      );
-      expect(
-        (second as LocalSnapshotSkipped).reason,
-        LocalSnapshotSkipReason.notDue,
-      );
-      expect(packCount, 0);
+        // \u5BBD\u9650\u671F\u5185\u518D\u68C0\u67E5\u4E5F\u4E0D\u52A8\u624B。
+        final second = await service.runIfDue(
+          now: DateTime.utc(2026, 5, 1, 0, 5),
+        );
+        expect(
+          (second as LocalSnapshotSkipped).reason,
+          LocalSnapshotSkipReason.notDue,
+        );
+        expect(packCount, 0);
 
-      // 过了就正常备份。
-      final third = await service.runIfDue(now: DateTime.utc(2026, 5, 1, 1));
-      expect(third, isA<LocalSnapshotCreated>());
-      expect(packCount, 1);
-    });
+        // \u8FC7\u4E86\u5C31\u6B63\u5E38\u5907\u4EFD。
+        final third = await service.runIfDue(now: DateTime.utc(2026, 5, 1, 1));
+        expect(third, isA<LocalSnapshotCreated>());
+        expect(packCount, 1);
+      },
+    );
 
-    test('宽限期只管第一次，之后按周期走', () async {
-      final service = build();
-      await service.runIfDue(now: DateTime.utc(2026, 5, 1));
-      expect(packCount, 1);
-      await touchDatabase();
+    test(
+      '\u5BBD\u9650\u671F\u53EA\u7BA1\u7B2C\u4E00\u6B21，\u4E4B\u540E\u6309\u5468\u671F\u8D70',
+      () async {
+        final service = build();
+        await service.runIfDue(now: DateTime.utc(2026, 5, 1));
+        expect(packCount, 1);
+        await touchDatabase();
 
-      final result = await service.runIfDue(now: DateTime.utc(2026, 5, 2, 1));
+        final result = await service.runIfDue(now: DateTime.utc(2026, 5, 2, 1));
 
-      expect(result, isA<LocalSnapshotCreated>());
-      expect(packCount, 2);
-    });
+        expect(result, isA<LocalSnapshotCreated>());
+        expect(packCount, 2);
+      },
+    );
 
-    test('被占用时也把原因记下来', () async {
-      await build(
-        isBusy: () => LocalSnapshotSkipReason.generating,
-      ).runIfDue(now: DateTime.utc(2026, 5, 1));
+    test(
+      '\u88AB\u5360\u7528\u65F6\u4E5F\u628A\u539F\u56E0\u8BB0\u4E0B\u6765',
+      () async {
+        await build(
+          isBusy: () => LocalSnapshotSkipReason.generating,
+        ).runIfDue(now: DateTime.utc(2026, 5, 1));
 
-      expect(
-        preferences.readState().lastSkipReason,
-        LocalSnapshotSkipReason.generating,
-      );
-    });
+        expect(
+          preferences.readState().lastSkipReason,
+          LocalSnapshotSkipReason.generating,
+        );
+      },
+    );
 
-    test('首次运行就产一份副本', () async {
-      final result = await build().runIfDue(now: DateTime.utc(2026, 5, 1));
+    test(
+      '\u9996\u6B21\u8FD0\u884C\u5C31\u4EA7\u4E00\u4EFD\u526F\u672C',
+      () async {
+        final result = await build().runIfDue(now: DateTime.utc(2026, 5, 1));
 
-      expect(result, isA<LocalSnapshotCreated>());
-      expect(packCount, 1);
-      final entry = (result as LocalSnapshotCreated).entry;
-      expect(entry.messageCount, 100);
-      expect(entry.origin, LocalSnapshotOrigin.automatic);
-      expect(await entry.file.exists(), isTrue);
-    });
+        expect(result, isA<LocalSnapshotCreated>());
+        expect(packCount, 1);
+        final entry = (result as LocalSnapshotCreated).entry;
+        expect(entry.messageCount, 100);
+        expect(entry.origin, LocalSnapshotOrigin.automatic);
+        expect(await entry.file.exists(), isTrue);
+      },
+    );
 
-    test('未到周期不重复产', () async {
+    test('\u672A\u5230\u5468\u671F\u4E0D\u91CD\u590D\u4EA7', () async {
       final service = build();
       await service.runIfDue(now: DateTime.utc(2026, 5, 1));
       await touchDatabase();
@@ -172,32 +184,38 @@ void main() {
       expect(packCount, 1);
     });
 
-    test('数据没变就整轮跳过，不做任何打包', () async {
-      final service = build();
-      await service.runIfDue(now: DateTime.utc(2026, 5, 1));
+    test(
+      '\u6570\u636E\u6CA1\u53D8\u5C31\u6574\u8F6E\u8DF3\u8FC7，\u4E0D\u505A\u4EFB\u4F55\u6253\u5305',
+      () async {
+        final service = build();
+        await service.runIfDue(now: DateTime.utc(2026, 5, 1));
 
-      final result = await service.runIfDue(now: DateTime.utc(2026, 5, 3));
+        final result = await service.runIfDue(now: DateTime.utc(2026, 5, 3));
 
-      expect(
-        (result as LocalSnapshotSkipped).reason,
-        LocalSnapshotSkipReason.unchanged,
-      );
-      expect(packCount, 1);
-    });
+        expect(
+          (result as LocalSnapshotSkipped).reason,
+          LocalSnapshotSkipReason.unchanged,
+        );
+        expect(packCount, 1);
+      },
+    );
 
-    test('跳过"没变"不推进上次成功时间，改动后立刻就能产', () async {
-      final service = build();
-      await service.runIfDue(now: DateTime.utc(2026, 5, 1));
-      await service.runIfDue(now: DateTime.utc(2026, 5, 3));
+    test(
+      '\u8DF3\u8FC7"\u6CA1\u53D8"\u4E0D\u63A8\u8FDB\u4E0A\u6B21\u6210\u529F\u65F6\u95F4，\u6539\u52A8\u540E\u7ACB\u523B\u5C31\u80FD\u4EA7',
+      () async {
+        final service = build();
+        await service.runIfDue(now: DateTime.utc(2026, 5, 1));
+        await service.runIfDue(now: DateTime.utc(2026, 5, 3));
 
-      await touchDatabase();
-      final result = await service.runIfDue(now: DateTime.utc(2026, 5, 3, 1));
+        await touchDatabase();
+        final result = await service.runIfDue(now: DateTime.utc(2026, 5, 3, 1));
 
-      expect(result, isA<LocalSnapshotCreated>());
-      expect(packCount, 2);
-    });
+        expect(result, isA<LocalSnapshotCreated>());
+        expect(packCount, 2);
+      },
+    );
 
-    test('关闭后不跑', () async {
+    test('\u5173\u95ED\u540E\u4E0D\u8DD1', () async {
       await preferences.writeSettings(
         const LocalSnapshotSettings(enabled: false),
       );
@@ -211,80 +229,97 @@ void main() {
       expect(packCount, 0);
     });
 
-    test('正在生成时让路，不与用户抢 IO', () async {
-      final result = await build(
-        isBusy: () => LocalSnapshotSkipReason.generating,
-      ).runIfDue(now: DateTime.utc(2026, 5, 1));
+    test(
+      '\u6B63\u5728\u751F\u6210\u65F6\u8BA9\u8DEF，\u4E0D\u4E0E\u7528\u6237\u62A2 IO',
+      () async {
+        final result = await build(
+          isBusy: () => LocalSnapshotSkipReason.generating,
+        ).runIfDue(now: DateTime.utc(2026, 5, 1));
 
-      expect(
-        (result as LocalSnapshotSkipped).reason,
-        LocalSnapshotSkipReason.generating,
-      );
-      expect(packCount, 0);
-    });
+        expect(
+          (result as LocalSnapshotSkipped).reason,
+          LocalSnapshotSkipReason.generating,
+        );
+        expect(packCount, 0);
+      },
+    );
 
-    test('剩余空间不足时不动手', () async {
-      final result = await build(
-        freeBytes: () async => LocalSnapshotSchedule.freeSpaceFloor,
-      ).runIfDue(now: DateTime.utc(2026, 5, 1));
+    test(
+      '\u5269\u4F59\u7A7A\u95F4\u4E0D\u8DB3\u65F6\u4E0D\u52A8\u624B',
+      () async {
+        final result = await build(
+          freeBytes: () async => LocalSnapshotSchedule.freeSpaceFloor,
+        ).runIfDue(now: DateTime.utc(2026, 5, 1));
 
-      expect(
-        (result as LocalSnapshotSkipped).reason,
-        LocalSnapshotSkipReason.insufficientSpace,
-      );
-      expect(packCount, 0);
-      expect(
-        preferences.readState().lastSkipReason,
-        LocalSnapshotSkipReason.insufficientSpace,
-      );
-    });
+        expect(
+          (result as LocalSnapshotSkipped).reason,
+          LocalSnapshotSkipReason.insufficientSpace,
+        );
+        expect(packCount, 0);
+        expect(
+          preferences.readState().lastSkipReason,
+          LocalSnapshotSkipReason.insufficientSpace,
+        );
+      },
+    );
 
-    test('探测不到剩余空间时照常进行', () async {
-      final result = await build(
-        freeBytes: () async => null,
-      ).runIfDue(now: DateTime.utc(2026, 5, 1));
+    test(
+      '\u63A2\u6D4B\u4E0D\u5230\u5269\u4F59\u7A7A\u95F4\u65F6\u7167\u5E38\u8FDB\u884C',
+      () async {
+        final result = await build(
+          freeBytes: () async => null,
+        ).runIfDue(now: DateTime.utc(2026, 5, 1));
 
-      expect(result, isA<LocalSnapshotCreated>());
-    });
+        expect(result, isA<LocalSnapshotCreated>());
+      },
+    );
 
-    test('打包失败被记录下来，且不抛给调用方', () async {
-      packError = StateError('disk on fire');
+    test(
+      '\u6253\u5305\u5931\u8D25\u88AB\u8BB0\u5F55\u4E0B\u6765，\u4E14\u4E0D\u629B\u7ED9\u8C03\u7528\u65B9',
+      () async {
+        packError = StateError('disk on fire');
 
-      final result = await build().runIfDue(now: DateTime.utc(2026, 5, 1));
+        final result = await build().runIfDue(now: DateTime.utc(2026, 5, 1));
 
-      expect(result, isA<LocalSnapshotFailed>());
-      final state = preferences.readState();
-      expect(state.failureStreak, 1);
-      expect(state.lastFailureMessage, contains('disk on fire'));
-      expect(state.lastSuccessAt, isNull);
-    });
+        expect(result, isA<LocalSnapshotFailed>());
+        final state = preferences.readState();
+        expect(state.failureStreak, 1);
+        expect(state.lastFailureMessage, contains('disk on fire'));
+        expect(state.lastSuccessAt, isNull);
+      },
+    );
 
-    test('连续失败退避越来越久，不是每次 resume 都白跑', () async {
-      packError = StateError('nope');
-      final service = build();
-      await service.runIfDue(now: DateTime.utc(2026, 5, 1));
+    test(
+      '\u8FDE\u7EED\u5931\u8D25\u9000\u907F\u8D8A\u6765\u8D8A\u4E45，\u4E0D\u662F\u6BCF\u6B21 resume \u90FD\u767D\u8DD1',
+      () async {
+        packError = StateError('nope');
+        final service = build();
+        await service.runIfDue(now: DateTime.utc(2026, 5, 1));
 
-      // 一小时内不重试。
-      var result = await service.runIfDue(now: DateTime.utc(2026, 5, 1, 0, 30));
-      expect(
-        (result as LocalSnapshotSkipped).reason,
-        LocalSnapshotSkipReason.backoff,
-      );
-      expect(packCount, 1);
+        // \u4E00\u5C0F\u65F6\u5185\u4E0D\u91CD\u8BD5。
+        var result = await service.runIfDue(
+          now: DateTime.utc(2026, 5, 1, 0, 30),
+        );
+        expect(
+          (result as LocalSnapshotSkipped).reason,
+          LocalSnapshotSkipReason.backoff,
+        );
+        expect(packCount, 1);
 
-      // 退避窗口过后重试，再失败一次窗口翻倍。
-      result = await service.runIfDue(now: DateTime.utc(2026, 5, 1, 2));
-      expect(result, isA<LocalSnapshotFailed>());
-      expect(preferences.readState().failureStreak, 2);
+        // \u9000\u907F\u7A97\u53E3\u8FC7\u540E\u91CD\u8BD5，\u518D\u5931\u8D25\u4E00\u6B21\u7A97\u53E3\u7FFB\u500D。
+        result = await service.runIfDue(now: DateTime.utc(2026, 5, 1, 2));
+        expect(result, isA<LocalSnapshotFailed>());
+        expect(preferences.readState().failureStreak, 2);
 
-      result = await service.runIfDue(now: DateTime.utc(2026, 5, 1, 3, 30));
-      expect(
-        (result as LocalSnapshotSkipped).reason,
-        LocalSnapshotSkipReason.backoff,
-      );
-    });
+        result = await service.runIfDue(now: DateTime.utc(2026, 5, 1, 3, 30));
+        expect(
+          (result as LocalSnapshotSkipped).reason,
+          LocalSnapshotSkipReason.backoff,
+        );
+      },
+    );
 
-    test('成功后清空失败计数', () async {
+    test('\u6210\u529F\u540E\u6E05\u7A7A\u5931\u8D25\u8BA1\u6570', () async {
       packError = StateError('nope');
       final service = build();
       await service.runIfDue(now: DateTime.utc(2026, 5, 1));
@@ -298,32 +333,35 @@ void main() {
       expect(state.lastSuccessAt, isNotNull);
     });
 
-    test('产完顺带按策略清理，但不碰最新一份有内容的', () async {
-      await preferences.writeSettings(
-        const LocalSnapshotSettings(
-          keepRecent: 1,
-          keepWeekly: false,
-          keepMonthly: false,
-        ),
-      );
-      final service = build();
+    test(
+      '\u4EA7\u5B8C\u987A\u5E26\u6309\u7B56\u7565\u6E05\u7406，\u4F46\u4E0D\u78B0\u6700\u65B0\u4E00\u4EFD\u6709\u5185\u5BB9\u7684',
+      () async {
+        await preferences.writeSettings(
+          const LocalSnapshotSettings(
+            keepRecent: 1,
+            keepWeekly: false,
+            keepMonthly: false,
+          ),
+        );
+        final service = build();
 
-      await service.runIfDue(now: DateTime.utc(2026, 5, 1));
-      await touchDatabase();
-      await service.runIfDue(now: DateTime.utc(2026, 5, 3));
-      await touchDatabase();
-      messageCount = 0;
-      final result = await service.runIfDue(now: DateTime.utc(2026, 5, 5));
+        await service.runIfDue(now: DateTime.utc(2026, 5, 1));
+        await touchDatabase();
+        await service.runIfDue(now: DateTime.utc(2026, 5, 3));
+        await touchDatabase();
+        messageCount = 0;
+        final result = await service.runIfDue(now: DateTime.utc(2026, 5, 5));
 
-      expect(result, isA<LocalSnapshotCreated>());
-      final remaining = await service.store.list();
-      // 最新的那份是空的，所以最后一份有内容的必须留着。
-      expect(remaining, hasLength(2));
-      expect(remaining.first.messageCount, 0);
-      expect(remaining.last.messageCount, greaterThan(0));
-    });
+        expect(result, isA<LocalSnapshotCreated>());
+        final remaining = await service.store.list();
+        // \u6700\u65B0\u7684\u90A3\u4EFD\u662F\u7A7A\u7684，\u6240\u4EE5\u6700\u540E\u4E00\u4EFD\u6709\u5185\u5BB9\u7684\u5FC5\u987B\u7559\u7740。
+        expect(remaining, hasLength(2));
+        expect(remaining.first.messageCount, 0);
+        expect(remaining.last.messageCount, greaterThan(0));
+      },
+    );
 
-    test('大库默认拉长周期', () async {
+    test('\u5927\u5E93\u9ED8\u8BA4\u62C9\u957F\u5468\u671F', () async {
       expect(
         LocalSnapshotSchedule.defaultIntervalFor(10 * 1024 * 1024),
         const Duration(days: 1),
@@ -338,72 +376,87 @@ void main() {
       );
     });
 
-    test('用户设定的周期覆盖自适应默认值', () async {
-      await preferences.writeSettings(
-        const LocalSnapshotSettings(intervalDays: 7),
-      );
-      final service = build();
-      await service.runIfDue(now: DateTime.utc(2026, 5, 1));
-      await touchDatabase();
+    test(
+      '\u7528\u6237\u8BBE\u5B9A\u7684\u5468\u671F\u8986\u76D6\u81EA\u9002\u5E94\u9ED8\u8BA4\u503C',
+      () async {
+        await preferences.writeSettings(
+          const LocalSnapshotSettings(intervalDays: 7),
+        );
+        final service = build();
+        await service.runIfDue(now: DateTime.utc(2026, 5, 1));
+        await touchDatabase();
 
-      final result = await service.runIfDue(now: DateTime.utc(2026, 5, 4));
+        final result = await service.runIfDue(now: DateTime.utc(2026, 5, 4));
 
-      expect(
-        (result as LocalSnapshotSkipped).reason,
-        LocalSnapshotSkipReason.notDue,
-      );
-    });
+        expect(
+          (result as LocalSnapshotSkipped).reason,
+          LocalSnapshotSkipReason.notDue,
+        );
+      },
+    );
 
-    test('备份进行当中写入的数据，下一轮仍会被当作有改动', () async {
-      // 记录的指纹必须描述"这份副本装的是哪个状态"，也就是备份开始之前那个。
-      // 若记成备份结束后的状态，备份进行期间写进去的数据会被"没变化"这道闸
-      // 永远挡在外面——除非之后又恰好有别的改动，否则再也不会被备份到。
-      final service = build();
-      duringPack = touchDatabase;
-      await service.runIfDue(now: DateTime.utc(2026, 5, 1));
-      expect(packCount, 1);
-      duringPack = null;
+    test(
+      '\u5907\u4EFD\u8FDB\u884C\u5F53\u4E2D\u5199\u5165\u7684\u6570\u636E，\u4E0B\u4E00\u8F6E\u4ECD\u4F1A\u88AB\u5F53\u4F5C\u6709\u6539\u52A8',
+      () async {
+        // \u8BB0\u5F55\u7684\u6307\u7EB9\u5FC5\u987B\u63CF\u8FF0"\u8FD9\u4EFD\u526F\u672C\u88C5\u7684\u662F\u54EA\u4E2A\u72B6\u6001"，\u4E5F\u5C31\u662F\u5907\u4EFD\u5F00\u59CB\u4E4B\u524D\u90A3\u4E2A。
+        // \u82E5\u8BB0\u6210\u5907\u4EFD\u7ED3\u675F\u540E\u7684\u72B6\u6001，\u5907\u4EFD\u8FDB\u884C\u671F\u95F4\u5199\u8FDB\u53BB\u7684\u6570\u636E\u4F1A\u88AB"\u6CA1\u53D8\u5316"\u8FD9\u9053\u95F8
+        // \u6C38\u8FDC\u6321\u5728\u5916\u9762——\u9664\u975E\u4E4B\u540E\u53C8\u6070\u597D\u6709\u522B\u7684\u6539\u52A8，\u5426\u5219\u518D\u4E5F\u4E0D\u4F1A\u88AB\u5907\u4EFD\u5230。
+        final service = build();
+        duringPack = touchDatabase;
+        await service.runIfDue(now: DateTime.utc(2026, 5, 1));
+        expect(packCount, 1);
+        duringPack = null;
 
-      final result = await service.runIfDue(now: DateTime.utc(2026, 5, 3));
+        final result = await service.runIfDue(now: DateTime.utc(2026, 5, 3));
 
-      expect(result, isA<LocalSnapshotCreated>());
-      expect(packCount, 2);
-    });
+        expect(result, isA<LocalSnapshotCreated>());
+        expect(packCount, 2);
+      },
+    );
 
-    test('手动备份失败也要留下记录，否则转后台失败就无声无息', () async {
-      // 转到后台之后弹窗已经卸载，异步错误被消费掉只用于释放资源。
-      // 若这里不记，用户只会看到"正在后台备份"，然后再无下文。
-      packError = StateError('device is full');
-      final service = build();
+    test(
+      '\u624B\u52A8\u5907\u4EFD\u5931\u8D25\u4E5F\u8981\u7559\u4E0B\u8BB0\u5F55，\u5426\u5219\u8F6C\u540E\u53F0\u5931\u8D25\u5C31\u65E0\u58F0\u65E0\u606F',
+      () async {
+        // \u8F6C\u5230\u540E\u53F0\u4E4B\u540E\u5F39\u7A97\u5DF2\u7ECF\u5378\u8F7D，\u5F02\u6B65\u9519\u8BEF\u88AB\u6D88\u8D39\u6389\u53EA\u7528\u4E8E\u91CA\u653E\u8D44\u6E90。
+        // \u82E5\u8FD9\u91CC\u4E0D\u8BB0，\u7528\u6237\u53EA\u4F1A\u770B\u5230"\u6B63\u5728\u540E\u53F0\u5907\u4EFD"，\u7136\u540E\u518D\u65E0\u4E0B\u6587。
+        packError = StateError('device is full');
+        final service = build();
 
-      await expectLater(
-        service.take(origin: LocalSnapshotOrigin.manual),
-        throwsA(isA<StateError>()),
-      );
+        await expectLater(
+          service.take(origin: LocalSnapshotOrigin.manual),
+          throwsA(isA<StateError>()),
+        );
 
-      // 服务层只负责抛；记录发生在 provider 层（见 local_snapshot_provider）。
-      expect(await service.store.list(), isEmpty);
-    });
+        // \u670D\u52A1\u5C42\u53EA\u8D1F\u8D23\u629B；\u8BB0\u5F55\u53D1\u751F\u5728 provider \u5C42（\u89C1 local_snapshot_provider）。
+        expect(await service.store.list(), isEmpty);
+      },
+    );
 
-    test('手动一份标成 manual，且不受周期限制', () async {
-      final service = build();
-      await service.runIfDue(now: DateTime.utc(2026, 5, 1));
+    test(
+      '\u624B\u52A8\u4E00\u4EFD\u6807\u6210 manual，\u4E14\u4E0D\u53D7\u5468\u671F\u9650\u5236',
+      () async {
+        final service = build();
+        await service.runIfDue(now: DateTime.utc(2026, 5, 1));
 
-      final entry = await service.take(origin: LocalSnapshotOrigin.manual);
+        final entry = await service.take(origin: LocalSnapshotOrigin.manual);
 
-      expect(entry.origin, LocalSnapshotOrigin.manual);
-      expect(await service.store.list(), hasLength(2));
-    });
+        expect(entry.origin, LocalSnapshotOrigin.manual);
+        expect(await service.store.list(), hasLength(2));
+      },
+    );
 
-    test('打包产物在发布后不残留在临时位置', () async {
-      final service = build();
-      await service.take(origin: LocalSnapshotOrigin.manual);
+    test(
+      '\u6253\u5305\u4EA7\u7269\u5728\u53D1\u5E03\u540E\u4E0D\u6B8B\u7559\u5728\u4E34\u65F6\u4F4D\u7F6E',
+      () async {
+        final service = build();
+        await service.take(origin: LocalSnapshotOrigin.manual);
 
-      final strays = await root
-          .list()
-          .where((entity) => p.basename(entity.path).startsWith('packed_'))
-          .toList();
-      expect(strays, isEmpty);
-    });
+        final strays = await root
+            .list()
+            .where((entity) => p.basename(entity.path).startsWith('packed_'))
+            .toList();
+        expect(strays, isEmpty);
+      },
+    );
   });
 }

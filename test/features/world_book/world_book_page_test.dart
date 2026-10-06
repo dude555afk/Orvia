@@ -171,10 +171,12 @@ void main() {
           await tester.runAsync(
             () => provider.updateBook(
               provider.books.single.copyWith(
-                name: 'A world with a long name 很长的世界书名称',
+                name:
+                    'A world with a long name \u5F88\u957F\u7684\u4E16\u754C\u4E66\u540D\u79F0',
                 entries: [
                   provider.books.single.entries.first.copyWith(
-                    name: 'A very long entry title 很长的条目名称',
+                    name:
+                        'A very long entry title \u5F88\u957F\u7684\u6761\u76EE\u540D\u79F0',
                   ),
                   ...provider.books.single.entries.skip(1),
                 ],

@@ -529,7 +529,8 @@ void main() {
           tester,
           'ios-preparation-prompt-${width.toInt()}-$locale-${dark ? 'dark' : 'light'}',
         );
-        const custom = '只输出助手消息。\n时间 {{scheduled_time}} / {{utc_offset}}';
+        const custom =
+            '\u53EA\u8F93\u51FA\u52A9\u624B\u6D88\u606F。\n\u65F6\u95F4 {{scheduled_time}} / {{utc_offset}}';
         await tester.enterText(field, custom);
         await tap(tester, find.byKey(const ValueKey('scheduled-tasks-action')));
         expect(saved!.preparationPrompt, custom);
@@ -992,8 +993,9 @@ void main() {
         addTearDown(tester.view.resetDevicePixelRatio);
         final task = ScheduledTask(
           id: 'task',
-          name: '晨间简报',
-          prompt: '整理项目的最新进展，总结今天需要关注的事项。',
+          name: '\u6668\u95F4\u7B80\u62A5',
+          prompt:
+              '\u6574\u7406\u9879\u76EE\u7684\u6700\u65B0\u8FDB\u5C55，\u603B\u7ED3\u4ECA\u5929\u9700\u8981\u5173\u6CE8\u7684\u4E8B\u9879。',
           assistantId: 'assistant',
           hour: 8,
           minute: 30,

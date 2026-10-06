@@ -44,92 +44,95 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   SharedPreferences.setMockInitialValues(const {});
 
-  testWidgets('后台生成失败时收尾写库再失败，原始错误仍然送到 UI', (tester) async {
-    final service = _ThrowingFinalizeChatService();
-    final settings = SettingsProvider(createBusinessTestPreferences());
-    final streamErrors = <String>[];
-    final clearedIndicatorIds = <String?>[];
-    late HomeViewModel viewModel;
+  testWidgets(
+    '\u540E\u53F0\u751F\u6210\u5931\u8D25\u65F6\u6536\u5C3E\u5199\u5E93\u518D\u5931\u8D25，\u539F\u59CB\u9519\u8BEF\u4ECD\u7136\u9001\u5230 UI',
+    (tester) async {
+      final service = _ThrowingFinalizeChatService();
+      final settings = SettingsProvider(createBusinessTestPreferences());
+      final streamErrors = <String>[];
+      final clearedIndicatorIds = <String?>[];
+      late HomeViewModel viewModel;
 
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<SettingsProvider>.value(value: settings),
-          ChangeNotifierProvider<ChatService>.value(value: service),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Builder(
-            builder: (context) {
-              final chatController = ChatController(chatService: service);
-              final streamController = StreamController(
-                onStateChanged: () {},
-                getSettingsProvider: () => settings,
-                getCurrentConversationId: () => 'conversation-1',
-              );
-              final messageBuilder = MessageBuilderService(
-                chatService: service,
-                contextProvider: context,
-              );
-              final generationController = GenerationController(
-                chatService: service,
-                chatController: chatController,
-                streamController: streamController,
-                messageBuilderService: messageBuilder,
-                contextProvider: context,
-                onStateChanged: () {},
-                getTitleForLocale: (_) => 'title',
-              );
-              final messageGeneration = MessageGenerationService(
-                chatService: service,
-                messageBuilderService: messageBuilder,
-                generationController: generationController,
-                streamController: streamController,
-                contextProvider: context,
-              );
-              viewModel = HomeViewModel(
-                chatService: service,
-                messageBuilderService: messageBuilder,
-                messageGenerationService: messageGeneration,
-                generationController: generationController,
-                streamController: streamController,
-                chatController: chatController,
-                contextProvider: context,
-                getTitleForLocale: (_) => 'title',
-              );
-              viewModel.debugChatActions.onStreamError = streamErrors.add;
-              viewModel.debugChatActions.onFileProcessingFinished =
-                  clearedIndicatorIds.add;
-              return const SizedBox.shrink();
-            },
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<SettingsProvider>.value(value: settings),
+            ChangeNotifierProvider<ChatService>.value(value: service),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Builder(
+              builder: (context) {
+                final chatController = ChatController(chatService: service);
+                final streamController = StreamController(
+                  onStateChanged: () {},
+                  getSettingsProvider: () => settings,
+                  getCurrentConversationId: () => 'conversation-1',
+                );
+                final messageBuilder = MessageBuilderService(
+                  chatService: service,
+                  contextProvider: context,
+                );
+                final generationController = GenerationController(
+                  chatService: service,
+                  chatController: chatController,
+                  streamController: streamController,
+                  messageBuilderService: messageBuilder,
+                  contextProvider: context,
+                  onStateChanged: () {},
+                  getTitleForLocale: (_) => 'title',
+                );
+                final messageGeneration = MessageGenerationService(
+                  chatService: service,
+                  messageBuilderService: messageBuilder,
+                  generationController: generationController,
+                  streamController: streamController,
+                  contextProvider: context,
+                );
+                viewModel = HomeViewModel(
+                  chatService: service,
+                  messageBuilderService: messageBuilder,
+                  messageGenerationService: messageGeneration,
+                  generationController: generationController,
+                  streamController: streamController,
+                  chatController: chatController,
+                  contextProvider: context,
+                  getTitleForLocale: (_) => 'title',
+                );
+                viewModel.debugChatActions.onStreamError = streamErrors.add;
+                viewModel.debugChatActions.onFileProcessingFinished =
+                    clearedIndicatorIds.add;
+                return const SizedBox.shrink();
+              },
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    final assistantMessage = ChatMessage(
-      id: 'assistant-1',
-      role: 'assistant',
-      content: '',
-      conversationId: 'conversation-1',
-      isStreaming: true,
-    );
+      final assistantMessage = ChatMessage(
+        id: 'assistant-1',
+        role: 'assistant',
+        content: '',
+        conversationId: 'conversation-1',
+        isStreaming: true,
+      );
 
-    // Must complete rather than throw: nobody awaits the send generation
-    // future, so an escaping error would become an unhandled async error.
-    await viewModel.debugChatActions.handleSendGenerationFailure(
-      error: StateError('generation failed'),
-      conversationId: 'conversation-1',
-      assistantMessage: assistantMessage,
-    );
+      // Must complete rather than throw: nobody awaits the send generation
+      // future, so an escaping error would become an unhandled async error.
+      await viewModel.debugChatActions.handleSendGenerationFailure(
+        error: StateError('generation failed'),
+        conversationId: 'conversation-1',
+        assistantMessage: assistantMessage,
+      );
 
-    expect(service.terminalStates, [GenerationRunState.failed]);
-    expect(service.errorCodes, ['preparation_failed']);
-    expect(streamErrors, ['Bad state: generation failed']);
-    // The indicator is released for this message only, never globally.
-    expect(clearedIndicatorIds, ['assistant-1']);
-  });
+      expect(service.terminalStates, [GenerationRunState.failed]);
+      expect(service.errorCodes, ['preparation_failed']);
+      expect(streamErrors, ['Bad state: generation failed']);
+      // The indicator is released for this message only, never globally.
+      expect(clearedIndicatorIds, ['assistant-1']);
+    },
+  );
 
   testWidgets('cancelled prepare does not notify onStreamError', (
     tester,

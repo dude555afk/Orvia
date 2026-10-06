@@ -298,7 +298,7 @@ void main() {
     (tester) async {
       const id = 'bound-after-send';
       late String workspaceId;
-      final source = File(p.join(tempDir.path, '项目.zip'))
+      final source = File(p.join(tempDir.path, '\u9879\u76EE.zip'))
         ..writeAsBytesSync([80, 75, 0, 1]);
       await tester.runAsync(() async {
         workspaceId = (await workspaces.create(name: 'Work')).id;
@@ -325,18 +325,23 @@ void main() {
             ChatMessage(
               role: 'user',
               conversationId: id,
-              parts: [FilePart(uri: source.path, name: '项目.zip')],
+              parts: [FilePart(uri: source.path, name: '\u9879\u76EE.zip')],
             ),
           ],
         ),
       );
       await _awaitPanel(tester);
-      expect(find.byKey(FileBrowser.itemKey('项目.zip')), findsOneWidget);
+      expect(
+        find.byKey(FileBrowser.itemKey('\u9879\u76EE.zip')),
+        findsOneWidget,
+      );
       final session = await tester.runAsync(
         () => AppDirectories.sessionDir(id),
       );
       expect(
-        File(p.join(session!.path, 'attachments', '项目.zip')).readAsBytesSync(),
+        File(
+          p.join(session!.path, 'attachments', '\u9879\u76EE.zip'),
+        ).readAsBytesSync(),
         [80, 75, 0, 1],
       );
     },

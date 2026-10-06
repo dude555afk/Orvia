@@ -6,25 +6,31 @@ import 'package:Kelivo/features/home/controllers/chat_actions.dart';
 
 void main() {
   group('ChatActions.resolveStreamErrorContent', () {
-    test('零正文失败时把错误信息写入助手消息', () {
-      expect(
-        ChatActions.resolveStreamErrorContent(
-          partialContent: '',
-          errorText: 'Connection failed',
-        ),
-        'Connection failed',
-      );
-    });
+    test(
+      '\u96F6\u6B63\u6587\u5931\u8D25\u65F6\u628A\u9519\u8BEF\u4FE1\u606F\u5199\u5165\u52A9\u624B\u6D88\u606F',
+      () {
+        expect(
+          ChatActions.resolveStreamErrorContent(
+            partialContent: '',
+            errorText: 'Connection failed',
+          ),
+          'Connection failed',
+        );
+      },
+    );
 
-    test('已有部分回复时保留回复正文', () {
-      expect(
-        ChatActions.resolveStreamErrorContent(
-          partialContent: 'Partial response',
-          errorText: 'Connection failed',
-        ),
-        'Partial response',
-      );
-    });
+    test(
+      '\u5DF2\u6709\u90E8\u5206\u56DE\u590D\u65F6\u4FDD\u7559\u56DE\u590D\u6B63\u6587',
+      () {
+        expect(
+          ChatActions.resolveStreamErrorContent(
+            partialContent: 'Partial response',
+            errorText: 'Connection failed',
+          ),
+          'Partial response',
+        );
+      },
+    );
   });
 
   group('ChatActions.listenSequentiallyToStream', () {
@@ -87,35 +93,38 @@ void main() {
       },
     );
 
-    test('正常流按顺序处理 chunk 并调用 done', () async {
-      final controller = async.StreamController<int>();
-      final done = async.Completer<void>();
-      final seen = <int>[];
+    test(
+      '\u6B63\u5E38\u6D41\u6309\u987A\u5E8F\u5904\u7406 chunk \u5E76\u8C03\u7528 done',
+      () async {
+        final controller = async.StreamController<int>();
+        final done = async.Completer<void>();
+        final seen = <int>[];
 
-      final subscription = ChatActions.listenSequentiallyToStream<int>(
-        stream: controller.stream,
-        onData: (value) async {
-          seen.add(value);
-        },
-        onError: (error, stackTrace) async {
-          fail('unexpected stream error: $error');
-        },
-        onDone: () async {
-          done.complete();
-        },
-      );
-      addTearDown(subscription.cancel);
+        final subscription = ChatActions.listenSequentiallyToStream<int>(
+          stream: controller.stream,
+          onData: (value) async {
+            seen.add(value);
+          },
+          onError: (error, stackTrace) async {
+            fail('unexpected stream error: $error');
+          },
+          onDone: () async {
+            done.complete();
+          },
+        );
+        addTearDown(subscription.cancel);
 
-      controller
-        ..add(1)
-        ..add(2);
-      await controller.close();
-      await done.future.timeout(const Duration(seconds: 1));
+        controller
+          ..add(1)
+          ..add(2);
+        await controller.close();
+        await done.future.timeout(const Duration(seconds: 1));
 
-      expect(seen, const [1, 2]);
-    });
+        expect(seen, const [1, 2]);
+      },
+    );
 
-    test('空流直接调用 done', () async {
+    test('\u7A7A\u6D41\u76F4\u63A5\u8C03\u7528 done', () async {
       final controller = async.StreamController<int>();
       final done = async.Completer<void>();
 
@@ -139,60 +148,70 @@ void main() {
       expect(done.isCompleted, isTrue);
     });
 
-    test('chunk 处理异步失败时进入 error 收尾且不再调用 done', () async {
-      final controller = async.StreamController<int>();
-      final errorSeen = async.Completer<Object>();
-      var doneCalled = false;
+    test(
+      'chunk \u5904\u7406\u5F02\u6B65\u5931\u8D25\u65F6\u8FDB\u5165 error \u6536\u5C3E\u4E14\u4E0D\u518D\u8C03\u7528 done',
+      () async {
+        final controller = async.StreamController<int>();
+        final errorSeen = async.Completer<Object>();
+        var doneCalled = false;
 
-      final subscription = ChatActions.listenSequentiallyToStream<int>(
-        stream: controller.stream,
-        onData: (value) async {
-          if (value == 2) {
-            throw StateError('chunk failed');
-          }
-        },
-        onError: (error, stackTrace) async {
-          errorSeen.complete(error);
-        },
-        onDone: () async {
-          doneCalled = true;
-        },
-      );
-      addTearDown(subscription.cancel);
+        final subscription = ChatActions.listenSequentiallyToStream<int>(
+          stream: controller.stream,
+          onData: (value) async {
+            if (value == 2) {
+              throw StateError('chunk failed');
+            }
+          },
+          onError: (error, stackTrace) async {
+            errorSeen.complete(error);
+          },
+          onDone: () async {
+            doneCalled = true;
+          },
+        );
+        addTearDown(subscription.cancel);
 
-      controller
-        ..add(1)
-        ..add(2)
-        ..add(3);
-      await controller.close();
+        controller
+          ..add(1)
+          ..add(2)
+          ..add(3);
+        await controller.close();
 
-      final error = await errorSeen.future.timeout(const Duration(seconds: 1));
-      expect(error, isA<StateError>());
-      await Future<void>.delayed(Duration.zero);
-      expect(doneCalled, isFalse);
-    });
+        final error = await errorSeen.future.timeout(
+          const Duration(seconds: 1),
+        );
+        expect(error, isA<StateError>());
+        await Future<void>.delayed(Duration.zero);
+        expect(doneCalled, isFalse);
+      },
+    );
 
-    test('done 收尾异步失败时进入 error 收尾', () async {
-      final controller = async.StreamController<int>();
-      final errorSeen = async.Completer<Object>();
+    test(
+      'done \u6536\u5C3E\u5F02\u6B65\u5931\u8D25\u65F6\u8FDB\u5165 error \u6536\u5C3E',
+      () async {
+        final controller = async.StreamController<int>();
+        final errorSeen = async.Completer<Object>();
 
-      final subscription = ChatActions.listenSequentiallyToStream<int>(
-        stream: controller.stream,
-        onData: (_) async {},
-        onError: (error, stackTrace) async {
-          errorSeen.complete(error);
-        },
-        onDone: () async {
-          throw StateError('done failed');
-        },
-      );
-      addTearDown(subscription.cancel);
+        final subscription = ChatActions.listenSequentiallyToStream<int>(
+          stream: controller.stream,
+          onData: (_) async {},
+          onError: (error, stackTrace) async {
+            errorSeen.complete(error);
+          },
+          onDone: () async {
+            throw StateError('done failed');
+          },
+        );
+        addTearDown(subscription.cancel);
 
-      await controller.close();
+        await controller.close();
 
-      final error = await errorSeen.future.timeout(const Duration(seconds: 1));
-      expect(error, isA<StateError>());
-    });
+        final error = await errorSeen.future.timeout(
+          const Duration(seconds: 1),
+        );
+        expect(error, isA<StateError>());
+      },
+    );
 
     test(
       'error handler secondary failure is reported without escaping drain',
@@ -223,83 +242,89 @@ void main() {
       },
     );
 
-    test('异步 handler 未完成前不会并发处理后续 chunk', () async {
-      final controller = async.StreamController<int>();
-      final firstStarted = async.Completer<void>();
-      final allowFirstToFinish = async.Completer<void>();
-      final done = async.Completer<void>();
-      final started = <int>[];
+    test(
+      '\u5F02\u6B65 handler \u672A\u5B8C\u6210\u524D\u4E0D\u4F1A\u5E76\u53D1\u5904\u7406\u540E\u7EED chunk',
+      () async {
+        final controller = async.StreamController<int>();
+        final firstStarted = async.Completer<void>();
+        final allowFirstToFinish = async.Completer<void>();
+        final done = async.Completer<void>();
+        final started = <int>[];
 
-      final subscription = ChatActions.listenSequentiallyToStream<int>(
-        stream: controller.stream,
-        onData: (value) async {
-          started.add(value);
-          if (value == 1) {
-            firstStarted.complete();
-            await allowFirstToFinish.future;
-          }
-        },
-        onError: (error, stackTrace) async {
-          fail('unexpected stream error: $error');
-        },
-        onDone: () async {
-          done.complete();
-        },
-      );
-      addTearDown(subscription.cancel);
+        final subscription = ChatActions.listenSequentiallyToStream<int>(
+          stream: controller.stream,
+          onData: (value) async {
+            started.add(value);
+            if (value == 1) {
+              firstStarted.complete();
+              await allowFirstToFinish.future;
+            }
+          },
+          onError: (error, stackTrace) async {
+            fail('unexpected stream error: $error');
+          },
+          onDone: () async {
+            done.complete();
+          },
+        );
+        addTearDown(subscription.cancel);
 
-      controller
-        ..add(1)
-        ..add(2);
-      await firstStarted.future.timeout(const Duration(seconds: 1));
-      await Future<void>.delayed(Duration.zero);
-      expect(started, const [1]);
+        controller
+          ..add(1)
+          ..add(2);
+        await firstStarted.future.timeout(const Duration(seconds: 1));
+        await Future<void>.delayed(Duration.zero);
+        expect(started, const [1]);
 
-      allowFirstToFinish.complete();
-      await controller.close();
-      await done.future.timeout(const Duration(seconds: 1));
+        allowFirstToFinish.complete();
+        await controller.close();
+        await done.future.timeout(const Duration(seconds: 1));
 
-      expect(started, const [1, 2]);
-    });
+        expect(started, const [1, 2]);
+      },
+    );
 
-    test('异步 handler 未完成时网络订阅保持读取并在本地排队', () async {
-      final controller = async.StreamController<int>(sync: true);
-      addTearDown(controller.close);
-      final firstStarted = async.Completer<void>();
-      final allowFirstToFinish = async.Completer<void>();
-      final done = async.Completer<void>();
-      final seen = <int>[];
+    test(
+      '\u5F02\u6B65 handler \u672A\u5B8C\u6210\u65F6\u7F51\u7EDC\u8BA2\u9605\u4FDD\u6301\u8BFB\u53D6\u5E76\u5728\u672C\u5730\u6392\u961F',
+      () async {
+        final controller = async.StreamController<int>(sync: true);
+        addTearDown(controller.close);
+        final firstStarted = async.Completer<void>();
+        final allowFirstToFinish = async.Completer<void>();
+        final done = async.Completer<void>();
+        final seen = <int>[];
 
-      final subscription = ChatActions.listenSequentiallyToStream<int>(
-        stream: controller.stream,
-        onData: (value) async {
-          seen.add(value);
-          if (value == 1) {
-            firstStarted.complete();
-            await allowFirstToFinish.future;
-          }
-        },
-        onError: (error, stackTrace) async {
-          fail('unexpected stream error: $error');
-        },
-        onDone: () async => done.complete(),
-      );
-      addTearDown(subscription.cancel);
+        final subscription = ChatActions.listenSequentiallyToStream<int>(
+          stream: controller.stream,
+          onData: (value) async {
+            seen.add(value);
+            if (value == 1) {
+              firstStarted.complete();
+              await allowFirstToFinish.future;
+            }
+          },
+          onError: (error, stackTrace) async {
+            fail('unexpected stream error: $error');
+          },
+          onDone: () async => done.complete(),
+        );
+        addTearDown(subscription.cancel);
 
-      controller.add(1);
-      await firstStarted.future.timeout(const Duration(seconds: 1));
-      expect(controller.isPaused, isFalse);
-      controller
-        ..add(2)
-        ..add(3);
-      expect(controller.isPaused, isFalse);
-      expect(seen, const [1]);
+        controller.add(1);
+        await firstStarted.future.timeout(const Duration(seconds: 1));
+        expect(controller.isPaused, isFalse);
+        controller
+          ..add(2)
+          ..add(3);
+        expect(controller.isPaused, isFalse);
+        expect(seen, const [1]);
 
-      allowFirstToFinish.complete();
-      await controller.close();
-      await done.future.timeout(const Duration(seconds: 1));
-      expect(seen, const [1, 2, 3]);
-    });
+        allowFirstToFinish.complete();
+        await controller.close();
+        await done.future.timeout(const Duration(seconds: 1));
+        expect(seen, const [1, 2, 3]);
+      },
+    );
 
     test(
       'cancel waits for in-flight chunk and drops queued late chunks',

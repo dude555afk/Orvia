@@ -25,69 +25,72 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  testWidgets('生成结束时尾部高度变化被布局阶段吸收，不再跳一下再滑回底部', (tester) async {
-    tester.view.physicalSize = const Size(1170, 2100);
-    tester.view.devicePixelRatio = 3.0;
-    addTearDown(tester.view.reset);
+  testWidgets(
+    '\u751F\u6210\u7ED3\u675F\u65F6\u5C3E\u90E8\u9AD8\u5EA6\u53D8\u5316\u88AB\u5E03\u5C40\u9636\u6BB5\u5438\u6536，\u4E0D\u518D\u8DF3\u4E00\u4E0B\u518D\u6ED1\u56DE\u5E95\u90E8',
+    (tester) async {
+      tester.view.physicalSize = const Size(1170, 2100);
+      tester.view.devicePixelRatio = 3.0;
+      addTearDown(tester.view.reset);
 
-    final key = GlobalKey<_ProbeHarnessState>();
-    await tester.pumpWidget(_ProbeHarness(key: key));
-    await tester.pump(const Duration(milliseconds: 100));
-    final state = key.currentState!;
+      final key = GlobalKey<_ProbeHarnessState>();
+      await tester.pumpWidget(_ProbeHarness(key: key));
+      await tester.pump(const Duration(milliseconds: 100));
+      final state = key.currentState!;
 
-    final full = List<String>.filled(
-      60,
-      '这是一段用于撑高消息气泡的长文本，重复出现以便观察滚动跟随行为。',
-    ).join('\n');
-    var visible = 0;
-    while (visible < full.length) {
-      visible = (visible + 40).clamp(0, full.length);
-      state.pushStreamTick(
-        visibleContent: full.substring(0, visible),
-        targetContent: full.substring(0, visible),
+      final full = List<String>.filled(
+        60,
+        '\u8FD9\u662F\u4E00\u6BB5\u7528\u4E8E\u6491\u9AD8\u6D88\u606F\u6C14\u6CE1\u7684\u957F\u6587\u672C，\u91CD\u590D\u51FA\u73B0\u4EE5\u4FBF\u89C2\u5BDF\u6EDA\u52A8\u8DDF\u968F\u884C\u4E3A。',
+      ).join('\n');
+      var visible = 0;
+      while (visible < full.length) {
+        visible = (visible + 40).clamp(0, full.length);
+        state.pushStreamTick(
+          visibleContent: full.substring(0, visible),
+          targetContent: full.substring(0, visible),
+        );
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      final position = state.scrollController.position;
+      expect(position.maxScrollExtent - position.pixels, lessThan(1));
+      final markdown = find.descendant(
+        of: find.byKey(const ValueKey<String>('timeline-slot:$_streamingId')),
+        matching: find.byType(MarkdownWithCodeHighlight),
       );
-      await tester.pump(const Duration(milliseconds: 50));
-    }
+      expect(markdown, findsOneWidget);
+      final renderer = tester.state(markdown);
 
-    final position = state.scrollController.position;
-    expect(position.maxScrollExtent - position.pixels, lessThan(1));
-    final markdown = find.descendant(
-      of: find.byKey(const ValueKey<String>('timeline-slot:$_streamingId')),
-      matching: find.byType(MarkdownWithCodeHighlight),
-    );
-    expect(markdown, findsOneWidget);
-    final renderer = tester.state(markdown);
+      // The terminal widget is taller than the streaming one (action bar, token
+      // stats), and it arrives after isGenerating\u5DF2\u7ECF\u53D8\u6210 false.
+      state.finishStreaming(full);
+      state.scrollCtrl.stickToBottomAfterGeneration();
 
-    // The terminal widget is taller than the streaming one (action bar, token
-    // stats), and it arrives after isGenerating已经变成 false.
-    state.finishStreaming(full);
-    state.scrollCtrl.stickToBottomAfterGeneration();
+      final anchor = find.byKey(
+        const ValueKey<String>('timeline-slot:$_streamingId'),
+      );
+      final trace = <double>[];
+      for (var i = 0; i < 30; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        expect(tester.state(markdown), same(renderer));
+        trace.add(tester.getTopLeft(anchor).dy);
+      }
 
-    final anchor = find.byKey(
-      const ValueKey<String>('timeline-slot:$_streamingId'),
-    );
-    final trace = <double>[];
-    for (var i = 0; i < 30; i++) {
-      await tester.pump(const Duration(milliseconds: 16));
-      expect(tester.state(markdown), same(renderer));
-      trace.add(tester.getTopLeft(anchor).dy);
-    }
-
-    // Held layout pin: the tail stays at the bottom the whole time, so the
-    // timeline never has to catch up afterwards.
-    expect(
-      state.scrollController.position.maxScrollExtent -
-          state.scrollController.position.pixels,
-      lessThan(1),
-    );
-    for (var i = 1; i < trace.length; i++) {
+      // Held layout pin: the tail stays at the bottom the whole time, so the
+      // timeline never has to catch up afterwards.
       expect(
-        trace[i],
-        moreOrLessEquals(trace[i - 1], epsilon: 1),
-        reason: 'frame $i moved by ${trace[i] - trace[i - 1]}',
+        state.scrollController.position.maxScrollExtent -
+            state.scrollController.position.pixels,
+        lessThan(1),
       );
-    }
-  });
+      for (var i = 1; i < trace.length; i++) {
+        expect(
+          trace[i],
+          moreOrLessEquals(trace[i - 1], epsilon: 1),
+          reason: 'frame $i moved by ${trace[i] - trace[i - 1]}',
+        );
+      }
+    },
+  );
 }
 
 class _ProbeHarness extends StatefulWidget {
@@ -109,7 +112,10 @@ class _ProbeHarnessState extends State<_ProbeHarness> {
       ChatMessage(
         id: 'history-$index',
         role: index.isEven ? 'user' : 'assistant',
-        content: List<String>.filled(3, '历史消息内容 $index').join('\n'),
+        content: List<String>.filled(
+          3,
+          '\u5386\u53F2\u6D88\u606F\u5185\u5BB9 $index',
+        ).join('\n'),
         conversationId: 'conversation-1',
       ),
     ChatMessage(

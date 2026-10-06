@@ -88,7 +88,7 @@ void main() {
   test(
     'cleanup deletes indexed copies across sessions and preserves independent files',
     () async {
-      final source = await _write(root, 'upload/报告.txt', 'AAAA');
+      final source = await _write(root, 'upload/\u62A5\u544A.txt', 'AAAA');
       final other = await _write(root, 'upload/other.txt', 'BBBB');
       final messages = [
         _message('kelivo-file:///upload/%E6%8A%A5%E5%91%8A.txt'),
@@ -98,11 +98,11 @@ void main() {
       for (final ctx in contexts) {
         final copies = await syncAttachments(ctx, messages);
         expect(copies.map((c) => c.name).toSet(), hasLength(2));
-        await _write(ctx.sessionDir, 'outputs/报告.txt', 'AAAA');
+        await _write(ctx.sessionDir, 'outputs/\u62A5\u544A.txt', 'AAAA');
       }
       final independent = await _write(
         root,
-        'workspaces/ws/files/报告.txt',
+        'workspaces/ws/files/\u62A5\u544A.txt',
         'AAAA',
       );
       expect(
@@ -115,17 +115,21 @@ void main() {
       expect(await independent.readAsString(), 'AAAA');
       for (final ctx in contexts) {
         expect(
-          await File('${ctx.sessionDir.path}/attachments/报告.txt').exists(),
+          await File(
+            '${ctx.sessionDir.path}/attachments/\u62A5\u544A.txt',
+          ).exists(),
           isFalse,
         );
         expect(
           await File(
-            '${ctx.sessionDir.path}/attachments/报告 (2).txt',
+            '${ctx.sessionDir.path}/attachments/\u62A5\u544A (2).txt',
           ).readAsString(),
           'BBBB',
         );
         expect(
-          await File('${ctx.sessionDir.path}/outputs/报告.txt').readAsString(),
+          await File(
+            '${ctx.sessionDir.path}/outputs/\u62A5\u544A.txt',
+          ).readAsString(),
           'AAAA',
         );
         // Historical parts remain in the conversation after a storage cleanup.
@@ -246,7 +250,9 @@ void main() {
     await pending;
     expect(await deletion, 1);
     expect(
-      await File('${ctx.sessionDir.path}/attachments/报告.txt').exists(),
+      await File(
+        '${ctx.sessionDir.path}/attachments/\u62A5\u544A.txt',
+      ).exists(),
       isFalse,
     );
     expect(await syncAttachments(ctx, [_message(source.path)]), isEmpty);
@@ -267,7 +273,9 @@ void main() {
         1,
       );
       expect(
-        await File('${ctx.sessionDir.path}/attachments/报告.txt').exists(),
+        await File(
+          '${ctx.sessionDir.path}/attachments/\u62A5\u544A.txt',
+        ).exists(),
         isFalse,
       );
     },
@@ -394,7 +402,7 @@ Future<File> _write(Directory root, String relative, String contents) async {
 ChatMessage _message(String uri) => ChatMessage(
   role: 'user',
   conversationId: 'chat',
-  parts: [FilePart(uri: uri, name: '报告.txt')],
+  parts: [FilePart(uri: uri, name: '\u62A5\u544A.txt')],
 );
 
 WorkspaceToolContext _context(Directory root, String id) {

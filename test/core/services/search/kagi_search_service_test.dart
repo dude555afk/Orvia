@@ -92,7 +92,7 @@ void main() {
                     'title': '  Steve Jobs | Apple, &amp; Facts  ',
                     'url': url,
                     'snippet':
-                        'Apple&#39;s history &#x2014; &quot;你好&quot; &#x1F680;',
+                        'Apple&#39;s history &#x2014; &quot;\u4F60\u597D&quot; &#x1F680;',
                   },
                   {
                     'title': 'List<String> &amp; Map<K, V>',
@@ -118,7 +118,7 @@ void main() {
 
       expect(result.items, hasLength(2));
       expect(result.items.first.title, 'Steve Jobs | Apple, & Facts');
-      expect(result.items.first.text, 'Apple\'s history — "你好" 🚀');
+      expect(result.items.first.text, 'Apple\'s history — "\u4F60\u597D" 🚀');
       expect(result.items.first.url, url);
       expect(result.items.last.title, 'List<String> & Map<K, V>');
       expect(

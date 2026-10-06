@@ -30,7 +30,8 @@ void main() {
             ComposerAttachmentCard(
               file: DocumentAttachment(
                 path: file.path,
-                fileName: '工作区项目与设计资源.zip',
+                fileName:
+                    '\u5DE5\u4F5C\u533A\u9879\u76EE\u4E0E\u8BBE\u8BA1\u8D44\u6E90.zip',
                 mime: 'application/zip',
               ),
               onRemove: () => removed = true,

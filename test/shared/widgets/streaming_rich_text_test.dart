@@ -19,7 +19,10 @@ void main() {
           valueListenable: background,
           builder: (_, color, child) => ColoredBox(color: color, child: child),
           child: StreamingRichText(
-            text: _PaintObservedText('中文 paragraph', onPaint: () => paints++),
+            text: _PaintObservedText(
+              '\u4E2D\u6587 paragraph',
+              onPaint: () => paints++,
+            ),
           ),
         ),
       ),
@@ -53,7 +56,7 @@ void main() {
   testWidgets(
     'restoring an older span does not reuse a different text prefix',
     (tester) async {
-      final first = TextSpan(text: 'original 中文 words ' * 300);
+      final first = TextSpan(text: 'original \u4E2D\u6587 words ' * 300);
       final extended = TextSpan(text: '${first.text} appended');
       final replacement = TextSpan(
         text: 'different prefix ${first.text} appended',
@@ -96,7 +99,7 @@ void main() {
       ]) {
         Future<(Size, Rect)> measure(bool optimized) async {
           final text = Text(
-            'Short 中文',
+            'Short \u4E2D\u6587',
             textDirection: direction,
             textAlign: align,
             style: const TextStyle(fontSize: 16),
@@ -134,7 +137,10 @@ void main() {
     tester,
   ) async {
     final source = ValueNotifier(
-      List.generate(200, (i) => 'Line $i 中文 content for selection.').join('\n'),
+      List.generate(
+        200,
+        (i) => 'Line $i \u4E2D\u6587 content for selection.',
+      ).join('\n'),
     );
     String? selected;
     await tester.pumpWidget(
@@ -182,13 +188,16 @@ void main() {
           (tester) async {
             final spans = <InlineSpan>[
               for (var i = 0; i < 100; i++) ...[
-                TextSpan(text: '段落 $i English words 😀 继续思考。'),
+                TextSpan(
+                  text:
+                      '\u6BB5\u843D $i English words 😀 \u7EE7\u7EED\u601D\u8003。',
+                ),
                 const TextSpan(
-                  text: '粗体 bold',
+                  text: '\u7C97\u4F53 bold',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const TextSpan(
-                  text: ' italic 内容',
+                  text: ' italic \u5185\u5BB9',
                   style: TextStyle(fontStyle: FontStyle.italic),
                 ),
                 TextSpan(text: hardBreaks ? '\n' : ' '),

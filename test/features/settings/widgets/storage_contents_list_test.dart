@@ -40,7 +40,7 @@ void main() {
           await tester.runAsync(() async {
             await Directory('${root.path}/attachments').create();
             await File(
-              '${root.path}/attachments/报告.txt',
+              '${root.path}/attachments/\u62A5\u544A.txt',
             ).writeAsString('report');
           });
           final category = StorageUsageCategory(
@@ -84,7 +84,10 @@ void main() {
           final browser = tester.widget<FileBrowser>(find.byType(FileBrowser));
           expect(browser.root.path, root.path);
           await tester.tap(find.byKey(FileBrowser.itemKey('attachments')));
-          await _waitFor(tester, find.byKey(FileBrowser.itemKey('报告.txt')));
+          await _waitFor(
+            tester,
+            find.byKey(FileBrowser.itemKey('\u62A5\u544A.txt')),
+          );
           expect(tester.takeException(), isNull);
           await tester.pumpWidget(const SizedBox());
           await tester.pumpAndSettle();

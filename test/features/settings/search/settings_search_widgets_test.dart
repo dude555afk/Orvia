@@ -183,7 +183,7 @@ void main() {
       );
       for (final (draft, committed, expectedId) in [
         ('font size', 'language', 'displaySettingsPageLanguageTitle'),
-        ('yuyan', '语言', 'displaySettingsPageLanguageTitle'),
+        ('yuyan', '\u8BED\u8A00', 'displaySettingsPageLanguageTitle'),
         ('font size', 'no matching setting qzx', null),
         ('language', '  ', null),
       ]) {

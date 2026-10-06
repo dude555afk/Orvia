@@ -107,7 +107,7 @@ class _HState extends State<_H> {
         id: 'tool-$i',
         toolName: 'read_file',
         arguments: {'path': 'lib/x_$i.dart'},
-        content: '工具结果 $i',
+        content: '\u5DE5\u5177\u7ED3\u679C $i',
         loading: false,
       ),
     );
@@ -115,7 +115,8 @@ class _HState extends State<_H> {
     notifier.notifyToolPartsUpdated(_id);
   }
 
-  void tick(int i) => notifier.updateContent(_id, '思考中' * (i + 1), 1);
+  void tick(int i) =>
+      notifier.updateContent(_id, '\u601D\u8003\u4E2D' * (i + 1), 1);
 
   @override
   void dispose() {

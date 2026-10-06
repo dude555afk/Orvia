@@ -12,7 +12,7 @@ void main() {
         final seed = DebugConversationFactory.createOversizedConversation(
           title: 'large',
           assistantId: 'assistant-1',
-          chunkText: '性能测试内容 abc 123 ',
+          chunkText: '\u6027\u80FD\u6D4B\u8BD5\u5185\u5BB9 abc 123 ',
           targetBytes: 64 * 1024,
         );
 

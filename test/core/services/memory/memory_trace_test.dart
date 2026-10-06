@@ -163,7 +163,8 @@ void main() {
       (
         message: ChatMessage(
           role: 'user',
-          content: '我是大学生，学软件工程。',
+          content:
+              '\u6211\u662F\u5927\u5B66\u751F，\u5B66\u8F6F\u4EF6\u5DE5\u7A0B。',
           conversationId: conversationId,
         ),
         order: 4,
@@ -171,7 +172,7 @@ void main() {
       (
         message: ChatMessage(
           role: 'assistant',
-          content: '了解了。',
+          content: '\u4E86\u89E3\u4E86。',
           conversationId: conversationId,
         ),
         order: 5,
@@ -186,14 +187,14 @@ void main() {
       step++;
       if (step == 1) return '<gate><user_memory>true</user_memory></gate>';
       if (step == 2) {
-        return '<extracted><item type="identity">用户希望被称为小明。</item></extracted>';
+        return '<extracted><item type="identity">\u7528\u6237\u5E0C\u671B\u88AB\u79F0\u4E3A\u5C0F\u660E。</item></extracted>';
       }
       if (step == 3) {
         return jsonEncode({'action': 'NEW', 'relatedIds': <String>[]});
       }
       return jsonEncode({
         'fields': [
-          {'key': 'preferred_name', 'value': '小明'},
+          {'key': 'preferred_name', 'value': '\u5C0F\u660E'},
         ],
       });
     };
@@ -204,7 +205,7 @@ void main() {
       final recorder = MemoryTraceRecorder();
       final pipeline = buildPipeline(recorder);
       final convo = await chatService.createConversation(
-        title: '记忆测试',
+        title: '\u8BB0\u5FC6\u6D4B\u8BD5',
         assistantId: 'a1',
       );
 
@@ -221,7 +222,7 @@ void main() {
       expect(recorder.traces, hasLength(1));
       final trace = recorder.traces.first;
       expect(trace.conversationId, convo.id);
-      expect(trace.conversationTitle, '记忆测试');
+      expect(trace.conversationTitle, '\u8BB0\u5FC6\u6D4B\u8BD5');
       expect(trace.assistantId, 'a1');
       expect(trace.assistantName, 'A1');
       expect(trace.scope, MemoryTraceScope.global);
@@ -247,12 +248,18 @@ void main() {
       }
 
       final gate = trace.steps[0];
-      expect(gate.prompt, contains('用户：我是大学生'));
+      expect(
+        gate.prompt,
+        contains('\u7528\u6237：\u6211\u662F\u5927\u5B66\u751F'),
+      );
       expect(gate.rawResponse, contains('<user_memory>true'));
       expect(gate.parsedResult, 'worthRemembering');
 
       final extract = trace.steps[1];
-      expect(extract.parsedResult, contains('用户希望被称为小明'));
+      expect(
+        extract.parsedResult,
+        contains('\u7528\u6237\u5E0C\u671B\u88AB\u79F0\u4E3A\u5C0F\u660E'),
+      );
 
       final smartAdd = trace.steps[2];
       expect(smartAdd.parsedResult, contains('NEW'));
@@ -261,7 +268,10 @@ void main() {
         smartAdd.mutations.first.kind,
         MemoryTraceMutationKind.memoryCreated,
       );
-      expect(smartAdd.mutations.first.after, '用户希望被称为小明。');
+      expect(
+        smartAdd.mutations.first.after,
+        '\u7528\u6237\u5E0C\u671B\u88AB\u79F0\u4E3A\u5C0F\u660E。',
+      );
       expect(smartAdd.mutations.first.targetId, isNotNull);
 
       final distiller = trace.steps[3];
@@ -270,7 +280,7 @@ void main() {
       expect(profileMutation.kind, MemoryTraceMutationKind.profileFieldWritten);
       expect(profileMutation.targetId, 'preferred_name');
       expect(profileMutation.before, isNull);
-      expect(profileMutation.after, '小明');
+      expect(profileMutation.after, '\u5C0F\u660E');
     });
 
     test('short-circuited stages are recorded as skipped', () async {

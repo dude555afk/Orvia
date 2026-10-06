@@ -129,8 +129,8 @@ void main() {
                   'index': 0,
                   'delta': {
                     'role': 'assistant',
-                    'reasoning_content': '先获取当前日期',
-                    'content': '我先查一下日期。',
+                    'reasoning_content': '\u5148\u83B7\u53D6\u5F53\u524D\u65E5\u671F',
+                    'content': '\u6211\u5148\u67E5\u4E00\u4E0B\u65E5\u671F。',
                     'tool_calls': [
                       {
                         'index': 0,
@@ -158,7 +158,7 @@ void main() {
               'choices': [
                 {
                   'index': 0,
-                  'delta': {'role': 'assistant', 'content': '今天是 2026-06-15'},
+                  'delta': {'role': 'assistant', 'content': '\u4ECA\u5929\u662F 2026-06-15'},
                   'finish_reason': 'stop',
                 },
               ],
@@ -175,7 +175,7 @@ void main() {
         config: _zhipuConfig(baseUrl),
         modelId: 'glm-5.2',
         messages: const [
-          {'role': 'user', 'content': '今天几号？'},
+          {'role': 'user', 'content': '\u4ECA\u5929\u51E0\u53F7？'},
         ],
         tools: const [
           {
@@ -208,8 +208,14 @@ void main() {
       expect(chunks.isGenerationDone, isTrue);
       expect(secondBody['thinking'], {'type': 'enabled'});
       expect(secondBody['reasoning_effort'], 'low');
-      expect(assistantToolMessage['content'], '我先查一下日期。');
-      expect(assistantToolMessage['reasoning_content'], '先获取当前日期');
+      expect(
+        assistantToolMessage['content'],
+        '\u6211\u5148\u67E5\u4E00\u4E0B\u65E5\u671F。',
+      );
+      expect(
+        assistantToolMessage['reasoning_content'],
+        '\u5148\u83B7\u53D6\u5F53\u524D\u65E5\u671F',
+      );
       expect(assistantToolMessage['tool_calls'], [
         {
           'id': 'call_date',

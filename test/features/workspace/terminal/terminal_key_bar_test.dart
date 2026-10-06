@@ -57,8 +57,8 @@ void main() {
 
     await pumpBar(tester, session: session);
 
-    expect(find.text('复制'), findsOneWidget);
-    expect(find.text('粘贴'), findsOneWidget);
+    expect(find.text('\u590D\u5236'), findsOneWidget);
+    expect(find.text('\u7C98\u8D34'), findsOneWidget);
 
     final copy = tester.getRect(find.byKey(TerminalKeyBar.copyKey));
     final paste = tester.getRect(find.byKey(TerminalKeyBar.pasteKey));

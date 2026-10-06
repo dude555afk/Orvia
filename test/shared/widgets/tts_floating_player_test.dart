@@ -94,12 +94,15 @@ void main() {
     await tester.pump();
 
     expect(tester.takeException(), isNull);
-    expect(find.byTooltip('继续播放'), findsOneWidget);
-    expect(find.byTooltip('关闭播放器'), findsOneWidget);
-    expect(find.byTooltip('展开播放控制'), findsOneWidget);
-    expect(find.byTooltip('后退 15 秒'), findsNothing);
-    expect(find.byTooltip('前进 15 秒'), findsNothing);
-    expect(find.byTooltip('播放倍速'), findsNothing);
+    expect(find.byTooltip('\u7EE7\u7EED\u64AD\u653E'), findsOneWidget);
+    expect(find.byTooltip('\u5173\u95ED\u64AD\u653E\u5668'), findsOneWidget);
+    expect(
+      find.byTooltip('\u5C55\u5F00\u64AD\u653E\u63A7\u5236'),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('\u540E\u9000 15 \u79D2'), findsNothing);
+    expect(find.byTooltip('\u524D\u8FDB 15 \u79D2'), findsNothing);
+    expect(find.byTooltip('\u64AD\u653E\u500D\u901F'), findsNothing);
     expect(find.byType(Slider), findsNothing);
     expect(find.byIcon(lucide.LucideIcons.grip), findsNothing);
     expect(
@@ -107,7 +110,10 @@ void main() {
       findsOneWidget,
     );
 
-    expect(find.bySemanticsLabel('语音播放器'), findsOneWidget);
+    expect(
+      find.bySemanticsLabel('\u8BED\u97F3\u64AD\u653E\u5668'),
+      findsOneWidget,
+    );
     final player = find.byKey(const ValueKey('ttsFloatingPlayerSurface'));
     showAppSnackBar(
       tester.element(player),
@@ -125,21 +131,24 @@ void main() {
     expect(afterDrag.dx, beforeDrag.dx);
     expect(afterDrag.dy, greaterThan(beforeDrag.dy));
 
-    await tester.tap(find.byTooltip('展开播放控制'));
+    await tester.tap(find.byTooltip('\u5C55\u5F00\u64AD\u653E\u63A7\u5236'));
     await tester.pumpAndSettle();
 
-    expect(find.byTooltip('收起播放控制'), findsOneWidget);
-    expect(find.byTooltip('后退 15 秒'), findsOneWidget);
-    expect(find.byTooltip('前进 15 秒'), findsOneWidget);
-    expect(find.byTooltip('播放倍速'), findsOneWidget);
+    expect(
+      find.byTooltip('\u6536\u8D77\u64AD\u653E\u63A7\u5236'),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('\u540E\u9000 15 \u79D2'), findsOneWidget);
+    expect(find.byTooltip('\u524D\u8FDB 15 \u79D2'), findsOneWidget);
+    expect(find.byTooltip('\u64AD\u653E\u500D\u901F'), findsOneWidget);
     final expandedWidth = tester.getSize(player).width;
 
-    await tester.tap(find.byTooltip('后退 15 秒'));
-    await tester.tap(find.byTooltip('继续播放'));
-    await tester.tap(find.byTooltip('前进 15 秒'));
-    await tester.tap(find.byTooltip('播放倍速'));
+    await tester.tap(find.byTooltip('\u540E\u9000 15 \u79D2'));
+    await tester.tap(find.byTooltip('\u7EE7\u7EED\u64AD\u653E'));
+    await tester.tap(find.byTooltip('\u524D\u8FDB 15 \u79D2'));
+    await tester.tap(find.byTooltip('\u64AD\u653E\u500D\u901F'));
 
-    await tester.tap(find.byTooltip('收起播放控制'));
+    await tester.tap(find.byTooltip('\u6536\u8D77\u64AD\u653E\u63A7\u5236'));
     await tester.pump();
     expect(tester.takeException(), isNull);
     await tester.pump(const Duration(milliseconds: 40));
@@ -154,12 +163,15 @@ void main() {
     final collapsedWidth = tester.getSize(player).width;
     expect(collapsedWidth, lessThan(midCollapseWidth));
 
-    expect(find.byTooltip('展开播放控制'), findsOneWidget);
-    expect(find.byTooltip('后退 15 秒'), findsNothing);
-    expect(find.byTooltip('前进 15 秒'), findsNothing);
-    expect(find.byTooltip('播放倍速'), findsNothing);
+    expect(
+      find.byTooltip('\u5C55\u5F00\u64AD\u653E\u63A7\u5236'),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('\u540E\u9000 15 \u79D2'), findsNothing);
+    expect(find.byTooltip('\u524D\u8FDB 15 \u79D2'), findsNothing);
+    expect(find.byTooltip('\u64AD\u653E\u500D\u901F'), findsNothing);
 
-    await tester.tap(find.byTooltip('关闭播放器'));
+    await tester.tap(find.byTooltip('\u5173\u95ED\u64AD\u653E\u5668'));
 
     expect(tts.rewindCount, 1);
     expect(tts.playPauseCount, 1);
@@ -205,15 +217,18 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.bySemanticsLabel('语音播放器'), findsOneWidget);
-    expect(find.byTooltip('重新播放'), findsOneWidget);
+    expect(
+      find.bySemanticsLabel('\u8BED\u97F3\u64AD\u653E\u5668'),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('\u91CD\u65B0\u64AD\u653E'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('展开播放控制'));
+    await tester.tap(find.byTooltip('\u5C55\u5F00\u64AD\u653E\u63A7\u5236'));
     await tester.pumpAndSettle();
 
-    expect(find.byTooltip('保存音频'), findsOneWidget);
+    expect(find.byTooltip('\u4FDD\u5B58\u97F3\u9891'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('重新播放'));
+    await tester.tap(find.byTooltip('\u91CD\u65B0\u64AD\u653E'));
 
     expect(tts.playPauseCount, 1);
   });

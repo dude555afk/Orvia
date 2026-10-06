@@ -295,7 +295,12 @@ void main() {
       });
       await pump(tester, const Scaffold(body: EnvironmentPane()));
       await tester.pumpAndSettle();
-      expect(find.textContaining('请重新安装沙盒后使用'), findsOneWidget);
+      expect(
+        find.textContaining(
+          '\u8BF7\u91CD\u65B0\u5B89\u88C5\u6C99\u76D2\u540E\u4F7F\u7528',
+        ),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(EnvironmentPane.retryKey));
       await tester.pumpAndSettle();
       final save = find.byKey(const ValueKey('download-source-save'));
@@ -309,9 +314,14 @@ void main() {
         () async => Future<void>.delayed(const Duration(milliseconds: 30)),
       );
       await tester.pumpAndSettle();
-      expect(find.textContaining('更换会替换当前环境内的软件包和文件'), findsOneWidget);
+      expect(
+        find.textContaining(
+          '\u66F4\u6362\u4F1A\u66FF\u6362\u5F53\u524D\u73AF\u5883\u5185\u7684\u8F6F\u4EF6\u5305\u548C\u6587\u4EF6',
+        ),
+        findsOneWidget,
+      );
       expect(installer.calls, 0);
-      await tester.tap(find.text('取消').last);
+      await tester.tap(find.text('\u53D6\u6D88').last);
       await tester.pumpAndSettle();
       expect(installer.calls, 0);
       await tester.runAsync(() async {
@@ -357,7 +367,12 @@ void main() {
       await tester.tap(save);
       await tester.pumpAndSettle();
       expect(env.downloadSource, RootfsDownloadSource.automatic);
-      expect(find.text('请输入有效的 HTTP 或 HTTPS 链接。'), findsOneWidget);
+      expect(
+        find.text(
+          '\u8BF7\u8F93\u5165\u6709\u6548\u7684 HTTP \u6216 HTTPS \u94FE\u63A5。',
+        ),
+        findsOneWidget,
+      );
       await tester.enterText(
         find.byType(TextField),
         'https://mirror.test/image.tar.gz?token=x%2Fy',
@@ -447,8 +462,8 @@ void main() {
           service.status(EnvironmentDependency.python),
           DependencyStatus.installed,
         );
-        expect(find.text('已安装'), findsOneWidget);
-        expect(find.text('安装日志'), findsOneWidget);
+        expect(find.text('\u5DF2\u5B89\u88C5'), findsOneWidget);
+        expect(find.text('\u5B89\u88C5\u65E5\u5FD7'), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
       variant: TargetPlatformVariant.only(platform),

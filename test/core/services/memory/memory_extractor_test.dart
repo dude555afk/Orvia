@@ -11,15 +11,15 @@ void main() {
       const raw = '''
 Here you go:
 <extracted>
-<item type="identity">用户是大学生。</item>
-<item type="workflow" scope="assistant">用户偏好 Flutter。</item>
+<item type="identity">\u7528\u6237\u662F\u5927\u5B66\u751F。</item>
+<item type="workflow" scope="assistant">\u7528\u6237\u504F\u597D Flutter。</item>
 </extracted>
 ''';
       final r = MemoryExtractor.parse(raw);
       expect(r.ok, isTrue);
       expect(r.items, hasLength(2));
       expect(r.items[0].type, MemoryType.identity);
-      expect(r.items[0].content, '用户是大学生。');
+      expect(r.items[0].content, '\u7528\u6237\u662F\u5927\u5B66\u751F。');
       expect(r.items[1].scopeAttr, 'assistant');
     });
 

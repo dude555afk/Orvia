@@ -199,7 +199,7 @@ void main() {
       testWidgets('oversized file hint: desktop=$desktop, $brightness', (
         tester,
       ) async {
-        file.replace('界' * 40000);
+        file.replace('\u754C' * 40000);
         expect(utf8.decode(file.bytes).length, lessThan(_limit));
         await IOOverrides.runWithIOOverrides(() async {
           await pumpDetail(tester, desktop: desktop, brightness: brightness);

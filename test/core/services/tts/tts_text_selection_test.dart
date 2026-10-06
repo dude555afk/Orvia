@@ -6,48 +6,48 @@ void main() {
     test('keeps full text by default', () {
       expect(
         TtsTextSelection.apply(
-          '旁白 “你好” (动作)',
+          '\u65C1\u767D “\u4F60\u597D” (\u52A8\u4F5C)',
           mode: TtsTextSelectionMode.fullText,
         ),
-        '旁白 “你好” (动作)',
+        '\u65C1\u767D “\u4F60\u597D” (\u52A8\u4F5C)',
       );
     });
 
     test('extracts full-width and half-width quoted text', () {
       expect(
         TtsTextSelection.apply(
-          '旁白 “你好” then \'世界\' and "again" plus ‘再见’.',
+          '\u65C1\u767D “\u4F60\u597D” then \'\u4E16\u754C\' and "again" plus ‘\u518D\u89C1’.',
           mode: TtsTextSelectionMode.quotedOnly,
         ),
-        '你好\n世界\nagain\n再见',
+        '\u4F60\u597D\n\u4E16\u754C\nagain\n\u518D\u89C1',
       );
     });
 
     test('ignores quoted text inside fenced and inline code', () {
       expect(
         TtsTextSelection.apply(
-          '旁白 “保留”\n'
+          '\u65C1\u767D “\u4FDD\u7559”\n'
           '```dart\n'
-          'print("代码块");\n'
+          'print("\u4EE3\u7801\u5757");\n'
           '```\n'
-          '以及 `print("行内代码")`。',
+          '\u4EE5\u53CA `print("\u884C\u5185\u4EE3\u7801")`。',
           mode: TtsTextSelectionMode.quotedOnly,
         ),
-        '保留',
+        '\u4FDD\u7559',
       );
     });
 
     test('ignores quoted text inside all supported fence forms', () {
       for (final source in const [
-        '旁白 “保留”\n~~~dart\nprint("波浪线");\n~~~',
-        '旁白 “保留”\n````markdown\n```\nprint("变长围栏");\n````',
-        '旁白 “保留”\n```dart\n``` not-a-closer\nprint("伪关闭");\n```',
-        '旁白 “保留”\n> ```dart\n> print("引用围栏");\n> ```',
-        '旁白 “保留”\n```dart\nprint("未闭合");',
+        '\u65C1\u767D “\u4FDD\u7559”\n~~~dart\nprint("\u6CE2\u6D6A\u7EBF");\n~~~',
+        '\u65C1\u767D “\u4FDD\u7559”\n````markdown\n```\nprint("\u53D8\u957F\u56F4\u680F");\n````',
+        '\u65C1\u767D “\u4FDD\u7559”\n```dart\n``` not-a-closer\nprint("\u4F2A\u5173\u95ED");\n```',
+        '\u65C1\u767D “\u4FDD\u7559”\n> ```dart\n> print("\u5F15\u7528\u56F4\u680F");\n> ```',
+        '\u65C1\u767D “\u4FDD\u7559”\n```dart\nprint("\u672A\u95ED\u5408");',
       ]) {
         expect(
           TtsTextSelection.apply(source, mode: TtsTextSelectionMode.quotedOnly),
-          '保留',
+          '\u4FDD\u7559',
           reason: source,
         );
       }
@@ -56,110 +56,107 @@ void main() {
     test('ignores quoted text inside multi-backtick inline code', () {
       expect(
         TtsTextSelection.apply(
-          '旁白 “保留”以及 ``print("行内代码")``。',
+          '\u65C1\u767D “\u4FDD\u7559”\u4EE5\u53CA ``print("\u884C\u5185\u4EE3\u7801")``。',
           mode: TtsTextSelectionMode.quotedOnly,
         ),
-        '保留',
+        '\u4FDD\u7559',
       );
     });
 
     test('does not pair unmatched backticks across lines', () {
       expect(
         TtsTextSelection.apply(
-          '`第一行\n旁白 “应朗读”\n第三行`',
+          '`\u7B2C\u4E00\u884C\n\u65C1\u767D “\u5E94\u6717\u8BFB”\n\u7B2C\u4E09\u884C`',
           mode: TtsTextSelectionMode.quotedOnly,
         ),
-        '应朗读',
+        '\u5E94\u6717\u8BFB',
       );
     });
 
-    test(
-      'extracts half-width quotes next to CJK text but skips apostrophes',
-      () {
-        expect(
-          TtsTextSelection.apply(
-            '他说\'你好\'，她说"世界"，don\'t read apostrophes.',
-            mode: TtsTextSelectionMode.quotedOnly,
-          ),
-          '你好\n世界',
-        );
-      },
-    );
+    test('extracts half-width quotes next to CJK text but skips apostrophes', () {
+      expect(
+        TtsTextSelection.apply(
+          '\u4ED6\u8BF4\'\u4F60\u597D\'，\u5979\u8BF4"\u4E16\u754C"，don\'t read apostrophes.',
+          mode: TtsTextSelectionMode.quotedOnly,
+        ),
+        '\u4F60\u597D\n\u4E16\u754C',
+      );
+    });
 
     test('does not close an unmatched quote with an apostrophe in a word', () {
       expect(
         TtsTextSelection.apply(
-          '他说\'你好，don\'t stop.',
+          '\u4ED6\u8BF4\'\u4F60\u597D，don\'t stop.',
           mode: TtsTextSelectionMode.quotedOnly,
         ),
-        '他说\'你好，don\'t stop.',
+        '\u4ED6\u8BF4\'\u4F60\u597D，don\'t stop.',
       );
     });
 
     test('keeps text outside full-width and half-width parentheses', () {
       expect(
         TtsTextSelection.apply(
-          '你好（动作）世界 (stage direction) 继续',
+          '\u4F60\u597D（\u52A8\u4F5C）\u4E16\u754C (stage direction) \u7EE7\u7EED',
           mode: TtsTextSelectionMode.outsideParentheses,
         ),
-        '你好 世界 继续',
+        '\u4F60\u597D \u4E16\u754C \u7EE7\u7EED',
       );
     });
 
     test('extracts markdown and html italic text', () {
       expect(
         TtsTextSelection.apply(
-          '正体 *斜体一* and _斜体二_ plus <em>斜体三</em>.',
+          '\u6B63\u4F53 *\u659C\u4F53\u4E00* and _\u659C\u4F53\u4E8C_ plus <em>\u659C\u4F53\u4E09</em>.',
           mode: TtsTextSelectionMode.italicOnly,
         ),
-        '斜体一\n斜体二\n斜体三',
+        '\u659C\u4F53\u4E00\n\u659C\u4F53\u4E8C\n\u659C\u4F53\u4E09',
       );
     });
 
     test('ignores italic text inside fenced and inline code', () {
       expect(
         TtsTextSelection.apply(
-          '旁白 *保留*\n'
+          '\u65C1\u767D *\u4FDD\u7559*\n'
           '```dart\n'
-          'final value = "*代码块*";\n'
+          'final value = "*\u4EE3\u7801\u5757*";\n'
           '```\n'
-          '以及 `_行内代码_`。',
+          '\u4EE5\u53CA `_\u884C\u5185\u4EE3\u7801_`。',
           mode: TtsTextSelectionMode.italicOnly,
         ),
-        '保留',
+        '\u4FDD\u7559',
       );
     });
 
     test('removes markdown and html italic text for non-italic mode', () {
       expect(
         TtsTextSelection.apply(
-          '正体 *斜体一* and _斜体二_ plus <i>斜体三</i> done.',
+          '\u6B63\u4F53 *\u659C\u4F53\u4E00* and _\u659C\u4F53\u4E8C_ plus <i>\u659C\u4F53\u4E09</i> done.',
           mode: TtsTextSelectionMode.nonItalic,
         ),
-        '正体 and plus done.',
+        '\u6B63\u4F53 and plus done.',
       );
     });
 
     test('falls back to original text when selected content is empty', () {
       expect(
         TtsTextSelection.apply(
-          '没有引号的内容',
+          '\u6CA1\u6709\u5F15\u53F7\u7684\u5185\u5BB9',
           mode: TtsTextSelectionMode.quotedOnly,
         ),
-        '没有引号的内容',
+        '\u6CA1\u6709\u5F15\u53F7\u7684\u5185\u5BB9',
       );
     });
 
     test('fallback excludes code when no selected content remains', () {
       expect(
         TtsTextSelection.apply(
-          '普通旁白\n'
+          '\u666E\u901A\u65C1\u767D\n'
           '```dart\n'
-          'print("不应朗读");\n'
+          'print("\u4E0D\u5E94\u6717\u8BFB");\n'
           '```',
           mode: TtsTextSelectionMode.quotedOnly,
         ),
-        '普通旁白',
+        '\u666E\u901A\u65C1\u767D',
       );
     });
   });

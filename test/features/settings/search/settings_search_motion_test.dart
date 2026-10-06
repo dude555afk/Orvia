@@ -166,7 +166,7 @@ void main() {
   ) async {
     try {
       await openSearch(tester);
-      await tester.enterText(find.byType(TextField), '字体');
+      await tester.enterText(find.byType(TextField), '\u5B57\u4F53');
       await tester.pumpAndSettle();
       final view = find.byType(SettingsSearchView);
       final target = tester.getRect(surface(view));
@@ -201,11 +201,11 @@ void main() {
       expect(tester.getRect(surface(view)), target);
       expect(
         tester.widget<TextField>(find.byType(TextField)).controller!.text,
-        '字体',
+        '\u5B57\u4F53',
       );
       expect(tester.testTextInput.isVisible, isTrue);
       expect(navigator.userGestureInProgress, isFalse);
-      await tester.tap(find.text('取消'));
+      await tester.tap(find.text('\u53D6\u6D88'));
       await tester.pumpAndSettle();
       expect(view, findsNothing);
     } finally {
@@ -365,7 +365,7 @@ void main() {
       await openSearch(tester);
       final view = find.byType(SettingsSearchView);
       final target = tester.getRect(surface(view));
-      await tester.enterText(find.byType(TextField), '设置');
+      await tester.enterText(find.byType(TextField), '\u8BBE\u7F6E');
       await tester.pumpAndSettle();
       await tester.dragFrom(const Offset(130, 350), const Offset(0, -140));
       await tester.pumpAndSettle();
@@ -378,7 +378,7 @@ void main() {
       expect(tester.getRect(surface(view)), target);
       expect(
         tester.widget<TextField>(find.byType(TextField)).controller!.text,
-        '设置',
+        '\u8BBE\u7F6E',
       );
       expect(
         tester
@@ -530,7 +530,7 @@ void main() {
           final target = tester.getRect(surface(view));
           expect(target.left, 63);
           expect(target.top, 8);
-          final cancel = tester.getRect(find.text('取消'));
+          final cancel = tester.getRect(find.text('\u53D6\u6D88'));
           expect(cancel.left, greaterThanOrEqualTo(target.right + 8));
           expect(cancel.right, lessThanOrEqualTo(797));
           for (final row in tester.widgetList<IosNavRow>(
@@ -540,7 +540,7 @@ void main() {
             expect(rect.left, greaterThanOrEqualTo(63));
             expect(rect.right, lessThanOrEqualTo(781));
           }
-          await tester.tap(find.text('取消'));
+          await tester.tap(find.text('\u53D6\u6D88'));
           await tester.pump();
           await tester.pump(const Duration(milliseconds: 150));
           final returning = tester.getRect(surface(view));
@@ -656,7 +656,7 @@ void main() {
           expect(top.top, closeTo(55, 0.1));
           await tester.enterText(
             find.descendant(of: view, matching: find.byType(TextField)),
-            '字体',
+            '\u5B57\u4F53',
           );
           await tester.pumpAndSettle();
           await record('results', hold: 900);
@@ -682,7 +682,7 @@ void main() {
           await tester.pumpAndSettle();
           expect(tester.getRect(surface(view)), top);
           await record('rebounded', hold: 400);
-          await tester.tap(find.text('取消'));
+          await tester.tap(find.text('\u53D6\u6D88'));
           await tester.pump();
           for (var i = 0; i < 9; i++) {
             await tester.pump(const Duration(milliseconds: 30));
@@ -751,7 +751,7 @@ void main() {
         await tester.tap(find.byType(SettingsSearchEntry));
         await tester.pumpAndSettle();
         expect(find.byType(SettingsSearchView), findsOneWidget);
-        final cancelPosition = tester.getCenter(find.text('取消'));
+        final cancelPosition = tester.getCenter(find.text('\u53D6\u6D88'));
         await tester.tapAt(cancelPosition);
         await tester.tapAt(cancelPosition);
         await tester.pumpAndSettle();
@@ -773,7 +773,7 @@ void main() {
       await tester.pumpAndSettle();
       final view = find.byType(SettingsSearchView);
       expect(tester.widget<SettingsSearchView>(view).transition.value, 1);
-      await tester.tap(find.text('取消'));
+      await tester.tap(find.text('\u53D6\u6D88'));
       await tester.pumpAndSettle();
       expect(find.byType(SettingsSearchView), findsNothing);
       expect(tester.takeException(), isNull);
@@ -792,7 +792,7 @@ void main() {
         await tester.pumpAndSettle();
         tester.view.physicalSize = const Size(600, 700);
         await tester.pumpAndSettle();
-        await tester.tap(find.text('取消'));
+        await tester.tap(find.text('\u53D6\u6D88'));
         await tester.pumpAndSettle();
         expect(find.byType(SettingsSearchView), findsNothing);
         expect(

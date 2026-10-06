@@ -83,13 +83,19 @@ void main() {
                 jsonEncode({
                   'search_results': [
                     {
-                      'title': '月之暗面',
+                      'title': '\u6708\u4E4B\u6697\u9762',
                       'url': 'https://example.com/kimi',
-                      'snippet': '摘要',
+                      'snippet': '\u6458\u8981',
                       'chunks': [
-                        {'text': '第一段正文', 'score': 1.23},
+                        {
+                          'text': '\u7B2C\u4E00\u6BB5\u6B63\u6587',
+                          'score': 1.23,
+                        },
                         {'text': ' ', 'score': 1.0},
-                        {'text': '第二段正文', 'score': 0.98},
+                        {
+                          'text': '\u7B2C\u4E8C\u6BB5\u6B63\u6587',
+                          'score': 0.98,
+                        },
                       ],
                     },
                     {
@@ -108,7 +114,7 @@ void main() {
         );
 
         final result = await service.search(
-          query: 'Kimi 发布',
+          query: 'Kimi \u53D1\u5E03',
           commonOptions: const SearchCommonOptions(
             resultSize: 2,
             timeout: 30000,
@@ -124,14 +130,17 @@ void main() {
         expect(captured!.headers['Authorization'], 'Bearer test-key');
         expect(captured!.headers['Content-Type'], contains('application/json'));
         expect(jsonDecode(captured!.body), {
-          'text_query': 'Kimi 发布',
+          'text_query': 'Kimi \u53D1\u5E03',
           'limit': 2,
           'timeout_seconds': 30,
         });
         expect(result.items, hasLength(2));
-        expect(result.items.first.title, '月之暗面');
+        expect(result.items.first.title, '\u6708\u4E4B\u6697\u9762');
         expect(result.items.first.url, 'https://example.com/kimi');
-        expect(result.items.first.text, '第一段正文\n\n第二段正文');
+        expect(
+          result.items.first.text,
+          '\u7B2C\u4E00\u6BB5\u6B63\u6587\n\n\u7B2C\u4E8C\u6BB5\u6B63\u6587',
+        );
         expect(result.items.last.text, 'Available without page content');
       },
     );

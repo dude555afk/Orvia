@@ -56,14 +56,14 @@ void main() {
         '<?xml version="1.0"?><svg viewBox="0 0 240 140">'
         '<defs><linearGradient id="bg"><stop stop-color="#123456"/></linearGradient></defs>'
         '<rect width="240" height="140" fill="url(#bg)"/>'
-        '<text x="20" y="30">你好</text></svg>';
+        '<text x="20" y="30">\u4F60\u597D</text></svg>';
     final uri = Uri.parse(svgPreviewDataUri(source)!);
     final root = XmlDocument.parse(
       utf8.decode(uri.data!.contentAsBytes()),
     ).rootElement;
     expect(root.namespaceUri, 'http://www.w3.org/2000/svg');
     expect(root.getAttribute('viewBox'), '0 0 240 140');
-    expect(root.getElement('text')!.innerText, '你好');
+    expect(root.getElement('text')!.innerText, '\u4F60\u597D');
     expect(root.getElement('rect')!.getAttribute('fill'), 'url(#bg)');
   });
 
@@ -92,7 +92,7 @@ void main() {
 
   test('SVG content is isolated in an image data URI', () {
     const source =
-        '<svg><script>alert("untrusted")</script><text>中文</text></svg>';
+        '<svg><script>alert("untrusted")</script><text>\u4E2D\u6587</text></svg>';
     final html = buildSvgPreviewHtml(source);
     expect(html, contains(svgPreviewDataUri(source)!));
     expect(html, isNot(contains('alert("untrusted")')));

@@ -20,7 +20,8 @@ void main() {
         id: 'mem_a1b2c3d4',
         scope: MemoryScope.global,
         type: MemoryType.workflow,
-        content: '用户开发 Flutter 应用时重视跨平台与长列表性能。',
+        content:
+            '\u7528\u6237\u5F00\u53D1 Flutter \u5E94\u7528\u65F6\u91CD\u89C6\u8DE8\u5E73\u53F0\u4E0E\u957F\u5217\u8868\u6027\u80FD。',
         source: MemorySource.extracted,
         relatedIds: const ['mem_e5f6g7h8'],
         migrationIds: const ['legacy_memory_v1:receipt'],

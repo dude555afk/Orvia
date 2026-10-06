@@ -44,7 +44,11 @@ void main() {
             ..write(_frame(finishReason: 'STOP'))
             ..write(_frame(finishReason: 'STOP'));
           if (hasText) {
-            for (final text in ['第一段正文。', '第二段正文。', '最后一段。']) {
+            for (final text in [
+              '\u7B2C\u4E00\u6BB5\u6B63\u6587。',
+              '\u7B2C\u4E8C\u6BB5\u6B63\u6587。',
+              '\u6700\u540E\u4E00\u6BB5。',
+            ]) {
               request.response.write(_frame(text: text));
             }
           }
@@ -74,7 +78,12 @@ void main() {
         ).toList().timeout(const Duration(seconds: 10));
 
         expect(requestCount, 1);
-        expect(chunks.joinedContent, hasText ? '第一段正文。第二段正文。最后一段。' : '');
+        expect(
+          chunks.joinedContent,
+          hasText
+              ? '\u7B2C\u4E00\u6BB5\u6B63\u6587。\u7B2C\u4E8C\u6BB5\u6B63\u6587。\u6700\u540E\u4E00\u6BB5。'
+              : '',
+        );
         expect(chunks.isGenerationDone, isTrue);
       });
     }

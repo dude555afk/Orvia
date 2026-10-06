@@ -9,7 +9,7 @@ void main() {
   test(
     'redacts nested escaped JSON without damaging the payload or local preview',
     () {
-      const secret = '密钥"abc\\xyz\nsecond-line';
+      const secret = '\u5BC6\u94A5"abc\\xyz\nsecond-line';
       final redactor = EnvironmentOutputRedactor(
         EnvironmentExecutionConfig(variables: {'TOKEN': secret}),
       );

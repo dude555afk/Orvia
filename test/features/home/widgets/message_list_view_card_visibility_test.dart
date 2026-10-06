@@ -483,7 +483,7 @@ void main() {
     final message = ChatMessage(
       id: 'tools-laid-out',
       role: 'assistant',
-      content: '好的，我来看看。',
+      content: '\u597D\u7684，\u6211\u6765\u770B\u770B。',
       conversationId: 'conversation-1',
     );
     final settings = SettingsProvider(createBusinessTestPreferences());

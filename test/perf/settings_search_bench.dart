@@ -13,13 +13,13 @@ void main() {
     );
     build.stop();
     const queries = [
-      '字',
-      '字体',
-      '语言',
+      '\u5B57',
+      '\u5B57\u4F53',
+      '\u8BED\u8A00',
       'font size',
       'tool cards',
-      '聊天',
-      '不存在的设置',
+      '\u804A\u5929',
+      '\u4E0D\u5B58\u5728\u7684\u8BBE\u7F6E',
       'api key',
     ];
     for (var i = 0; i < 100; i++) {

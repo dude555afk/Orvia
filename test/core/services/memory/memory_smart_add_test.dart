@@ -150,14 +150,16 @@ Sure:
       await memoryRepository.create(
         scope: MemoryScope.global,
         type: MemoryType.workflow,
-        content: '用户开发 Flutter 应用时重视跨平台。',
+        content:
+            '\u7528\u6237\u5F00\u53D1 Flutter \u5E94\u7528\u65F6\u91CD\u89C6\u8DE8\u5E73\u53F0。',
         source: MemorySource.manual,
       );
       for (var i = 0; i < 6; i++) {
         await memoryRepository.create(
           scope: MemoryScope.global,
           type: MemoryType.workflow,
-          content: '完全无关的工作习惯条目编号 $i',
+          content:
+              '\u5B8C\u5168\u65E0\u5173\u7684\u5DE5\u4F5C\u4E60\u60EF\u6761\u76EE\u7F16\u53F7 $i',
           source: MemorySource.manual,
         );
       }
@@ -165,14 +167,15 @@ Sure:
       await memoryRepository.create(
         scope: MemoryScope.global,
         type: MemoryType.voice,
-        content: '用户偏好简短回复。',
+        content: '\u7528\u6237\u504F\u597D\u7B80\u77ED\u56DE\u590D。',
         source: MemorySource.manual,
       );
 
       final cands = await smartAdd.candidatesFor(
         assistantId: 'a1',
         type: MemoryType.workflow,
-        newInfo: '用户开发 Flutter 项目时优先考虑兼容性。',
+        newInfo:
+            '\u7528\u6237\u5F00\u53D1 Flutter \u9879\u76EE\u65F6\u4F18\u5148\u8003\u8651\u517C\u5BB9\u6027。',
       );
       expect(cands, hasLength(5));
       expect(cands.every((e) => e.type == MemoryType.workflow), isTrue);
@@ -180,123 +183,122 @@ Sure:
   });
 
   group('applyDecision NEW/MERGE/CONFLICT/SKIP', () {
-    test(
-      'NEW links bidirectionally; MERGE does not; CONFLICT archives',
-      () async {
-        await seedAssistant('a1');
-        final existing = await memoryRepository.create(
-          scope: MemoryScope.global,
+    test('NEW links bidirectionally; MERGE does not; CONFLICT archives', () async {
+      await seedAssistant('a1');
+      final existing = await memoryRepository.create(
+        scope: MemoryScope.global,
+        type: MemoryType.identity,
+        content: '\u7528\u6237\u4F4F\u5728\u4E0A\u6D77。',
+        source: MemorySource.manual,
+      );
+      final related = await memoryRepository.create(
+        scope: MemoryScope.global,
+        type: MemoryType.identity,
+        content: '\u7528\u6237\u5728\u534E\u4E1C\u5DE5\u4F5C。',
+        source: MemorySource.manual,
+      );
+      final candidateIds = {existing.id, related.id};
+
+      final neu = await smartAdd.applyDecision(
+        item: const SmartAddItem(
           type: MemoryType.identity,
-          content: '用户住在上海。',
-          source: MemorySource.manual,
-        );
-        final related = await memoryRepository.create(
+          content: '\u7528\u6237\u662F\u8F6F\u4EF6\u5DE5\u7A0B\u5E08。',
           scope: MemoryScope.global,
+        ),
+        decision: SmartAddDecision(
+          action: SmartAddAction.neu,
+          relatedIds: [related.id, 'mem_ghost00'],
+        ),
+        candidateIds: candidateIds,
+        source: MemorySource.extracted,
+      );
+      expect(neu.action, SmartAddAction.neu);
+      final neuEntry = (await chatRepository.memoriesByIds([neu.id!])).single;
+      expect(neuEntry.relatedIds, [related.id]);
+      final relatedAfter = (await chatRepository.memoriesByIds([
+        related.id,
+      ])).single;
+      expect(relatedAfter.relatedIds, contains(neu.id));
+
+      final merged = await smartAdd.applyDecision(
+        item: const SmartAddItem(
           type: MemoryType.identity,
-          content: '用户在华东工作。',
-          source: MemorySource.manual,
-        );
-        final candidateIds = {existing.id, related.id};
+          content: 'ignored',
+          scope: MemoryScope.global,
+        ),
+        decision: SmartAddDecision(
+          action: SmartAddAction.merge,
+          targetId: existing.id,
+          mergedContent:
+              '\u7528\u6237\u4F4F\u5728\u4E0A\u6D77，\u5076\u5C14\u53BB\u676D\u5DDE。',
+          relatedIds: [related.id],
+        ),
+        candidateIds: candidateIds,
+        source: MemorySource.extracted,
+      );
+      expect(merged.action, SmartAddAction.merge);
+      final afterMerge = (await chatRepository.memoriesByIds([
+        existing.id,
+      ])).single;
+      expect(
+        afterMerge.content,
+        '\u7528\u6237\u4F4F\u5728\u4E0A\u6D77，\u5076\u5C14\u53BB\u676D\u5DDE。',
+      );
+      // MERGE must not attach relatedIds (D-25).
+      expect(afterMerge.relatedIds, isEmpty);
 
-        final neu = await smartAdd.applyDecision(
-          item: const SmartAddItem(
-            type: MemoryType.identity,
-            content: '用户是软件工程师。',
-            scope: MemoryScope.global,
-          ),
-          decision: SmartAddDecision(
-            action: SmartAddAction.neu,
-            relatedIds: [related.id, 'mem_ghost00'],
-          ),
-          candidateIds: candidateIds,
-          source: MemorySource.extracted,
-        );
-        expect(neu.action, SmartAddAction.neu);
-        final neuEntry = (await chatRepository.memoriesByIds([neu.id!])).single;
-        expect(neuEntry.relatedIds, [related.id]);
-        final relatedAfter = (await chatRepository.memoriesByIds([
-          related.id,
-        ])).single;
-        expect(relatedAfter.relatedIds, contains(neu.id));
+      final conflict = await smartAdd.applyDecision(
+        item: const SmartAddItem(
+          type: MemoryType.identity,
+          content: '\u7528\u6237\u4F4F\u5728\u5317\u4EAC。',
+          scope: MemoryScope.global,
+        ),
+        decision: SmartAddDecision(
+          action: SmartAddAction.conflict,
+          targetId: existing.id,
+          relatedIds: const [],
+        ),
+        candidateIds: candidateIds,
+        source: MemorySource.extracted,
+      );
+      expect(conflict.action, SmartAddAction.conflict);
+      final archived = (await chatRepository.memoriesByIds([
+        existing.id,
+      ])).single;
+      expect(archived.status, MemoryStatus.archived);
+      final fresh = (await chatRepository.memoriesByIds([conflict.id!])).single;
+      expect(fresh.content, '\u7528\u6237\u4F4F\u5728\u5317\u4EAC。');
+      expect(fresh.relatedIds, contains(existing.id));
 
-        final merged = await smartAdd.applyDecision(
-          item: const SmartAddItem(
-            type: MemoryType.identity,
-            content: 'ignored',
-            scope: MemoryScope.global,
-          ),
-          decision: SmartAddDecision(
-            action: SmartAddAction.merge,
-            targetId: existing.id,
-            mergedContent: '用户住在上海，偶尔去杭州。',
-            relatedIds: [related.id],
-          ),
-          candidateIds: candidateIds,
-          source: MemorySource.extracted,
-        );
-        expect(merged.action, SmartAddAction.merge);
-        final afterMerge = (await chatRepository.memoriesByIds([
-          existing.id,
-        ])).single;
-        expect(afterMerge.content, '用户住在上海，偶尔去杭州。');
-        // MERGE must not attach relatedIds (D-25).
-        expect(afterMerge.relatedIds, isEmpty);
-
-        final conflict = await smartAdd.applyDecision(
-          item: const SmartAddItem(
-            type: MemoryType.identity,
-            content: '用户住在北京。',
-            scope: MemoryScope.global,
-          ),
-          decision: SmartAddDecision(
-            action: SmartAddAction.conflict,
-            targetId: existing.id,
-            relatedIds: const [],
-          ),
-          candidateIds: candidateIds,
-          source: MemorySource.extracted,
-        );
-        expect(conflict.action, SmartAddAction.conflict);
-        final archived = (await chatRepository.memoriesByIds([
-          existing.id,
-        ])).single;
-        expect(archived.status, MemoryStatus.archived);
-        final fresh = (await chatRepository.memoriesByIds([
-          conflict.id!,
-        ])).single;
-        expect(fresh.content, '用户住在北京。');
-        expect(fresh.relatedIds, contains(existing.id));
-
-        final skip = await smartAdd.applyDecision(
-          item: const SmartAddItem(
-            type: MemoryType.identity,
-            content: 'x',
-            scope: MemoryScope.global,
-          ),
-          decision: SmartAddDecision(
-            action: SmartAddAction.skip,
-            targetId: related.id,
-          ),
-          candidateIds: candidateIds,
-          source: MemorySource.extracted,
-        );
-        expect(skip.action, SmartAddAction.skip);
-        expect(skip.id, related.id);
-      },
-    );
+      final skip = await smartAdd.applyDecision(
+        item: const SmartAddItem(
+          type: MemoryType.identity,
+          content: 'x',
+          scope: MemoryScope.global,
+        ),
+        decision: SmartAddDecision(
+          action: SmartAddAction.skip,
+          targetId: related.id,
+        ),
+        candidateIds: candidateIds,
+        source: MemorySource.extracted,
+      );
+      expect(skip.action, SmartAddAction.skip);
+      expect(skip.id, related.id);
+    });
 
     test('exact duplicate fast-path SKIP without LLM', () async {
       await seedAssistant('a1');
       final e = await memoryRepository.create(
         scope: MemoryScope.global,
         type: MemoryType.voice,
-        content: '用户偏好直接说明。',
+        content: '\u7528\u6237\u504F\u597D\u76F4\u63A5\u8BF4\u660E。',
         source: MemorySource.manual,
       );
       final r = await smartAdd.addOne(
         item: const SmartAddItem(
           type: MemoryType.voice,
-          content: '用户偏好直接说明。',
+          content: '\u7528\u6237\u504F\u597D\u76F4\u63A5\u8BF4\u660E。',
           scope: MemoryScope.global,
         ),
         visibilityAssistantId: 'a1',
@@ -313,7 +315,8 @@ Sure:
       final r = await smartAdd.addOne(
         item: const SmartAddItem(
           type: MemoryType.instruction,
-          content: '用户要求回复使用中文。',
+          content:
+              '\u7528\u6237\u8981\u6C42\u56DE\u590D\u4F7F\u7528\u4E2D\u6587。',
           scope: MemoryScope.global,
         ),
         visibilityAssistantId: 'a1',
@@ -332,13 +335,13 @@ Sure:
         final global = await memoryRepository.create(
           scope: MemoryScope.global,
           type: MemoryType.identity,
-          content: '用户住在上海。',
+          content: '\u7528\u6237\u4F4F\u5728\u4E0A\u6D77。',
           source: MemorySource.manual,
         );
         final r = await smartAdd.addOne(
           item: const SmartAddItem(
             type: MemoryType.identity,
-            content: '用户住在杭州。',
+            content: '\u7528\u6237\u4F4F\u5728\u676D\u5DDE。',
             scope: MemoryScope.assistant,
             assistantId: 'a1',
           ),
@@ -348,7 +351,8 @@ Sure:
           llmCall: (_) async => jsonEncode({
             'action': 'MERGE',
             'targetId': global.id,
-            'mergedContent': '用户住在上海和杭州。',
+            'mergedContent':
+                '\u7528\u6237\u4F4F\u5728\u4E0A\u6D77\u548C\u676D\u5DDE。',
             'relatedIds': <String>[],
           }),
         );
@@ -357,12 +361,12 @@ Sure:
         final afterGlobal = (await chatRepository.memoriesByIds([
           global.id,
         ])).single;
-        expect(afterGlobal.content, '用户住在上海。');
+        expect(afterGlobal.content, '\u7528\u6237\u4F4F\u5728\u4E0A\u6D77。');
         expect(afterGlobal.scope, MemoryScope.global);
         final created = (await chatRepository.memoriesByIds([r.id!])).single;
         expect(created.scope, MemoryScope.assistant);
         expect(created.assistantId, 'a1');
-        expect(created.content, '用户住在杭州。');
+        expect(created.content, '\u7528\u6237\u4F4F\u5728\u676D\u5DDE。');
       },
     );
   });

@@ -46,10 +46,10 @@ void main() {
         0x2D,
       ]); // %PDF-
       final content = [
-        '帮我看看',
+        '\u5E2E\u6211\u770B\u770B',
         '[image:${image.path}]',
         '[file:${pdf.path}|spec.pdf|application/pdf]',
-        '谢谢',
+        '\u8C22\u8C22',
       ].join('\n');
 
       final result = await decodeLegacyContent(content);
@@ -59,7 +59,7 @@ void main() {
       expect(result.missingFiles, 0);
       expect(result.parts, hasLength(4));
       expect(result.parts[0], isA<TextPart>());
-      expect((result.parts[0] as TextPart).text, '帮我看看');
+      expect((result.parts[0] as TextPart).text, '\u5E2E\u6211\u770B\u770B');
       expect(result.parts[1], isA<ImagePart>());
       final imagePart = result.parts[1] as ImagePart;
       expect(imagePart.uri, image.path);
@@ -72,10 +72,10 @@ void main() {
       expect(filePart.mime, 'application/pdf');
       expect(filePart.unavailable, isFalse);
       expect(result.parts[3], isA<TextPart>());
-      expect((result.parts[3] as TextPart).text, '\n谢谢');
+      expect((result.parts[3] as TextPart).text, '\n\u8C22\u8C22');
       expect(
         result.parts.whereType<TextPart>().map((part) => part.text).join(),
-        '帮我看看\n谢谢',
+        '\u5E2E\u6211\u770B\u770B\n\u8C22\u8C22',
       );
     },
   );
