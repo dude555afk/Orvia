@@ -94,22 +94,6 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Version: $VERSION"
 
-      - name: 🔨 Build debug APK (no signing required)
-        run: flutter build apk --debug
-
-      - name: 📦 Rename debug APK
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd build/app/outputs/flutter-apk
-          mv app-debug.apk Orvia_android_${VERSION}_debug.apk
-
-      - name: 📤 Upload Debug APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android-debug
-          path: build/app/outputs/flutter-apk/Orvia_android_*_debug.apk
-
       # Fail closed: public release APKs must never be silently unsigned.
       - name: 🔑 Configure Android release signing
         if: ${{ github.event.inputs.publish_release == 'true' }}
