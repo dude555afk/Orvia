@@ -118,14 +118,14 @@ abstract final class MemoryTools {
         'type': 'function',
         'function': {
           'name': 'create_memory',
-          'description': zh ? '新增一条记忆记录。' : 'Create a memory record.',
+          'description': zh ? 'Create a memory record.' : 'Create a memory record.',
           'parameters': {
             'type': 'object',
             'properties': {
               'content': {
                 'type': 'string',
                 'description': zh
-                    ? '记忆记录的内容。'
+                    ? 'The content of the memory record.'
                     : 'The content of the memory record.',
               },
             },
@@ -138,7 +138,7 @@ abstract final class MemoryTools {
         'function': {
           'name': 'edit_memory',
           'description': zh
-              ? '更新一条已有的记忆记录。'
+              ? 'Update an existing memory record.'
               : 'Update an existing memory record.',
           'parameters': {
             'type': 'object',
@@ -146,13 +146,13 @@ abstract final class MemoryTools {
               'id': {
                 'type': 'integer',
                 'description': zh
-                    ? '记忆记录的 id。'
+                    ? 'The id of the memory record.'
                     : 'The id of the memory record.',
               },
               'content': {
                 'type': 'string',
                 'description': zh
-                    ? '记忆记录的内容。'
+                    ? 'The content of the memory record.'
                     : 'The content of the memory record.',
               },
             },
@@ -164,14 +164,14 @@ abstract final class MemoryTools {
         'type': 'function',
         'function': {
           'name': 'delete_memory',
-          'description': zh ? '删除一条记忆记录。' : 'Delete a memory record.',
+          'description': zh ? 'Delete a memory record.' : 'Delete a memory record.',
           'parameters': {
             'type': 'object',
             'properties': {
               'id': {
                 'type': 'integer',
                 'description': zh
-                    ? '记忆记录的 id。'
+                    ? 'The id of the memory record.'
                     : 'The id of the memory record.',
               },
             },
@@ -902,7 +902,7 @@ abstract final class MemoryTools {
       'function': {
         'name': memoryRead,
         'description': zh
-            ? '读取用户的长期记忆。type 可选：identity（姓名、身边的人、职业等身份信息）、workflow（做事方式、工具偏好、调试习惯）、voice（行文风格、句式节奏、用词习惯）、instruction（用户对你的明确要求）。不传 type 则返回全部类型。使用 limit 和 offset 分页；结果中 total 为筛选后的总条数，has_more 为 true 时，保持筛选条件不变，将 next_offset 作为下次调用的 offset 继续读取，最后一页 next_offset 为 null。对话中已经提供了记忆摘要，只有在摘要标了 mode="summary" 被截断、或需要拿到条目 id 时才需要调用。'
+            ? 'Read the user\'
             : 'Read the user\'s long-term memory. Optional type: identity (name, people around them, occupation, etc.), workflow (ways of working, tool preferences, debugging habits), voice (writing style, rhythm, word choice), instruction (explicit requests to you). Omit type to return all types. Paginate with limit and offset. The result total counts all entries matching the filters. When has_more is true, keep the same filters and pass next_offset as offset to read the next page; next_offset is null on the last page. A memory summary is already in the conversation; call this only when a block is marked mode="summary" (truncated) or you need entry ids.',
         'parameters': {
           'type': 'object',
@@ -911,13 +911,13 @@ abstract final class MemoryTools {
               'type': 'string',
               'enum': ['identity', 'workflow', 'voice', 'instruction'],
               'description': zh
-                  ? '只返回该类型的记忆。省略则返回全部类型。'
+                  ? 'Return only memories of this type. Omit to return all types.'
                   : 'Return only memories of this type. Omit to return all types.',
             },
             'include_archived': {
               'type': 'boolean',
               'description': zh
-                  ? '是否包含已归档的记忆。默认 false。'
+                  ? 'Whether to include archived memories. Default false.'
                   : 'Whether to include archived memories. Default false.',
             },
             'limit': {
@@ -925,14 +925,14 @@ abstract final class MemoryTools {
               'minimum': 1,
               'maximum': 100,
               'description': zh
-                  ? '每页最多返回多少条，默认 50，最大 100。'
+                  ? 'Maximum entries per page. Default 50, maximum 100.'
                   : 'Maximum entries per page. Default 50, maximum 100.',
             },
             'offset': {
               'type': 'integer',
               'minimum': 0,
               'description': zh
-                  ? '跳过筛选结果的条数，默认 0。从上一页的 next_offset 继续读取。'
+                  ? 'Number of matching entries to skip. Default 0. Use next_offset from the previous page to continue.'
                   : 'Number of matching entries to skip. Default 0. Use next_offset from the previous page to continue.',
             },
           },
@@ -952,13 +952,13 @@ abstract final class MemoryTools {
         'type': 'string',
         'enum': ['identity', 'workflow', 'voice', 'instruction'],
         'description': zh
-            ? 'identity 身份信息；workflow 做事方式与工具偏好；voice 表达风格；instruction 用户对你的明确要求。'
+            ? 'identity: identity facts; workflow: ways of working and tool preferences; voice: expression style; instruction: explicit requests to you.'
             : 'identity: identity facts; workflow: ways of working and tool preferences; voice: expression style; instruction: explicit requests to you.',
       },
       'content': {
         'type': 'string',
         'description': zh
-            ? '一条完整、自包含的第三人称陈述句，例如「用户偏好直接、可落地的中文说明」。不要使用「这个」「刚才」等指回本次对话的词。'
+            ? 'One complete, self-contained third-person statement, e.g. "The user prefers direct, actionable explanations in Chinese." Avoid deictic words that refer back to this conversation.'
             : 'One complete, self-contained third-person statement, e.g. "The user prefers direct, actionable explanations in Chinese." Avoid deictic words that refer back to this conversation.',
       },
     };
@@ -968,7 +968,7 @@ abstract final class MemoryTools {
         'type': 'string',
         'enum': ['global', 'assistant'],
         'description': zh
-            ? 'global 对所有助手可见；assistant 只对当前助手可见。省略时按用户设置的默认值。'
+            ? 'global is visible to all assistants; assistant is visible only to the current assistant. When omitted, uses the user\'
             : 'global is visible to all assistants; assistant is visible only to the current assistant. When omitted, uses the user\'s configured default.',
       };
     }
@@ -977,7 +977,7 @@ abstract final class MemoryTools {
       'function': {
         'name': memoryUpdate,
         'description': zh
-            ? '写入一条用户长期记忆。系统会自动与已有记忆去重合并，不需要先读取再全文替换。只写下次新开对话时仍然成立的稳定信息；本次对话内的临时上下文不要写。'
+            ? 'Write one long-term user memory. The system deduplicates and merges with existing memories automatically; you do not need to read then replace. Only write stable facts that will still hold in a future conversation; do not write ephemeral context from this chat.'
             : 'Write one long-term user memory. The system deduplicates and merges with existing memories automatically; you do not need to read then replace. Only write stable facts that will still hold in a future conversation; do not write ephemeral context from this chat.',
         'parameters': {
           'type': 'object',
@@ -995,7 +995,7 @@ abstract final class MemoryTools {
       'function': {
         'name': memorySearchProfile,
         'description': zh
-            ? '搜索用户的长期记忆。当对话中提供的记忆摘要不够详细、被截断（标了 mode="summary"），或需要查找某个特定信息时使用。按关键词匹配，多个关键词之间是「且」关系。'
+            ? 'Search the user\'
             : 'Search the user\'s long-term memory. Use when the in-conversation memory summary is incomplete, truncated (mode="summary"), or you need a specific fact. Keyword match; multiple keywords are ANDed.',
         'parameters': {
           'type': 'object',
@@ -1003,14 +1003,14 @@ abstract final class MemoryTools {
             'query': {
               'type': 'string',
               'description': zh
-                  ? '关键词，多个用空格分隔。中文可以直接写连续短语。'
+                  ? 'Keywords separated by spaces. Continuous Chinese phrases can be used as-is.'
                   : 'Keywords separated by spaces. Continuous Chinese phrases can be used as-is.',
             },
             'type': {
               'type': 'string',
               'enum': ['identity', 'workflow', 'voice', 'instruction'],
               'description': zh
-                  ? '只在该类型内搜索。省略则搜索全部类型。'
+                  ? 'Search only within this type. Omit to search all types.'
                   : 'Search only within this type. Omit to search all types.',
             },
             'limit': {
@@ -1018,7 +1018,7 @@ abstract final class MemoryTools {
               'minimum': 1,
               'maximum': 20,
               'description': zh
-                  ? '最多返回多少条，默认 10。'
+                  ? 'Maximum number of entries to return. Default 10.'
                   : 'Maximum number of entries to return. Default 10.',
             },
           },
@@ -1035,7 +1035,7 @@ abstract final class MemoryTools {
       'function': {
         'name': memoryEdit,
         'description': zh
-            ? '修改一条已有记忆的内容。需要先用 memory_read 或 memory_search_profile 拿到条目 id（形如 mem_xxxxxxxx）。只在记忆内容确实过时或有错时使用；补充新信息请用 memory_update。'
+            ? 'Edit the content of an existing memory. First obtain the entry id (e.g. mem_xxxxxxxx) via memory_read or memory_search_profile. Use only when content is outdated or wrong; for new information use memory_update.'
             : 'Edit the content of an existing memory. First obtain the entry id (e.g. mem_xxxxxxxx) via memory_read or memory_search_profile. Use only when content is outdated or wrong; for new information use memory_update.',
         'parameters': {
           'type': 'object',
@@ -1043,13 +1043,13 @@ abstract final class MemoryTools {
             'id': {
               'type': 'string',
               'description': zh
-                  ? '条目 id，形如 mem_a1b2c3d4。'
+                  ? 'Entry id, e.g. mem_a1b2c3d4.'
                   : 'Entry id, e.g. mem_a1b2c3d4.',
             },
             'content': {
               'type': 'string',
               'description': zh
-                  ? '修改后的完整内容，会整体替换原内容。'
+                  ? 'The full replacement content.'
                   : 'The full replacement content.',
             },
           },
@@ -1066,7 +1066,7 @@ abstract final class MemoryTools {
       'function': {
         'name': memoryDelete,
         'description': zh
-            ? '归档一条记忆（软删除）。归档后不再出现在记忆摘要和搜索结果里，用户仍可以在设置中看到并恢复。需要先用 memory_read 或 memory_search_profile 拿到条目 id。只在用户明确表示某条记忆不再成立时使用。'
+            ? 'Archive a memory (soft delete). Archived entries disappear from the memory summary and search results, but the user can still see and restore them in settings. First obtain the entry id via memory_read or memory_search_profile. Use only when the user clearly says a memory no longer holds.'
             : 'Archive a memory (soft delete). Archived entries disappear from the memory summary and search results, but the user can still see and restore them in settings. First obtain the entry id via memory_read or memory_search_profile. Use only when the user clearly says a memory no longer holds.',
         'parameters': {
           'type': 'object',
@@ -1074,7 +1074,7 @@ abstract final class MemoryTools {
             'id': {
               'type': 'string',
               'description': zh
-                  ? '条目 id，形如 mem_a1b2c3d4。'
+                  ? 'Entry id, e.g. mem_a1b2c3d4.'
                   : 'Entry id, e.g. mem_a1b2c3d4.',
             },
           },
@@ -1091,27 +1091,27 @@ abstract final class MemoryTools {
       'function': {
         'name': updateUserProfile,
         'description': zh
-            ? '更新用户画像字段。这些是最稳定的身份信息。不确定的时候不要写。'
+            ? 'Update user profile fields. These are the most stable identity facts. Do not write when uncertain.'
             : 'Update user profile fields. These are the most stable identity facts. Do not write when uncertain.',
         'parameters': {
           'type': 'object',
           'properties': {
             'fields': {
               'type': 'array',
-              'description': zh ? '要更新的字段列表。' : 'List of fields to update.',
+              'description': zh ? 'List of fields to update.' : 'List of fields to update.',
               'items': {
                 'type': 'object',
                 'properties': {
                   'key': {
                     'type': 'string',
                     'description': zh
-                        ? '可用字段：preferred_name（用户希望你怎么称呼他）、gender、pronouns、preferred_language、timezone、occupation、location。其他稳定字段用 custom.<名称>，名称只能是字母、数字、下划线或连字符。'
+                        ? 'Allowed keys: preferred_name (how the user wants to be addressed), gender, pronouns, preferred_language, timezone, occupation, location. Other stable fields use custom.<name> where name is letters, digits, underscore, or hyphen only.'
                         : 'Allowed keys: preferred_name (how the user wants to be addressed), gender, pronouns, preferred_language, timezone, occupation, location. Other stable fields use custom.<name> where name is letters, digits, underscore, or hyphen only.',
                   },
                   'value': {
                     'type': 'string',
                     'description': zh
-                        ? '字段取值。传空字符串表示清除该字段。'
+                        ? 'Field value. An empty string clears the field.'
                         : 'Field value. An empty string clears the field.',
                   },
                 },
@@ -1132,7 +1132,7 @@ abstract final class MemoryTools {
       'function': {
         'name': chatSearch,
         'description': zh
-            ? '在历史对话中按关键词搜索消息内容（仅当前助手的会话，以及没有归属助手的旧会话）。需要回忆之前聊过什么，或者用户提到「上次」「之前说的」「我们讨论过」时，优先使用这个工具。默认不搜索当前对话，因为当前对话的内容已经在上下文里。'
+            ? 'Search message content in this assistant\'
             : 'Search message content in this assistant\'s past conversations (and unowned older chats) by keywords. Prefer this when recalling prior discussion, or when the user mentions "last time", "earlier", or "we discussed". By default the current conversation is excluded because it is already in context.',
         'parameters': {
           'type': 'object',
@@ -1140,7 +1140,7 @@ abstract final class MemoryTools {
             'query': {
               'type': 'string',
               'description': zh
-                  ? '关键词，多个用空格分隔。'
+                  ? 'Keywords separated by spaces.'
                   : 'Keywords separated by spaces.',
             },
             'limit': {
@@ -1148,13 +1148,13 @@ abstract final class MemoryTools {
               'minimum': 1,
               'maximum': 20,
               'description': zh
-                  ? '最多返回多少条，默认 10。'
+                  ? 'Maximum number of results. Default 10.'
                   : 'Maximum number of results. Default 10.',
             },
             'conversation_id': {
               'type': 'string',
               'description': zh
-                  ? '只在指定会话内搜索。省略则搜索除当前会话外、当前助手可见的会话。'
+                  ? 'Search only within this conversation. Omit to search this assistant\'
                   : 'Search only within this conversation. Omit to search this assistant\'s visible conversations except the current one.',
             },
           },
