@@ -27,7 +27,7 @@ void main() {
         .map((entry) => entry.id)
         .toList();
 
-    test('单份副本永远不删', () {
+    test('\u5355\u4EFD\u526F\u672C\u6C38\u8FDC\u4E0D\u5220', () {
       expect(
         deleted(LocalSnapshotRetentionPolicy.gfsLite, [
           entry('only', age: const Duration(days: 400)),
@@ -36,7 +36,7 @@ void main() {
       );
     });
 
-    test('GFS-lite 保留 近期3 + 周 + 月', () {
+    test('GFS-lite \u4FDD\u7559 \u8FD1\u671F3 + \u5468 + \u6708', () {
       final entries = [
         entry('d0', age: const Duration(hours: 1)),
         entry('d1', age: const Duration(days: 1)),
@@ -49,7 +49,7 @@ void main() {
         entry('m2', age: const Duration(days: 200)),
       ];
 
-      // 近期 d0/d1/d2；周槽取"最新的一份 >=7 天"= w1；月槽取"最新的一份 >=30 天"= m1。
+      // \u8FD1\u671F d0/d1/d2；\u5468\u69FD\u53D6"\u6700\u65B0\u7684\u4E00\u4EFD >=7 \u5929"= w1；\u6708\u69FD\u53D6"\u6700\u65B0\u7684\u4E00\u4EFD >=30 \u5929"= m1。
       expect(deleted(LocalSnapshotRetentionPolicy.gfsLite, entries), [
         'm2',
         'w2',
@@ -58,7 +58,7 @@ void main() {
       ]);
     });
 
-    test('周/月槽取的是最新一份够龄的，不是最老的那份', () {
+    test('\u5468/\u6708\u69FD\u53D6\u7684\u662F\u6700\u65B0\u4E00\u4EFD\u591F\u9F84\u7684，\u4E0D\u662F\u6700\u8001\u7684\u90A3\u4EFD', () {
       final entries = [
         entry('new', age: const Duration(hours: 1)),
         entry('week-fresh', age: const Duration(days: 7, hours: 1)),
@@ -72,7 +72,7 @@ void main() {
       expect(deleted(policy, entries), ['week-stale']);
     });
 
-    test('空副本挤不掉最后一份有内容的', () {
+    test('\u7A7A\u526F\u672C\u6324\u4E0D\u6389\u6700\u540E\u4E00\u4EFD\u6709\u5185\u5BB9\u7684', () {
       final entries = [
         entry('empty2', age: const Duration(hours: 1), messageCount: 0),
         entry('empty1', age: const Duration(hours: 2), messageCount: 0),
@@ -87,7 +87,7 @@ void main() {
       expect(deleted(policy, entries), ['empty1']);
     });
 
-    test('内容骤降时钉住高水位那一份', () {
+    test('\u5185\u5BB9\u9AA4\u964D\u65F6\u9489\u4F4F\u9AD8\u6C34\u4F4D\u90A3\u4E00\u4EFD', () {
       final entries = [
         entry('after2', age: const Duration(hours: 1), messageCount: 10),
         entry('after1', age: const Duration(hours: 2), messageCount: 10),
@@ -102,7 +102,7 @@ void main() {
       expect(deleted(policy, entries), ['after1']);
     });
 
-    test('内容平稳变化不触发高水位保护', () {
+    test('\u5185\u5BB9\u5E73\u7A33\u53D8\u5316\u4E0D\u89E6\u53D1\u9AD8\u6C34\u4F4D\u4FDD\u62A4', () {
       final entries = [
         entry('c', age: const Duration(hours: 1), messageCount: 900),
         entry('b', age: const Duration(hours: 2), messageCount: 950),
@@ -117,7 +117,7 @@ void main() {
       expect(deleted(policy, entries), ['a', 'b']);
     });
 
-    test('高水位保护有期限，不会永久留着已删的数据', () {
+    test('\u9AD8\u6C34\u4F4D\u4FDD\u62A4\u6709\u671F\u9650，\u4E0D\u4F1A\u6C38\u4E45\u7559\u7740\u5DF2\u5220\u7684\u6570\u636E', () {
       final entries = [
         entry('after', age: const Duration(days: 1), messageCount: 10),
         entry('before', age: const Duration(days: 120), messageCount: 5000),
@@ -131,7 +131,7 @@ void main() {
       expect(deleted(policy, entries), ['before']);
     });
 
-    test('pinned 的副本不参与自动清理', () {
+    test('pinned \u7684\u526F\u672C\u4E0D\u53C2\u4E0E\u81EA\u52A8\u6E05\u7406', () {
       final entries = [
         entry('new', age: const Duration(hours: 1)),
         entry('old', age: const Duration(days: 300)),
@@ -146,7 +146,7 @@ void main() {
       expect(deleted(policy, entries), ['old']);
     });
 
-    test('超出总量上限时继续砍槽位，但不动受保护的', () {
+    test('\u8D85\u51FA\u603B\u91CF\u4E0A\u9650\u65F6\u7EE7\u7EED\u780D\u69FD\u4F4D，\u4F46\u4E0D\u52A8\u53D7\u4FDD\u62A4\u7684', () {
       final entries = [
         entry('d0', age: const Duration(hours: 1), bytes: 400),
         entry('d1', age: const Duration(days: 1), bytes: 400),
@@ -159,11 +159,11 @@ void main() {
         keepMonthly: false,
         maximumTotalBytes: 500,
       );
-      // 预算只放得下一份，但 d0（最新）受保护，所以停在这里而不是清空。
+      // \u9884\u7B97\u53EA\u653E\u5F97\u4E0B\u4E00\u4EFD，\u4F46 d0（\u6700\u65B0）\u53D7\u4FDD\u62A4，\u6240\u4EE5\u505C\u5728\u8FD9\u91CC\u800C\u4E0D\u662F\u6E05\u7A7A。
       expect(deleted(policy, entries), ['d2', 'd1']);
     });
 
-    test('总量上限压不掉最后一份有内容的副本', () {
+    test('\u603B\u91CF\u4E0A\u9650\u538B\u4E0D\u6389\u6700\u540E\u4E00\u4EFD\u6709\u5185\u5BB9\u7684\u526F\u672C', () {
       final entries = [
         entry(
           'empty',
