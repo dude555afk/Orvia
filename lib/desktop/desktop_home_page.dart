@@ -56,7 +56,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
       });
       ChatActionBus.instance.fire(ChatAction.exitGlobalSearch);
     });
-    // 初始进入时如果就是聊天页，则聚焦聊天输入框
+    // \u521D\u59CB\u8FDB\u5165\u65F6\u5982\u679C\u5C31\u662F\u804A\u5929\u9875，\u5219\u805A\u7126\u804A\u5929\u8F93\u5165\u6846
     if (_tabIndex == 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ChatActionBus.instance.fire(ChatAction.focusInput);
@@ -85,20 +85,20 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
             final minimized = await windowManager.isMinimized();
             final focused = await windowManager.isFocused();
 
-            // 优先级：
-            // 1. 如果窗口不可见或最小化，则显示并聚焦
-            // 2. 如果窗口可见但未聚焦，则聚焦
-            // 3. 如果窗口可见且已聚焦，则隐藏
+            // \u4F18\u5148\u7EA7：
+            // 1. \u5982\u679C\u7A97\u53E3\u4E0D\u53EF\u89C1\u6216\u6700\u5C0F\u5316，\u5219\u663E\u793A\u5E76\u805A\u7126
+            // 2. \u5982\u679C\u7A97\u53E3\u53EF\u89C1\u4F46\u672A\u805A\u7126，\u5219\u805A\u7126
+            // 3. \u5982\u679C\u7A97\u53E3\u53EF\u89C1\u4E14\u5DF2\u805A\u7126，\u5219\u9690\u85CF
             if (!visible || minimized) {
               await windowManager.show();
               await windowManager.focus();
-              // 如果当前是聊天页，显示窗口时聚焦输入框
+              // \u5982\u679C\u5F53\u524D\u662F\u804A\u5929\u9875，\u663E\u793A\u7A97\u53E3\u65F6\u805A\u7126\u8F93\u5165\u6846
               if (_tabIndex == 0) {
                 ChatActionBus.instance.fire(ChatAction.focusInput);
               }
             } else if (!focused) {
               await windowManager.focus();
-              // 如果当前是聊天页，聚焦窗口时也聚焦输入框
+              // \u5982\u679C\u5F53\u524D\u662F\u804A\u5929\u9875，\u805A\u7126\u7A97\u53E3\u65F6\u4E5F\u805A\u7126\u8F93\u5165\u6846
               if (_tabIndex == 0) {
                 ChatActionBus.instance.fire(ChatAction.focusInput);
               }
@@ -190,7 +190,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                   _globalSearchActive = false;
                 });
                 ChatActionBus.instance.fire(ChatAction.exitGlobalSearch);
-                // 切换到聊天页时聚焦输入框
+                // \u5207\u6362\u5230\u804A\u5929\u9875\u65F6\u805A\u7126\u8F93\u5165\u6846
                 ChatActionBus.instance.fire(ChatAction.focusInput);
               },
               onTapGlobalSearch: () {
