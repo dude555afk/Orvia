@@ -77,18 +77,18 @@ void main() {
         final backend = _FakeSystemAsrBackend()
           ..availableLocales = const <SystemAsrLocale>[
             SystemAsrLocale(id: 'en_US', name: 'English'),
-            SystemAsrLocale(id: 'zh_CN', name: '中文'),
+            SystemAsrLocale(id: 'zh_CN', name: '\u4E2D\u6587'),
           ]
           ..currentSystemLocale = const SystemAsrLocale(
             id: 'zh_CN',
-            name: '中文',
+            name: '\u4E2D\u6587',
           );
         final service = SystemAsrService(backend: backend);
 
         expect(await service.locales, backend.availableLocales);
         expect(
           await service.systemLocale,
-          const SystemAsrLocale(id: 'zh_CN', name: '中文'),
+          const SystemAsrLocale(id: 'zh_CN', name: '\u4E2D\u6587'),
         );
         expect(backend.initializeCalls, 1);
         expect(backend.localesCalls, 1);
@@ -175,8 +175,8 @@ void main() {
           ),
           isTrue,
         );
-        backend.emitTranscript('你好', false);
-        backend.emitTranscript('你好世界', true);
+        backend.emitTranscript('\u4F60\u597D', false);
+        backend.emitTranscript('\u4F60\u597D\u4E16\u754C', true);
         backend.emitSoundLevel(3.5);
         backend.emitError(
           const SystemAsrError(message: 'temporary', isPermanent: false),
@@ -187,7 +187,7 @@ void main() {
         expect(backend.lastLocaleId, 'zh_CN');
         expect(backend.lastListenFor, SystemAsrService.defaultListenFor);
         expect(backend.lastPauseFor, SystemAsrService.defaultPauseFor);
-        expect(transcripts, <(String, bool)>[('你好', false), ('你好世界', true)]);
+        expect(transcripts, <(String, bool)>[('\u4F60\u597D', false), ('\u4F60\u597D\u4E16\u754C', true)]);
         expect(levels, <double>[3.5]);
         expect(errors.single.message, 'temporary');
       },
