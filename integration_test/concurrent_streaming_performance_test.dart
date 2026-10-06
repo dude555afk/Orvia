@@ -191,12 +191,12 @@ void main() {
         final expectedReasoning =
             List.filled(
               1800,
-              '正在分析长文本，保留 Markdown **粗体**、中文和 English。\n\n',
+              '\u6B63\u5728\u5206\u6790\u957F\u6587\u672C，\u4FDD\u7559 Markdown **\u7C97\u4F53**、\u4E2D\u6587\u548C English。\n\n',
             ).join() +
-            List.filled(240, '继续分析上下文并核对事实。').join();
+            List.filled(240, '\u7EE7\u7EED\u5206\u6790\u4E0A\u4E0B\u6587\u5E76\u6838\u5BF9\u4E8B\u5B9E。').join();
         final expectedText = List.filled(
           720,
-          '正文持续输出，保留 **Markdown** 和文字选择。 ',
+          '\u6B63\u6587\u6301\u7EED\u8F93\u51FA，\u4FDD\u7559 **Markdown** \u548C\u6587\u5B57\u9009\u62E9。 ',
         ).join();
         for (final conversation in conversations) {
           final messages = await service.loadMessages(conversation.id);
