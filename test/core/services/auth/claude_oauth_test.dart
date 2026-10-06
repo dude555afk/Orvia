@@ -797,7 +797,7 @@ void main() {
   // messages, a UTF-16 surrogate at fingerprint index 4 and a Unicode body.
   for (final vector in [
     ('Hello', '790', 'b8f6c'),
-    ('编码测试🙂cache校验字符串with emoji', '05c', 'a1994'),
+    ('\u7F16\u7801\u6D4B\u8BD5🙂cache\u6821\u9A8C\u5B57\u7B26\u4E32with emoji', '05c', 'a1994'),
   ]) {
     test(
       'Claude billing fingerprint and cch match independent vectors for ${vector.$1}',
