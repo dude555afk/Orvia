@@ -109,7 +109,7 @@ void main() {
     final message = ChatMessage(
       id: 'revision-1',
       role: 'assistant',
-      content: 'A searchable needle appears here，测试中文短词。',
+      content: 'A searchable needle appears here，\u6D4B\u8BD5\u4E2D\u6587\u77ED\u8BCD。',
       timestamp: DateTime.utc(2026, 7, 12),
       conversationId: conversation.id,
       groupId: 'slot-1',
@@ -126,7 +126,7 @@ void main() {
       tokens: const ['needle'],
     );
     final cjk = await repository.searchConversationMatches(
-      tokens: const ['中文'],
+      tokens: const ['\u4E2D\u6587'],
     );
 
     expect(word.single.messageId, 'revision-1');
