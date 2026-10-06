@@ -217,7 +217,7 @@ void main() {
       await live.ensureReady();
     }
 
-    test('无冲突 conversation 原 ID 导入且 order/关联数据完整', () async {
+    test('\u65E0\u51B2\u7A81 conversation \u539F ID \u5BFC\u5165\u4E14 order/\u5173\u8054\u6570\u636E\u5B8C\u6574', () async {
       await putConversation(
         source,
         conversationId: 'source-conversation',
@@ -251,7 +251,7 @@ void main() {
       );
     });
 
-    test('会话级模型锁定随合并导入一并携带', () async {
+    test('\u4F1A\u8BDD\u7EA7\u6A21\u578B\u9501\u5B9A\u968F\u5408\u5E76\u5BFC\u5165\u4E00\u5E76\u643A\u5E26', () async {
       await putConversation(
         source,
         conversationId: 'pinned-conversation',
@@ -271,7 +271,7 @@ void main() {
       expect(conversation?.chatModelId, 'gpt-5');
     });
 
-    test('相同 ID 与内容按 hash 去重，重复导入保持幂等', () async {
+    test('\u76F8\u540C ID \u4E0E\u5185\u5BB9\u6309 hash \u53BB\u91CD，\u91CD\u590D\u5BFC\u5165\u4FDD\u6301\u5E42\u7B49', () async {
       for (final repository in [live, source]) {
         await putConversation(
           repository,
@@ -292,7 +292,7 @@ void main() {
       expect(await live.getAllConversations(), hasLength(1));
     });
 
-    test('仅 sender_id 不同不会被误判为重复', () async {
+    test('\u4EC5 sender_id \u4E0D\u540C\u4E0D\u4F1A\u88AB\u8BEF\u5224\u4E3A\u91CD\u590D', () async {
       for (final repository in [live, source]) {
         await putConversation(
           repository,
@@ -333,7 +333,7 @@ void main() {
       }
     });
 
-    test('仅消息 extras_json 不同不会被误判为重复', () async {
+    test('\u4EC5\u6D88\u606F extras_json \u4E0D\u540C\u4E0D\u4F1A\u88AB\u8BEF\u5224\u4E3A\u91CD\u590D', () async {
       for (final repository in [live, source]) {
         await putConversation(
           repository,
@@ -362,7 +362,7 @@ void main() {
       expect(report.remappedConversationIds['extras-conv'], isNotNull);
     });
 
-    test('多消息会话 parts 按 revision 分组后指纹一致，重复导入去重', () async {
+    test('\u591A\u6D88\u606F\u4F1A\u8BDD parts \u6309 revision \u5206\u7EC4\u540E\u6307\u7EB9\u4E00\u81F4，\u91CD\u590D\u5BFC\u5165\u53BB\u91CD', () async {
       for (final repository in [live, source]) {
         await putTwoMessageConversation(
           repository,
@@ -382,7 +382,7 @@ void main() {
       expect(await live.getAllConversations(), hasLength(1));
     });
 
-    test('多消息会话正文互换后指纹不同，不会被误判为重复', () async {
+    test('\u591A\u6D88\u606F\u4F1A\u8BDD\u6B63\u6587\u4E92\u6362\u540E\u6307\u7EB9\u4E0D\u540C，\u4E0D\u4F1A\u88AB\u8BEF\u5224\u4E3A\u91CD\u590D', () async {
       // Both sides hold the same multiset of text/reasoning/tool payloads, the
       // same signature and the same per-position timestamps, and differ only in
       // which message owns which payload. A fingerprint that pooled parts per
@@ -441,7 +441,7 @@ void main() {
       ]);
     });
 
-    test('正文相同但附件不同不会被误判为重复', () async {
+    test('\u6B63\u6587\u76F8\u540C\u4F46\u9644\u4EF6\u4E0D\u540C\u4E0D\u4F1A\u88AB\u8BEF\u5224\u4E3A\u91CD\u590D', () async {
       await putConversationWithAttachments(
         live,
         conversationId: 'attach',
@@ -477,7 +477,7 @@ void main() {
       expect(await live.getAllConversations(), hasLength(2));
     });
 
-    test('仅 unavailable 不同仍按附件身份去重', () async {
+    test('\u4EC5 unavailable \u4E0D\u540C\u4ECD\u6309\u9644\u4EF6\u8EAB\u4EFD\u53BB\u91CD', () async {
       await putConversationWithAttachments(
         live,
         conversationId: 'avail',
@@ -515,7 +515,7 @@ void main() {
       expect(await live.getAllConversations(), hasLength(1));
     });
 
-    test('附件 ordinal 顺序不同产生不同指纹', () async {
+    test('\u9644\u4EF6 ordinal \u987A\u5E8F\u4E0D\u540C\u4EA7\u751F\u4E0D\u540C\u6307\u7EB9', () async {
       await putConversationWithAttachments(
         live,
         conversationId: 'order',
@@ -545,7 +545,7 @@ void main() {
       expect(await live.getAllConversations(), hasLength(2));
     });
 
-    test('同 conversation ID 异内容时整会话 remap 并可重复去重', () async {
+    test('\u540C conversation ID \u5F02\u5185\u5BB9\u65F6\u6574\u4F1A\u8BDD remap \u5E76\u53EF\u91CD\u590D\u53BB\u91CD', () async {
       await putConversation(
         live,
         conversationId: 'collision',
@@ -580,7 +580,7 @@ void main() {
       expect(await live.getAllConversations(), hasLength(2));
     });
 
-    test('conversation ID 可用但 message ID 冲突时整会话 remap', () async {
+    test('conversation ID \u53EF\u7528\u4F46 message ID \u51B2\u7A81\u65F6\u6574\u4F1A\u8BDD remap', () async {
       await putConversation(
         live,
         conversationId: 'local-conversation',
@@ -615,7 +615,7 @@ void main() {
       );
     });
 
-    test('迁移批写入后工具事件与签名物化进 parts/artifacts 可读', () async {
+    test('\u8FC1\u79FB\u6279\u5199\u5165\u540E\u5DE5\u5177\u4E8B\u4EF6\u4E0E\u7B7E\u540D\u7269\u5316\u8FDB parts/artifacts \u53EF\u8BFB', () async {
       await putConversation(
         live,
         conversationId: 'materialized',
@@ -635,7 +635,7 @@ void main() {
       );
     });
 
-    test('merge 拷贝 parts/artifacts，无 legacy 表时仍可读', () async {
+    test('merge \u62F7\u8D1D parts/artifacts，\u65E0 legacy \u8868\u65F6\u4ECD\u53EF\u8BFB', () async {
       await putConversation(
         source,
         conversationId: 'artifact-conversation',
@@ -667,7 +667,7 @@ void main() {
       });
     });
 
-    test('remap 时 group_id 为 null 的 v0 与后续版本仍属同一版本组', () async {
+    test('remap \u65F6 group_id \u4E3A null \u7684 v0 \u4E0E\u540E\u7EED\u7248\u672C\u4ECD\u5C5E\u540C\u4E00\u7248\u672C\u7EC4', () async {
       await putConversation(
         live,
         conversationId: 'versioned',
@@ -676,7 +676,7 @@ void main() {
         content: 'local',
       );
 
-      // 生产形态：v0 不显式传 id，因此 group_id 落库为 NULL。
+      // \u751F\u4EA7\u5F62\u6001：v0 \u4E0D\u663E\u5F0F\u4F20 id，\u56E0\u6B64 group_id \u843D\u5E93\u4E3A NULL。
       final v0 = ChatMessage(
         role: 'assistant',
         content: 'v0',
@@ -719,7 +719,7 @@ void main() {
       expect(await live.getAllConversations(), hasLength(2));
     });
 
-    test('删除中间消息后的稀疏 order 可导入、稳定去重并保留水位', () async {
+    test('\u5220\u9664\u4E2D\u95F4\u6D88\u606F\u540E\u7684\u7A00\u758F order \u53EF\u5BFC\u5165、\u7A33\u5B9A\u53BB\u91CD\u5E76\u4FDD\u7559\u6C34\u4F4D', () async {
       await putSparseConversation(
         conversationId: 'sparse',
         messagePrefix: 'sparse',
@@ -748,7 +748,7 @@ void main() {
       expect(second.skippedConversations, 0);
     });
 
-    test('稀疏 order 在 conversation ID 冲突时可整会话 remap', () async {
+    test('\u7A00\u758F order \u5728 conversation ID \u51B2\u7A81\u65F6\u53EF\u6574\u4F1A\u8BDD remap', () async {
       await putConversation(
         live,
         conversationId: 'sparse-remap',
@@ -778,7 +778,7 @@ void main() {
       expect(imported.lastMemoryExtractedOrder, 2);
     });
 
-    test('非法 order 仅跳过所属会话并计数', () async {
+    test('\u975E\u6CD5 order \u4EC5\u8DF3\u8FC7\u6240\u5C5E\u4F1A\u8BDD\u5E76\u8BA1\u6570', () async {
       await putConversation(
         source,
         conversationId: 'valid',
