@@ -138,7 +138,7 @@ void main() {
       },
     );
 
-    test('一次事务写入完整消息快照和 tool events 且不改变顺序', () async {
+    test('\u4E00\u6B21\u4E8B\u52A1\u5199\u5165\u5B8C\u6574\u6D88\u606F\u5FEB\u7167\u548C tool events \u4E14\u4E0D\u6539\u53D8\u987A\u5E8F', () async {
       final snapshot = ChatMessage(
         id: 'streaming',
         role: 'assistant',
@@ -207,7 +207,7 @@ void main() {
       expect(authoritative?.reasoningText, 'thinking');
     });
 
-    test('checkpoint 按 parts 交错顺序落库而不是拍平', () async {
+    test('checkpoint \u6309 parts \u4EA4\u9519\u987A\u5E8F\u843D\u5E93\u800C\u4E0D\u662F\u62CD\u5E73', () async {
       const toolEvents = [
         {'id': 'tool-1', 'name': 'search', 'content': 'result'},
       ];
@@ -238,12 +238,12 @@ void main() {
       expect(await repository.getToolEvents('streaming'), toolEvents);
     });
 
-    test('相邻 data 记录中的斜体段落逐字进入 checkpoint 和 API 历史', () async {
+    test('\u76F8\u90BB data \u8BB0\u5F55\u4E2D\u7684\u659C\u4F53\u6BB5\u843D\u9010\u5B57\u8FDB\u5165 checkpoint \u548C API \u5386\u53F2', () async {
       const fragments = <String>[
-        '*被窝裹住，她反而笑得更',
-        '甜*\n\n*懒懒地、',
-        '黏糊糊地*\n\n对',
-        '……后面的内容仍然保留。',
+        '*\u88AB\u7A9D\u88F9\u4F4F，\u5979\u53CD\u800C\u7B11\u5F97\u66F4',
+        '\u751C*\n\n*\u61D2\u61D2\u5730、',
+        '\u9ECF\u7CCA\u7CCA\u5730*\n\n\u5BF9',
+        '……\u540E\u9762\u7684\u5185\u5BB9\u4ECD\u7136\u4FDD\u7559。',
       ];
       String frame(String text) =>
           'data: ${jsonEncode(<String, dynamic>{
@@ -314,7 +314,7 @@ void main() {
       expect(apiMessages.last['content'], expected);
     });
 
-    test('已 finalize 的消息不会被迟到的流式 checkpoint 复活', () async {
+    test('\u5DF2 finalize \u7684\u6D88\u606F\u4E0D\u4F1A\u88AB\u8FDF\u5230\u7684\u6D41\u5F0F checkpoint \u590D\u6D3B', () async {
       // Terminal write commits the finalized (non-streaming) content.
       await repository.updateStreamingCheckpoint(
         ChatMessage(
@@ -358,7 +358,7 @@ void main() {
       }
     });
 
-    test('不存在的消息不会被 checkpoint 意外插入', () async {
+    test('\u4E0D\u5B58\u5728\u7684\u6D88\u606F\u4E0D\u4F1A\u88AB checkpoint \u610F\u5916\u63D2\u5165', () async {
       await expectLater(
         repository.updateStreamingCheckpoint(
           ChatMessage(
@@ -376,7 +376,7 @@ void main() {
       expect(await repository.getMessagesByIds(const ['missing']), isEmpty);
     });
 
-    test('cold start 一次事务清理未登记 flag 和孤儿 tracking metadata', () async {
+    test('cold start \u4E00\u6B21\u4E8B\u52A1\u6E05\u7406\u672A\u767B\u8BB0 flag \u548C\u5B64\u513F tracking metadata', () async {
       final createdAt = DateTime.now().toUtc();
       await repository.createGenerationRun(
         id: 'abandoned-run',
@@ -450,7 +450,7 @@ void main() {
       }
     });
 
-    test('tool parts 内容与 ordinal 在仅正文变化的 checkpoint 后保持等价', () async {
+    test('tool parts \u5185\u5BB9\u4E0E ordinal \u5728\u4EC5\u6B63\u6587\u53D8\u5316\u7684 checkpoint \u540E\u4FDD\u6301\u7B49\u4EF7', () async {
       const toolEvents = [
         {
           'id': 'tool-1',
@@ -518,7 +518,7 @@ void main() {
       expect(await repository.getToolEvents('streaming'), toolEvents);
     });
 
-    test('tool events 变化时回退全量重建', () async {
+    test('tool events \u53D8\u5316\u65F6\u56DE\u9000\u5168\u91CF\u91CD\u5EFA', () async {
       ChatMessage snapshot(String content) => ChatMessage(
         id: 'streaming',
         role: 'assistant',
@@ -562,7 +562,7 @@ void main() {
       expect((await repository.getMessage('streaming'))?.content, 'draft two');
     });
 
-    test('message_rows 不再包含 content / reasoning_text 影子列', () async {
+    test('message_rows \u4E0D\u518D\u5305\u542B content / reasoning_text \u5F71\u5B50\u5217', () async {
       final raw = sqlite.sqlite3.open('${directory.path}/chat.sqlite');
       try {
         final columns = raw
@@ -576,7 +576,7 @@ void main() {
       }
     });
 
-    test('任何写入路径都不会产生 tool_result part', () async {
+    test('\u4EFB\u4F55\u5199\u5165\u8DEF\u5F84\u90FD\u4E0D\u4F1A\u4EA7\u751F tool_result part', () async {
       await repository.updateStreamingCheckpoint(
         ChatMessage(
           id: 'streaming',
@@ -643,7 +643,7 @@ void main() {
       }
     });
 
-    test('崩溃恢复后 parts 可读且 FTS 可搜索', () async {
+    test('\u5D29\u6E83\u6062\u590D\u540E parts \u53EF\u8BFB\u4E14 FTS \u53EF\u641C\u7D22', () async {
       final createdAt = DateTime.now().toUtc();
       await repository.createGenerationRun(
         id: 'crashed-run',
@@ -821,12 +821,12 @@ void main() {
       expect(message?.reasoningText, 'let me think');
     });
 
-    test('ServerToolStart 到 checkpoint 再到 ServerToolEnd 工具卡不丢且位置不变', () async {
+    test('ServerToolStart \u5230 checkpoint \u518D\u5230 ServerToolEnd \u5DE5\u5177\u5361\u4E0D\u4E22\u4E14\u4F4D\u7F6E\u4E0D\u53D8', () async {
       final handler = StreamChunkHandler();
       handler.handle(
         const ServerToolStart(id: 'srv_1', toolName: 'search_web'),
       );
-      handler.handle(const TextDelta(id: 't', text: '我查一下'));
+      handler.handle(const TextDelta(id: 't', text: '\u6211\u67E5\u4E00\u4E0B'));
 
       ChatMessage snapshot() => ChatMessage(
         id: 'streaming',
@@ -847,12 +847,12 @@ void main() {
         jsonDecode((persisted.parts[0] as ToolCallPart).payloadJson)['server'],
         isTrue,
       );
-      expect((persisted.parts[1] as TextPart).text, '我查一下');
+      expect((persisted.parts[1] as TextPart).text, '\u6211\u67E5\u4E00\u4E0B');
 
       handler.handle(
         const ServerToolEnd(id: 'srv_1', output: {'items': <Object>[]}),
       );
-      handler.handle(const TextDelta(id: 't', text: '结果是 X'));
+      handler.handle(const TextDelta(id: 't', text: '\u7ED3\u679C\u662F X'));
       await repository.updateStreamingCheckpoint(snapshot(), const [
         {
           'id': 'srv_1',
@@ -869,10 +869,10 @@ void main() {
       );
       expect(payload['id'], 'srv_1');
       expect(payload['server'], isTrue);
-      expect((persisted.parts[1] as TextPart).text, '我查一下结果是 X');
+      expect((persisted.parts[1] as TextPart).text, '\u6211\u67E5\u4E00\u4E0B\u7ED3\u679C\u662F X');
     });
 
-    test('toolEvents 少于 ToolCallPart 时未匹配的工具卡保留原位', () async {
+    test('toolEvents \u5C11\u4E8E ToolCallPart \u65F6\u672A\u5339\u914D\u7684\u5DE5\u5177\u5361\u4FDD\u7559\u539F\u4F4D', () async {
       await repository.updateStreamingCheckpoint(
         ChatMessage(
           id: 'streaming',
@@ -880,10 +880,10 @@ void main() {
           conversationId: 'conversation',
           isStreaming: true,
           parts: const [
-            TextPart('我查一下'),
+            TextPart('\u6211\u67E5\u4E00\u4E0B'),
             ToolCallPart('{"id":"local_1","name":"lookup","arguments":{}}'),
             ToolCallPart('{"id":"srv_1","name":"search_web","server":true}'),
-            TextPart('结果是 X'),
+            TextPart('" '\u7ED3' '\u679C' '\u662F' r" X'),
           ],
         ),
         const [
@@ -910,11 +910,11 @@ void main() {
         jsonDecode((persisted.parts[2] as ToolCallPart).payloadJson)['server'],
         isTrue,
       );
-      expect((persisted.parts[0] as TextPart).text, '我查一下');
-      expect((persisted.parts[3] as TextPart).text, '结果是 X');
+      expect((persisted.parts[0] as TextPart).text, '" '\u6211' '\u67E5' '\u4E00' '\u4E0B' r"');
+      expect((persisted.parts[3] as TextPart).text, '" '\u7ED3' '\u679C' '\u662F' r" X');
     });
 
-    test('多余 toolEvents 插在最后一个工具卡之后而不是全文末尾', () async {
+    test('" '\u591A' '\u4F59' r" toolEvents " '\u63D2' '\u5728' '\u6700' '\u540E' '\u4E00' '\u4E2A' '\u5DE5' '\u5177' '\u5361' '\u4E4B' '\u540E' '\u800C' '\u4E0D' '\u662F' '\u5168' '\u6587' '\u672B' '\u5C3E' r"', () async {
       await repository.updateStreamingCheckpoint(
         ChatMessage(
           id: 'streaming',
@@ -922,9 +922,9 @@ void main() {
           conversationId: 'conversation',
           isStreaming: true,
           parts: const [
-            TextPart('我查一下'),
+            TextPart('" '\u6211' '\u67E5' '\u4E00' '\u4E0B' r"'),
             ToolCallPart('{"id":"local_1","name":"lookup"}'),
-            TextPart('结果是 X'),
+            TextPart('\u7ED3\u679C\u662F X'),
           ],
         ),
         const [
@@ -948,10 +948,10 @@ void main() {
         jsonDecode((persisted.parts[2] as ToolCallPart).payloadJson)['id'],
         'extra_1',
       );
-      expect((persisted.parts[3] as TextPart).text, '结果是 X');
+      expect((persisted.parts[3] as TextPart).text, '\u7ED3\u679C\u662F X');
     });
 
-    test('未匹配的非空 toolEvent ID 不会改写另一张工具卡', () async {
+    test('\u672A\u5339\u914D\u7684\u975E\u7A7A toolEvent ID \u4E0D\u4F1A\u6539\u5199\u53E6\u4E00\u5F20\u5DE5\u5177\u5361', () async {
       await repository.updateStreamingCheckpoint(
         ChatMessage(
           id: 'streaming',
@@ -991,7 +991,7 @@ void main() {
       );
     });
 
-    test('有 ID 的事件不会被前面的无 ID 工具卡抢走', () async {
+    test('\u6709 ID \u7684\u4E8B\u4EF6\u4E0D\u4F1A\u88AB\u524D\u9762\u7684\u65E0 ID \u5DE5\u5177\u5361\u62A2\u8D70', () async {
       await repository.updateStreamingCheckpoint(
         ChatMessage(
           id: 'streaming',
@@ -1035,7 +1035,7 @@ void main() {
       );
     });
 
-    test('只有无 ID 工具卡时仍允许按位置合并有 ID 的事件', () async {
+    test('\u53EA\u6709\u65E0 ID \u5DE5\u5177\u5361\u65F6\u4ECD\u5141\u8BB8\u6309\u4F4D\u7F6E\u5408\u5E76\u6709 ID \u7684\u4E8B\u4EF6', () async {
       await repository.updateStreamingCheckpoint(
         ChatMessage(
           id: 'streaming',
@@ -1066,7 +1066,7 @@ void main() {
       expect(payload['arguments'], {'q': 'two'});
     });
 
-    test('checkpoint 合并同 id 引用 items 而不是只留最后一条', () async {
+    test('checkpoint \u5408\u5E76\u540C id \u5F15\u7528 items \u800C\u4E0D\u662F\u53EA\u7559\u6700\u540E\u4E00\u6761', () async {
       await repository.updateStreamingCheckpoint(
         ChatMessage(
           id: 'streaming',
@@ -1101,7 +1101,7 @@ void main() {
       ]);
     });
 
-    test('空 toolEvent arguments 不会覆盖 checkpoint 里已有的代码', () async {
+    test('\u7A7A toolEvent arguments \u4E0D\u4F1A\u8986\u76D6 checkpoint \u91CC\u5DF2\u6709\u7684\u4EE3\u7801', () async {
       await repository.updateStreamingCheckpoint(
         ChatMessage(
           id: 'streaming',
@@ -1134,7 +1134,7 @@ void main() {
       expect(payload['server'], isTrue);
     });
 
-    test('普通工具的 items 不被当成搜索引用合并', () async {
+    test('" '\u666E' '\u901A' '\u5DE5' '\u5177' '\u7684' r" items " '\u4E0D' '\u88AB' '\u5F53' '\u6210' '\u641C' '\u7D22' '\u5F15' '\u7528' '\u5408' '\u5E76' r"', () async {
       await repository.updateStreamingCheckpoint(
         ChatMessage(
           id: 'streaming',
