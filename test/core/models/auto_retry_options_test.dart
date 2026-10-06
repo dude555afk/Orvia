@@ -13,8 +13,8 @@ void main() {
     expect(defaults.jitter, isTrue);
     expect(defaults.retryOnNetworkError, isTrue);
     expect(defaults.retryStatusCodes, {408, 425, 429, 500, 502, 503, 504, 529});
-    expect(defaults.retryKeywords, contains('访问量过大'));
-    expect(defaults.stopKeywords, contains('余额'));
+    expect(defaults.retryKeywords, contains('\u8BBF\u95EE\u91CF\u8FC7\u5927'));
+    expect(defaults.stopKeywords, contains('\u4F59\u989D'));
   });
 
   test('toJson/fromJson round-trip', () {
