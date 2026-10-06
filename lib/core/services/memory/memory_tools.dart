@@ -902,7 +902,7 @@ abstract final class MemoryTools {
       'function': {
         'name': memoryRead,
         'description': zh
-            ? 'Read the user\'
+            ? "Read the user's long-term memory."
             : 'Read the user\'s long-term memory. Optional type: identity (name, people around them, occupation, etc.), workflow (ways of working, tool preferences, debugging habits), voice (writing style, rhythm, word choice), instruction (explicit requests to you). Omit type to return all types. Paginate with limit and offset. The result total counts all entries matching the filters. When has_more is true, keep the same filters and pass next_offset as offset to read the next page; next_offset is null on the last page. A memory summary is already in the conversation; call this only when a block is marked mode="summary" (truncated) or you need entry ids.',
         'parameters': {
           'type': 'object',
@@ -968,7 +968,7 @@ abstract final class MemoryTools {
         'type': 'string',
         'enum': ['global', 'assistant'],
         'description': zh
-            ? 'global is visible to all assistants; assistant is visible only to the current assistant. When omitted, uses the user\'
+            ? "global is visible to all assistants; assistant is visible only to the current assistant. When omitted, uses the user's configured default."
             : 'global is visible to all assistants; assistant is visible only to the current assistant. When omitted, uses the user\'s configured default.',
       };
     }
@@ -995,7 +995,7 @@ abstract final class MemoryTools {
       'function': {
         'name': memorySearchProfile,
         'description': zh
-            ? 'Search the user\'
+            ? "Search the user's long-term memory."
             : 'Search the user\'s long-term memory. Use when the in-conversation memory summary is incomplete, truncated (mode="summary"), or you need a specific fact. Keyword match; multiple keywords are ANDed.',
         'parameters': {
           'type': 'object',
@@ -1132,7 +1132,7 @@ abstract final class MemoryTools {
       'function': {
         'name': chatSearch,
         'description': zh
-            ? 'Search message content in this assistant\'
+            ? "Search message content in this assistant's past conversations by keywords."
             : 'Search message content in this assistant\'s past conversations (and unowned older chats) by keywords. Prefer this when recalling prior discussion, or when the user mentions "last time", "earlier", or "we discussed". By default the current conversation is excluded because it is already in context.',
         'parameters': {
           'type': 'object',
@@ -1154,7 +1154,7 @@ abstract final class MemoryTools {
             'conversation_id': {
               'type': 'string',
               'description': zh
-                  ? 'Search only within this conversation. Omit to search this assistant\'
+                  ? "Search only within this conversation. Omit to search this assistant's visible conversations except the current one."
                   : 'Search only within this conversation. Omit to search this assistant\'s visible conversations except the current one.',
             },
           },
