@@ -56,7 +56,9 @@ void main() {
           '```mermaid\ngraph TD; A-->B;\n```\n';
       final target = StringBuffer(block);
       while (target.length < 1 << 20) {
-        target.writeln('Streaming plain text \u4E2D\u6587 English seed=20260711.');
+        target.writeln(
+          'Streaming plain text \u4E2D\u6587 English seed=20260711.',
+        );
       }
       final content = target.toString().substring(0, 1 << 20);
       const chunks = 32;

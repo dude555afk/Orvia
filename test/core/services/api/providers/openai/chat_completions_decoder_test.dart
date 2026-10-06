@@ -371,7 +371,10 @@ void main() {
       ),
     );
 
-    expect(result.chunks.whereType<TextDelta>().single.text, '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。');
+    expect(
+      result.chunks.whereType<TextDelta>().single.text,
+      '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。',
+    );
     expect(decoder.toolCalls, <int, Map<String, dynamic>>{
       0: <String, dynamic>{
         'id': 'call_lookup',
@@ -1035,7 +1038,10 @@ void main() {
       ),
     );
 
-    expect(malformed.chunks.whereType<TextDelta>().single.text, '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。');
+    expect(
+      malformed.chunks.whereType<TextDelta>().single.text,
+      '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。',
+    );
     expect(malformed.chunks.whereType<ToolCallDelta>(), isEmpty);
     expect(decoder.toolCalls.keys, <int>[0]);
     expect(decoder.toolCalls[0], <String, dynamic>{
@@ -1096,7 +1102,10 @@ void main() {
       ),
     );
 
-    expect(malformed.chunks.whereType<TextDelta>().single.text, '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。');
+    expect(
+      malformed.chunks.whereType<TextDelta>().single.text,
+      '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。',
+    );
     expect(malformed.chunks.whereType<ToolCallDelta>(), isEmpty);
     expect(decoder.toolCalls, <int, Map<String, dynamic>>{
       0: <String, dynamic>{

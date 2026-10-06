@@ -940,7 +940,9 @@ class _SegTabBarState extends State<_SegTabBar> {
             final double rowWidth =
                 segWidth * widget.tabs.length + gap * (widget.tabs.length - 1);
 
-            final Color shellBg = context.appColors.surfaceCard; // \u767D\u5E95\u80F6\u56CA，\u65E0\u8FB9\u6846\u9634\u5F71
+            final Color shellBg = context
+                .appColors
+                .surfaceCard; // \u767D\u5E95\u80F6\u56CA，\u65E0\u8FB9\u6846\u9634\u5F71
 
             List<Widget> children = [];
             for (int index = 0; index < widget.tabs.length; index++) {
@@ -956,13 +958,16 @@ class _SegTabBarState extends State<_SegTabBar> {
                       final Color baseBg = selected
                           ? cs.primary.withValues(alpha: 0.14)
                           : Colors.transparent;
-                      final Color bg = baseBg; // \u4E0D\u53E0\u52A0\u906E\u7F69，\u4E0D\u6539\u53D8\u5E95\u8272
+                      final Color bg =
+                          baseBg; // \u4E0D\u53E0\u52A0\u906E\u7F69，\u4E0D\u6539\u53D8\u5E95\u8272
 
                       // \u4EC5\u6587\u5B57\u5728\u6309\u538B\u65F6\u53D8\u6D45\u5E76\u6709\u6E10\u53D8
                       final Color baseTextColor = selected
                           ? cs
                                 .primary // \u9009\u4E2D\u6587\u5B57：\u4E3B\u9898\u8272
-                          : cs.onSurface.withValues(alpha: 0.82); // \u672A\u9009\u4E2D：\u6DF1\u7070
+                          : cs.onSurface.withValues(
+                              alpha: 0.82,
+                            ); // \u672A\u9009\u4E2D：\u6DF1\u7070
                       final Color targetTextColor = pressed
                           ? Color.lerp(
                                   baseTextColor,

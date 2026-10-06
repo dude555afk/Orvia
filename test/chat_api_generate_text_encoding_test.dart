@@ -146,7 +146,9 @@ void main() {
             'text/plain',
           );
           request.response.add(
-            utf8.encode('{"choices":[{"message":{"content":"\u95EE\u5019\u4EA4\u6D41"}}]}'),
+            utf8.encode(
+              '{"choices":[{"message":{"content":"\u95EE\u5019\u4EA4\u6D41"}}]}',
+            ),
           );
           await request.response.close();
         });

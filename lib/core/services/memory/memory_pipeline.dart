@@ -189,7 +189,9 @@ class MemoryPipelineService {
     MemoryPromptLang lang,
   ) {
     final userPrefix = lang == MemoryPromptLang.zh ? 'User: ' : 'User: ';
-    final assistantPrefix = lang == MemoryPromptLang.zh ? 'Assistant: ' : 'Assistant: ';
+    final assistantPrefix = lang == MemoryPromptLang.zh
+        ? 'Assistant: '
+        : 'Assistant: ';
     final lines = <String>[];
     for (final m in window) {
       String prefix;

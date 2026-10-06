@@ -1830,7 +1830,9 @@ class MessageBuilderService {
       if (relevantChats.isNotEmpty) {
         final sb = StringBuffer();
         sb.writeln('<recent_chats>');
-        sb.writeln("These are some of the user's recent conversation titles and summaries. Use them as context for the user's preferences and interests.");
+        sb.writeln(
+          "These are some of the user's recent conversation titles and summaries. Use them as context for the user's preferences and interests.",
+        );
         for (final c in relevantChats) {
           sb.writeln('<conversation>');
           // Format: timestamp: title || summary

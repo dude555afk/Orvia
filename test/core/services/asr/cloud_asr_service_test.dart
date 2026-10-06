@@ -304,7 +304,9 @@ void main() {
       expect(_volcFlags(finalAudioFrame), 0x02);
       expect(_volcPayload(finalAudioFrame), isEmpty);
 
-      socket.serverBinary(_volcTranscriptFrame('\u706B\u5C71\u5F15\u64CE', isFinal: true));
+      socket.serverBinary(
+        _volcTranscriptFrame('\u706B\u5C71\u5F15\u64CE', isFinal: true),
+      );
       expect(await resultFuture, '\u706B\u5C71\u5F15\u64CE');
       expect(socket.closeCode, 1000);
     });
@@ -355,7 +357,9 @@ void main() {
             jsonEncode({
               'choices': [
                 {
-                  'message': {'content': '\u4ECA\u5929\u5929\u6C14\u5F88\u597D'},
+                  'message': {
+                    'content': '\u4ECA\u5929\u5929\u6C14\u5F88\u597D',
+                  },
                 },
               ],
             }),
@@ -464,8 +468,14 @@ void main() {
         expect(combineQwenAudioTranscript('Hello', 'World'), 'Hello World');
         expect(combineQwenAudioTranscript('Hello. ', 'World'), 'Hello. World');
         // CJK joins stay unspaced.
-        expect(combineQwenAudioTranscript('\u4F60\u597D。', '\u4ECA\u5929'), '\u4F60\u597D。\u4ECA\u5929');
-        expect(combineQwenAudioTranscript('\u4F60\u597D', '\u4E16\u754C'), '\u4F60\u597D\u4E16\u754C');
+        expect(
+          combineQwenAudioTranscript('\u4F60\u597D。', '\u4ECA\u5929'),
+          '\u4F60\u597D。\u4ECA\u5929',
+        );
+        expect(
+          combineQwenAudioTranscript('\u4F60\u597D', '\u4E16\u754C'),
+          '\u4F60\u597D\u4E16\u754C',
+        );
       },
     );
 
@@ -518,7 +528,10 @@ void main() {
         'header': {'event': 'result-generated'},
         'payload': {
           'output': {
-            'sentence': {'text': '\u4F60\u597D\u4E16\u754C', 'sentence_end': true},
+            'sentence': {
+              'text': '\u4F60\u597D\u4E16\u754C',
+              'sentence_end': true,
+            },
           },
         },
       });
@@ -538,11 +551,17 @@ void main() {
         'header': {'event': 'result-generated'},
         'payload': {
           'output': {
-            'sentence': {'text': '\u4ECA\u5929\u5929\u6C14\u4E0D\u9519', 'sentence_end': true},
+            'sentence': {
+              'text': '\u4ECA\u5929\u5929\u6C14\u4E0D\u9519',
+              'sentence_end': true,
+            },
           },
         },
       });
-      expect(partials.last, '\u4F60\u597D\u4E16\u754C\u4ECA\u5929\u5929\u6C14\u4E0D\u9519');
+      expect(
+        partials.last,
+        '\u4F60\u597D\u4E16\u754C\u4ECA\u5929\u5929\u6C14\u4E0D\u9519',
+      );
 
       final resultFuture = session.finish();
       expect(socket.sentJson.last['header']['action'], 'finish-task');
@@ -551,7 +570,10 @@ void main() {
         'payload': const <String, dynamic>{},
       });
 
-      expect(await resultFuture, '\u4F60\u597D\u4E16\u754C\u4ECA\u5929\u5929\u6C14\u4E0D\u9519');
+      expect(
+        await resultFuture,
+        '\u4F60\u597D\u4E16\u754C\u4ECA\u5929\u5929\u6C14\u4E0D\u9519',
+      );
       expect(socket.closeCode, 1000);
       await subscription.cancel();
     });

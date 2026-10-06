@@ -467,18 +467,21 @@ Input:
 
   // ── §7.5 injection intros ────────────────────────────────────────────────
 
-  static const String introFullZh = '\u4EE5\u4E0B\u5185\u5BB9\u7531\u7CFB\u7EDF\u63D0\u4F9B，\u4E0D\u662F\u7528\u6237\u672C\u8F6E\u53D1\u9001\u7684\u5185\u5BB9。';
+  static const String introFullZh =
+      '\u4EE5\u4E0B\u5185\u5BB9\u7531\u7CFB\u7EDF\u63D0\u4F9B，\u4E0D\u662F\u7528\u6237\u672C\u8F6E\u53D1\u9001\u7684\u5185\u5BB9。';
   static const String introFullEn =
       'The following context is provided by the system. It is not what the user said in this turn.';
   // No longer written: injection always emits a full snapshot. Kept so
   // prompts frozen by earlier versions can still be parsed and stripped.
-  static const String introUpdateZh = '\u4EE5\u4E0B\u662F\u672C\u6B21\u5BF9\u8BDD\u5F00\u59CB\u540E\u53D1\u751F\u7684\u8BB0\u5FC6\u66F4\u65B0，\u7531\u7CFB\u7EDF\u63D0\u4F9B。';
+  static const String introUpdateZh =
+      '\u4EE5\u4E0B\u662F\u672C\u6B21\u5BF9\u8BDD\u5F00\u59CB\u540E\u53D1\u751F\u7684\u8BB0\u5FC6\u66F4\u65B0，\u7531\u7CFB\u7EDF\u63D0\u4F9B。';
   static const String introUpdateEn =
       'The following memory changes happened after this conversation started, provided by the system.';
 
   // ── §7.2 moreHint ────────────────────────────────────────────────────────
 
-  static const String moreHintZh = '[\u66F4\u591A\u5185\u5BB9\u8BF7\u4F7F\u7528 memory_search_profile \u67E5\u8BE2]';
+  static const String moreHintZh =
+      '[\u66F4\u591A\u5185\u5BB9\u8BF7\u4F7F\u7528 memory_search_profile \u67E5\u8BE2]';
   static const String moreHintEn =
       '[More entries exist. Use memory_search_profile to look them up.]';
 
@@ -535,13 +538,15 @@ Input:
 
   static String rulesFor(MemoryPromptLang lang) => rulesEn;
 
-  static String rulesPastConversationRecallFor(MemoryPromptLang lang) => rulesPastConversationRecallEn;
+  static String rulesPastConversationRecallFor(MemoryPromptLang lang) =>
+      rulesPastConversationRecallEn;
 
   static String gateFor(MemoryPromptLang lang) => gateEn;
 
   static String extractFor(MemoryPromptLang lang) => extractEn;
 
-  static String extractToolDefaultScopeRuleFor(MemoryPromptLang lang) => extractToolDefaultScopeRuleEn;
+  static String extractToolDefaultScopeRuleFor(MemoryPromptLang lang) =>
+      extractToolDefaultScopeRuleEn;
 
   static String smartAddFor(MemoryPromptLang lang) => smartAddEn;
 

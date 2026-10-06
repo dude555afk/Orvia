@@ -118,7 +118,9 @@ abstract final class MemoryTools {
         'type': 'function',
         'function': {
           'name': 'create_memory',
-          'description': zh ? 'Create a memory record.' : 'Create a memory record.',
+          'description': zh
+              ? 'Create a memory record.'
+              : 'Create a memory record.',
           'parameters': {
             'type': 'object',
             'properties': {
@@ -164,7 +166,9 @@ abstract final class MemoryTools {
         'type': 'function',
         'function': {
           'name': 'delete_memory',
-          'description': zh ? 'Delete a memory record.' : 'Delete a memory record.',
+          'description': zh
+              ? 'Delete a memory record.'
+              : 'Delete a memory record.',
           'parameters': {
             'type': 'object',
             'properties': {
@@ -1098,7 +1102,9 @@ abstract final class MemoryTools {
           'properties': {
             'fields': {
               'type': 'array',
-              'description': zh ? 'List of fields to update.' : 'List of fields to update.',
+              'description': zh
+                  ? 'List of fields to update.'
+                  : 'List of fields to update.',
               'items': {
                 'type': 'object',
                 'properties': {

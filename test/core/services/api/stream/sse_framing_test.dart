@@ -93,23 +93,20 @@ void main() {
     expect(events.single.data, 'hello\nworld');
   });
 
-  test(
-    'recovers adjacent JSON data records without blank delimiters',
-    () async {
-      final events = await parse(
-        'data: {"choices":[{"delta":{"content":"*\u88AB"}}]}\n'
-        'data: {"choices":[{"delta":{"content":"\u751C*\\n\\n*\u61D2\u61D2\u5730、"}}]}\n'
-        'data: [DONE]\n\n',
-        recoverAdjacentJsonDataRecords: true,
-      );
+  test('recovers adjacent JSON data records without blank delimiters', () async {
+    final events = await parse(
+      'data: {"choices":[{"delta":{"content":"*\u88AB"}}]}\n'
+      'data: {"choices":[{"delta":{"content":"\u751C*\\n\\n*\u61D2\u61D2\u5730、"}}]}\n'
+      'data: [DONE]\n\n',
+      recoverAdjacentJsonDataRecords: true,
+    );
 
-      expect(events.map((event) => event.data), <String>[
-        '{"choices":[{"delta":{"content":"*\u88AB"}}]}',
-        '{"choices":[{"delta":{"content":"\u751C*\\n\\n*\u61D2\u61D2\u5730、"}}]}',
-        '[DONE]',
-      ]);
-    },
-  );
+    expect(events.map((event) => event.data), <String>[
+      '{"choices":[{"delta":{"content":"*\u88AB"}}]}',
+      '{"choices":[{"delta":{"content":"\u751C*\\n\\n*\u61D2\u61D2\u5730、"}}]}',
+      '[DONE]',
+    ]);
+  });
 
   test(
     'releases each recovered JSON record when the next data line arrives',

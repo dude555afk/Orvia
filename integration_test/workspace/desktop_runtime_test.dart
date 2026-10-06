@@ -105,7 +105,15 @@ Future<void> _utf8RoundTrip(
   File(p.join(cwd.path, '\u4E2D\u6587\u540D.txt')).writeAsStringSync('ok\n');
   final printfEvents = await _collect(
     runtime,
-    _req(runId: 'printf-zh', command: r"printf '" '\u4E2D' '\u6587' r"\n'", cwd: cwd.path),
+    _req(
+      runId: 'printf-zh',
+      command:
+          r"printf '"
+          '\u4E2D'
+          '\u6587'
+          r"\n'",
+      cwd: cwd.path,
+    ),
   );
   final printfText = utf8.decode(_stdout(printfEvents));
   expect(printfText, contains('\u4E2D\u6587'));

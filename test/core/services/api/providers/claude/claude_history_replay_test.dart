@@ -35,7 +35,10 @@ String _assistantText(List<Map> messages) => messages
 /// One finished web search turn, as the app persists it: the card's tool call
 /// carries the blocks the API sent, and the card summary is the tool message.
 const _webSearchHistory = <Map<String, dynamic>>[
-  {'role': 'user', 'content': '\u4EAC\u90FD\u6709\u4EC0\u4E48\u597D\u73A9\u7684'},
+  {
+    'role': 'user',
+    'content': '\u4EAC\u90FD\u6709\u4EC0\u4E48\u597D\u73A9\u7684',
+  },
   {
     'role': 'assistant',
     'content': '\n\n',
@@ -78,7 +81,10 @@ const _webSearchHistory = <Map<String, dynamic>>[
     'name': 'search_web',
     'content': '{"items":[{"title":"Example","url":"https://example.com"}]}',
   },
-  {'role': 'user', 'content': '\u7B2C\u4E00\u6761\u5177\u4F53\u600E\u4E48\u8BF4\u7684'},
+  {
+    'role': 'user',
+    'content': '\u7B2C\u4E00\u6761\u5177\u4F53\u600E\u4E48\u8BF4\u7684',
+  },
 ];
 
 /// A relay round whose thinking came back redacted before the tool call.
@@ -243,7 +249,10 @@ void main() {
       final toolResultContent = (messages[2]['content'] as List).cast<Map>();
 
       expect(assistantContent[0]['type'], 'thinking');
-      expect(assistantContent[0]['thinking'], '\u9700\u8981\u5148\u67E5\u8D44\u6599。');
+      expect(
+        assistantContent[0]['thinking'],
+        '\u9700\u8981\u5148\u67E5\u8D44\u6599。',
+      );
       expect(assistantContent[0]['signature'], 'sig-claude-history');
       expect(assistantContent[1]['type'], 'tool_use');
       expect(assistantContent[1]['id'], 'toolu_1');
@@ -327,7 +336,8 @@ void main() {
                       'assistant_blocks': [
                         {
                           'type': 'thinking',
-                          'thinking': '\u9700\u8981\u8BB0\u5F55\u8FD9\u4E2A\u504F\u597D。',
+                          'thinking':
+                              '\u9700\u8981\u8BB0\u5F55\u8FD9\u4E2A\u504F\u597D。',
                           'signature': 'sig-memory-turn',
                         },
                         {
@@ -505,7 +515,10 @@ void main() {
             isFalse,
           );
         }
-        expect(messages.last['content'], '\u7B2C\u4E00\u6761\u5177\u4F53\u600E\u4E48\u8BF4\u7684');
+        expect(
+          messages.last['content'],
+          '\u7B2C\u4E00\u6761\u5177\u4F53\u600E\u4E48\u8BF4\u7684',
+        );
       },
     );
 
@@ -785,7 +798,10 @@ void main() {
         modelId: 'claude-sonnet-4-6',
         messages: [
           {'role': 'user', 'content': '\u753B\u4E2A\u56FE'},
-          {'role': 'assistant', 'content': '\u753B\u597D\u4E86 ![](${file.path}) \u8BF7\u770B'},
+          {
+            'role': 'assistant',
+            'content': '\u753B\u597D\u4E86 ![](${file.path}) \u8BF7\u770B',
+          },
           {'role': 'user', 'content': '\u54EA\u6839\u67F1\u5B50\u6700\u9AD8'},
         ],
       );
@@ -844,7 +860,10 @@ void main() {
               'name': 'web_fetch',
               'content': '{"items":[]}',
             },
-            {'role': 'user', 'content': '\u7B97\u4E86，\u76F4\u63A5\u8BF4\u5427'},
+            {
+              'role': 'user',
+              'content': '\u7B97\u4E86，\u76F4\u63A5\u8BF4\u5427',
+            },
           ],
         );
 
@@ -861,7 +880,10 @@ void main() {
           expect(types, isNot(contains('server_tool_use')));
           expect(types, isNot(contains('tool_result')));
         }
-        expect(messages.last['content'], '\u7B97\u4E86，\u76F4\u63A5\u8BF4\u5427');
+        expect(
+          messages.last['content'],
+          '\u7B97\u4E86，\u76F4\u63A5\u8BF4\u5427',
+        );
       },
     );
 
@@ -1089,10 +1111,14 @@ void main() {
           config: claudeConfig(baseUrl: officialBaseUrl),
           modelId: 'claude-sonnet-4-6',
           messages: [
-            {'role': 'user', 'content': '\u770B\u770B\u8FD9\u4E24\u4E2A\u9875\u9762'},
+            {
+              'role': 'user',
+              'content': '\u770B\u770B\u8FD9\u4E24\u4E2A\u9875\u9762',
+            },
             {
               'role': 'assistant',
-              'content': '\u6211\u67E5\u4E00\u4E0B。\u518D\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+              'content':
+                  '\u6211\u67E5\u4E00\u4E0B。\u518D\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
               'tool_calls': [
                 replayCall('srvtoolu_1', 'web_fetch', [
                   firstResponse,
@@ -1163,7 +1189,10 @@ void main() {
         config: claudeConfig(baseUrl: officialBaseUrl),
         modelId: 'claude-sonnet-4-6',
         messages: [
-          {'role': 'user', 'content': '\u770B\u770B\u8FD9\u4E24\u4E2A\u9875\u9762'},
+          {
+            'role': 'user',
+            'content': '\u770B\u770B\u8FD9\u4E24\u4E2A\u9875\u9762',
+          },
           {
             'role': 'assistant',
             'content': '\u6211\u67E5\u4E00\u4E0B。',
@@ -1206,7 +1235,11 @@ void main() {
       // the order recorded, the thinking block first as Anthropic requires,
       // and the persisted text folds into the turn instead of repeating it.
       final firstResponse = [
-        {'type': 'thinking', 'thinking': '\u5148\u67E5\u9875\u9762。', 'signature': 'sig-handoff'},
+        {
+          'type': 'thinking',
+          'thinking': '\u5148\u67E5\u9875\u9762。',
+          'signature': 'sig-handoff',
+        },
         {'type': 'text', 'text': '\u6211\u67E5\u4E00\u4E0B。'},
         hostedCall('srvtoolu_relay', 'https://example.com'),
         clientCall('toolu_client', 'test'),
@@ -1234,7 +1267,10 @@ void main() {
           },
           toolResult('srvtoolu_relay', 'web_fetch', '{"url":"https://e.com"}'),
           toolResult('toolu_client', 'create_memory', 'test'),
-          {'role': 'assistant', 'content': '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。'},
+          {
+            'role': 'assistant',
+            'content': '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+          },
           {'role': 'user', 'content': '\u518D\u8BF4\u8BF4'},
         ],
       );
@@ -1252,7 +1288,10 @@ void main() {
       // The turn's text, in the order the API wrote it and only once: the
       // persisted message aggregates it, so it must fold into the turn rather
       // than replay on top of it.
-      expect(_assistantText(messages), '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。');
+      expect(
+        _assistantText(messages),
+        '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+      );
       // Both calls replay as client tools, each with its result.
       final calls = assistant
           .where((block) => block['type'] == 'tool_use')
@@ -1486,7 +1525,10 @@ void main() {
             ],
           },
           toolResult('srvtoolu_paused', 'web_fetch', '{"url":"https://e.com"}'),
-          {'role': 'assistant', 'content': '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。'},
+          {
+            'role': 'assistant',
+            'content': '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+          },
           {'role': 'user', 'content': '\u518D\u8BF4\u8BF4'},
         ],
       );
@@ -1504,7 +1546,10 @@ void main() {
         'web_fetch_tool_result',
         'text',
       ]);
-      expect(_assistantText(messages), '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。');
+      expect(
+        _assistantText(messages),
+        '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+      );
     });
 
     test('a stored turn replays as its responses', () async {
@@ -1533,7 +1578,10 @@ void main() {
           ),
           toolResult('srvtoolu_1', 'web_fetch', '{"url":"https://e.com"}'),
           toolResult('toolu_client_1', 'create_memory', 'saved'),
-          {'role': 'assistant', 'content': '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。'},
+          {
+            'role': 'assistant',
+            'content': '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+          },
           {'role': 'user', 'content': '\u518D\u8BF4\u8BF4'},
         ],
       );
@@ -1549,7 +1597,10 @@ void main() {
       expect(_blockTypes(messages[1]), ['text', 'server_tool_use', 'tool_use']);
       expect(_resultIds(messages[2]), ['toolu_client_1']);
       expect(_blockTypes(messages[3]), ['web_fetch_tool_result', 'text']);
-      expect(_assistantText(messages), '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。');
+      expect(
+        _assistantText(messages),
+        '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+      );
     });
 
     test('every turn shape replays as one assistant message', () async {

@@ -972,7 +972,8 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
           ),
           const SizedBox(height: 12),
         ],
-        if (widget.keyName.toLowerCase() == '\u968F\u60F3ai\u4E2D\u8F6C\u7AD9') ...[
+        if (widget.keyName.toLowerCase() ==
+            '\u968F\u60F3ai\u4E2D\u8F6C\u7AD9') ...[
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(

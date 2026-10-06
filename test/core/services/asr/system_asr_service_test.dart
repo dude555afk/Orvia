@@ -187,7 +187,10 @@ void main() {
         expect(backend.lastLocaleId, 'zh_CN');
         expect(backend.lastListenFor, SystemAsrService.defaultListenFor);
         expect(backend.lastPauseFor, SystemAsrService.defaultPauseFor);
-        expect(transcripts, <(String, bool)>[('\u4F60\u597D', false), ('\u4F60\u597D\u4E16\u754C', true)]);
+        expect(transcripts, <(String, bool)>[
+          ('\u4F60\u597D', false),
+          ('\u4F60\u597D\u4E16\u754C', true),
+        ]);
         expect(levels, <double>[3.5]);
         expect(errors.single.message, 'temporary');
       },

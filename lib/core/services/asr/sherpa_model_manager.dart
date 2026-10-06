@@ -51,7 +51,8 @@ abstract final class SherpaModelCatalog {
     SherpaModelDefinition(
       id: 'paraformer-zh-small-2024-03-09',
       name: 'Paraformer \u4E2D\u6587\u5C0F\u6A21\u578B',
-      description: '\u4E2D\u6587\u4F18\u5148，\u517C\u987E\u7B80\u5355\u82F1\u6587，\u4E0B\u8F7D\u7EA6 78 MB',
+      description:
+          '\u4E2D\u6587\u4F18\u5148，\u517C\u987E\u7B80\u5355\u82F1\u6587，\u4E0B\u8F7D\u7EA6 78 MB',
       architecture: SherpaModelArchitecture.paraformer,
       archiveUri: Uri.parse(
         'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
@@ -65,7 +66,8 @@ abstract final class SherpaModelCatalog {
     SherpaModelDefinition(
       id: 'sense-voice-multilingual-int8-2025-09-09',
       name: 'SenseVoice int8 \u591A\u8BED\u6A21\u578B',
-      description: '\u652F\u6301\u4E2D\u6587、\u82F1\u6587、\u7CA4\u8BED、\u65E5\u8BED\u548C\u97E9\u8BED，\u4E0B\u8F7D\u7EA6 166 MB',
+      description:
+          '\u652F\u6301\u4E2D\u6587、\u82F1\u6587、\u7CA4\u8BED、\u65E5\u8BED\u548C\u97E9\u8BED，\u4E0B\u8F7D\u7EA6 166 MB',
       architecture: SherpaModelArchitecture.senseVoice,
       archiveUri: Uri.parse(
         'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
@@ -79,7 +81,8 @@ abstract final class SherpaModelCatalog {
     SherpaModelDefinition(
       id: 'zipformer-zh-en-mobile-2023-02-20',
       name: 'Zipformer \u4E2D\u82F1 Mobile',
-      description: '\u4E2D\u82F1\u53CC\u8BED\u6D41\u5F0F\u8BC6\u522B，\u4E0B\u8F7D\u7EA6 347 MB',
+      description:
+          '\u4E2D\u82F1\u53CC\u8BED\u6D41\u5F0F\u8BC6\u522B，\u4E0B\u8F7D\u7EA6 347 MB',
       architecture: SherpaModelArchitecture.streamingZipformer,
       archiveUri: Uri.parse(
         'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
@@ -308,7 +311,9 @@ final class SherpaModelManager {
       return SherpaModelInstallStatus(
         model: model,
         state: SherpaModelInstallState.failed,
-        error: _failures[modelId] ?? 'Model files are incomplete. Please download them again.',
+        error:
+            _failures[modelId] ??
+            'Model files are incomplete. Please download them again.',
       );
     }
     final failure = _failures[modelId];

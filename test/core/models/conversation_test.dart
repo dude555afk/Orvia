@@ -23,7 +23,10 @@ void main() {
         chatSuggestions: const ['\u7EE7\u7EED', '\u4E3E\u4F8B'],
       );
 
-      expect(conversation.toJson()['chatSuggestions'], ['\u7EE7\u7EED', '\u4E3E\u4F8B']);
+      expect(conversation.toJson()['chatSuggestions'], [
+        '\u7EE7\u7EED',
+        '\u4E3E\u4F8B',
+      ]);
     });
   });
 

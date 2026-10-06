@@ -6427,7 +6427,13 @@ class ProviderConfig {
     if (RegExp(r'bytedance|doubao|volces|ark').hasMatch(k)) {
       return 'https://ark.cn-beijing.volces.com/api/v3';
     }
-    if (RegExp(r'kimi|moonshot|' '\u6708' '\u4E4B' '\u6697' '\u9762').hasMatch(k)) {
+    if (RegExp(
+      r'kimi|moonshot|'
+      '\u6708'
+      '\u4E4B'
+      '\u6697'
+      '\u9762',
+    ).hasMatch(k)) {
       return 'https://api.moonshot.cn/v1';
     }
     if (k.contains('silicon')) return 'https://api.siliconflow.cn/v1';
@@ -6435,7 +6441,12 @@ class ProviderConfig {
       return 'https://api.x.ai/v1';
     }
     if (k.contains('deepseek')) return 'https://api.deepseek.com/v1';
-    if (RegExp(r'zhipu|' '\u667A' '\u8C31' r'|glm').hasMatch(k)) {
+    if (RegExp(
+      r'zhipu|'
+      '\u667A'
+      '\u8C31'
+      r'|glm',
+    ).hasMatch(k)) {
       return 'https://open.bigmodel.cn/api/paas/v4';
     }
     if (k.contains('gemini') || k.contains('google')) {
@@ -6642,7 +6653,13 @@ class ProviderConfig {
     if (k.contains('deepseek')) return '/user/balance';
     if (k.contains('openrouter')) return '/credits';
     if (k.contains('vercel')) return '/credits';
-    if (RegExp(r'kimi|moonshot|' '\u6708' '\u4E4B' '\u6697' '\u9762').hasMatch(k)) {
+    if (RegExp(
+      r'kimi|moonshot|'
+      '\u6708'
+      '\u4E4B'
+      '\u6697'
+      '\u9762',
+    ).hasMatch(k)) {
       return '/users/me/balance';
     }
     return '/credits';
@@ -6656,7 +6673,13 @@ class ProviderConfig {
       return 'data.total_credits - data.total_usage';
     }
     if (k.contains('vercel')) return 'balance';
-    if (RegExp(r'kimi|moonshot|' '\u6708' '\u4E4B' '\u6697' '\u9762').hasMatch(k)) {
+    if (RegExp(
+      r'kimi|moonshot|'
+      '\u6708'
+      '\u4E4B'
+      '\u6697'
+      '\u9762',
+    ).hasMatch(k)) {
       return 'data.available_balance';
     }
     return 'data.total_usage';
@@ -6668,6 +6691,12 @@ class ProviderConfig {
         k.contains('deepseek') ||
         k.contains('openrouter') ||
         k.contains('vercel') ||
-        RegExp(r'kimi|moonshot|' '\u6708' '\u4E4B' '\u6697' '\u9762').hasMatch(k);
+        RegExp(
+          r'kimi|moonshot|'
+          '\u6708'
+          '\u4E4B'
+          '\u6697'
+          '\u9762',
+        ).hasMatch(k);
   }
 }

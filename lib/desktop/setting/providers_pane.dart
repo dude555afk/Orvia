@@ -311,7 +311,10 @@ class _DesktopProvidersBodyState extends State<_DesktopProvidersBody> {
       (name: 'Tensdaq', key: 'Tensdaq'),
       (name: 'DeepSeek', key: 'DeepSeek'),
       (name: 'AIhubmix', key: 'AIhubmix'),
-      (name: '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9', key: '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9'),
+      (
+        name: '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
+        key: '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
+      ),
       (name: 'MaruCode', key: 'MaruCode'),
       (name: l10n.providersPageAliyunName, key: 'Aliyun'),
       (name: l10n.providersPageZhipuName, key: 'Zhipu AI'),
@@ -1352,7 +1355,8 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
                 const SizedBox(height: 12),
               ],
 
-              if (widget.providerKey.toLowerCase() == '\u968F\u60F3ai\u4E2D\u8F6C\u7AD9') ...[
+              if (widget.providerKey.toLowerCase() ==
+                  '\u968F\u60F3ai\u4E2D\u8F6C\u7AD9') ...[
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,

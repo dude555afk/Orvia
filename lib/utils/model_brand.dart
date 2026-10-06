@@ -35,21 +35,44 @@ class ModelBrand {
     ModelBrand(
       'Kimi',
       'kimi-color.svg',
-      r'kimi|moonshot|' '\u6708' '\u4E4B' '\u6697' '\u9762' r'|k3(?=$|[^a-z0-9])',
+      r'kimi|moonshot|'
+          '\u6708'
+          '\u4E4B'
+          '\u6697'
+          '\u9762'
+          r'|k3(?=$|[^a-z0-9])',
     ),
     ModelBrand('Qwen', 'qwen-color.svg', r'(?:code)?qwen|qwq|qvq|dashscope'),
     ModelBrand(
       'Doubao',
       'doubao-color.svg',
-      r'doubao|' '\u8C46' '\u5305' r'|seed(?:ance|ream|uplex|asr|tts)?(?=$|[^a-z0-9]|\d)',
+      r'doubao|'
+          '\u8C46'
+          '\u5305'
+          r'|seed(?:ance|ream|uplex|asr|tts)?(?=$|[^a-z0-9]|\d)',
     ),
-    ModelBrand('GLM', 'zhipu-color.svg', r'(?:chat)?glm|zhipu|' '\u667A' '\u8C31'),
+    ModelBrand(
+      'GLM',
+      'zhipu-color.svg',
+      r'(?:chat)?glm|zhipu|'
+          '\u667A'
+          '\u8C31',
+    ),
     ModelBrand(
       'Hunyuan',
       'hunyuan-color.svg',
-      r'hunyuan|' '\u6DF7' '\u5143' r'|hy[34](?=$|[^a-z0-9])',
+      r'hunyuan|'
+          '\u6DF7'
+          '\u5143'
+          r'|hy[34](?=$|[^a-z0-9])',
     ),
-    ModelBrand('MiMo', 'mimo.svg', r'mimo|xiaomi|' '\u5C0F' '\u7C73'),
+    ModelBrand(
+      'MiMo',
+      'mimo.svg',
+      r'mimo|xiaomi|'
+          '\u5C0F'
+          '\u7C73',
+    ),
     ModelBrand('MiniMax', 'minimax-color.svg', r'minimax'),
     ModelBrand('Grok', 'grok.svg', r'grok'),
     ModelBrand(
@@ -59,13 +82,31 @@ class ModelBrand {
     ),
     ModelBrand('Llama', 'meta-color.svg', r'(?:code|tiny)?llama'),
     ModelBrand('Muse', 'meta-color.svg', r'muse[-_ ](?:spark|image)'),
-    ModelBrand('StepFun', 'stepfun.svg', r'stepfun|step(?=$|[^a-z0-9]|\d)|' '\u9636' '\u8DC3'),
-    ModelBrand('InternLM', 'internlm-color.svg', r'internlm|intern-s1|' '\u4E66' '\u751F'),
+    ModelBrand(
+      'StepFun',
+      'stepfun.svg',
+      r'stepfun|step(?=$|[^a-z0-9]|\d)|'
+          '\u9636'
+          '\u8DC3',
+    ),
+    ModelBrand(
+      'InternLM',
+      'internlm-color.svg',
+      r'internlm|intern-s1|'
+          '\u4E66'
+          '\u751F',
+    ),
     ModelBrand('LongCat', 'longcat.png', r'longcat'),
     ModelBrand(
       'SenseNova',
       'sensenova-color.svg',
-      r'sensenova|sensetime|' '\u5546' '\u6C64' r'|' '\u65E5' '\u65E5' '\u65B0',
+      r'sensenova|sensetime|'
+          '\u5546'
+          '\u6C64'
+          r'|'
+          '\u65E5'
+          '\u65E5'
+          '\u65B0',
     ),
     ModelBrand(
       'InclusionAI',

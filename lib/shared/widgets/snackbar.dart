@@ -191,7 +191,8 @@ class _AppSnackBarOverlayState extends State<AppSnackBarOverlay> {
       animation: entry.animationController,
       builder: (context, child) {
         // Calculate positioning - \u7EDF\u4E00\u95F4\u8DDD
-        final baseOffset = visualIndex * 8.0; // \u6BCF\u4E2AToast\u56FA\u5B9A\u95F4\u8DDD8px
+        final baseOffset =
+            visualIndex * 8.0; // \u6BCF\u4E2AToast\u56FA\u5B9A\u95F4\u8DDD8px
 
         // Calculate scale - \u7EDF\u4E00\u7F29\u653E
         final scaleValue = 1.0 - (visualIndex * 0.03);

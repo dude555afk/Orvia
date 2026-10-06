@@ -132,7 +132,9 @@ void main() {
 
   testWidgets('6 UTF-8 printf/touch/ls has no U+FFFD', (tester) async {
     await tester.pump();
-    final result = await h.run("printf '\u4E2D\u6587\\n'; touch \u4E2D\u6587\u540D.txt; ls");
+    final result = await h.run(
+      "printf '\u4E2D\u6587\\n'; touch \u4E2D\u6587\u540D.txt; ls",
+    );
     _log('UTF8 exit=${result.exit.exitCode} stdout:\n${result.stdout}');
     expect(result.exit.exitCode, 0);
     expect(result.stdout, contains('\u4E2D\u6587'));

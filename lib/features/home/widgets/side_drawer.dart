@@ -1618,7 +1618,8 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
-    final textBase = cs.onSurface; // \u7EAF\u9ED1（\u767D\u5929），\u591C\u95F4\u81EA\u52A8\u9002\u914D
+    final textBase = cs
+        .onSurface; // \u7EAF\u9ED1（\u767D\u5929），\u591C\u95F4\u81EA\u52A8\u9002\u914D
     final ap = context.watch<AssistantProvider>();
     final currentAssistantId = ap.currentAssistantId;
     final chatServiceForSelection = context.read<ChatService>();

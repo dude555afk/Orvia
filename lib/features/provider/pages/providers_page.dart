@@ -500,7 +500,12 @@ class _ProvidersPageState extends State<ProvidersPage> {
     _p('Tensdaq', 'Tensdaq', enabled: false, models: 0),
     _p('DeepSeek', 'DeepSeek', enabled: false, models: 0),
     _p('AIhubmix', 'AIhubmix', enabled: false, models: 0),
-    _p('\u968F\u60F3AI\u4E2D\u8F6C\u7AD9', '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9', enabled: false, models: 0),
+    _p(
+      '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
+      '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
+      enabled: false,
+      models: 0,
+    ),
     _p('MaruCode', 'MaruCode', enabled: false, models: 0),
     _p(l10n.providersPageAliyunName, 'Aliyun', enabled: false, models: 0),
     _p(l10n.providersPageZhipuName, 'Zhipu AI', enabled: false, models: 0),

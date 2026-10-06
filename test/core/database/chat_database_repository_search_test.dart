@@ -109,7 +109,8 @@ void main() {
     final message = ChatMessage(
       id: 'revision-1',
       role: 'assistant',
-      content: 'A searchable needle appears here，\u6D4B\u8BD5\u4E2D\u6587\u77ED\u8BCD。',
+      content:
+          'A searchable needle appears here，\u6D4B\u8BD5\u4E2D\u6587\u77ED\u8BCD。',
       timestamp: DateTime.utc(2026, 7, 12),
       conversationId: conversation.id,
       groupId: 'slot-1',
