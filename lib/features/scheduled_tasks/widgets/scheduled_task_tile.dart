@@ -144,11 +144,11 @@ class ScheduledTaskTile extends StatelessWidget {
 Widget scheduledTaskPreview() => Padding(
   padding: const EdgeInsets.all(16),
   child: ScheduledTaskTile(
-    name: '晨间简报',
+    name: 'Morning brief',
     time: '08:00',
-    repeat: '每天',
-    detail: '下次：明天 08:00',
-    preparationLabel: '结果已准备',
+    repeat: 'Daily',
+    detail: 'Next: tomorrow 08:00',
+    preparationLabel: 'Result ready',
     enabled: true,
     onChanged: (_) {},
     onTap: () {},
