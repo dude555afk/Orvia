@@ -172,7 +172,7 @@ void main() {
       conversationId: conversationId,
       timestamp: now,
       parts: const [
-        TextPart('帮我看看'),
+        TextPart('\u5E2E\u6211\u770B\u770B'),
         ImagePart(uri: '/tmp/a.png', mime: 'image/png', assetId: 'asset-image'),
         FilePart(
           uri: '/tmp/spec.pdf',
@@ -180,7 +180,7 @@ void main() {
           mime: 'application/pdf',
           assetId: 'asset-file',
         ),
-        TextPart('谢谢'),
+        TextPart('\u8C22\u8C22'),
       ],
     );
 
@@ -193,11 +193,11 @@ void main() {
 
     final reloaded = await repository.getMessage(messageId);
     expect(reloaded, isNotNull);
-    expect(reloaded!.content, '帮我看看谢谢');
+    expect(reloaded!.content, '\u5E2E\u6211\u770B\u770B\u8C22\u8C22');
     expect(reloaded.parts, hasLength(4));
 
     expect(reloaded.parts[0], isA<TextPart>());
-    expect((reloaded.parts[0] as TextPart).text, '帮我看看');
+    expect((reloaded.parts[0] as TextPart).text, '\u5E2E\u6211\u770B\u770B');
 
     expect(reloaded.parts[1], isA<ImagePart>());
     final image = reloaded.parts[1] as ImagePart;
@@ -215,7 +215,7 @@ void main() {
     expect(file.unavailable, isFalse);
 
     expect(reloaded.parts[3], isA<TextPart>());
-    expect((reloaded.parts[3] as TextPart).text, '谢谢');
+    expect((reloaded.parts[3] as TextPart).text, '\u8C22\u8C22');
 
     // Encode payloads must match the domain model contract exactly.
     for (var i = 0; i < message.parts.length; i++) {
@@ -342,9 +342,9 @@ void main() {
               groupId: messageId,
               version: 0,
               parts: const [
-                TextPart('我查一下'),
+                TextPart('\u6211\u67E5\u4E00\u4E0B'),
                 ToolCallPart('{"id":"search","name":"search"}'),
-                TextPart('结果是 X'),
+                TextPart('\u7ED3\u679C\u662F X'),
               ],
             ),
             messageOrder: 0,
@@ -356,7 +356,7 @@ void main() {
 
       final result = await repository.appendMessageVersion(
         messageId: messageId,
-        content: '我查一下结果是 X',
+        content: '\u6211\u67E5\u4E00\u4E0B\u7ED3\u679C\u662F X',
       );
       expect(result, isNotNull);
       final persisted = await repository.getMessage(result!.message.id);
@@ -365,8 +365,8 @@ void main() {
         'tool_call',
         'text',
       ]);
-      expect((persisted.parts[0] as TextPart).text, '我查一下');
-      expect((persisted.parts[2] as TextPart).text, '结果是 X');
+      expect((persisted.parts[0] as TextPart).text, '\u6211\u67E5\u4E00\u4E0B');
+      expect((persisted.parts[2] as TextPart).text, '\u7ED3\u679C\u662F X');
     },
   );
 
