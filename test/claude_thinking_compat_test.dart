@@ -148,7 +148,7 @@ void main() {
         replies: const [
           {
             'content': [
-              {'type': 'thinking', 'thinking': '先思考。'},
+              {'type': 'thinking', 'thinking': '\u5148\u601D\u8003。'},
               {'type': 'text', 'text': 'ok'},
             ],
           },
