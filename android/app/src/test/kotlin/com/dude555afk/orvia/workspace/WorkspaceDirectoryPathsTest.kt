@@ -12,8 +12,8 @@ class WorkspaceDirectoryPathsTest {
 
     @Test fun resolvesUnicodeSpacesAndVolumeRoot() {
         val root = temporary.newFolder("volume")
-        assertEquals(File(root, "Documents/我的笔记 Vault").canonicalFile,
-            WorkspaceDirectoryPaths.resolve(root, "primary:Documents/我的笔记 Vault"))
+        assertEquals(File(root, "Documents/\u6211\u7684\u7B14\u8BB0 Vault").canonicalFile,
+            WorkspaceDirectoryPaths.resolve(root, "primary:Documents/\u6211\u7684\u7B14\u8BB0 Vault"))
         assertEquals(root.canonicalFile, WorkspaceDirectoryPaths.resolve(root, "1234-ABCD:"))
     }
 
