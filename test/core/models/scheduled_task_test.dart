@@ -49,7 +49,7 @@ void main() {
         ).preparationPrompt,
         ScheduledTask.defaultPreparationPrompt,
       );
-      for (final prompt in ['只输出正文，发送时间为 {{scheduled_time}}', '']) {
+      for (final prompt in ['\u53EA\u8F93\u51FA\u6B63\u6587，\u53D1\u9001\u65F6\u95F4\u4E3A {{scheduled_time}}', '']) {
         final decoded = ScheduledTask.fromJson({
           ...task.toJson(),
           'preparationPrompt': prompt,
