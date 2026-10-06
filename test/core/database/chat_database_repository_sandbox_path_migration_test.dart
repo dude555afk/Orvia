@@ -62,7 +62,7 @@ void main() {
       if (await directory.exists()) await directory.delete(recursive: true);
     });
 
-    test('首次按批迁移并在同一事务写 version receipt', () async {
+    test('\u9996\u6B21\u6309\u6279\u8FC1\u79FB\u5E76\u5728\u540C\u4E00\u4E8B\u52A1\u5199 version receipt', () async {
       final result = await repository.migrateSandboxPaths(
         targetVersion: 1,
         targetRoot: '/new',
@@ -86,7 +86,7 @@ void main() {
       );
     });
 
-    test('同版本后续启动不读取候选消息', () async {
+    test('\u540C\u7248\u672C\u540E\u7EED\u542F\u52A8\u4E0D\u8BFB\u53D6\u5019\u9009\u6D88\u606F', () async {
       await repository.migrateSandboxPaths(
         targetVersion: 1,
         targetRoot: '/same',
@@ -104,7 +104,7 @@ void main() {
       expect(result.skippedParts, 0);
     });
 
-    test('rewrite 失败回滚内容且不写 receipt，可重试', () async {
+    test('rewrite \u5931\u8D25\u56DE\u6EDA\u5185\u5BB9\u4E14\u4E0D\u5199 receipt，\u53EF\u91CD\u8BD5', () async {
       await expectLater(
         repository.migrateSandboxPaths(
           targetVersion: 1,
@@ -130,7 +130,7 @@ void main() {
       expect(retry.updatedMessages, 1);
     });
 
-    test('同版本目标根变化时重新执行一次', () async {
+    test('\u540C\u7248\u672C\u76EE\u6807\u6839\u53D8\u5316\u65F6\u91CD\u65B0\u6267\u884C\u4E00\u6B21', () async {
       await repository.migrateSandboxPaths(
         targetVersion: 1,
         targetRoot: '/first',
@@ -150,7 +150,7 @@ void main() {
       expect(result.updatedMessages, 1);
     });
 
-    test('损坏附件不阻塞迁移并保持原 payload 与 dirty 状态', () async {
+    test('\u635F\u574F\u9644\u4EF6\u4E0D\u963B\u585E\u8FC1\u79FB\u5E76\u4FDD\u6301\u539F payload \u4E0E dirty \u72B6\u6001', () async {
       const malformedPayload =
           '{"uri":"/old/sandboxoldtoken/a.png","mime":["/private/secret"]}';
       final database = sqlite.sqlite3.open(dbFile.path);
@@ -207,7 +207,7 @@ void main() {
       }
     });
 
-    test('路径重写后 ImagePart URI 更新且 FTS 索引完整', () async {
+    test('\u8DEF\u5F84\u91CD\u5199\u540E ImagePart URI \u66F4\u65B0\u4E14 FTS \u7D22\u5F15\u5B8C\u6574', () async {
       await repository.migrateSandboxPaths(
         targetVersion: 1,
         targetRoot: '/new',
@@ -492,7 +492,7 @@ void main() {
       },
     );
 
-    test('拒绝高于当前实现的已有 migration version', () async {
+    test('\u62D2\u7EDD\u9AD8\u4E8E\u5F53\u524D\u5B9E\u73B0\u7684\u5DF2\u6709 migration version', () async {
       await repository.migrateSandboxPaths(
         targetVersion: 2,
         targetRoot: '/future',
