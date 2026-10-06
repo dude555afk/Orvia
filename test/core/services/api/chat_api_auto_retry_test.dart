@@ -182,7 +182,7 @@ void main() {
       requests++;
       await request.drain();
       request.response.statusCode = HttpStatus.tooManyRequests;
-      request.response.write('HTTP 429: 访问量过大');
+      request.response.write('HTTP 429: \u8BBF\u95EE\u91CF\u8FC7\u5927');
       await request.response.close();
     });
     final baseUrl = 'http://${server.address.address}:${server.port}/v1';
@@ -227,7 +227,7 @@ void main() {
       await request.drain();
       if (requests == 1) {
         request.response.statusCode = HttpStatus.tooManyRequests;
-        request.response.write('HTTP 429: 访问量过大');
+        request.response.write('HTTP 429: \u8BBF\u95EE\u91CF\u8FC7\u5927');
         await request.response.close();
         return;
       }
@@ -278,7 +278,7 @@ void main() {
       if (requests == 2) {
         request.response.statusCode = HttpStatus.tooManyRequests;
         request.response.write(
-          '{"error":{"code":"1305","message":"该模型当前访问量过大，请您稍后再试"}}',
+          '{"error":{"code":"1305","message":"\u8BE5\u6A21\u578B\u5F53\u524D\u8BBF\u95EE\u91CF\u8FC7\u5927，\u8BF7\u60A8\u7A0D\u540E\u518D\u8BD5"}}',
         );
         await request.response.close();
         return;
