@@ -2748,7 +2748,7 @@ String _serviceTypeName(BuildContext context, String type) {
     case 'you':
       return l10n.searchServiceNameYou;
     case 'kelivo':
-      return l10n.searchServiceNameKelivo;
+      return l10n.searchServiceNameOrvia;
     default:
       return type;
   }
