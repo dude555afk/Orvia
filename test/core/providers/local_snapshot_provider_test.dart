@@ -74,9 +74,9 @@ void main() {
       debugBuildArchive: buildArchive,
     );
 
-    test('手动备份失败会被记录，转到后台也留得下痕迹', () async {
-      // 用户点了"转到后台继续"之后，弹窗已经卸载，异步错误只被用于释放资源。
-      // 不记的话用户只看到"正在后台备份"，之后既无成功也无失败。
+    test('\u624B\u52A8\u5907\u4EFD\u5931\u8D25\u4F1A\u88AB\u8BB0\u5F55，\u8F6C\u5230\u540E\u53F0\u4E5F\u7559\u5F97\u4E0B\u75D5\u8FF9', () async {
+      // \u7528\u6237\u70B9\u4E86"\u8F6C\u5230\u540E\u53F0\u7EE7\u7EED"\u4E4B\u540E，\u5F39\u7A97\u5DF2\u7ECF\u5378\u8F7D，\u5F02\u6B65\u9519\u8BEF\u53EA\u88AB\u7528\u4E8E\u91CA\u653E\u8D44\u6E90。
+      // \u4E0D\u8BB0\u7684\u8BDD\u7528\u6237\u53EA\u770B\u5230"\u6B63\u5728\u540E\u53F0\u5907\u4EFD"，\u4E4B\u540E\u65E2\u65E0\u6210\u529F\u4E5F\u65E0\u5931\u8D25。
       packError = StateError('device is full');
       final vm = build();
 
@@ -87,7 +87,7 @@ void main() {
       expect(state.lastFailureMessage, contains('device is full'));
     });
 
-    test('用户主动取消不算失败', () async {
+    test('\u7528\u6237\u4E3B\u52A8\u53D6\u6D88\u4E0D\u7B97\u5931\u8D25', () async {
       packError = const BackupCancelledException();
       final vm = build();
 
@@ -97,12 +97,12 @@ void main() {
       expect(snapshotPreferences.readState().lastFailureMessage, isNull);
     });
 
-    test('正在恢复副本时，定时任务让路而不是去剪枝', () async {
+    test('\u6B63\u5728\u6062\u590D\u526F\u672C\u65F6，\u5B9A\u65F6\u4EFB\u52A1\u8BA9\u8DEF\u800C\u4E0D\u662F\u53BB\u526A\u679D', () async {
       final vm = build();
       await vm.takeNow();
       expect(packCount, 1);
 
-      // 模拟恢复期间：副本正被按路径读取。
+      // \u6A21\u62DF\u6062\u590D\u671F\u95F4：\u526F\u672C\u6B63\u88AB\u6309\u8DEF\u5F84\u8BFB\u53D6。
       final gate = Completer<void>();
       final holding = vm.whileHoldingCopies(() => gate.future);
 
@@ -118,7 +118,7 @@ void main() {
       await holding;
     });
 
-    test('恢复前那份副本可以取消保留', () async {
+    test('\u6062\u590D\u524D\u90A3\u4EFD\u526F\u672C\u53EF\u4EE5\u53D6\u6D88\u4FDD\u7559', () async {
       final vm = build();
       final entry = await vm.takeNow(
         origin: LocalSnapshotOrigin.beforeRestore,
