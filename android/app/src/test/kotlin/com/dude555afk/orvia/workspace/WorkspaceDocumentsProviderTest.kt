@@ -68,7 +68,7 @@ class WorkspaceDocumentsProviderTest {
         }
     }
 
-    private fun workspace(id: String = "one", name: String = "工作区一", kind: String = "managed"): File {
+    private fun workspace(id: String = "one", name: String = "\u5DE5\u4F5C\u533A\u4E00", kind: String = "managed"): File {
         val payload = JSONObject().put("id", id).put("name", name).put("kind", kind)
             .put("hostPath", appData.path)
         database.execSQL("INSERT OR REPLACE INTO extension_entity_rows VALUES ('workspace', ?, 0, ?)", arrayOf(id, payload.toString()))
@@ -116,9 +116,9 @@ class WorkspaceDocumentsProviderTest {
     @Test
     fun exposesNamedWorkspacesWithoutFlutterOrDuplicateDatabase() {
         workspace()
-        workspace("two", "另一个工作区")
+        workspace("two", "\u53E6\u4E00\u4E2A\u5DE5\u4F5C\u533A")
         assertEquals(listOf("Kelivo"), provider.queryRoots(null).strings(Root.COLUMN_TITLE))
-        assertEquals(listOf("工作区一", "另一个工作区"), children().strings(Document.COLUMN_DISPLAY_NAME))
+        assertEquals(listOf("\u5DE5\u4F5C\u533A\u4E00", "\u53E6\u4E00\u4E2A\u5DE5\u4F5C\u533A"), children().strings(Document.COLUMN_DISPLAY_NAME))
         assertTrue(File(appData, "kelivo.db").exists())
     }
 
@@ -139,27 +139,27 @@ class WorkspaceDocumentsProviderTest {
     @Test
     fun listsNestedUnicodeFilesWithStableIdsAndMimeTypes() {
         val root = workspace()
-        File(root, "文件夹").mkdir()
-        File(root, "新技能.md").writeText("# 示例")
-        assertEquals(listOf("文件夹", "新技能.md"), children("workspace/one").strings(Document.COLUMN_DISPLAY_NAME))
-        assertEquals("text/markdown", provider.getDocumentType("workspace/one/新技能.md"))
-        assertEquals(listOf("workspace/one/新技能.md"), provider.queryDocument("workspace/one/新技能.md", arrayOf(Document.COLUMN_DOCUMENT_ID)).strings(Document.COLUMN_DOCUMENT_ID))
-        assertTrue(provider.isChildDocument("workspace/one", "workspace/one/新技能.md"))
+        File(root, "\u6587\u4EF6\u5939").mkdir()
+        File(root, "\u65B0\u6280\u80FD.md").writeText("# \u793A\u4F8B")
+        assertEquals(listOf("\u6587\u4EF6\u5939", "\u65B0\u6280\u80FD.md"), children("workspace/one").strings(Document.COLUMN_DISPLAY_NAME))
+        assertEquals("text/markdown", provider.getDocumentType("workspace/one/\u65B0\u6280\u80FD.md"))
+        assertEquals(listOf("workspace/one/\u65B0\u6280\u80FD.md"), provider.queryDocument("workspace/one/\u65B0\u6280\u80FD.md", arrayOf(Document.COLUMN_DOCUMENT_ID)).strings(Document.COLUMN_DOCUMENT_ID))
+        assertTrue(provider.isChildDocument("workspace/one", "workspace/one/\u65B0\u6280\u80FD.md"))
     }
 
     @Test
     @Config(shadows = [DocumentDescriptorOsShadow::class])
     fun readsSelectedFileAndRejectsEveryWriteMode() {
         val root = workspace()
-        File(root, "hello.txt").writeText("工作区内容")
+        File(root, "hello.txt").writeText("\u5DE5\u4F5C\u533A\u5185\u5BB9")
         for (mode in listOf("w", "wa", "rw", "rwt")) {
             assertThrows(FileNotFoundException::class.java) { provider.openDocument("workspace/one/hello.txt", mode, null) }
         }
         DocumentDescriptorOsShadow.openedPath = File(root, "hello.txt").path
         val descriptor = provider.openDocument("workspace/one/hello.txt", "r", null)
         val content = ParcelFileDescriptor.AutoCloseInputStream(descriptor).bufferedReader().use { it.readText() }
-        assertEquals("工作区内容", content)
-        assertEquals("工作区内容", File(root, "hello.txt").readText())
+        assertEquals("\u5DE5\u4F5C\u533A\u5185\u5BB9", content)
+        assertEquals("\u5DE5\u4F5C\u533A\u5185\u5BB9", File(root, "hello.txt").readText())
     }
 
     @Test
@@ -177,9 +177,9 @@ class WorkspaceDocumentsProviderTest {
     fun observesRegistryChangesOnTheNextQueryAndRevokesDeletedWorkspaceIds() {
         val root = workspace()
         File(root, "hello.txt").writeText("hello")
-        assertEquals(listOf("工作区一"), children().strings(Document.COLUMN_DISPLAY_NAME))
-        workspace(name = "改名后")
-        assertEquals(listOf("改名后"), children().strings(Document.COLUMN_DISPLAY_NAME))
+        assertEquals(listOf("\u5DE5\u4F5C\u533A\u4E00"), children().strings(Document.COLUMN_DISPLAY_NAME))
+        workspace(name = "\u6539\u540D\u540E")
+        assertEquals(listOf("\u6539\u540D\u540E"), children().strings(Document.COLUMN_DISPLAY_NAME))
         database.execSQL("DELETE FROM extension_entity_rows WHERE id = 'one'")
         assertTrue(children().strings(Document.COLUMN_DOCUMENT_ID).isEmpty())
         assertThrows(FileNotFoundException::class.java) { provider.openDocument("workspace/one/hello.txt", "r", null) }
@@ -346,7 +346,7 @@ class WorkspaceDocumentsProviderTest {
     @Test
     fun aWorkspaceWithoutRestoredFilesRemainsAnEmptyFolder() {
         workspace().delete()
-        assertEquals(listOf("工作区一"), children().strings(Document.COLUMN_DISPLAY_NAME))
+        assertEquals(listOf("\u5DE5\u4F5C\u533A\u4E00"), children().strings(Document.COLUMN_DISPLAY_NAME))
         assertTrue(children("workspace/one").strings(Document.COLUMN_DOCUMENT_ID).isEmpty())
         assertEquals(Document.MIME_TYPE_DIR, provider.getDocumentType("workspace/one"))
     }
