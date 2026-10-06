@@ -5106,7 +5106,7 @@
   "googleFontsNoResults": "No matching fonts",
   "googleFontsFailed": "Could not load, download, or apply the font. Check your connection and try again.",
   "googleFontsDownloading": "Downloading font…",
-  "googleFontsPreview": "The quick brown fox 0123456789 · 字体预览",
+  "googleFontsPreview": "The quick brown fox 0123456789 · Font preview",
   "googleFontsLicense": "Font license",
   "assistantEditLocationPermissionSettingsMessage": "Location permission is blocked. Allow location access in system settings, then turn this tool on again.",
   "healthDataSettingsCategoryReproductive": "Reproductive health",
