@@ -81,9 +81,9 @@ void main() {
       // the call streams its input in the first response and the result only
       // arrives in the second, whose decoder never saw that input.
       final handler = StreamChunkHandler();
-      handler.handle(const ToolCallStart(id: 'srvtoolu_1', toolName: 'web 获取'));
+      handler.handle(const ToolCallStart(id: 'srvtoolu_1', toolName: 'web \u83B7\u53D6'));
       handler.handle(
-        const ServerToolStart(id: 'srvtoolu_1', toolName: 'web 获取'),
+        const ServerToolStart(id: 'srvtoolu_1', toolName: 'web \u83B7\u53D6'),
       );
       handler.handle(
         const ToolCallDelta(
@@ -112,7 +112,7 @@ void main() {
       // Empty arguments are no news, whoever reports them: a decoder closing an
       // unfinished call still knows less about its input than the deltas do.
       final handler = StreamChunkHandler();
-      handler.handle(const ToolCallStart(id: 'srvtoolu_1', toolName: 'web 获取'));
+      handler.handle(const ToolCallStart(id: 'srvtoolu_1', toolName: 'web \u83B7\u53D6'));
       handler.handle(
         const ToolCallDelta(
           id: 'srvtoolu_1',
