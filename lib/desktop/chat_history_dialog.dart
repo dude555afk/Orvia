@@ -412,7 +412,7 @@ class _ConversationTileDesktopState extends State<_ConversationTileDesktop> {
   String _format(BuildContext context, DateTime dt) {
     final locale = Localizations.localeOf(context);
     final fmt = locale.languageCode == 'zh'
-        ? DateFormat('yyyy年M月d日 HH:mm:ss')
+        ? DateFormat('yyyy-MM-dd HH:mm:ss')
         : DateFormat('yyyy-MM-dd HH:mm:ss');
     return fmt.format(dt);
   }
