@@ -166,7 +166,7 @@ class SettingsPage extends StatelessWidget {
               ),
             ),
 
-          // 通用设置：使用iOS风格分组卡片，黑色（中性）图标与标题，无描述
+          // \u901A\u7528\u8BBE\u7F6E：\u4F7F\u7528iOS\u98CE\u683C\u5206\u7EC4\u5361\u7247，\u9ED1\u8272（\u4E2D\u6027）\u56FE\u6807\u4E0E\u6807\u9898，\u65E0\u63CF\u8FF0
           header(l10n.settingsPageGeneralSection, first: true),
           SectionCard(
             children: [
