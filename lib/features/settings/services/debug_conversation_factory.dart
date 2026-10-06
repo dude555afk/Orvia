@@ -245,7 +245,7 @@ class DebugConversationFactory {
     switch (turn % 6) {
       case 0:
         return [
-          'Round $turn: help me organize today's tasks, prioritizing work and personal items.',
+          "Round $turn: help me organize today's tasks, prioritizing work and personal items.",
           '',
           '- [ ] Reply to product review feedback',
           '- [ ] Confirm the travel budget before 8 PM',
@@ -285,7 +285,7 @@ class DebugConversationFactory {
         ].join('\n');
       case 4:
         return [
-          'Today's workout log:',
+          "Today's workout log:",
           '',
           '- Run for 32 minutes',
           '- 4 sets of squats',
@@ -332,7 +332,7 @@ class DebugConversationFactory {
         ].join('\n');
       case 2:
         return [
-          '\u95EE\u9898\u901A\u5E38\u51FA\u5728\u5F02\u5E38\u8DEF\u5F84：\u5982\u679C `submitMessage` \u629B\u9519，`isSending` \u4E0D\u4F1A\u6062\u590D。',
+          'The issue usually occurs on the exception path: if `submitMessage` throws, `isSending` is not reset.',
           '',
           '```dart',
           'if (isSending) return;',
@@ -356,7 +356,7 @@ class DebugConversationFactory {
         ].join('\n');
       case 4:
         return [
-          'Tomorrow's plan should be conservative:',
+          "Tomorrow's plan should be conservative:",
           '',
           '- Easy run for 20 minutes or brisk walk for 35 minutes',
           '- Reduce lower-body strength work to 2 sets',
