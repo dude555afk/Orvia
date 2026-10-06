@@ -4,7 +4,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../l10n/app_localizations_en.dart';
-import '../../../l10n/app_localizations_zh.dart';
 
 enum SettingsSearchDestination {
  display,
@@ -206,8 +205,6 @@ class SettingsSearchIndex {
  _ => false,
  };
  final en = AppLocalizationsEn();
- final zh = AppLocalizationsZh();
- final hant = AppLocalizationsZhHant();
  final items = <SettingsSearchItem>[];
  void add(
  String id,
@@ -233,7 +230,7 @@ class SettingsSearchIndex {
  path: path,
  destination: destination,
  targetLabel: targetLabel ?? (page ? null : title(l)),
- alternateTitles: [title(en), title(zh), title(hant)],
+ alternateTitles: [title(en)],
  keywords: keywords,
  ),
  );
