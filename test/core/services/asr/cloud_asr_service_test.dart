@@ -57,20 +57,20 @@ void main() {
       socket.serverJson({
         'type': 'conversation.item.input_audio_transcription.delta',
         'item_id': 'item-1',
-        'delta': '你好',
+        'delta': '\u4F60\u597D',
       });
-      expect(partials, ['你好']);
+      expect(partials, ['\u4F60\u597D']);
 
       final resultFuture = session.finish();
       expect(socket.sentJson.last, {'type': 'input_audio_buffer.commit'});
       socket.serverJson({
         'type': 'conversation.item.input_audio_transcription.completed',
         'item_id': 'item-1',
-        'transcript': '你好。',
+        'transcript': '\u4F60\u597D。',
       });
 
-      expect(await resultFuture, '你好。');
-      expect(partials, ['你好', '你好。']);
+      expect(await resultFuture, '\u4F60\u597D。');
+      expect(partials, ['\u4F60\u597D', '\u4F60\u597D。']);
       expect(socket.closeCode, 1000);
       await subscription.cancel();
     });
@@ -172,9 +172,9 @@ void main() {
       socket.serverJson({
         'type': 'conversation.item.input_audio_transcription.text',
         'item_id': 'dash-item',
-        'text': '阿里',
+        'text': '\u963F\u91CC',
       });
-      expect(await partialFuture, '阿里');
+      expect(await partialFuture, '\u963F\u91CC');
 
       final resultFuture = session.finish();
       expect(
@@ -190,12 +190,12 @@ void main() {
       socket.serverJson({
         'type': 'conversation.item.input_audio_transcription.completed',
         'item_id': 'dash-item',
-        'transcript': '阿里云',
+        'transcript': '\u963F\u91CC\u4E91',
       });
       await Future<void>.delayed(Duration.zero);
       expect(socket.closeCode, isNull);
       socket.serverJson({'type': 'session.finished'});
-      expect(await resultFuture, '阿里云');
+      expect(await resultFuture, '\u963F\u91CC\u4E91');
       expect(socket.closeCode, 1000);
     });
 
@@ -295,8 +295,8 @@ void main() {
       expect(_volcCompression(audioFrame), 0);
       expect(_volcPayload(audioFrame), [1, 2, 3, 4]);
 
-      socket.serverBinary(_volcTranscriptFrame('火山', isFinal: false));
-      expect(await partialFuture, '火山');
+      socket.serverBinary(_volcTranscriptFrame('\u706B\u5C71', isFinal: false));
+      expect(await partialFuture, '\u706B\u5C71');
 
       final resultFuture = session.finish();
       final finalAudioFrame = socket.sentBinary.last;
@@ -304,8 +304,8 @@ void main() {
       expect(_volcFlags(finalAudioFrame), 0x02);
       expect(_volcPayload(finalAudioFrame), isEmpty);
 
-      socket.serverBinary(_volcTranscriptFrame('火山引擎', isFinal: true));
-      expect(await resultFuture, '火山引擎');
+      socket.serverBinary(_volcTranscriptFrame('\u706B\u5C71\u5F15\u64CE', isFinal: true));
+      expect(await resultFuture, '\u706B\u5C71\u5F15\u64CE');
       expect(socket.closeCode, 1000);
     });
 
@@ -355,7 +355,7 @@ void main() {
             jsonEncode({
               'choices': [
                 {
-                  'message': {'content': '今天天气很好'},
+                  'message': {'content': '\u4ECA\u5929\u5929\u6C14\u5F88\u597D'},
                 },
               ],
             }),
@@ -374,8 +374,8 @@ void main() {
       final partialFuture = session.partialTranscripts.first;
       await session.addPcm16(Uint8List.fromList([1, 2, 3, 4]));
 
-      expect(await session.finish(), '今天天气很好');
-      expect(await partialFuture, '今天天气很好');
+      expect(await session.finish(), '\u4ECA\u5929\u5929\u6C14\u5F88\u597D');
+      expect(await partialFuture, '\u4ECA\u5929\u5929\u6C14\u5F88\u597D');
       expect(captured.url.path, '/v1/chat/completions');
       expect(captured.headers['api-key'], 'mimo-secret');
       expect(body['model'], 'mimo-v2.5-asr');
@@ -464,8 +464,8 @@ void main() {
         expect(combineQwenAudioTranscript('Hello', 'World'), 'Hello World');
         expect(combineQwenAudioTranscript('Hello. ', 'World'), 'Hello. World');
         // CJK joins stay unspaced.
-        expect(combineQwenAudioTranscript('你好。', '今天'), '你好。今天');
-        expect(combineQwenAudioTranscript('你好', '世界'), '你好世界');
+        expect(combineQwenAudioTranscript('\u4F60\u597D。', '\u4ECA\u5929'), '\u4F60\u597D。\u4ECA\u5929');
+        expect(combineQwenAudioTranscript('\u4F60\u597D', '\u4E16\u754C'), '\u4F60\u597D\u4E16\u754C');
       },
     );
 
@@ -508,41 +508,41 @@ void main() {
         'header': {'event': 'result-generated'},
         'payload': {
           'output': {
-            'sentence': {'text': '你好', 'sentence_end': false},
+            'sentence': {'text': '\u4F60\u597D', 'sentence_end': false},
           },
         },
       });
-      expect(partials, ['你好']);
+      expect(partials, ['\u4F60\u597D']);
 
       socket.serverJson({
         'header': {'event': 'result-generated'},
         'payload': {
           'output': {
-            'sentence': {'text': '你好世界', 'sentence_end': true},
+            'sentence': {'text': '\u4F60\u597D\u4E16\u754C', 'sentence_end': true},
           },
         },
       });
-      expect(partials.last, '你好世界');
+      expect(partials.last, '\u4F60\u597D\u4E16\u754C');
 
       socket.serverJson({
         'header': {'event': 'result-generated'},
         'payload': {
           'output': {
-            'sentence': {'text': '今天', 'sentence_end': false},
+            'sentence': {'text': '\u4ECA\u5929', 'sentence_end': false},
           },
         },
       });
-      expect(partials.last, '你好世界今天');
+      expect(partials.last, '\u4F60\u597D\u4E16\u754C\u4ECA\u5929');
 
       socket.serverJson({
         'header': {'event': 'result-generated'},
         'payload': {
           'output': {
-            'sentence': {'text': '今天天气不错', 'sentence_end': true},
+            'sentence': {'text': '\u4ECA\u5929\u5929\u6C14\u4E0D\u9519', 'sentence_end': true},
           },
         },
       });
-      expect(partials.last, '你好世界今天天气不错');
+      expect(partials.last, '\u4F60\u597D\u4E16\u754C\u4ECA\u5929\u5929\u6C14\u4E0D\u9519');
 
       final resultFuture = session.finish();
       expect(socket.sentJson.last['header']['action'], 'finish-task');
@@ -551,7 +551,7 @@ void main() {
         'payload': const <String, dynamic>{},
       });
 
-      expect(await resultFuture, '你好世界今天天气不错');
+      expect(await resultFuture, '\u4F60\u597D\u4E16\u754C\u4ECA\u5929\u5929\u6C14\u4E0D\u9519');
       expect(socket.closeCode, 1000);
       await subscription.cancel();
     });
@@ -629,9 +629,9 @@ void main() {
         return http.Response.bytes(
           utf8.encode(
             [
-              'data: ${jsonEncode({'type': 'transcript.text.delta', 'delta': '阶跃'})}',
+              'data: ${jsonEncode({'type': 'transcript.text.delta', 'delta': '\u9636\u8DC3'})}',
               '',
-              'data: ${jsonEncode({'type': 'transcript.text.done', 'text': '阶跃星辰'})}',
+              'data: ${jsonEncode({'type': 'transcript.text.done', 'text': '\u9636\u8DC3\u661F\u8FB0'})}',
               '',
               'data: [DONE]',
               '',
@@ -650,14 +650,14 @@ void main() {
           sampleRate: 16000,
           enableItn: false,
           enableTimestamp: true,
-          hotwords: const ['Kelivo', '阶跃星辰'],
+          hotwords: const ['Kelivo', '\u9636\u8DC3\u661F\u8FB0'],
         ),
       );
       final partialFuture = session.partialTranscripts.first;
       await session.addPcm16(Uint8List(3200));
 
-      expect(await session.finish(), '阶跃星辰');
-      expect(await partialFuture, '阶跃星辰');
+      expect(await session.finish(), '\u9636\u8DC3\u661F\u8FB0');
+      expect(await partialFuture, '\u9636\u8DC3\u661F\u8FB0');
       expect(
         captured.url.toString(),
         'https://step.example.test/v1/audio/asr/sse',
@@ -674,7 +674,7 @@ void main() {
         'enable_itn': false,
         'enable_timestamp': true,
         'language': 'zh',
-        'hotwords': ['Kelivo', '阶跃星辰'],
+        'hotwords': ['Kelivo', '\u9636\u8DC3\u661F\u8FB0'],
       });
       expect(input['format'], {
         'type': 'pcm',
