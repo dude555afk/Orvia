@@ -330,7 +330,7 @@ void main() {
       _event(
         _choice(
           message: <String, dynamic>{
-            'content': '正文仍然保留。',
+            'content': '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。',
             'tool_calls': <Map<String, dynamic>>[
               <String, dynamic>{
                 'index': 0,
@@ -371,7 +371,7 @@ void main() {
       ),
     );
 
-    expect(result.chunks.whereType<TextDelta>().single.text, '正文仍然保留。');
+    expect(result.chunks.whereType<TextDelta>().single.text, '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。');
     expect(decoder.toolCalls, <int, Map<String, dynamic>>{
       0: <String, dynamic>{
         'id': 'call_lookup',
@@ -939,7 +939,7 @@ void main() {
       _event(
         _choice(
           delta: <String, dynamic>{
-            'content': '*气音*\n\n……我要吃了。',
+            'content': '*\u6C14\u97F3*\n\n……\u6211\u8981\u5403\u4E86。',
             'tool_calls': <Map<String, dynamic>>[
               <String, dynamic>{
                 'index': 'bad',
@@ -957,7 +957,7 @@ void main() {
 
     expect(
       decoded.chunks.whereType<TextDelta>().single.text,
-      '*气音*\n\n……我要吃了。',
+      '*\u6C14\u97F3*\n\n……\u6211\u8981\u5403\u4E86。',
     );
   });
 
@@ -1018,7 +1018,7 @@ void main() {
       _event(
         _choice(
           delta: <String, dynamic>{
-            'content': '正文仍然保留。',
+            'content': '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。',
             'tool_calls': <Map<String, dynamic>>[
               <String, dynamic>{
                 'index': 'bad',
@@ -1035,7 +1035,7 @@ void main() {
       ),
     );
 
-    expect(malformed.chunks.whereType<TextDelta>().single.text, '正文仍然保留。');
+    expect(malformed.chunks.whereType<TextDelta>().single.text, '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。');
     expect(malformed.chunks.whereType<ToolCallDelta>(), isEmpty);
     expect(decoder.toolCalls.keys, <int>[0]);
     expect(decoder.toolCalls[0], <String, dynamic>{
@@ -1071,7 +1071,7 @@ void main() {
       _event(
         _choice(
           delta: <String, dynamic>{
-            'content': '正文仍然保留。',
+            'content': '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。',
             'tool_calls': <Map<String, dynamic>>[
               <String, dynamic>{
                 'index': 0.9,
@@ -1096,7 +1096,7 @@ void main() {
       ),
     );
 
-    expect(malformed.chunks.whereType<TextDelta>().single.text, '正文仍然保留。');
+    expect(malformed.chunks.whereType<TextDelta>().single.text, '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。');
     expect(malformed.chunks.whereType<ToolCallDelta>(), isEmpty);
     expect(decoder.toolCalls, <int, Map<String, dynamic>>{
       0: <String, dynamic>{
