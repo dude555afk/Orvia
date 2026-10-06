@@ -1618,7 +1618,7 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
-    final textBase = cs.onSurface; // 纯黑（白天），夜间自动适配
+    final textBase = cs.onSurface; // \u7EAF\u9ED1（\u767D\u5929），\u591C\u95F4\u81EA\u52A8\u9002\u914D
     final ap = context.watch<AssistantProvider>();
     final currentAssistantId = ap.currentAssistantId;
     final chatServiceForSelection = context.read<ChatService>();
@@ -1792,7 +1792,7 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                       textBase,
                       topicsOnly: topicsOnly,
                     ),
-                    // 1. 搜索框 + 历史按钮（固定头部）；多选时换成计数栏
+                    // 1. \u641C\u7D22\u6846 + \u5386\u53F2\u6309\u94AE（\u56FA\u5B9A\u5934\u90E8）；\u591A\u9009\u65F6\u6362\u6210\u8BA1\u6570\u680F
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 220),
                       switchInCurve: Curves.easeOutCubic,
@@ -1850,7 +1850,7 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                                 'sidebar-search-header',
                               ),
                               child: _isDesktop
-                                  // 桌面端
+                                  // ' '\u684C' '\u9762' '\u7AEF' r'
                                   ? Padding(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 2,
@@ -2454,7 +2454,7 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                                               ),
                                             ),
                                             const SizedBox(width: 4),
-                                            // 历史按钮（圆形，无水波纹）
+                                            // \u5386\u53F2\u6309\u94AE（\u5706\u5F62，\u65E0\u6C34\u6CE2\u7EB9）
                                             SizedBox(
                                               width: 44,
                                               height: 44,
@@ -2548,14 +2548,14 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                     if (!widget.globalSearchMode) ...[
                       SizedBox(height: _isDesktop ? 8 : 12),
 
-                      // 桌面端：替换为 Tab（助手 / 话题）
+                      // \u684C\u9762\u7AEF：\u66FF\u6362\u4E3A Tab（\u52A9\u624B / \u8BDD\u9898）
                       if (useTabs)
                         _DesktopSidebarTabs(
                           textColor: textBase,
                           controller: _tabController!,
                         )
                       else if (!assistOnly && !topicsOnly)
-                        // 当前助手区域（固定）
+                        // \u5F53\u524D\u52A9\u624B\u533A\u57DF（\u56FA\u5B9A）
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 2),
                           child: KeyedSubtree(
@@ -2646,7 +2646,7 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                         ),
                     ],
 
-                    // 注意：内联助手列表已移动至下方可滚动区域
+                    // \u6CE8\u610F：\u5185\u8054\u52A9\u624B\u5217\u8868\u5DF2\u79FB\u52A8\u81F3\u4E0B\u65B9\u53EF\u6EDA\u52A8\u533A\u57DF
                   ],
                 ),
               ),
@@ -2815,7 +2815,7 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                                   Row(
                                     children: [
                                       const SizedBox(width: 6),
-                                      // 用户头像（可点击更换）—移除水波纹
+                                      // ' '\u7528' '\u6237' '\u5934' '\u50CF' r'（' '\u53EF' '\u70B9' '\u51FB' '\u66F4' '\u6362' r'）—' '\u79FB' '\u9664' '\u6C34' '\u6CE2' '\u7EB9' r'
                                       GestureDetector(
                                         behavior: HitTestBehavior.opaque,
                                         onTap: () => _editAvatar(context),
@@ -2826,7 +2826,7 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                                         ),
                                       ),
                                       const SizedBox(width: 20),
-                                      // 用户名称（可点击编辑，垂直居中）
+                                      // ' '\u7528' '\u6237' '\u540D' '\u79F0' r'（' '\u53EF' '\u70B9' '\u51FB' '\u7F16' '\u8F91' r'，' '\u5782' '\u76F4' '\u5C45' '\u4E2D' r'）
                                       Expanded(
                                         child: IosCardPress(
                                           borderRadius: BorderRadius.circular(
@@ -2859,7 +2859,7 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                                         ),
                                       ),
                                       const SizedBox(width: 8),
-                                      // 翻译按钮（圆形，无水波纹）
+                                      // ' '\u7FFB' '\u8BD1' '\u6309' '\u94AE' r'（' '\u5706' '\u5F62' r'，' '\u65E0' '\u6C34' '\u6CE2' '\u7EB9' r'）
                                       SizedBox(
                                         width: 45,
                                         height: 45,
@@ -2881,7 +2881,7 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                                         ),
                                       ),
                                       const SizedBox(width: 4),
-                                      // 设置按钮（圆形，无水波纹）
+                                      // ' '\u8BBE' '\u7F6E' '\u6309' '\u94AE' r'（' '\u5706' '\u5F62' r'，' '\u65E0' '\u6C34' '\u6CE2' '\u7EB9' r'）
                                       SizedBox(
                                         width: 45,
                                         height: 45,
