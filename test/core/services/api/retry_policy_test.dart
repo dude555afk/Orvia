@@ -16,7 +16,7 @@ void main() {
       expect(
         httpStatusFromError(
           const HttpException(
-            'HTTP 429: {"error":{"code":"1305","message":"访问量过大"}}',
+            'HTTP 429: {"error":{"code":"1305","message":"\u8BBF\u95EE\u91CF\u8FC7\u5927"}}',
           ),
         ),
         429,
@@ -47,7 +47,7 @@ void main() {
     });
 
     test('retries on retry keywords even without a status code', () {
-      expect(shouldRetryError(Exception('该模型当前访问量过大，请您稍后再试'), options), isTrue);
+      expect(shouldRetryError(Exception('\u8BE5\u6A21\u578B\u5F53\u524D\u8BBF\u95EE\u91CF\u8FC7\u5927，\u8BF7\u60A8\u7A0D\u540E\u518D\u8BD5'), options), isTrue);
       expect(
         shouldRetryError(Exception('Rate Limit exceeded'), options),
         isTrue,
@@ -56,11 +56,11 @@ void main() {
 
     test('stop keywords beat retry keywords and status codes', () {
       expect(
-        shouldRetryError(const HttpException('HTTP 429: 余额不足，请充值'), options),
+        shouldRetryError(const HttpException('HTTP 429: \u4F59\u989D\u4E0D\u8DB3，\u8BF7\u5145\u503C'), options),
         isFalse,
       );
       expect(
-        shouldRetryError(Exception('访问量过大 but quota exceeded'), options),
+        shouldRetryError(Exception('\u8BBF\u95EE\u91CF\u8FC7\u5927 but quota exceeded'), options),
         isFalse,
       );
       expect(
@@ -194,7 +194,7 @@ void main() {
         );
         expect(
           shouldRetryError(
-            TimeoutException('TimeoutException after 0:00:30.000000: 超时'),
+            TimeoutException('TimeoutException after 0:00:30.000000: \u8D85\u65F6'),
             imageOpts,
           ),
           isFalse,
