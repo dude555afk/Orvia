@@ -20,10 +20,10 @@ void main() {
       final conversation = Conversation(
         id: 'conversation-2',
         title: 'Chat',
-        chatSuggestions: const ['继续', '举例'],
+        chatSuggestions: const ['\u7EE7\u7EED', '\u4E3E\u4F8B'],
       );
 
-      expect(conversation.toJson()['chatSuggestions'], ['继续', '举例']);
+      expect(conversation.toJson()['chatSuggestions'], ['\u7EE7\u7EED', '\u4E3E\u4F8B']);
     });
   });
 
