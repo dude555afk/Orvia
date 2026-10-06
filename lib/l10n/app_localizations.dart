@@ -20496,7 +20496,7 @@ abstract class AppLocalizations {
   /// No description provided for @googleFontsPreview.
   ///
   /// In en, this message translates to:
-  /// **'The quick brown fox 0123456789 · 字体预览'**
+  /// **'The quick brown fox 0123456789 · Font preview'**
   String get googleFontsPreview;
 
   /// No description provided for @googleFontsLicense.
