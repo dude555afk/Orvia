@@ -311,7 +311,7 @@ class _DesktopProvidersBodyState extends State<_DesktopProvidersBody> {
       (name: 'Tensdaq', key: 'Tensdaq'),
       (name: 'DeepSeek', key: 'DeepSeek'),
       (name: 'AIhubmix', key: 'AIhubmix'),
-      (name: '随想AI中转站', key: '随想AI中转站'),
+      (name: '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9', key: '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9'),
       (name: 'MaruCode', key: 'MaruCode'),
       (name: l10n.providersPageAliyunName, key: 'Aliyun'),
       (name: l10n.providersPageZhipuName, key: 'Zhipu AI'),
@@ -999,7 +999,7 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
   bool _showApiKey = false;
   bool _eyeHover = false;
 
-  // 批量选择模式相关
+  // \u6279\u91CF\u9009\u62E9\u6A21\u5F0F\u76F8\u5173
   bool _isSelectionMode = false;
   final Set<String> _selectedModels = {};
   bool _isDetecting = false;
@@ -1243,7 +1243,7 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '革命性竞价 AI MaaS 平台，价格由市场供需决定，告别高成本固定定价。',
+                        '\u9769\u547D\u6027\u7ADE\u4EF7 AI MaaS \u5E73\u53F0，\u4EF7\u683C\u7531\u5E02\u573A\u4F9B\u9700\u51B3\u5B9A，\u544A\u522B\u9AD8\u6210\u672C\u56FA\u5B9A\u5B9A\u4EF7。',
                         style: TextStyle(
                           color: cs.onSurface.withValues(alpha: 0.8),
                         ),
@@ -1251,7 +1251,7 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
                       const SizedBox(height: 6),
                       Text.rich(
                         TextSpan(
-                          text: '官网：',
+                          text: '\u5B98\u7F51：',
                           style: TextStyle(
                             color: cs.onSurface.withValues(alpha: 0.8),
                           ),
@@ -1306,7 +1306,7 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '已内置硅基流动的免费模型，无需 API Key。若需更强大的模型，请申请并在此配置你自己的 API Key。',
+                        '\u5DF2\u5185\u7F6E\u7845\u57FA\u6D41\u52A8\u7684\u514D\u8D39\u6A21\u578B，\u65E0\u9700 API Key。\u82E5\u9700\u66F4\u5F3A\u5927\u7684\u6A21\u578B，\u8BF7\u7533\u8BF7\u5E76\u5728\u6B64\u914D\u7F6E\u4F60\u81EA\u5DF1\u7684 API Key。',
                         style: TextStyle(
                           color: cs.onSurface.withValues(alpha: 0.8),
                         ),
@@ -1314,7 +1314,7 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
                       const SizedBox(height: 6),
                       Text.rich(
                         TextSpan(
-                          text: '官网：',
+                          text: '\u5B98\u7F51：',
                           style: TextStyle(
                             color: cs.onSurface.withValues(alpha: 0.8),
                           ),
@@ -1352,7 +1352,7 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
                 const SizedBox(height: 12),
               ],
 
-              if (widget.providerKey.toLowerCase() == '随想ai中转站') ...[
+              if (widget.providerKey.toLowerCase() == '\u968F\u60F3ai\u4E2D\u8F6C\u7AD9') ...[
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -1369,7 +1369,7 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '可靠高效的 API 中继服务，提供 Claude、Codex、Gemini 等中继服务。注重隐私·无数据倒卖·无模型掺水，充值额度 1:1，按量付费。多线路冗余、跨区域容灾、自动故障切换，长链路 SSE 不中断。',
+                        '\u53EF\u9760\u9AD8\u6548\u7684 API \u4E2D\u7EE7\u670D\u52A1，\u63D0\u4F9B Claude、Codex、Gemini \u7B49\u4E2D\u7EE7\u670D\u52A1。\u6CE8\u91CD\u9690\u79C1·\u65E0\u6570\u636E\u5012\u5356·\u65E0\u6A21\u578B\u63BA\u6C34，\u5145\u503C\u989D\u5EA6 1:1，\u6309\u91CF\u4ED8\u8D39。\u591A\u7EBF\u8DEF\u5197\u4F59、\u8DE8\u533A\u57DF\u5BB9\u707E、\u81EA\u52A8\u6545\u969C\u5207\u6362，\u957F\u94FE\u8DEF SSE \u4E0D\u4E2D\u65AD。',
                         style: TextStyle(
                           color: cs.onSurface.withValues(alpha: 0.8),
                         ),
@@ -1377,7 +1377,7 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
                       const SizedBox(height: 6),
                       Text.rich(
                         TextSpan(
-                          text: '官网：',
+                          text: '\u5B98\u7F51：',
                           style: TextStyle(
                             color: cs.onSurface.withValues(alpha: 0.8),
                           ),
@@ -1432,7 +1432,7 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '偶尔做做慈善的小破站 API，自营号池，主要提供 Codex、Claude Code、GPT Image 等主流模型。支持 Websocket 协议，明码标价(Codex 0.25x, CC 1.5x)，透明汇率(1:1)，新用户注册送 2 刀。',
+                        '\u5076\u5C14\u505A\u505A\u6148\u5584\u7684\u5C0F\u7834\u7AD9 API，\u81EA\u8425\u53F7\u6C60，\u4E3B\u8981\u63D0\u4F9B Codex、Claude Code、GPT Image \u7B49\u4E3B\u6D41\u6A21\u578B。\u652F\u6301 Websocket \u534F\u8BAE，\u660E\u7801\u6807\u4EF7(Codex 0.25x, CC 1.5x)，\u900F\u660E\u6C47\u7387(1:1)，\u65B0\u7528\u6237\u6CE8\u518C\u9001 2 \u5200。',
                         style: TextStyle(
                           color: cs.onSurface.withValues(alpha: 0.8),
                         ),
@@ -1440,7 +1440,7 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
                       const SizedBox(height: 6),
                       Text.rich(
                         TextSpan(
-                          text: '官网：',
+                          text: '\u5B98\u7F51：',
                           style: TextStyle(
                             color: cs.onSurface.withValues(alpha: 0.8),
                           ),
