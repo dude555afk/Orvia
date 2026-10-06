@@ -127,9 +127,9 @@ class AssistantProvider extends ChangeNotifier {
     await loaded;
     if (_assistants.isNotEmpty) return;
     final l10n = AppLocalizations.of(context)!;
-    // 1) 默认助手
+    // 1) \u9ED8\u8BA4\u52A9\u624B
     _assistants.add(_defaultAssistant(l10n));
-    // 2) 示例助手（带提示词模板）
+    // 2) \u793A\u4F8B\u52A9\u624B（\u5E26\u63D0\u793A\u8BCD\u6A21\u677F）
     _assistants.add(
       Assistant(
         id: const Uuid().v4(),
