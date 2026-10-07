@@ -2835,7 +2835,7 @@ A-->B
         _markdownHarness(r'''
 Price $10 should not render.
 
-Range$\pm 2$ is valid.
+Range: $\pm 2$ is valid.
 
 Punctuation: $x+y$.
 
