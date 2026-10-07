@@ -27,6 +27,7 @@ import android.view.WindowManager
 import android.view.animation.LinearInterpolator
 import android.widget.Chronometer
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.dude555afk.orvia.R
