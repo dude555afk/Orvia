@@ -10,17 +10,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/business_restore_service.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/backup.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/services/backup/chatbox_importer.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/business_restore_service.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/backup.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/services/backup/chatbox_importer.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 
 class _FakePathProvider extends PathProviderPlatform {
   _FakePathProvider(this.root);
@@ -99,10 +99,10 @@ void main() {
     late File backup;
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_chatbox_db_');
+      root = await Directory.systemTemp.createTemp('orvia_chatbox_db_');
       PathProviderPlatform.instance = _FakePathProvider(root.path);
       SharedPreferences.setMockInitialValues({});
-      final databaseFile = File('${root.path}/kelivo.db');
+      final databaseFile = File('${root.path}/orvia.db');
       database = AppDatabase.open(file: databaseFile);
       businessRepository = BusinessRepository(database);
       chatService = ChatService(
@@ -227,7 +227,7 @@ void main() {
         final reloaded = ChatService(
           existingRepository: ChatDatabaseRepository(
             database,
-            databaseFile: File('${root.path}/kelivo.db'),
+            databaseFile: File('${root.path}/orvia.db'),
           ),
         );
         await reloaded.init();
@@ -890,7 +890,7 @@ void main() {
                       'type': 'tool-call',
                       'state': 'result',
                       'toolName': 'search',
-                      'args': {'q': 'kelivo'},
+                      'args': {'q': 'orvia'},
                       'resultStorageKey': 'tool-result:1',
                     },
                   ],

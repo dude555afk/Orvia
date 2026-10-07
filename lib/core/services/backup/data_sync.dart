@@ -249,7 +249,7 @@ typedef _BackupDatabaseSource =
     Future<ChatDatabaseSnapshotInfo> Function(File destination);
 
 class DataSync {
-  static const _backupFormat = 'kelivo-backup';
+  static const _backupFormat = 'orvia-backup';
   static const _backupFormatVersion = 2;
 
   /// Manifest key naming the oldest archive format that can still read a
@@ -271,7 +271,7 @@ class DataSync {
   /// tomorrow's backups still restore into today's build.
   static const _minimumReadableFormatVersion = 2;
   static const _manifestEntryName = 'manifest.json';
-  static const _databaseEntryName = 'database/kelivo.db';
+  static const _databaseEntryName = 'database/orvia.db';
 
   /// Declared file roots copied when `includeFiles` is true.
   ///
@@ -367,7 +367,7 @@ class DataSync {
         throw StateError('restore_startup_business_lease');
       }
       extractDir = await Directory.systemTemp.createTemp(
-        'kelivo-startup-snapshot-',
+        'orvia-startup-snapshot-',
       );
       registerLiveTempPath(extractDir.path);
       await runBackupIsolate<void, _BackupExtractArgs>(
@@ -620,11 +620,11 @@ class DataSync {
     final tmp = await _ensureTempDir();
     await _cleanupPreviousBackupTempFiles(tmp);
     final timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
-    final workDir = Directory(p.join(tmp.path, 'kelivo_backup_$timestamp'));
+    final workDir = Directory(p.join(tmp.path, 'orvia_backup_$timestamp'));
     await workDir.create(recursive: true);
     registerLiveTempPath(workDir.path);
 
-    final outPath = p.join(workDir.path, 'kelivo_backup_$timestamp.zip');
+    final outPath = p.join(workDir.path, 'orvia_backup_$timestamp.zip');
     final outFile = File(outPath);
     if (await outFile.exists()) await outFile.delete();
 
@@ -655,7 +655,7 @@ class DataSync {
 
       ChatDatabaseSnapshotInfo? snapshotInfo;
       if (includeChats) {
-        final databaseFile = File(p.join(workDir.path, '_bk_kelivo.db'));
+        final databaseFile = File(p.join(workDir.path, '_bk_orvia.db'));
         databaseTmp = databaseFile;
         onProgress?.call(
           const BackupProgress(
@@ -757,7 +757,7 @@ class DataSync {
     }
     final tmp = await _ensureTempDir();
     final stagingDirectory = await Directory(
-      p.join(tmp.path, 'kelivo_adopt_${DateTime.now().microsecondsSinceEpoch}'),
+      p.join(tmp.path, 'orvia_adopt_${DateTime.now().microsecondsSinceEpoch}'),
     ).create(recursive: true);
     registerLiveTempPath(stagingDirectory.path);
     try {
@@ -918,11 +918,11 @@ class DataSync {
     return _cleanupPreviousBackupTempFiles(tmp);
   }
 
-  /// Parses the creation time out of a `kelivo_backup_<iso-with-dashes>` name
+  /// Parses the creation time out of a `orvia_backup_<iso-with-dashes>` name
   /// (see [prepareBackupFile], which replaces ':' with '-'). Returns null for
   /// names that do not carry a timestamp.
   static DateTime? _backupTempTimestampFromName(String name) {
-    const prefix = 'kelivo_backup_';
+    const prefix = 'orvia_backup_';
     if (!name.startsWith(prefix)) return null;
     var core = name.substring(prefix.length);
     if (core.endsWith('.zip')) {
@@ -959,14 +959,14 @@ class DataSync {
       await for (final ent in tmp.list(followLinks: false)) {
         if (_isLiveTempPath(ent.path)) continue;
         final name = p.basename(ent.path);
-        if (ent is Directory && name.startsWith('kelivo_backup_')) {
+        if (ent is Directory && name.startsWith('orvia_backup_')) {
           if (await isStale(ent, name)) await _deleteDirectoryQuietly(ent);
         } else if (ent is File &&
-            ((name.startsWith('kelivo_backup_') && name.endsWith('.zip')) ||
+            ((name.startsWith('orvia_backup_') && name.endsWith('.zip')) ||
                 name == '_bk_settings.json' ||
                 name == '_bk_chats.json' ||
                 name == '_bk_manifest.json' ||
-                name == '_bk_kelivo.db')) {
+                name == '_bk_orvia.db')) {
           if (await isStale(ent, name)) await _deleteFileQuietly(ent);
         }
       }
@@ -1656,10 +1656,10 @@ class DataSync {
           ? disp.first.trim()
           : Uri.parse(href).pathSegments.last;
 
-      // If mtime is null, try to extract from filename (format: kelivo_backup_2025-01-19T12-34-56.123456.zip)
+      // If mtime is null, try to extract from filename (format: orvia_backup_2025-01-19T12-34-56.123456.zip)
       if (mtime == null) {
         final match = RegExp(
-          r'kelivo_backup_(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.\d+)\.zip',
+          r'orvia_backup_(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.\d+)\.zip',
         ).firstMatch(name);
         if (match != null) {
           try {
@@ -2012,7 +2012,7 @@ class DataSync {
       } catch (_) {}
     }
     if (!await dir.exists()) {
-      dir = await Directory.systemTemp.createTemp('kelivo_tmp_');
+      dir = await Directory.systemTemp.createTemp('orvia_tmp_');
     }
     return dir;
   }
@@ -2547,7 +2547,7 @@ class DataSync {
           message = message.copyWith(parts: decoded.parts);
         }
       }
-      // Import boundary: persist managed local attachments as kelivo-file URIs.
+      // Import boundary: persist managed local attachments as orvia-file URIs.
       final normalized = _normalizeAttachmentPartUris(message.parts);
       if (!identical(normalized, message.parts)) {
         message = message.copyWith(parts: normalized);

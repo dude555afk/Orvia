@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/asr/asr_service_options.dart';
-import 'package:Kelivo/core/services/asr/sherpa_model_manager.dart';
-import 'package:Kelivo/features/settings/widgets/asr_services_section.dart';
-import 'package:Kelivo/features/settings/widgets/voice_service_widgets.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/asr/asr_service_options.dart';
+import 'package:orvia/core/services/asr/sherpa_model_manager.dart';
+import 'package:orvia/features/settings/widgets/asr_services_section.dart';
+import 'package:orvia/features/settings/widgets/voice_service_widgets.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -131,7 +131,7 @@ void main() {
         segmentDurationSec: 17,
         enableItn: false,
         enableTimestamp: true,
-        hotwords: const ['Kelivo', 'ASR'],
+        hotwords: const ['Orvia', 'ASR'],
       ),
       MimoAsrOptions(
         id: 'mimo-test',
@@ -160,7 +160,7 @@ void main() {
     expect(step.segmentDurationSec, 17);
     expect(step.enableItn, isFalse);
     expect(step.enableTimestamp, isTrue);
-    expect(step.hotwords, const ['Kelivo', 'ASR']);
+    expect(step.hotwords, const ['Orvia', 'ASR']);
 
     await tester.tap(find.byTooltip('Edit').at(1));
     await tester.pumpAndSettle();
@@ -181,7 +181,7 @@ void main() {
           id: 'openai-test',
           name: 'OpenAI custom',
           apiKey: 'openai-key',
-          prompt: 'Kelivo vocabulary',
+          prompt: 'Orvia vocabulary',
           sampleRate: 48000,
           vadThreshold: 0.42,
           prefixPaddingMs: 420,
@@ -211,7 +211,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final openAi = settings.asrServices.first as OpenAiRealtimeAsrOptions;
-      expect(openAi.prompt, 'Kelivo vocabulary');
+      expect(openAi.prompt, 'Orvia vocabulary');
       expect(openAi.sampleRate, 48000);
       expect(openAi.vadThreshold, 0.42);
       expect(openAi.prefixPaddingMs, 420);
@@ -386,7 +386,7 @@ final class _ModelManagerFixture {
   final SherpaModelManager manager;
 
   static _ModelManagerFixture create() {
-    final directory = Directory.systemTemp.createTempSync('kelivo-asr-ui-');
+    final directory = Directory.systemTemp.createTempSync('orvia-asr-ui-');
     return _ModelManagerFixture(
       directory,
       SherpaModelManager(modelsRoot: directory),

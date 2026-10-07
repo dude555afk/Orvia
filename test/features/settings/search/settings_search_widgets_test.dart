@@ -1,15 +1,15 @@
 import 'dart:ui' show SemanticsAction;
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/desktop/desktop_settings_page.dart';
-import 'package:Kelivo/features/settings/pages/settings_search_page.dart';
-import 'package:Kelivo/features/settings/pages/settings_page.dart';
-import 'package:Kelivo/features/settings/search/settings_search_index.dart';
-import 'package:Kelivo/features/settings/search/settings_search_navigation.dart';
-import 'package:Kelivo/features/settings/widgets/settings_search_entry.dart';
-import 'package:Kelivo/features/settings/widgets/settings_search_view.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/l10n/app_localizations_en.dart';
-import 'package:Kelivo/shared/widgets/ios_switch.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/desktop/desktop_settings_page.dart';
+import 'package:orvia/features/settings/pages/settings_search_page.dart';
+import 'package:orvia/features/settings/pages/settings_page.dart';
+import 'package:orvia/features/settings/search/settings_search_index.dart';
+import 'package:orvia/features/settings/search/settings_search_navigation.dart';
+import 'package:orvia/features/settings/widgets/settings_search_entry.dart';
+import 'package:orvia/features/settings/widgets/settings_search_view.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/l10n/app_localizations_en.dart';
+import 'package:orvia/shared/widgets/ios_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;

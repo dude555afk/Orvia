@@ -1,5 +1,5 @@
-import 'package:Kelivo/core/models/model_spec.dart';
-import 'package:Kelivo/core/services/api/providers/openai/chat_completions_api.dart';
+import 'package:orvia/core/models/model_spec.dart';
+import 'package:orvia/core/services/api/providers/openai/chat_completions_api.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

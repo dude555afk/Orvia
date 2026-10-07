@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:Kelivo/core/services/chat/document_text_extractor.dart';
+import 'package:orvia/core/services/chat/document_text_extractor.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   late Directory directory;
   setUp(
-    () => directory = Directory.systemTemp.createTempSync('kelivo_extract_'),
+    () => directory = Directory.systemTemp.createTempSync('orvia_extract_'),
   );
   tearDown(() => directory.deleteSync(recursive: true));
 

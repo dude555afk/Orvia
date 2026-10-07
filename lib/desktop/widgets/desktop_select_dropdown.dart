@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 
 import 'package:flutter/material.dart';
 

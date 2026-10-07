@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:Kelivo/core/models/mobile_background_settings.dart';
-import 'package:Kelivo/core/services/mobile_background.dart';
-import 'package:Kelivo/core/services/notification_service.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/models/mobile_background_settings.dart';
+import 'package:orvia/core/services/mobile_background.dart';
+import 'package:orvia/core/services/notification_service.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';

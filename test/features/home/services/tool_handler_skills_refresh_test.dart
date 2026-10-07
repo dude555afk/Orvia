@@ -1,25 +1,25 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/mcp_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/mcp/mcp_tool_service.dart';
-import 'package:Kelivo/core/services/skills/skills_service.dart';
-import 'package:Kelivo/core/services/workspace/tool_run_registry.dart';
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tools_service.dart';
-import 'package:Kelivo/features/home/services/tool_handler_service.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/conversation_skills_sheet.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skills_pane.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/mcp_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/mcp/mcp_tool_service.dart';
+import 'package:orvia/core/services/skills/skills_service.dart';
+import 'package:orvia/core/services/workspace/tool_run_registry.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/workspace/workspace_tools_service.dart';
+import 'package:orvia/features/home/services/tool_handler_service.dart';
+import 'package:orvia/features/workspace/widgets/skills/conversation_skills_sheet.dart';
+import 'package:orvia/features/workspace/widgets/skills/skills_pane.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -56,7 +56,7 @@ void main() {
   late Directory sessionDir;
 
   setUp(() async {
-    tmp = await Directory.systemTemp.createTemp('kelivo_agent_skills_');
+    tmp = await Directory.systemTemp.createTemp('orvia_agent_skills_');
     workspaceDir = Directory(p.join(tmp.path, 'workspace'))..createSync();
     sessionDir = Directory(p.join(tmp.path, 'session'))..createSync();
     Directory(p.join(sessionDir.path, 'outputs')).createSync();

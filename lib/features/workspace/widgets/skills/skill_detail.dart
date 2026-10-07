@@ -3,27 +3,27 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:Kelivo/core/services/haptics.dart';
-import 'package:Kelivo/core/services/skills/skills_service.dart';
-import 'package:Kelivo/desktop/menu_anchor.dart';
-import 'package:Kelivo/features/settings/widgets/custom_theme_widgets.dart';
-import 'package:Kelivo/features/workspace/widgets/files/file_browser.dart';
-import 'package:Kelivo/features/workspace/widgets/files/workspace_prompts.dart';
-import 'package:Kelivo/features/workspace/widgets/preview/preview_states.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skill_import.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skill_labels.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/features/workspace/workspace_layout.dart';
-import 'package:Kelivo/shared/utils/format_bytes.dart';
-import 'package:Kelivo/shared/utils/save_file_picker.dart';
-import 'package:Kelivo/shared/widgets/action_sheet.dart';
-import 'package:Kelivo/shared/widgets/ios_switch.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/shared/widgets/markdown_with_highlight.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/core/services/haptics.dart';
+import 'package:orvia/core/services/skills/skills_service.dart';
+import 'package:orvia/desktop/menu_anchor.dart';
+import 'package:orvia/features/settings/widgets/custom_theme_widgets.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser.dart';
+import 'package:orvia/features/workspace/widgets/files/workspace_prompts.dart';
+import 'package:orvia/features/workspace/widgets/preview/preview_states.dart';
+import 'package:orvia/features/workspace/widgets/skills/skill_import.dart';
+import 'package:orvia/features/workspace/widgets/skills/skill_labels.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/features/workspace/workspace_layout.dart';
+import 'package:orvia/shared/utils/format_bytes.dart';
+import 'package:orvia/shared/utils/save_file_picker.dart';
+import 'package:orvia/shared/widgets/action_sheet.dart';
+import 'package:orvia/shared/widgets/ios_switch.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/shared/widgets/markdown_with_highlight.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
@@ -76,9 +76,7 @@ Future<void> exportSkill(BuildContext context, Skill skill) async {
   final l10n = AppLocalizations.of(context)!;
   final service = context.read<SkillsService>();
   try {
-    final outDir = await Directory.systemTemp.createTemp(
-      'kelivo_skill_export_',
-    );
+    final outDir = await Directory.systemTemp.createTemp('orvia_skill_export_');
     final zip = await service.exportZip(skill.record.id, outDir);
     if (!context.mounted) return;
     final savePath = await saveHostFileWithPicker(

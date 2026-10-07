@@ -2,7 +2,7 @@
 
 ## Project overview
 
-Kelivo is a cross-platform LLM chat client built with Flutter, targeting iOS, Android, macOS, Windows, and Linux. Package name is `Kelivo` — imports use `package:Kelivo/...`.
+Orvia is a cross-platform LLM chat client built with Flutter, targeting iOS, Android, macOS, Windows, and Linux. Package name is `orvia` — imports use `package:orvia/...`.
 
 ## Architecture
 

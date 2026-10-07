@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:Kelivo/features/settings/search/settings_search_index.dart';
-import 'package:Kelivo/features/settings/widgets/settings_search_view.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/theme/palettes.dart';
-import 'package:Kelivo/theme/theme_factory.dart';
+import 'package:orvia/features/settings/search/settings_search_index.dart';
+import 'package:orvia/features/settings/widgets/settings_search_view.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/theme/palettes.dart';
+import 'package:orvia/theme/theme_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
@@ -14,11 +14,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Optional native Flutter previews. Output stays outside the repository:
-// KELIVO_SEARCH_QA_DIR=/tmp/settings-search KELIVO_SEARCH_QA_FONT=/path/font.ttf
+// ORVIA_SEARCH_QA_DIR=/tmp/settings-search ORVIA_SEARCH_QA_FONT=/path/font.ttf
 // flutter test test/features/settings/search/settings_search_visual_test.dart
 void main() {
-  final output = Platform.environment['KELIVO_SEARCH_QA_DIR'];
-  final fontPath = Platform.environment['KELIVO_SEARCH_QA_FONT'];
+  final output = Platform.environment['ORVIA_SEARCH_QA_DIR'];
+  final fontPath = Platform.environment['ORVIA_SEARCH_QA_FONT'];
   setUpAll(() async {
     if (fontPath != null) {
       final loader = FontLoader('SettingsSearchQA');

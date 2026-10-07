@@ -7,14 +7,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/backup.dart';
-import 'package:Kelivo/core/services/backup/backup_cancel_token.dart';
-import 'package:Kelivo/core/services/backup/backup_task_progress.dart';
-import 'package:Kelivo/core/services/backup/chatbox_importer.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/backup.dart';
+import 'package:orvia/core/services/backup/backup_cancel_token.dart';
+import 'package:orvia/core/services/backup/backup_task_progress.dart';
+import 'package:orvia/core/services/backup/chatbox_importer.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
 
 class _FakePathProvider extends PathProviderPlatform {
   _FakePathProvider(this.root);
@@ -85,10 +85,10 @@ void main() {
   late ChatService chatService;
 
   setUp(() async {
-    root = await Directory.systemTemp.createTemp('kelivo_chatbox_isolate_');
+    root = await Directory.systemTemp.createTemp('orvia_chatbox_isolate_');
     PathProviderPlatform.instance = _FakePathProvider(root.path);
     SharedPreferences.setMockInitialValues({});
-    final databaseFile = File('${root.path}/kelivo.db');
+    final databaseFile = File('${root.path}/orvia.db');
     database = AppDatabase.open(file: databaseFile);
     businessRepository = BusinessRepository(database);
     chatService = ChatService(

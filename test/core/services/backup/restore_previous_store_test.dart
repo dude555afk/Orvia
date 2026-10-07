@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/backup/restore_durability.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_builder.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_plan.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_store.dart';
-import 'package:Kelivo/core/services/backup/restore_receipt.dart';
+import 'package:orvia/core/services/backup/restore_durability.dart';
+import 'package:orvia/core/services/backup/restore_previous_builder.dart';
+import 'package:orvia/core/services/backup/restore_previous_plan.dart';
+import 'package:orvia/core/services/backup/restore_previous_store.dart';
+import 'package:orvia/core/services/backup/restore_receipt.dart';
 
 const _runId = '0123456789abcdef0123456789abcdef';
 const _candidateHash =
@@ -29,7 +29,7 @@ void main() {
 
     setUp(() async {
       appData = await Directory.systemTemp.createTemp(
-        'kelivo_previous_store_test_',
+        'orvia_previous_store_test_',
       );
       runDirectory = Directory(p.join(appData.path, 'run_$_runId'));
       await runDirectory.create();
@@ -127,7 +127,7 @@ void main() {
     test(
       'requires every selected database and asset payload before promotion',
       () async {
-        final database = File(p.join(appData.path, 'kelivo.db'));
+        final database = File(p.join(appData.path, 'orvia.db'));
         await database.writeAsBytes([1, 2, 3], flush: true);
         final upload = File(p.join(appData.path, 'upload', 'item'));
         await upload.parent.create();
@@ -150,7 +150,7 @@ void main() {
           p.join(store.pendingDirectory.path, 'database'),
         ).create();
         await database.rename(
-          p.join(store.pendingDirectory.path, 'database', 'kelivo.db'),
+          p.join(store.pendingDirectory.path, 'database', 'orvia.db'),
         );
         await Directory(
           p.join(appData.path, 'upload'),

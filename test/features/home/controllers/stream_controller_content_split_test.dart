@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import "../../../support/business_test_harness.dart";
 import 'package:flutter_test/flutter_test.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/features/chat/widgets/chat_message_widget.dart'
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/features/chat/widgets/chat_message_widget.dart'
     show ToolUIPart;
-import 'package:Kelivo/features/home/controllers/stream_controller.dart';
+import 'package:orvia/features/home/controllers/stream_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -305,7 +305,7 @@ void main() {
         {
           'id': 'tool-1',
           'name': 'search_web',
-          'arguments': {'query': 'Kelivo'},
+          'arguments': {'query': 'Orvia'},
           'content': null,
         },
       ],
@@ -1000,7 +1000,7 @@ void main() {
         id: 'st_1',
         toolName: 'web_search_preview',
         input: {
-          'action': {'query': 'kelivo'},
+          'action': {'query': 'orvia'},
         },
       );
       const end = ServerToolEnd(id: 'st_1');
@@ -1024,7 +1024,7 @@ void main() {
       );
 
       expect(upserted!['arguments'], {
-        'action': {'query': 'kelivo'},
+        'action': {'query': 'orvia'},
       });
       expect(upserted!['content'], isNotEmpty);
     },

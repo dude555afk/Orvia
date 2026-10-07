@@ -5,13 +5,13 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/environment_manager.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_speed_test.dart';
-import 'package:Kelivo/core/services/sandbox/rootfs_source.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
-import 'package:Kelivo/utils/app_directories.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/environment_manager.dart';
+import 'package:orvia/core/services/sandbox/mirror_speed_test.dart';
+import 'package:orvia/core/services/sandbox/rootfs_source.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/utils/app_directories.dart';
 
 /// Machine-readable [EnvironmentState.errorMessage] codes for UI localization.
 abstract final class EnvironmentError {
@@ -34,7 +34,7 @@ abstract final class EnvironmentError {
 const List<int> kAndroidNetworkGids = <int>[3003, 9997];
 
 const int kMinFreeBytes = 600 * 1024 * 1024;
-const String kKelivoVersionFile = '.kelivo-version';
+const String kOrviaVersionFile = '.orvia-version';
 
 /// APK ABI changes preserve app data, including the previous guest system.
 /// Reject an incompatible install without deleting it or changing its metadata.
@@ -44,7 +44,7 @@ Future<bool> validateInstalledRootfsArchitecture({
   required String abi,
 }) async {
   var installedArch = env.state.arch;
-  final marker = File(p.join(rootfsDir.path, kKelivoVersionFile));
+  final marker = File(p.join(rootfsDir.path, kOrviaVersionFile));
   if (await marker.exists()) {
     final parts = (await marker.readAsString()).trim().split(RegExp(r'\s+'));
     if (parts.length >= 3) installedArch = parts[2];
@@ -133,7 +133,7 @@ class EnvironmentInstaller implements EnvironmentManager {
       await _resolveEnvDir();
       await _validateInstalledArchitecture();
       _previousState =
-          await File(p.join(rootfsDir.path, kKelivoVersionFile)).exists()
+          await File(p.join(rootfsDir.path, kOrviaVersionFile)).exists()
           ? env.state
           : null;
       await channel.setEnvironmentBusy(true);
@@ -253,7 +253,7 @@ class EnvironmentInstaller implements EnvironmentManager {
   Future<void> ensureInstalled() async {
     await env.loaded;
     await _resolveEnvDir();
-    if (await File(p.join(rootfsDir.path, kKelivoVersionFile)).exists()) {
+    if (await File(p.join(rootfsDir.path, kOrviaVersionFile)).exists()) {
       if (!await _validateInstalledArchitecture()) return;
       if (env.state.phase != EnvironmentPhase.ready) {
         final parsed = await _readVersionFile();
@@ -454,7 +454,7 @@ class EnvironmentInstaller implements EnvironmentManager {
       return;
     }
     await _throwIfCancelled();
-    final versionPath = p.join(staging.path, kKelivoVersionFile);
+    final versionPath = p.join(staging.path, kOrviaVersionFile);
     // Imported archives can contain guest-absolute links. Remove the link
     // itself, including a dangling one, before writing this app-owned marker.
     final versionLink = Link(versionPath);
@@ -716,7 +716,7 @@ class EnvironmentInstaller implements EnvironmentManager {
 
   Future<({String distro, String version, String arch, String? codename})?>
   _readVersionFile() async {
-    final file = File(p.join(rootfsDir.path, kKelivoVersionFile));
+    final file = File(p.join(rootfsDir.path, kOrviaVersionFile));
     if (!await file.exists()) return null;
     final parts = (await file.readAsString()).trim().split(RegExp(r'\s+'));
     if (parts.length < 3) return null;

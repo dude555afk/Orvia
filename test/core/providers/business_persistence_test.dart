@@ -1,21 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/instruction_injection.dart';
-import 'package:Kelivo/core/models/quick_phrase.dart';
-import 'package:Kelivo/core/models/world_book.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/backup_reminder_provider.dart';
-import 'package:Kelivo/core/providers/instruction_injection_group_provider.dart';
-import 'package:Kelivo/core/providers/instruction_injection_provider.dart';
-import 'package:Kelivo/core/providers/mcp_provider.dart';
-import 'package:Kelivo/core/providers/tag_provider.dart';
-import 'package:Kelivo/core/providers/user_provider.dart';
-import 'package:Kelivo/core/services/instruction_injection_store.dart';
-import 'package:Kelivo/core/services/memory_store.dart';
-import 'package:Kelivo/core/services/quick_phrase_store.dart';
-import 'package:Kelivo/core/services/world_book_store.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/instruction_injection.dart';
+import 'package:orvia/core/models/quick_phrase.dart';
+import 'package:orvia/core/models/world_book.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/backup_reminder_provider.dart';
+import 'package:orvia/core/providers/instruction_injection_group_provider.dart';
+import 'package:orvia/core/providers/instruction_injection_provider.dart';
+import 'package:orvia/core/providers/mcp_provider.dart';
+import 'package:orvia/core/providers/tag_provider.dart';
+import 'package:orvia/core/providers/user_provider.dart';
+import 'package:orvia/core/services/instruction_injection_store.dart';
+import 'package:orvia/core/services/memory_store.dart';
+import 'package:orvia/core/services/quick_phrase_store.dart';
+import 'package:orvia/core/services/world_book_store.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -264,7 +264,7 @@ void main() {
       await _waitUntil(() => provider.servers.isNotEmpty);
 
       expect(
-        provider.servers.where((server) => server.id == 'kelivo_fetch'),
+        provider.servers.where((server) => server.id == 'orvia_fetch'),
         hasLength(1),
       );
       await provider.updateRequestTimeout(
@@ -286,7 +286,7 @@ void main() {
       await _waitUntil(() => restored.servers.length == 2);
 
       expect(
-        restored.servers.where((server) => server.id == 'kelivo_fetch'),
+        restored.servers.where((server) => server.id == 'orvia_fetch'),
         hasLength(1),
       );
       expect(restored.getById(customId)?.name, 'Docs');
@@ -318,9 +318,9 @@ void main() {
         'mcp_servers_v1',
         jsonEncode(<Map<String, dynamic>>[
           McpServerConfig(
-            id: 'kelivo_fetch',
+            id: 'orvia_fetch',
             enabled: false,
-            name: '@kelivo/fetch',
+            name: '@orvia/fetch',
             transport: McpTransportType.inmemory,
           ).toJson(),
           McpServerConfig(
@@ -392,7 +392,7 @@ void main() {
         provider.reorderServers(4, 2),
       ]);
       expect(provider.servers.map((server) => server.id), <String>[
-        'kelivo_fetch',
+        'orvia_fetch',
         logsId,
         ids[0],
         ids[1],

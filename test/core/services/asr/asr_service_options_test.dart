@@ -1,4 +1,4 @@
-import 'package:Kelivo/core/services/asr/asr_service_options.dart';
+import 'package:orvia/core/services/asr/asr_service_options.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -120,7 +120,7 @@ void main() {
           websocketUrl: 'wss://example.test/realtime',
           model: 'gpt-4o-transcribe',
           language: 'zh',
-          prompt: 'Kelivo vocabulary',
+          prompt: 'Orvia vocabulary',
           sampleRate: 24000,
           vadThreshold: 0.4,
           prefixPaddingMs: 250,
@@ -166,7 +166,7 @@ void main() {
           segmentDurationSec: 60,
           enableItn: false,
           enableTimestamp: true,
-          hotwords: const ['Kelivo', '\u9636\u8DC3\u661F\u8FB0'],
+          hotwords: const ['Orvia', '\u9636\u8DC3\u661F\u8FB0'],
         ),
       ];
 

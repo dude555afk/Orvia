@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/features/migration/hive_to_sqlite_migration_page.dart';
-import 'package:Kelivo/features/migration/hive_to_sqlite_migration_service.dart';
-import 'package:Kelivo/features/migration/widgets/migration_backup_options.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/main.dart' show MigrationApp;
-import 'package:Kelivo/shared/widgets/ios_checkbox.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
+import 'package:orvia/features/migration/hive_to_sqlite_migration_page.dart';
+import 'package:orvia/features/migration/hive_to_sqlite_migration_service.dart';
+import 'package:orvia/features/migration/widgets/migration_backup_options.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/main.dart' show MigrationApp;
+import 'package:orvia/shared/widgets/ios_checkbox.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
 
 void main() {
   testWidgets('can skip backup and start migration immediately', (
@@ -23,7 +23,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     final testDirectory = Directory.systemTemp.createTempSync(
-      'kelivo_skip_backup_option_',
+      'orvia_skip_backup_option_',
     );
     addTearDown(() {
       if (testDirectory.existsSync()) {
@@ -34,7 +34,7 @@ void main() {
       HiveToSqliteMigrationDecision(
         needsMigration: true,
         appDataDir: testDirectory,
-        sqliteFile: File('${testDirectory.path}/kelivo-test.sqlite'),
+        sqliteFile: File('${testDirectory.path}/orvia-test.sqlite'),
         hiveFiles: const <File>[],
       ),
     );
@@ -95,7 +95,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     final testDirectory = Directory.systemTemp.createTempSync(
-      'kelivo_skip_chats_option_',
+      'orvia_skip_chats_option_',
     );
     addTearDown(() {
       if (testDirectory.existsSync()) {
@@ -106,7 +106,7 @@ void main() {
       HiveToSqliteMigrationDecision(
         needsMigration: true,
         appDataDir: testDirectory,
-        sqliteFile: File('${testDirectory.path}/kelivo-test.sqlite'),
+        sqliteFile: File('${testDirectory.path}/orvia-test.sqlite'),
         hiveFiles: const <File>[],
       ),
     );
@@ -152,7 +152,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     final testDirectory = Directory.systemTemp.createTempSync(
-      'kelivo_mobile_migration_retry_',
+      'orvia_mobile_migration_retry_',
     );
     addTearDown(() {
       if (testDirectory.existsSync()) {
@@ -163,7 +163,7 @@ void main() {
       HiveToSqliteMigrationDecision(
         needsMigration: true,
         appDataDir: testDirectory,
-        sqliteFile: File('${testDirectory.path}/kelivo-test.sqlite'),
+        sqliteFile: File('${testDirectory.path}/orvia-test.sqlite'),
         hiveFiles: const <File>[],
       ),
     );
@@ -304,7 +304,7 @@ HiveToSqliteMigrationService _completeService() {
     HiveToSqliteMigrationDecision(
       needsMigration: true,
       appDataDir: Directory.systemTemp,
-      sqliteFile: File('${Directory.systemTemp.path}/kelivo-test.sqlite'),
+      sqliteFile: File('${Directory.systemTemp.path}/orvia-test.sqlite'),
       hiveFiles: const <File>[],
     ),
   );

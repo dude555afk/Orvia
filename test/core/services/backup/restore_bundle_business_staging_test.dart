@@ -5,14 +5,14 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_data.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/business_restore_service.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/services/backup/restore_bundle_staging.dart';
-import 'package:Kelivo/core/services/instruction_injection_store.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_data.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/business_restore_service.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/services/backup/restore_bundle_staging.dart';
+import 'package:orvia/core/services/instruction_injection_store.dart';
 
 Future<String> _sha256(File file) async =>
     (await sha256.bind(file.openRead()).first).toString();
@@ -22,7 +22,7 @@ void main() {
     late Directory root;
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_business_staging_');
+      root = await Directory.systemTemp.createTemp('orvia_business_staging_');
     });
 
     tearDown(() async {
@@ -34,7 +34,7 @@ void main() {
       () async {
         final extracted = Directory(p.join(root.path, 'extracted'));
         final databaseFile = File(
-          p.join(extracted.path, 'database', 'kelivo.db'),
+          p.join(extracted.path, 'database', 'orvia.db'),
         );
         await databaseFile.parent.create(recursive: true);
         final database = AppDatabase.open(file: databaseFile);
@@ -84,7 +84,7 @@ void main() {
         final manifestFile = File(p.join(extracted.path, 'manifest.json'));
         await manifestFile.writeAsString(
           jsonEncode({
-            'format': 'kelivo-backup',
+            'format': 'orvia-backup',
             'formatVersion': 2,
             'payloadKind': 'sqlite',
             'createdAtUtc': '2026-07-18T00:00:00.000Z',
@@ -93,7 +93,7 @@ void main() {
             'includeFiles': false,
             'secretsIncluded': true,
             'database': {
-              'entry': 'database/kelivo.db',
+              'entry': 'database/orvia.db',
               'schemaVersion': databaseInfo.schemaVersion,
               'conversationCount': databaseInfo.conversationCount,
               'messageCount': databaseInfo.messageCount,
@@ -103,7 +103,7 @@ void main() {
                 'bytes': await settingsFile.length(),
                 'sha256': await _sha256(settingsFile),
               },
-              'database/kelivo.db': {
+              'database/orvia.db': {
                 'bytes': await databaseFile.length(),
                 'sha256': sourceDatabaseHash,
               },
@@ -135,10 +135,10 @@ void main() {
                 as Map<String, dynamic>;
         expect(candidateManifest, isNot(contains('secretsIncluded')));
         expect((candidateManifest['entries'] as Map).keys, [
-          'database/kelivo.db',
+          'database/orvia.db',
         ]);
         expect(
-          ((candidateManifest['entries'] as Map)['database/kelivo.db']
+          ((candidateManifest['entries'] as Map)['database/orvia.db']
               as Map)['sha256'],
           isNot(sourceDatabaseHash),
         );
@@ -150,7 +150,7 @@ void main() {
         expect(validated.databaseInfo?.conversationCount, 1);
 
         final inspectionFile = await File(
-          p.join(staged.payloadDirectory.path, 'database', 'kelivo.db'),
+          p.join(staged.payloadDirectory.path, 'database', 'orvia.db'),
         ).copy(p.join(root.path, 'inspection.sqlite'));
         final inspectionDatabase = AppDatabase.open(file: inspectionFile);
         try {
@@ -185,7 +185,7 @@ void main() {
       () async {
         final extracted = Directory(p.join(root.path, 'idless-extracted'));
         final databaseFile = File(
-          p.join(extracted.path, 'database', 'kelivo.db'),
+          p.join(extracted.path, 'database', 'orvia.db'),
         );
         await databaseFile.parent.create(recursive: true);
         final database = AppDatabase.open(file: databaseFile);
@@ -215,7 +215,7 @@ void main() {
         final manifestFile = File(p.join(extracted.path, 'manifest.json'));
         await manifestFile.writeAsString(
           jsonEncode({
-            'format': 'kelivo-backup',
+            'format': 'orvia-backup',
             'formatVersion': 2,
             'payloadKind': 'sqlite',
             'createdAtUtc': '2026-07-18T00:00:00.000Z',
@@ -231,7 +231,7 @@ void main() {
                       : <String>[],
             },
             'database': {
-              'entry': 'database/kelivo.db',
+              'entry': 'database/orvia.db',
               'schemaVersion': databaseInfo.schemaVersion,
               'conversationCount': databaseInfo.conversationCount,
               'messageCount': databaseInfo.messageCount,
@@ -241,7 +241,7 @@ void main() {
                 'bytes': await settingsFile.length(),
                 'sha256': await _sha256(settingsFile),
               },
-              'database/kelivo.db': {
+              'database/orvia.db': {
                 'bytes': await databaseFile.length(),
                 'sha256': await _sha256(databaseFile),
               },
@@ -267,7 +267,7 @@ void main() {
         expect(candidateManifest, isNot(contains('businessEntityRowIds')));
 
         final inspectionFile = await File(
-          p.join(staged.payloadDirectory.path, 'database', 'kelivo.db'),
+          p.join(staged.payloadDirectory.path, 'database', 'orvia.db'),
         ).copy(p.join(root.path, 'idless-inspection.sqlite'));
         final inspectionDatabase = AppDatabase.open(file: inspectionFile);
         try {

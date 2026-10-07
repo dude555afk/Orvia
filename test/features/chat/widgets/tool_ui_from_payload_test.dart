@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:Kelivo/features/chat/widgets/chat_message_widget.dart';
+import 'package:orvia/features/chat/widgets/chat_message_widget.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -11,7 +11,7 @@ void main() {
         jsonEncode(<String, dynamic>{
           'id': '',
           'name': 'lookup',
-          'arguments': <String, dynamic>{'q': 'kelivo'},
+          'arguments': <String, dynamic>{'q': 'orvia'},
         }),
         fallbackOrdinal: 2,
       );
@@ -19,7 +19,7 @@ void main() {
       expect(parsed, isNotNull);
       expect(parsed!.id, 'lookup-2');
       expect(parsed.toolName, 'lookup');
-      expect(parsed.arguments, <String, dynamic>{'q': 'kelivo'});
+      expect(parsed.arguments, <String, dynamic>{'q': 'orvia'});
       expect(parsed.loading, isTrue);
     },
   );

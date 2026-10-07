@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/services/api/providers/openai/chat_completions_decoder.dart';
-import 'package:Kelivo/core/services/api/providers/openai/openai_tool_transcript.dart';
-import 'package:Kelivo/core/services/api/stream/sse_event.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk_handler.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/services/api/providers/openai/chat_completions_decoder.dart';
+import 'package:orvia/core/services/api/providers/openai/openai_tool_transcript.dart';
+import 'package:orvia/core/services/api/stream/sse_event.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk_handler.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 SseEvent _event(Map<String, dynamic> data) => SseEvent(data: jsonEncode(data));
@@ -99,7 +99,7 @@ void main() {
             'tool_calls': [
               <String, dynamic>{
                 'index': 0,
-                'function': <String, dynamic>{'arguments': '"kelivo"}'},
+                'function': <String, dynamic>{'arguments': '"orvia"}'},
               },
             ],
           },
@@ -111,14 +111,11 @@ void main() {
     expect(decoder.finishReason, 'tool_calls');
     expect(decoder.toolCalls[0]!['id'], 'call_1');
     expect(decoder.toolCalls[0]!['name'], 'lookup');
-    expect(decoder.toolCalls[0]!['args'], '{"q":"kelivo"}');
+    expect(decoder.toolCalls[0]!['args'], '{"q":"orvia"}');
     expect(start.chunks.whereType<ToolCallStart>().single.id, 'call_1');
     expect(start.chunks.whereType<ToolCallStart>().single.toolName, 'lookup');
     expect(start.chunks.whereType<ToolCallDelta>().single.inputDelta, '{"q":');
-    expect(
-      end.chunks.whereType<ToolCallDelta>().single.inputDelta,
-      '"kelivo"}',
-    );
+    expect(end.chunks.whereType<ToolCallDelta>().single.inputDelta, '"orvia"}');
     expect(end.chunks.whereType<ToolCallEnd>().single.id, 'call_1');
     expect(decoder.onClosed(), isEmpty);
 
@@ -306,7 +303,7 @@ void main() {
                 'type': 'function',
                 'function': <String, dynamic>{
                   'name': 'lookup',
-                  'arguments': '{"q":"kelivo"}',
+                  'arguments': '{"q":"orvia"}',
                 },
               },
             ],
@@ -319,7 +316,7 @@ void main() {
     expect(decoder.finishReason, 'tool_calls');
     expect(decoder.toolCalls[0]!['id'], 'call_ns');
     expect(decoder.toolCalls[0]!['name'], 'lookup');
-    expect(decoder.toolCalls[0]!['args'], '{"q":"kelivo"}');
+    expect(decoder.toolCalls[0]!['args'], '{"q":"orvia"}');
     expect(result.chunks.whereType<ToolCallStart>().single.id, 'call_ns');
     expect(result.chunks.whereType<ToolCallEnd>().single.id, 'call_ns');
   });
@@ -1008,7 +1005,7 @@ void main() {
                 'id': 'call_1',
                 'function': <String, dynamic>{
                   'name': 'lookup',
-                  'arguments': '{"q":"kelivo"}',
+                  'arguments': '{"q":"orvia"}',
                 },
               },
             ],
@@ -1047,7 +1044,7 @@ void main() {
     expect(decoder.toolCalls[0], <String, dynamic>{
       'id': 'call_1',
       'name': 'lookup',
-      'args': '{"q":"kelivo"}',
+      'args': '{"q":"orvia"}',
       'series_id': 'call_1',
     });
   });
@@ -1064,7 +1061,7 @@ void main() {
                 'id': 'call_1',
                 'function': <String, dynamic>{
                   'name': 'lookup',
-                  'arguments': '{"q":"kelivo"}',
+                  'arguments': '{"q":"orvia"}',
                 },
               },
             ],
@@ -1111,7 +1108,7 @@ void main() {
       0: <String, dynamic>{
         'id': 'call_1',
         'name': 'lookup',
-        'args': '{"q":"kelivo"}',
+        'args': '{"q":"orvia"}',
         'series_id': 'call_1',
       },
     });

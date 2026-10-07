@@ -15,7 +15,7 @@ import '../../features/settings/widgets/voice_service_widgets.dart';
 import '../../shared/widgets/ios_switch.dart';
 import '../../shared/widgets/snackbar.dart';
 import '../../theme/app_font_weights.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
 
 /// Desktop: TTS (\u8BED\u97F3\u670D\u52A1) right-side pane
 /// Adapts mobile TTS page to desktop with hoverable list card style

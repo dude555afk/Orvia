@@ -1,5 +1,5 @@
 //
-//  KelivoISHCompat.h
+//  OrviaISHCompat.h
 //  Runner
 //
 //  Include immediately before any iSH headers. Apple's <assert.h> only
@@ -8,8 +8,8 @@
 //  with Homebrew LLVM, whose assert.h provides the C11 alias.
 //
 
-#ifndef KelivoISHCompat_h
-#define KelivoISHCompat_h
+#ifndef OrviaISHCompat_h
+#define OrviaISHCompat_h
 
 #ifdef assert
 #undef assert
@@ -18,4 +18,4 @@
 #define static_assert _Static_assert
 #endif
 
-#endif /* KelivoISHCompat_h */
+#endif /* OrviaISHCompat_h */

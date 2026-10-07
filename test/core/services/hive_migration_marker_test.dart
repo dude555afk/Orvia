@@ -4,9 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/services/hive_migration_marker.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/services/hive_migration_marker.dart';
 
 /// [HiveMigrationMarker.requireMigrationComplete] is read by the startup legacy
 /// check, whose fallback re-runs the Hive migration and replaces the installed
@@ -17,7 +17,7 @@ void main() {
   late Directory directory;
 
   setUp(() async {
-    directory = await Directory.systemTemp.createTemp('kelivo_hive_marker_');
+    directory = await Directory.systemTemp.createTemp('orvia_hive_marker_');
   });
 
   tearDown(() async {
@@ -33,7 +33,7 @@ void main() {
     String? receipt,
     bool createTable = true,
   }) {
-    final file = fileNamed('kelivo.db');
+    final file = fileNamed('orvia.db');
     final database = sqlite.sqlite3.open(file.path);
     try {
       if (createTable) {
@@ -105,7 +105,7 @@ void main() {
 
   test('reports not migrated for a database that was never initialised', () {
     // What a launch that crashed before drift wrote anything leaves behind.
-    final file = fileNamed('kelivo.db')..writeAsBytesSync(const []);
+    final file = fileNamed('orvia.db')..writeAsBytesSync(const []);
     expect(file.lengthSync(), 0);
     expect(HiveMigrationMarker.requireMigrationComplete(file), isFalse);
   });
@@ -129,7 +129,7 @@ void main() {
   });
 
   test('refuses a file that is not a database', () {
-    final file = fileNamed('kelivo.db')
+    final file = fileNamed('orvia.db')
       ..writeAsBytesSync(List<int>.filled(4096, 0x7f));
     expect(
       () => HiveMigrationMarker.requireMigrationComplete(file),
@@ -138,7 +138,7 @@ void main() {
   });
 
   test('refuses a truncated database header', () {
-    final file = fileNamed('kelivo.db')..writeAsStringSync('SQLite fo');
+    final file = fileNamed('orvia.db')..writeAsStringSync('SQLite fo');
     expect(
       () => HiveMigrationMarker.requireMigrationComplete(file),
       throwsCorrupt(),
@@ -161,7 +161,7 @@ void main() {
     // A crashed launch leaves an unfolded -wal and no -shm; the receipt lives
     // in the log, so a read that ignored it would report "not migrated" and
     // send a migrated device back through a migration that replaces its data.
-    final file = fileNamed('kelivo.db');
+    final file = fileNamed('orvia.db');
     final database = sqlite.sqlite3.open(file.path);
     database.execute(
       'CREATE TABLE chat_storage_meta_rows '
@@ -193,7 +193,7 @@ void main() {
   test('the cleanup gate keeps answering false where this one refuses', () {
     // The two readers deliberately disagree: [isMigrationComplete] guards a
     // destructive cleanup, so "cannot tell" must keep the legacy data.
-    final file = fileNamed('kelivo.db')
+    final file = fileNamed('orvia.db')
       ..writeAsBytesSync(List<int>.filled(4096, 0x7f));
     expect(HiveMigrationMarker.isMigrationComplete(file), isFalse);
     expect(

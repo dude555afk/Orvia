@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:Kelivo/core/services/asr/asr_service_options.dart';
-import 'package:Kelivo/core/services/asr/cloud_asr_service.dart';
+import 'package:orvia/core/services/asr/asr_service_options.dart';
+import 'package:orvia/core/services/asr/cloud_asr_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -27,7 +27,7 @@ void main() {
           apiKey: 'openai-secret',
           websocketUrl: 'wss://api.example.test/realtime',
           language: 'zh-cn',
-          prompt: 'Kelivo',
+          prompt: 'Orvia',
           vadThreshold: 0,
         ),
       );
@@ -43,7 +43,7 @@ void main() {
       expect(input['transcription'], {
         'model': 'gpt-live-transcribe',
         'languages': ['zh-cn'],
-        'prompt': 'Kelivo',
+        'prompt': 'Orvia',
       });
 
       final partials = <String>[];
@@ -145,7 +145,7 @@ void main() {
           ).startSession(
             DashScopeAsrOptions(
               apiKey: 'dash-secret',
-              websocketUrl: 'wss://dash.example.test/realtime?workspace=kelivo',
+              websocketUrl: 'wss://dash.example.test/realtime?workspace=orvia',
               language: 'zh',
             ),
           );
@@ -154,7 +154,7 @@ void main() {
         connectedUri.queryParameters,
         containsPair('model', 'qwen3-asr-flash-realtime'),
       );
-      expect(connectedUri.queryParameters, containsPair('workspace', 'kelivo'));
+      expect(connectedUri.queryParameters, containsPair('workspace', 'orvia'));
       expect(connectedHeaders, {'Authorization': 'Bearer dash-secret'});
       final setup = socket.sentJson.single;
       expect(setup['type'], 'session.update');
@@ -167,7 +167,7 @@ void main() {
       final partialFuture = session.partialTranscripts.first;
       await session.addPcm16(Uint8List.fromList([5, 6]));
       expect(socket.sentJson.last['type'], 'input_audio_buffer.append');
-      expect(socket.sentJson.last['event_id'], 'kelivo_asr_1');
+      expect(socket.sentJson.last['event_id'], 'orvia_asr_1');
 
       socket.serverJson({
         'type': 'conversation.item.input_audio_transcription.text',
@@ -183,10 +183,10 @@ void main() {
       );
       expect(
         socket.sentJson[socket.sentJson.length - 2]['event_id'],
-        'kelivo_asr_2',
+        'orvia_asr_2',
       );
       expect(socket.sentJson.last['type'], 'session.finish');
-      expect(socket.sentJson.last['event_id'], 'kelivo_asr_3');
+      expect(socket.sentJson.last['event_id'], 'orvia_asr_3');
       socket.serverJson({
         'type': 'conversation.item.input_audio_transcription.completed',
         'item_id': 'dash-item',
@@ -271,7 +271,7 @@ void main() {
       final config =
           jsonDecode(utf8.decode(_volcPayload(configFrame)))
               as Map<String, dynamic>;
-      expect(config['user'], {'uid': 'kelivo'});
+      expect(config['user'], {'uid': 'orvia'});
       expect(config['audio'], {
         'format': 'pcm',
         'rate': 16000,
@@ -672,7 +672,7 @@ void main() {
           sampleRate: 16000,
           enableItn: false,
           enableTimestamp: true,
-          hotwords: const ['Kelivo', '\u9636\u8DC3\u661F\u8FB0'],
+          hotwords: const ['Orvia', '\u9636\u8DC3\u661F\u8FB0'],
         ),
       );
       final partialFuture = session.partialTranscripts.first;
@@ -696,7 +696,7 @@ void main() {
         'enable_itn': false,
         'enable_timestamp': true,
         'language': 'zh',
-        'hotwords': ['Kelivo', '\u9636\u8DC3\u661F\u8FB0'],
+        'hotwords': ['Orvia', '\u9636\u8DC3\u661F\u8FB0'],
       });
       expect(input['format'], {
         'type': 'pcm',

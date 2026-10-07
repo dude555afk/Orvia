@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/features/workspace/pages/environment_variables_page.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_settings_rows.dart';
-import 'package:Kelivo/theme/theme_factory.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/features/workspace/pages/environment_variables_page.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_settings_rows.dart';
+import 'package:orvia/theme/theme_factory.dart';
 
 import '../../../support/business_test_harness.dart';
 

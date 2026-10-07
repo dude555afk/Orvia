@@ -1,4 +1,4 @@
-import 'package:Kelivo/core/models/auto_retry_options.dart';
+import 'package:orvia/core/models/auto_retry_options.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

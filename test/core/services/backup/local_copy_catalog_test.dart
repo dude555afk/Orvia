@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/database_installation_gate.dart';
-import 'package:Kelivo/core/services/backup/local_copy_catalog.dart';
-import 'package:Kelivo/core/services/backup/local_snapshot_store.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/database_installation_gate.dart';
+import 'package:orvia/core/services/backup/local_copy_catalog.dart';
+import 'package:orvia/core/services/backup/local_snapshot_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
@@ -14,7 +14,7 @@ void main() {
     late LocalCopyCatalog catalog;
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_local_copies_');
+      root = await Directory.systemTemp.createTemp('orvia_local_copies_');
       store = LocalSnapshotStore(appDataDirectory: root);
       catalog = LocalCopyCatalog(appDataDirectory: root, store: store);
     });

@@ -5,8 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 
 const _fixtureFontPath =
     'dependencies/gpt_markdown/lib/fonts/JetBrainsMono-Regular.ttf';
@@ -46,7 +46,7 @@ void main() {
 
     setUp(() async {
       previousPathProvider = PathProviderPlatform.instance;
-      tempDir = await Directory.systemTemp.createTemp('kelivo_font_test_');
+      tempDir = await Directory.systemTemp.createTemp('orvia_font_test_');
       PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     });
 
@@ -208,13 +208,13 @@ void main() {
         await prefs.setString('display_app_font_local_alias_v1', appAlias);
         await prefs.setString(
           'display_code_font_family_v1',
-          'kelivo_local_code_123',
+          'orvia_local_code_123',
         );
         await prefs.setBool('display_code_font_is_google_v1', false);
         await prefs.setString('display_code_font_local_path_v1', sharedPath);
         await prefs.setString(
           'display_code_font_local_alias_v1',
-          'kelivo_local_code_123',
+          'orvia_local_code_123',
         );
         final sharedSettings = SettingsProvider(harness.preferences);
         await sharedSettings.loaded;
@@ -246,11 +246,11 @@ void main() {
     test('invalid persisted local font does not expose stale alias', () async {
       final harness = await createBusinessTestHarness(
         initial: {
-          'display_app_font_family_v1': 'kelivo_local_app_123',
+          'display_app_font_family_v1': 'orvia_local_app_123',
           'display_app_font_is_google_v1': false,
           'display_app_font_local_path_v1':
               '/var/mobile/Containers/Data/Application/OLD/Documents/fonts/missing.ttf',
-          'display_app_font_local_alias_v1': 'kelivo_local_app_123',
+          'display_app_font_local_alias_v1': 'orvia_local_app_123',
         },
       );
       final settings = SettingsProvider(harness.preferences);
@@ -294,11 +294,11 @@ void main() {
 
       final harness = await createBusinessTestHarness(
         initial: {
-          'display_app_font_family_v1': 'kelivo_local_app_123',
+          'display_app_font_family_v1': 'orvia_local_app_123',
           'display_app_font_is_google_v1': false,
           'display_app_font_local_path_v1':
               '/var/mobile/Containers/Data/Application/OLD/Documents/fonts/SFNS.ttf',
-          'display_app_font_local_alias_v1': 'kelivo_local_app_123',
+          'display_app_font_local_alias_v1': 'orvia_local_app_123',
         },
       );
       final settings = SettingsProvider(harness.preferences);

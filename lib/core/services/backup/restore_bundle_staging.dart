@@ -63,7 +63,7 @@ final class RestoreBundleStaging {
   RestoreBundleStaging._();
 
   static const workspaceRootName = RestoreWorkspaceLock.workspaceRootName;
-  static const _backupFormat = 'kelivo-backup';
+  static const _backupFormat = 'orvia-backup';
   static const _backupFormatVersion = 2;
 
   /// Mirrors DataSync's constant of the same name. Duplicated rather than
@@ -79,7 +79,7 @@ final class RestoreBundleStaging {
     'workspaces',
     'sessions',
   ];
-  static const _databaseEntry = 'database/kelivo.db';
+  static const _databaseEntry = 'database/orvia.db';
   static const _maximumManifestBytes = 16 * 1024 * 1024;
   // Settings contain structured preferences, never chat rows or binary assets.
   // Cap JSON before copying/parsing to bound UTF-8 and DOM amplification.

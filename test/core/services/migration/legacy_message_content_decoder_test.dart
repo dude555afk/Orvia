@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/services/migration/legacy_message_content_decoder.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/services/migration/legacy_message_content_decoder.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 
 void main() {
   late Directory tempDir;
@@ -415,7 +415,7 @@ void main() {
     }
   });
 
-  test('managed Documents absolute path becomes kelivo-file URI', () async {
+  test('managed Documents absolute path becomes orvia-file URI', () async {
     final docs = Directory('${tempDir.path}/Documents')..createSync();
     SandboxPathResolver.debugSetDirs(docsDir: docs.path);
     addTearDown(() => SandboxPathResolver.debugSetDirs());
@@ -429,7 +429,7 @@ void main() {
     expect(result.converted, 1);
     expect(result.missingFiles, 0);
     final part = result.parts.single as ImagePart;
-    expect(part.uri, 'kelivo-file:///upload/shot.png');
+    expect(part.uri, 'orvia-file:///upload/shot.png');
     expect(part.unavailable, isFalse);
 
     final again = await decodeLegacyContent(
@@ -439,12 +439,12 @@ void main() {
     expect(again.converted, 0);
     expect(
       (again.parts.single as ImagePart).uri,
-      'kelivo-file:///upload/shot.png',
+      'orvia-file:///upload/shot.png',
     );
   });
 
   test(
-    'missing managed file still yields unavailable kelivo-file part',
+    'missing managed file still yields unavailable orvia-file part',
     () async {
       final docs = Directory('${tempDir.path}/Documents')..createSync();
       SandboxPathResolver.debugSetDirs(docsDir: docs.path);
@@ -454,12 +454,12 @@ void main() {
       expect(result.converted, 1);
       expect(result.missingFiles, 1);
       final part = result.parts.single as ImagePart;
-      expect(part.uri, 'kelivo-file:///upload/gone.png');
+      expect(part.uri, 'orvia-file:///upload/gone.png');
       expect(part.unavailable, isTrue);
     },
   );
 
-  test('ordinary user Documents path is not claimed as kelivo-file', () async {
+  test('ordinary user Documents path is not claimed as orvia-file', () async {
     SandboxPathResolver.debugSetDirs(docsDir: '${tempDir.path}/app_docs');
     addTearDown(() => SandboxPathResolver.debugSetDirs());
     const external = '/Users/alice/Documents/images/report.png';

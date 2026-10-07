@@ -1,5 +1,5 @@
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

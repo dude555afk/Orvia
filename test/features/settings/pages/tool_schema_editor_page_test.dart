@@ -1,9 +1,9 @@
-import 'package:Kelivo/core/models/tool_schema_override.dart';
-import 'package:Kelivo/core/services/search/search_tool_service.dart';
-import 'package:Kelivo/features/settings/pages/tool_schema_editor_page.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/theme/theme_factory.dart';
+import 'package:orvia/core/models/tool_schema_override.dart';
+import 'package:orvia/core/services/search/search_tool_service.dart';
+import 'package:orvia/features/settings/pages/tool_schema_editor_page.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/theme/theme_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,8 +1,8 @@
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
 
 /// Conversation extras applied when starting a chat with [assistant].
 Map<String, dynamic> workspaceExtrasForNewConversation({

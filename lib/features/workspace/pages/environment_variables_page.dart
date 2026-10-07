@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/models/environment_variable.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/features/settings/widgets/custom_theme_widgets.dart';
-import 'package:Kelivo/features/workspace/workspace_layout.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/form_sheet.dart';
-import 'package:Kelivo/shared/widgets/ios_form_text_field.dart';
-import 'package:Kelivo/shared/widgets/ios_settings_rows.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/shared/widgets/ios_tile_button.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
+import 'package:orvia/core/models/environment_variable.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/features/settings/widgets/custom_theme_widgets.dart';
+import 'package:orvia/features/workspace/workspace_layout.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/form_sheet.dart';
+import 'package:orvia/shared/widgets/ios_form_text_field.dart';
+import 'package:orvia/shared/widgets/ios_settings_rows.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/shared/widgets/ios_tile_button.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
 
 Future<void> openEnvironmentVariablesPage(BuildContext context) {
   final provider = context.read<EnvironmentProvider>();

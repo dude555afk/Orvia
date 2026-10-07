@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_data.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/business_restore_service.dart';
-import 'package:Kelivo/core/database/business_settings_merger.dart';
-import 'package:Kelivo/core/database/business_settings_router.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_data.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/business_restore_service.dart';
+import 'package:orvia/core/database/business_settings_merger.dart';
+import 'package:orvia/core/database/business_settings_router.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
 import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,14 +23,14 @@ void main() {
       '17: new database passes raw structure and schema validation',
       () async {
         final directory = await Directory.systemTemp.createTemp(
-          'kelivo_memory_validate_',
+          'orvia_memory_validate_',
         );
         addTearDown(() async {
           if (await directory.exists()) {
             await directory.delete(recursive: true);
           }
         });
-        final file = File('${directory.path}/kelivo.db');
+        final file = File('${directory.path}/orvia.db');
         final repository = ChatDatabaseRepository.open(file: file);
         addTearDown(repository.close);
 
@@ -556,7 +556,7 @@ void main() {
       '27: database snapshot preserves memory rows through validation',
       () async {
         final directory = await Directory.systemTemp.createTemp(
-          'kelivo_memory_snapshot_',
+          'orvia_memory_snapshot_',
         );
         addTearDown(() async {
           if (await directory.exists()) {
@@ -642,7 +642,7 @@ void main() {
       '28: merge restore sets lastMemoryExtractedOrder to max and clears hash',
       () async {
         final directory = await Directory.systemTemp.createTemp(
-          'kelivo_memory_merge_order_',
+          'orvia_memory_merge_order_',
         );
         addTearDown(() async {
           if (await directory.exists()) {
@@ -710,14 +710,14 @@ void main() {
 
     test('28b: post-merge watermarks skip untouched conversations', () async {
       final directory = await Directory.systemTemp.createTemp(
-        'kelivo_memory_scoped_watermark_',
+        'orvia_memory_scoped_watermark_',
       );
       addTearDown(() async {
         if (await directory.exists()) {
           await directory.delete(recursive: true);
         }
       });
-      final file = File('${directory.path}/kelivo.db');
+      final file = File('${directory.path}/orvia.db');
       final repository = ChatDatabaseRepository.open(file: file);
       await repository.ensureReady();
 

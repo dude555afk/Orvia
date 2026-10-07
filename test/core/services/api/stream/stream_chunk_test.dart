@@ -1,9 +1,9 @@
-import 'package:Kelivo/core/models/token_usage.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/models/token_usage.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('ReasoningDelta carries Kelivo-specific details snapshot', () {
+  test('ReasoningDelta carries Orvia-specific details snapshot', () {
     const details = <Map<String, String>>[
       {'type': 'reasoning.text', 'text': 'sig'},
     ];
@@ -34,8 +34,8 @@ void main() {
       'https://img.example/a.png',
     );
     expect(
-      completeRenderableImageUri('kelivo-file:///images/a.png'),
-      'kelivo-file:///images/a.png',
+      completeRenderableImageUri('orvia-file:///images/a.png'),
+      'orvia-file:///images/a.png',
     );
   });
 
@@ -50,7 +50,7 @@ void main() {
   test('isCompleteImageUri distinguishes URLs from raw base64', () {
     expect(isCompleteImageUri('data:image/png;base64,AAA'), isTrue);
     expect(isCompleteImageUri('https://img.example/a.png'), isTrue);
-    expect(isCompleteImageUri('kelivo-file:///images/a.png'), isTrue);
+    expect(isCompleteImageUri('orvia-file:///images/a.png'), isTrue);
     expect(isCompleteImageUri('iVBORw0K'), isFalse);
     expect(mimeTypeFromImageUri('data:image/jpeg;base64,AAA'), 'image/jpeg');
     expect(mimeTypeFromImageUri('https://img.example/a.webp'), 'image/webp');

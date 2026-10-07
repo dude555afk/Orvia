@@ -1,7 +1,7 @@
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk_handler.dart';
-import 'package:Kelivo/features/home/controllers/chat_actions.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk_handler.dart';
+import 'package:orvia/features/home/controllers/chat_actions.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

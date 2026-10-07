@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:Kelivo/core/services/search/search_service.dart';
-import 'package:Kelivo/core/services/search/search_service_usage_service.dart';
-import 'package:Kelivo/features/search/pages/search_api_keys_page.dart';
-import 'package:Kelivo/features/search/pages/search_service_editor_page.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/theme/theme_factory.dart';
+import 'package:orvia/core/services/search/search_service.dart';
+import 'package:orvia/core/services/search/search_service_usage_service.dart';
+import 'package:orvia/features/search/pages/search_api_keys_page.dart';
+import 'package:orvia/features/search/pages/search_service_editor_page.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/theme/theme_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';

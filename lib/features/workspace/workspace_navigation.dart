@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
 
 /// App-shell hooks for workspace screens.
 ///

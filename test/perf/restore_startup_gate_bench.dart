@@ -3,7 +3,7 @@
 // Not a test: prints timings and counters, contains no expect(). Run with
 //   flutter test test/perf/restore_startup_gate_bench.dart
 // Size is configurable:
-//   KELIVO_BENCH_ASSET_MB (default 150) and KELIVO_BENCH_ASSET_FILES (300).
+//   ORVIA_BENCH_ASSET_MB (default 150) and ORVIA_BENCH_ASSET_FILES (300).
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -13,12 +13,12 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/services/backup/restore_bundle_preparation.dart';
-import 'package:Kelivo/core/services/backup/restore_durability.dart';
-import 'package:Kelivo/core/services/backup/restore_startup_gate.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/services/backup/restore_bundle_preparation.dart';
+import 'package:orvia/core/services/backup/restore_durability.dart';
+import 'package:orvia/core/services/backup/restore_startup_gate.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -27,21 +27,19 @@ void main() {
     'restore startup gate cold-start cost',
     () async {
       final assetMb =
-          int.tryParse(Platform.environment['KELIVO_BENCH_ASSET_MB'] ?? '') ??
+          int.tryParse(Platform.environment['ORVIA_BENCH_ASSET_MB'] ?? '') ??
           150;
       final assetFiles =
-          int.tryParse(
-            Platform.environment['KELIVO_BENCH_ASSET_FILES'] ?? '',
-          ) ??
+          int.tryParse(Platform.environment['ORVIA_BENCH_ASSET_FILES'] ?? '') ??
           300;
       final root = await Directory.systemTemp.createTemp(
-        'kelivo_restore_bench_',
+        'orvia_restore_bench_',
       );
       final appData = Directory(p.join(root.path, 'app_data'));
       await appData.create();
 
       final fixtureWatch = Stopwatch()..start();
-      final liveDatabase = File(p.join(appData.path, 'kelivo.db'));
+      final liveDatabase = File(p.join(appData.path, 'orvia.db'));
       await _createDatabase(liveDatabase, conversationId: 'old');
       final liveBytes = await _writeAssets(
         Directory(p.join(appData.path, 'upload')),
@@ -53,7 +51,7 @@ void main() {
       final extracted = Directory(p.join(root.path, 'extracted'));
       await extracted.create();
       final candidateDatabase = File(
-        p.join(extracted.path, 'database', 'kelivo.db'),
+        p.join(extracted.path, 'database', 'orvia.db'),
       );
       await candidateDatabase.parent.create(recursive: true);
       await _createDatabase(candidateDatabase, conversationId: 'new');
@@ -72,7 +70,7 @@ void main() {
 
       final entries = <String, dynamic>{
         'settings.json': await _descriptor(settings),
-        'database/kelivo.db': await _descriptor(candidateDatabase),
+        'database/orvia.db': await _descriptor(candidateDatabase),
       };
       await for (final entity in Directory(
         p.join(extracted.path, 'upload'),
@@ -86,7 +84,7 @@ void main() {
       final manifest = File(p.join(extracted.path, 'manifest.json'));
       await manifest.writeAsString(
         jsonEncode({
-          'format': 'kelivo-backup',
+          'format': 'orvia-backup',
           'formatVersion': 2,
           'payloadKind': 'sqlite',
           'createdAtUtc': '2026-07-09T00:00:00.000Z',
@@ -95,7 +93,7 @@ void main() {
           'includeFiles': true,
           'secretsIncluded': true,
           'database': {
-            'entry': 'database/kelivo.db',
+            'entry': 'database/orvia.db',
             'schemaVersion': databaseInfo.schemaVersion,
             'conversationCount': databaseInfo.conversationCount,
             'messageCount': databaseInfo.messageCount,
@@ -120,7 +118,7 @@ void main() {
       );
       prepareWatch.stop();
 
-      final rollback = Platform.environment['KELIVO_BENCH_ROLLBACK'] == '1';
+      final rollback = Platform.environment['ORVIA_BENCH_ROLLBACK'] == '1';
       final durability = _CountingDurability(
         rollback
             ? _ThrowAfterCandidateDatabaseRename(

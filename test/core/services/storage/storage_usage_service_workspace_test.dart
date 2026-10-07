@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/storage/storage_usage_service.dart';
+import 'package:orvia/core/services/storage/storage_usage_service.dart';
 
 class _FakePathProviderPlatform extends PathProviderPlatform {
   _FakePathProviderPlatform(this.path);
@@ -39,7 +39,7 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp(
-      'kelivo_storage_workspace_test_',
+      'orvia_storage_workspace_test_',
     );
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
@@ -89,7 +89,7 @@ void main() {
       await _writeSizedFile(tempDir, p.join('upload', 'keep.pdf'), 12);
 
       final alpine = await Directory.systemTemp.createTemp(
-        'kelivo_storage_alpine_',
+        'orvia_storage_alpine_',
       );
       addTearDown(() async {
         if (await alpine.exists()) await alpine.delete(recursive: true);

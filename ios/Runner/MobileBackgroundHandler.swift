@@ -18,7 +18,7 @@ struct BackgroundGenerationTask {
   init(_ map: [String: Any]) {
     id = map["id"] as? String ?? ""
     conversationId = map["conversationId"] as? String ?? ""
-    title = String((map["title"] as? String ?? "Kelivo").prefix(120))
+    title = String((map["title"] as? String ?? "Orvia").prefix(120))
     detail = String((map["detail"] as? String ?? "").prefix(180))
     startedAt = Date(timeIntervalSince1970: ((map["startedAt"] as? NSNumber)?.doubleValue ?? 0) / 1000)
     tokens = map["tokens"] as? Int ?? 0
@@ -61,9 +61,9 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
   private var audioOwners: Set<String> = []
   private var audioInterrupted = false
   private var observers: [NSObjectProtocol] = []
-  private var lastError = UserDefaults.standard.string(forKey: "kelivo.background.lastError") ?? ""
+  private var lastError = UserDefaults.standard.string(forKey: "orvia.background.lastError") ?? ""
   private var dartReady = false
-  private static let pendingConversationKey = "kelivo.background.pendingConversation"
+  private static let pendingConversationKey = "orvia.background.pendingConversation"
 
   static var liveActivitiesSupported: Bool {
     #if targetEnvironment(macCatalyst)
@@ -84,10 +84,10 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
     channel.setMethodCallHandler { [weak self] call, result in
       Task { @MainActor in self?.handle(call, result: result) }
     }
-    if UserDefaults.standard.bool(forKey: "kelivo.background.hadTasks") {
+    if UserDefaults.standard.bool(forKey: "orvia.background.hadTasks") {
       recordError("previous_process_terminated")
     }
-    UserDefaults.standard.set(false, forKey: "kelivo.background.hadTasks")
+    UserDefaults.standard.set(false, forKey: "orvia.background.hadTasks")
     observe(UIApplication.willResignActiveNotification) { handler in
       handler.preparingBackground = true
       handler.evaluateRuntime()
@@ -192,7 +192,7 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
           handler.finishedTask = BackgroundGenerationTask(terminal)
         }
         if !oldPrivate && handler.enabled("privacyMode") { handler.clearCompletionNotifications() }
-        UserDefaults.standard.set(!handler.tasks.isEmpty, forKey: "kelivo.background.hadTasks")
+        UserDefaults.standard.set(!handler.tasks.isEmpty, forKey: "orvia.background.hadTasks")
         await handler.updateActivity(force: changedSettings || oldIds != ids || args["terminal"] is [String: Any])
         if handler.tasks.isEmpty { handler.groupStartedAt = nil }
         // Await Activity.end before giving the OS back the last assertion.
@@ -226,7 +226,7 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
   }
 
   func receive(_ url: URL) -> Bool {
-    guard url.scheme == "kelivo", url.host == "conversation" else { return false }
+    guard url.scheme == "orvia", url.host == "conversation" else { return false }
     let id = url.pathComponents.dropFirst().first ?? ""
     guard !id.isEmpty else { return false }
     if dartReady { channel?.invokeMethod("openConversation", arguments: id) }
@@ -236,7 +236,7 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
 
   private func requestPermission(_ permission: String, result: @escaping FlutterResult) {
     guard UIApplication.shared.applicationState == .active else {
-      result(FlutterError(code: "foreground_required", message: "Open Kelivo to request permission.", details: nil)); return
+      result(FlutterError(code: "foreground_required", message: "Open Orvia to request permission.", details: nil)); return
     }
     switch permission {
     case "notifications":
@@ -314,7 +314,7 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
     let speechNeeded = enabled("backgroundSpeechEnabled") && (audioOwners.contains("speech") || audioOwners.contains("speechBuffering"))
     let needed = generationNeeded || speechNeeded
     if needed && assertion == .invalid && !assertionExpired {
-      assertion = UIApplication.shared.beginBackgroundTask(withName: "KelivoGeneration") { [weak self] in
+      assertion = UIApplication.shared.beginBackgroundTask(withName: "OrviaGeneration") { [weak self] in
         guard let self else { return }
         self.assertionExpired = true
         self.endAssertion()
@@ -378,7 +378,7 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
       let engine = AVAudioEngine()
       let player = AVAudioPlayerNode()
       guard let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 1),
-            let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 44100) else { throw NSError(domain: "KelivoAudio", code: 1) }
+            let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 44100) else { throw NSError(domain: "OrviaAudio", code: 1) }
       buffer.frameLength = 44100
       if let samples = buffer.floatChannelData?[0] { samples.initialize(repeating: 0, count: 44100) }
       engine.attach(player)
@@ -404,7 +404,7 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
   private func updateActivity(force: Bool) async {
     guard Self.liveActivitiesSupported else { return }
     if #available(iOS 16.1, *) {
-      var existing = activity as? Activity<KelivoGenerationActivityAttributes>
+      var existing = activity as? Activity<OrviaGenerationActivityAttributes>
       // The state stream can trail a sync. Respect removal synchronously as
       // well, without suppressing a new run that arrived after that activity.
       if let previous = existing, previous.activityState == .ended || previous.activityState == .dismissed {
@@ -415,7 +415,7 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
       // Enumeration is for orphan cleanup, not proof that a just-requested
       // activity disappeared: Activity.activities can lag creation.
       if !didCleanActivities || !enabled("liveActivitiesEnabled") || !inBackground {
-        for other in Activity<KelivoGenerationActivityAttributes>.activities where other.id != existing?.id {
+        for other in Activity<OrviaGenerationActivityAttributes>.activities where other.id != existing?.id {
           await end(other, state: nil, immediately: true)
         }
         didCleanActivities = true
@@ -451,8 +451,8 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
         guard Date() >= nextActivityAttempt else { return }
         nextActivityAttempt = Date().addingTimeInterval(10)
         do {
-          let attributes = KelivoGenerationActivityAttributes(groupId: UUID().uuidString)
-          let next: Activity<KelivoGenerationActivityAttributes>
+          let attributes = OrviaGenerationActivityAttributes(groupId: UUID().uuidString)
+          let next: Activity<OrviaGenerationActivityAttributes>
           if #available(iOS 16.2, *) {
             next = try Activity.request(attributes: attributes,
                 content: ActivityContent(state: state, staleDate: Date().addingTimeInterval(60)), pushType: nil)
@@ -466,7 +466,7 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
             for await state in next.activityStateUpdates {
               guard let self, !Task.isCancelled else { return }
               if state == .dismissed || state == .ended {
-                if (self.activity as? Activity<KelivoGenerationActivityAttributes>)?.id == next.id {
+                if (self.activity as? Activity<OrviaGenerationActivityAttributes>)?.id == next.id {
                   self.suppressedRunIds.formUnion(self.activityRunIds)
                   self.activity = nil
                   self.channel?.invokeMethod("statusChanged", arguments: nil)
@@ -481,7 +481,7 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
   }
 
   @available(iOS 16.1, *)
-  private func isRunning(_ activity: Activity<KelivoGenerationActivityAttributes>) -> Bool {
+  private func isRunning(_ activity: Activity<OrviaGenerationActivityAttributes>) -> Bool {
     if #available(iOS 16.2, *) {
       return activity.activityState == .active || activity.activityState == .stale
     }
@@ -489,8 +489,8 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
   }
 
   @available(iOS 16.1, *)
-  private func contentState(task: BackgroundGenerationTask, finished: Bool) -> KelivoGenerationActivityAttributes.ContentState {
-    KelivoGenerationActivityAttributes.ContentState(
+  private func contentState(task: BackgroundGenerationTask, finished: Bool) -> OrviaGenerationActivityAttributes.ContentState {
+    OrviaGenerationActivityAttributes.ContentState(
       displayTitle: tasks.count > 1 ? "\(tasks.count) \(labels["tasks"] ?? "Tasks")" : task.title,
       detail: task.detail,
       tokenCount: tasks.isEmpty ? task.tokens : tasks.reduce(0) { $0 + $1.tokens },
@@ -499,12 +499,12 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
       activeTaskCount: tasks.count,
       conversationId: task.conversationId,
       outcome: finished ? task.outcome : "",
-      staleMessage: labels["stale"] ?? "Open Kelivo to check the task.")
+      staleMessage: labels["stale"] ?? "Open Orvia to check the task.")
   }
 
   @available(iOS 16.1, *)
-  private func end(_ target: Activity<KelivoGenerationActivityAttributes>,
-                   state: KelivoGenerationActivityAttributes.ContentState?, immediately: Bool) async {
+  private func end(_ target: Activity<OrviaGenerationActivityAttributes>,
+                   state: OrviaGenerationActivityAttributes.ContentState?, immediately: Bool) async {
     let seconds = max(0, min(900, settings["completionSeconds"] as? Int ?? 60))
     let dismissal: ActivityUIDismissalPolicy = immediately || seconds == 0
         ? .immediate : .after(Date().addingTimeInterval(TimeInterval(seconds)))
@@ -520,7 +520,7 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
     var activityActive = false
     if Self.liveActivitiesSupported, #available(iOS 16.1, *) {
       activitiesEnabled = ActivityAuthorizationInfo().areActivitiesEnabled
-      if let activity = activity as? Activity<KelivoGenerationActivityAttributes> {
+      if let activity = activity as? Activity<OrviaGenerationActivityAttributes> {
         activityActive = isRunning(activity)
       }
     }
@@ -553,15 +553,15 @@ final class MobileBackgroundHandler: NSObject, CLLocationManagerDelegate {
 
   private func clearCompletionNotifications() {
     UNUserNotificationCenter.current().getDeliveredNotifications { notifications in
-      let ids = notifications.filter { $0.request.content.threadIdentifier == "kelivo.chat-completion" }.map { $0.request.identifier }
+      let ids = notifications.filter { $0.request.content.threadIdentifier == "orvia.chat-completion" }.map { $0.request.identifier }
       UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: ids)
     }
   }
 
   private func recordError(_ error: String) {
     lastError = error
-    UserDefaults.standard.set(error, forKey: "kelivo.background.lastError")
-    NSLog("Kelivo background: %@", error)
+    UserDefaults.standard.set(error, forKey: "orvia.background.lastError")
+    NSLog("Orvia background: %@", error)
   }
 
   func prepareForTermination() {

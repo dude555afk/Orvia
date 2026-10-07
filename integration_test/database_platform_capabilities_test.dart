@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/services/backup/restore_durability.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/services/backup/restore_durability.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as p;
@@ -15,7 +15,7 @@ void main() {
 
   testWidgets('DB2-07 native platform capability matrix', (tester) async {
     final root = await Directory.systemTemp.createTemp(
-      'kelivo_db2_platform_capability_',
+      'orvia_db2_platform_capability_',
     );
     addTearDown(() async {
       if (await root.exists()) await root.delete(recursive: true);
@@ -27,7 +27,7 @@ void main() {
 
     final version = sqlite.sqlite3.version;
     final report = <String, Object>{
-      'format': 'kelivo-db2-platform-capabilities-v1',
+      'format': 'orvia-db2-platform-capabilities-v1',
       'platform': Platform.operatingSystem,
       'operatingSystemVersion': Platform.operatingSystemVersion,
       'abi': Abi.current().toString(),

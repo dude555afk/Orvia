@@ -83,7 +83,7 @@ class SettingsProvider extends ChangeNotifier {
     'SiliconFlow',
     'Gemini',
     'OpenRouter',
-    'KelivoIN',
+    'OrviaIN',
     'Tensdaq',
     'DeepSeek',
     'AIhubmix',
@@ -1449,7 +1449,7 @@ class SettingsProvider extends ChangeNotifier {
     if (_providerConfigs.isEmpty) {
       // Seed a couple of sensible defaults on first launch, but do not recreate
       // providers implicitly during later reads (e.g., when switching chats).
-      ensureProviderConfig('KelivoIN', defaultName: 'KelivoIN');
+      ensureProviderConfig('OrviaIN', defaultName: 'OrviaIN');
       ensureProviderConfig('Tensdaq', defaultName: 'Tensdaq');
       ensureProviderConfig('SiliconFlow', defaultName: 'SiliconFlow');
       ensureProviderConfig('AIhubmix', defaultName: 'AIhubmix');
@@ -1748,7 +1748,7 @@ class SettingsProvider extends ChangeNotifier {
     if (localPath == null) return false;
     final fam = await _registerLocalFont(
       path: localPath,
-      aliasPrefix: alias ?? 'kelivo_local_app',
+      aliasPrefix: alias ?? 'orvia_local_app',
     );
     if (fam == null) {
       await _deleteManagedFontFileIfUnused(localPath);
@@ -1779,7 +1779,7 @@ class SettingsProvider extends ChangeNotifier {
     if (localPath == null) return false;
     final fam = await _registerLocalFont(
       path: localPath,
-      aliasPrefix: alias ?? 'kelivo_local_code',
+      aliasPrefix: alias ?? 'orvia_local_code',
     );
     if (fam == null) {
       await _deleteManagedFontFileIfUnused(localPath);
@@ -1858,7 +1858,7 @@ class SettingsProvider extends ChangeNotifier {
 
     // Re-register local fonts if paths are available.
     if (_appFontLocalPath != null && _appFontLocalPath!.isNotEmpty) {
-      final alias = _appFontLocalAlias ?? 'kelivo_local_app';
+      final alias = _appFontLocalAlias ?? 'orvia_local_app';
       final resolvedPath = SandboxPathResolver.fix(_appFontLocalPath!);
       final fam = await _registerLocalFont(
         path: resolvedPath,
@@ -1879,7 +1879,7 @@ class SettingsProvider extends ChangeNotifier {
       }
     }
     if (_codeFontLocalPath != null && _codeFontLocalPath!.isNotEmpty) {
-      final alias = _codeFontLocalAlias ?? 'kelivo_local_code';
+      final alias = _codeFontLocalAlias ?? 'orvia_local_code';
       final resolvedPath = SandboxPathResolver.fix(_codeFontLocalPath!);
       final fam = await _registerLocalFont(
         path: resolvedPath,
@@ -2169,7 +2169,7 @@ class SettingsProvider extends ChangeNotifier {
     final services = List<SearchServiceOptions>.from(_searchServices);
     final common = _searchCommonOptions;
     for (final s in services) {
-      if (s is BingLocalOptions || s is KelivoOptions) {
+      if (s is BingLocalOptions || s is OrviaOptions) {
         _searchConnection[s.id] = null;
         continue;
       }
@@ -5553,11 +5553,11 @@ Requirements:
   }
 
   // Search service settings
-  Future<bool> unlockKelivoSearch() async {
-    if (_searchServices.any((s) => s is KelivoOptions)) return false;
+  Future<bool> unlockOrviaSearch() async {
+    if (_searchServices.any((s) => s is OrviaOptions)) return false;
     await setSearchServices([
       ..._searchServices,
-      KelivoOptions(id: KelivoOptions.builtInId),
+      OrviaOptions(id: OrviaOptions.builtInId),
     ]);
     return true;
   }
@@ -6033,7 +6033,7 @@ enum ProviderKind { openai, google, claude }
 enum ChatMessageBackgroundStyle { defaultStyle, frosted, solid }
 
 class ProviderConfig {
-  static const _kelivoInPublicApiKey = 'kelivo';
+  static const _orviaInPublicApiKey = 'orvia';
 
   final String id;
   final bool enabled;
@@ -6375,7 +6375,7 @@ class ProviderConfig {
     final stored = json['apiKey'] as String? ?? '';
     if (stored.isNotEmpty) return stored;
     final id = json['id'] as String? ?? json['name'] as String? ?? '';
-    return id.trim().toLowerCase() == 'kelivoin' ? _kelivoInPublicApiKey : '';
+    return id.trim().toLowerCase() == 'orviain' ? _orviaInPublicApiKey : '';
   }
 
   static List<Map<String, String>> _customRequestRowsFromJson(
@@ -6414,7 +6414,7 @@ class ProviderConfig {
   static String _defaultBase(String key) {
     final k = key.toLowerCase();
     if (k.contains('tensdaq')) return 'https://tensdaq-api.x-aio.com/v1';
-    if (k.contains('kelivoin')) return 'https://text.pollinations.ai/openai';
+    if (k.contains('orviain')) return 'https://text.pollinations.ai/openai';
     if (k.contains('openrouter')) return 'https://openrouter.ai/api/v1';
     if (k.contains('aihubmix')) return 'https://aihubmix.com/v1';
     if (k.contains('\u968F\u60F3')) return 'https://sui-xiang.com/v1';
@@ -6466,7 +6466,7 @@ class ProviderConfig {
       if (s.contains('gemini') || s.contains('google')) return true;
       if (s.contains('silicon')) return true;
       if (s.contains('openrouter')) return true;
-      if (s.contains('kelivoin')) return true;
+      if (s.contains('orviain')) return true;
       return false; // others disabled by default
     }
 
@@ -6526,13 +6526,13 @@ class ProviderConfig {
           claudePromptCachingEnabled: false,
         );
       case ProviderKind.openai:
-        // Special-case KelivoIN default models and overrides
-        if (lowerKey.contains('kelivoin')) {
+        // Special-case OrviaIN default models and overrides
+        if (lowerKey.contains('orviain')) {
           return ProviderConfig(
             id: key,
             enabled: defaultEnabled(key),
             name: displayName ?? key,
-            apiKey: _kelivoInPublicApiKey,
+            apiKey: _orviaInPublicApiKey,
             baseUrl: _defaultBase(key),
             providerType: ProviderKind.openai,
             chatPath:

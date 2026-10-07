@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/custom_bottom_sheet.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/shared/widgets/qq_group_join_sheet.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/custom_bottom_sheet.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/shared/widgets/qq_group_join_sheet.dart';
 
 Widget _opener() {
   return MaterialApp(

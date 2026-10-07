@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/services/search/providers/you_search_service.dart';
-import 'package:Kelivo/core/services/search/search_service.dart';
-import 'package:Kelivo/utils/brand_assets.dart';
+import 'package:orvia/core/services/search/providers/you_search_service.dart';
+import 'package:orvia/core/services/search/search_service.dart';
+import 'package:orvia/utils/brand_assets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -81,7 +81,7 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo search',
+        query: 'orvia search',
         commonOptions: const SearchCommonOptions(resultSize: 5, timeout: 1000),
         serviceOptions: YouSearchOptions(id: 'you-1', apiKey: 'you-test'),
       );
@@ -90,7 +90,7 @@ void main() {
       expect(captured?.headers['X-API-Key'], 'you-test');
       expect(captured?.headers['Content-Type'], contains('application/json'));
       expect(jsonDecode(captured!.body), {
-        'query': 'kelivo search',
+        'query': 'orvia search',
         'count': 5,
         'extraction': {'extraction_mode': 'highlights'},
       });
@@ -130,7 +130,7 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(resultSize: 10, timeout: 1000),
         serviceOptions: YouSearchOptions(
           id: 'you-1',
@@ -139,7 +139,7 @@ void main() {
         ),
       );
 
-      expect(jsonDecode(captured!.body), {'query': 'kelivo', 'count': 10});
+      expect(jsonDecode(captured!.body), {'query': 'orvia', 'count': 10});
       expect(captured!.body.contains('extraction'), isFalse);
       expect(result.items, hasLength(2));
       expect(result.items.first.text, 'Snippet one\n\nSnippet two');
@@ -184,7 +184,7 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(resultSize: 3, timeout: 1000),
         serviceOptions: YouSearchOptions(id: 'you-1', apiKey: 'you-test'),
       );
@@ -204,7 +204,7 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(timeout: 1000),
         serviceOptions: YouSearchOptions(id: 'you-1', apiKey: 'you-test'),
       );
@@ -227,12 +227,12 @@ void main() {
       );
 
       await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(timeout: 1000),
         serviceOptions: options,
       );
       await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(timeout: 1000),
         serviceOptions: options,
       );
@@ -247,7 +247,7 @@ void main() {
 
       expect(
         () => service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: const SearchCommonOptions(timeout: 1000),
           serviceOptions: YouSearchOptions(id: 'you-1', apiKey: 'you-test'),
         ),

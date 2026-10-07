@@ -89,7 +89,7 @@ class BrandAssets {
         MapEntry(RegExp(r'xai'), 'xai.svg'),
         MapEntry(RegExp(r'juhenext'), 'juhenext.png'),
         MapEntry(RegExp(r'302'), '302ai-color.svg'),
-        MapEntry(RegExp(r'kelivo'), 'kelivo.png'),
+        MapEntry(RegExp(r'orvia'), 'orvia.png'),
         MapEntry(RegExp(r'tensdaq'), 'tensdaq-color.svg'),
         MapEntry(RegExp(r'marucode|muteki'), 'marucode.png'),
         MapEntry(
@@ -300,9 +300,9 @@ class BrandAssets {
       asset: 'assets/icons/cohere-color.svg',
     ),
     BrandIconOption(
-      id: 'kelivo',
-      label: 'Kelivo',
-      asset: 'assets/icons/kelivo.png',
+      id: 'orvia',
+      label: 'Orvia',
+      asset: 'assets/icons/orvia.png',
     ),
     BrandIconOption(
       id: 'tensdaq',

@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 
 void main() {
   test(
@@ -115,8 +115,8 @@ void main() {
     },
   );
 
-  test('kelivo-file asset path dual-form text refs block GC', () async {
-    final root = await Directory.systemTemp.createTemp('asset_gc_kelivo_');
+  test('orvia-file asset path dual-form text refs block GC', () async {
+    final root = await Directory.systemTemp.createTemp('asset_gc_orvia_');
     final repository = ChatDatabaseRepository.open(
       file: File('${root.path}/assets.sqlite'),
     );
@@ -130,12 +130,12 @@ void main() {
     final absPath = '${root.path}/images/gen.png';
     Directory('${root.path}/images').createSync(recursive: true);
     File(absPath).writeAsBytesSync(const [1, 2, 3]);
-    const canonical = 'kelivo-file:///images/gen.png';
+    const canonical = 'orvia-file:///images/gen.png';
 
     final now = DateTime.utc(2026, 7, 12);
     final conversation = Conversation(
       id: 'conversation-k',
-      title: 'Kelivo assets',
+      title: 'Orvia assets',
       createdAt: now,
       updatedAt: now,
       messageIds: const ['revision-k'],
@@ -214,7 +214,7 @@ void main() {
     });
 
     final now = DateTime.utc(2026, 8, 10);
-    const assetPath = r'C:\Users\Alice\Kelivo\images\corrupt.png';
+    const assetPath = r'C:\Users\Alice\Orvia\images\corrupt.png';
     const conversationId = 'conversation-malformed-gc';
     const messageId = 'revision-malformed-gc';
     const assetId = 'asset-malformed-gc';

@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/skills/skills_service.dart';
-import 'package:Kelivo/features/assistant/pages/assistant_settings_edit_skills_tab.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/skills/skills_service.dart';
+import 'package:orvia/features/assistant/pages/assistant_settings_edit_skills_tab.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +21,7 @@ void main() {
   late Directory tempDir;
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp('kelivo_skills_tab_');
+    tempDir = await Directory.systemTemp.createTemp('orvia_skills_tab_');
   });
 
   tearDown(() async {

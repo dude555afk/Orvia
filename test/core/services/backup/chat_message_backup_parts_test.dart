@@ -6,17 +6,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/backup.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/services/backup/data_sync.dart';
-import 'package:Kelivo/core/services/migration/legacy_message_content_decoder.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/backup.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/services/backup/data_sync.dart';
+import 'package:orvia/core/services/migration/legacy_message_content_decoder.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 import 'package:archive/archive_io.dart';
 
 class _FakePathProvider extends PathProviderPlatform {
@@ -41,11 +41,11 @@ void main() {
   late ChatService chatService;
 
   setUp(() async {
-    root = await Directory.systemTemp.createTemp('kelivo_backup_parts_');
+    root = await Directory.systemTemp.createTemp('orvia_backup_parts_');
     PathProviderPlatform.instance = _FakePathProvider(root.path);
     SandboxPathResolver.debugSetDirs(docsDir: root.path, supportDir: root.path);
     SharedPreferences.setMockInitialValues({});
-    final databaseFile = File('${root.path}/kelivo.db');
+    final databaseFile = File('${root.path}/orvia.db');
     database = AppDatabase.open(file: databaseFile);
     businessRepository = BusinessRepository(database);
     chatService = ChatService(
@@ -346,7 +346,7 @@ void main() {
       expect(await File(restoredPath).exists(), isTrue);
       final restored = (await chatService.loadMessages('c1')).single;
       final image = restored.parts.whereType<ImagePart>().single;
-      expect(image.uri, 'kelivo-file:///upload/restored.png');
+      expect(image.uri, 'orvia-file:///upload/restored.png');
       expect(image.unavailable, isFalse);
     },
   );

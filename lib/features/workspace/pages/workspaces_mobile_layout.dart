@@ -1,7 +1,7 @@
-import 'package:Kelivo/features/workspace/pages/workspaces_page.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
+import 'package:orvia/features/workspace/pages/workspaces_page.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
 import 'package:flutter/material.dart';
 
 class WorkspacesMobileLayout extends StatelessWidget {

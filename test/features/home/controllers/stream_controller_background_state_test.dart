@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/features/home/controllers/stream_controller.dart';
-import 'package:Kelivo/features/chat/widgets/timeline_projection.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/features/home/controllers/stream_controller.dart';
+import 'package:orvia/features/chat/widgets/timeline_projection.dart';
 import '../../../support/business_test_harness.dart';
 
 void main() {

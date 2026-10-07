@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/message_part.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/message_part.dart';
 
 void main() {
   group('ChatMessage.parts as source of truth', () {
@@ -148,7 +148,7 @@ void main() {
 
     test('sanitizing a long base64 TextPart keeps the tool card in place', () {
       const longB64 = 'data:image/png;base64,AAAAAAAAAAAAAAAA';
-      const shortUri = 'kelivo-file:///images/a.png';
+      const shortUri = 'orvia-file:///images/a.png';
       final original = <MessagePart>[
         const TextPart('see $longB64 please'),
         ToolCallPart('{"id":"t1","name":"lookup"}'),

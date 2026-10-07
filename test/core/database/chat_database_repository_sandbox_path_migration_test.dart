@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/utils/kelivo_file_uri.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/utils/orvia_file_uri.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
@@ -18,7 +18,7 @@ void main() {
 
     setUp(() async {
       directory = await Directory.systemTemp.createTemp(
-        'kelivo_sandbox_path_migration_',
+        'orvia_sandbox_path_migration_',
       );
       dbFile = File('${directory.path}/chat.sqlite');
       repository = ChatDatabaseRepository.open(file: dbFile);
@@ -330,7 +330,7 @@ void main() {
       },
     );
 
-    test('kelivo-file URI stays canonical when targetRoot changes', () async {
+    test('orvia-file URI stays canonical when targetRoot changes', () async {
       final uploadDir = Directory('${directory.path}/upload')
         ..createSync(recursive: true);
       final file = File('${uploadDir.path}/canon.png')
@@ -356,7 +356,7 @@ void main() {
               role: 'user',
               parts: [
                 ImagePart(
-                  uri: 'kelivo-file:///upload/canon.png',
+                  uri: 'orvia-file:///upload/canon.png',
                   unavailable: true,
                 ),
               ],
@@ -372,13 +372,13 @@ void main() {
       await repository.migrateSandboxPaths(
         targetVersion: 1,
         targetRoot: '/old-root',
-        rewriteUri: (uri) => KelivoFileUri.isKelivoFileUri(uri) ? uri : uri,
+        rewriteUri: (uri) => OrviaFileUri.isOrviaFileUri(uri) ? uri : uri,
       );
 
       final result = await repository.migrateSandboxPaths(
         targetVersion: 1,
         targetRoot: directory.path,
-        rewriteUri: (uri) => KelivoFileUri.isKelivoFileUri(uri)
+        rewriteUri: (uri) => OrviaFileUri.isOrviaFileUri(uri)
             ? uri
             : SandboxPathResolver.fix(uri),
       );
@@ -390,12 +390,12 @@ void main() {
         limit: 10,
       )).single;
       final image = migrated.parts.whereType<ImagePart>().single;
-      expect(image.uri, 'kelivo-file:///upload/canon.png');
+      expect(image.uri, 'orvia-file:///upload/canon.png');
       expect(image.unavailable, isFalse);
       expect(file.existsSync(), isTrue);
     });
 
-    test('kelivo-file unavailable recomputed when file missing', () async {
+    test('orvia-file unavailable recomputed when file missing', () async {
       SandboxPathResolver.debugSetDirs(docsDir: directory.path);
       addTearDown(() {
         SandboxPathResolver.debugSetDirs(docsDir: null, supportDir: null);
@@ -417,7 +417,7 @@ void main() {
               role: 'user',
               parts: const [
                 ImagePart(
-                  uri: 'kelivo-file:///upload/does-not-exist.png',
+                  uri: 'orvia-file:///upload/does-not-exist.png',
                   unavailable: false,
                 ),
               ],
@@ -432,13 +432,13 @@ void main() {
       await repository.migrateSandboxPaths(
         targetVersion: 1,
         targetRoot: '/previous-root',
-        rewriteUri: (uri) => KelivoFileUri.isKelivoFileUri(uri) ? uri : uri,
+        rewriteUri: (uri) => OrviaFileUri.isOrviaFileUri(uri) ? uri : uri,
       );
 
       await repository.migrateSandboxPaths(
         targetVersion: 1,
         targetRoot: directory.path,
-        rewriteUri: (uri) => KelivoFileUri.isKelivoFileUri(uri)
+        rewriteUri: (uri) => OrviaFileUri.isOrviaFileUri(uri)
             ? uri
             : SandboxPathResolver.fix(uri),
       );
@@ -449,12 +449,12 @@ void main() {
         limit: 10,
       )).single;
       final image = migrated.parts.whereType<ImagePart>().single;
-      expect(image.uri, 'kelivo-file:///upload/does-not-exist.png');
+      expect(image.uri, 'orvia-file:///upload/does-not-exist.png');
       expect(image.unavailable, isTrue);
     });
 
     test(
-      'canonicalize rewrite persists kelivo-file and skips UNC I/O',
+      'canonicalize rewrite persists orvia-file and skips UNC I/O',
       () async {
         final docs = Directory('${directory.path}/docs')..createSync();
         final upload = Directory('${docs.path}/upload')..createSync();
@@ -511,7 +511,7 @@ void main() {
           limit: 10,
         )).single;
         final parts = migrated.parts.whereType<ImagePart>().toList();
-        expect(parts[0].uri, 'kelivo-file:///upload/a.png');
+        expect(parts[0].uri, 'orvia-file:///upload/a.png');
         expect(parts[0].unavailable, isFalse);
         expect(parts[1].uri, 'file://attacker/share/a.png');
         expect(parts[1].unavailable, isTrue);

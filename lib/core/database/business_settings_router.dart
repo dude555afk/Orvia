@@ -209,7 +209,7 @@ final class BusinessSettingsRouter {
   // Storage-only row for an ordered key that has no persisted config. The
   // invalid `enabled` type prevents collision with a routed Provider payload.
   static const _providerOrderOnlyPayload =
-      '{"enabled":"__kelivo_provider_order_only__"}';
+      '{"enabled":"__orvia_provider_order_only__"}';
   static const _legacyPinnedModelsKey = 'pinned_models_v1';
   static const _instructionInjectionsKey = 'instruction_injections_v1';
   static const _legacyActiveIdKey = 'instruction_injections_active_id_v1';
@@ -988,7 +988,7 @@ final class BusinessSettingsRouter {
     switch (payload['type']) {
       case 'bing_local':
         _validateKnownFields(kind, payload, strings: const {'acceptLanguage'});
-      case 'kelivo':
+      case 'orvia':
         break;
       case 'tavily':
       case 'exa':

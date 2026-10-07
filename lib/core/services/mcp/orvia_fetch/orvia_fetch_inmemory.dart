@@ -1,6 +1,6 @@
 import 'package:mcp_client/mcp_client.dart' as mcp;
 
-import 'kelivo_fetch_server.dart';
+import 'orvia_fetch_server.dart';
 
 /// Build a function-call-friendly tool name (similar to Cherry Studio strategy)
 String buildFunctionCallToolName(String serverName, String toolName) {
@@ -30,15 +30,15 @@ String buildFunctionCallToolName(String serverName, String toolName) {
   return name;
 }
 
-/// Start the in-memory @kelivo/fetch MCP server and connect a client to it.
+/// Start the in-memory @orvia/fetch MCP server and connect a client to it.
 /// Returns the connected client and a stop() to dispose both ends.
 Future<({mcp.Client client, Future<void> Function() stop})>
 startFetchMcpInMemory() async {
-  final server = KelivoFetchMcpServerEngine();
-  final transport = KelivoInMemoryClientTransport(server);
+  final server = OrviaFetchMcpServerEngine();
+  final transport = OrviaInMemoryClientTransport(server);
 
   final client = mcp.McpClient.createClient(
-    mcp.McpClient.simpleConfig(name: 'Kelivo App', version: '1.0.0'),
+    mcp.McpClient.simpleConfig(name: 'Orvia App', version: '1.0.0'),
   );
   await client.connect(transport);
 
@@ -60,7 +60,7 @@ Future<List<(mcp.Tool tool, String id)>> listFetchTools(
   mcp.Client client,
 ) async {
   final tools = await client.listTools();
-  const serverName = '@kelivo/fetch';
+  const serverName = '@orvia/fetch';
   return tools
       .map((t) => (t, buildFunctionCallToolName(serverName, t.name)))
       .toList(growable: false);
@@ -77,7 +77,7 @@ Future<mcp.CallToolResult> callFetchTool(
   int? startIndex,
   bool raw = false,
 }) async {
-  final result = await client.callTool('kelivo_fetch', {
+  final result = await client.callTool('orvia_fetch', {
     'url': url,
     if (method != null && method.isNotEmpty) 'method': method,
     if (body != null) 'body': body,

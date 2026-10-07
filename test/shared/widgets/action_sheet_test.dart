@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/shared/widgets/action_sheet.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/shared/widgets/action_sheet.dart';
 
 import '../../support/business_test_harness.dart';
 

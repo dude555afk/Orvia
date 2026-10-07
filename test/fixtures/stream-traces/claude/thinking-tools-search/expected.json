@@ -1,6 +1,6 @@
 {
-  "text": "I'll gather weather data for Kyoto, look up kelivo, and search for general information about Kyoto simultaneously.",
-  "reasoning": "The user wants me to:\n1. Think in one short sentence about the plan\n2. Call get_weather for Kyoto\n3. Call lookup for kelivo \n4. Call web_search for Kyoto\n5. Do all of this in parallel in the same turn\n6. Don't ask questions or wait for results\n\nI need to make all three function calls together.",
+  "text": "I'll gather weather data for Kyoto, look up orvia, and search for general information about Kyoto simultaneously.",
+  "reasoning": "The user wants me to:\n1. Think in one short sentence about the plan\n2. Call get_weather for Kyoto\n3. Call lookup for orvia \n4. Call web_search for Kyoto\n5. Do all of this in parallel in the same turn\n6. Don't ask questions or wait for results\n\nI need to make all three function calls together.",
   "toolCalls": [
     {
       "id": "toolu_bdrk_01MEZrHmjZtEgpkELoFsvXvs",
@@ -135,7 +135,7 @@
     {
       "type": "reasoning_delta",
       "id": "stream:thinking-0",
-      "text": " Call lookup for kelivo",
+      "text": " Call lookup for orvia",
       "reasoningType": "reasoningText"
     },
     {
@@ -263,7 +263,7 @@
     {
       "type": "text_delta",
       "id": "stream:text-1",
-      "text": " up kelivo,"
+      "text": " up orvia,"
     },
     {
       "type": "text_delta",
@@ -312,7 +312,7 @@
     {
       "type": "tool_call_delta",
       "id": "toolu_bdrk_01CzXq3oeZp5ABFnfmAmBkiF",
-      "inputDelta": "{\"q\": \"kelivo"
+      "inputDelta": "{\"q\": \"orvia"
     },
     {
       "type": "tool_call_delta",

@@ -11,9 +11,9 @@ final class RestoreWorkspaceLock {
     RestoreDurability? durability,
   }) : _durabilityOverride = durability;
 
-  static const workspaceRootName = '.kelivo_restore';
+  static const workspaceRootName = '.orvia_restore';
   static const lockFileName = '.receipt.lock';
-  static const snapshotRecoveryMarkerName = '.kelivo_snapshot_recovery_pending';
+  static const snapshotRecoveryMarkerName = '.orvia_snapshot_recovery_pending';
   static const activeRunFileName = '.active_run';
   static const publishingRunFileName = '.active_run.publishing';
   static const discardingRunFileName = '.active_run.discarding';
@@ -105,9 +105,7 @@ final class RestoreWorkspaceLock {
       throw StateError('restore_recovery_marker_type');
     }
     if (entries.isEmpty) return;
-    final archive = await appDataDirectory.createTemp(
-      '.kelivo_restore_failed_',
-    );
+    final archive = await appDataDirectory.createTemp('.orvia_restore_failed_');
     await durability.restrictDirectory(archive);
     await durability.syncDirectory(appDataDirectory, fullBarrier: true);
     for (final entry in entries) {
@@ -516,7 +514,7 @@ final class RestoreWorkspaceLock {
         await for (final databaseEntry in Directory(
           entity.path,
         ).list(followLinks: false)) {
-          if (p.basename(databaseEntry.path) != 'kelivo.db' ||
+          if (p.basename(databaseEntry.path) != 'orvia.db' ||
               await FileSystemEntity.type(
                     databaseEntry.path,
                     followLinks: false,

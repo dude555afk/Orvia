@@ -1,5 +1,5 @@
 //
-//  KelivoISHKernel.m
+//  OrviaISHKernel.m
 //  Runner
 //
 //  Boot sequence adapted from Cuplivo/OpenMinis ISHKernel.m (GPL-3.0, see
@@ -7,12 +7,12 @@
 //  meta.db stays in sync — never write host-side into the fakefs data/ tree.
 //
 
-#import "KelivoISHKernel.h"
-#import "KelivoISHCrashGuards.h"
-#import "KelivoISHExecutor.h"
-#import "KelivoISHEnvironment.h"
-#import "KelivoISHFilesystem.h"
-#import "KelivoISHCompat.h"
+#import "OrviaISHKernel.h"
+#import "OrviaISHCrashGuards.h"
+#import "OrviaISHExecutor.h"
+#import "OrviaISHEnvironment.h"
+#import "OrviaISHFilesystem.h"
+#import "OrviaISHCompat.h"
 
 @import SystemConfiguration;
 
@@ -42,9 +42,9 @@
 #include <sys/un.h>
 #endif
 
-NSNotificationName const KelivoISHProcessExitedNotification = @"KelivoISHProcessExited";
+NSNotificationName const OrviaISHProcessExitedNotification = @"OrviaISHProcessExited";
 
-static NSString *const kDnsSubdir = @"KelivoWorkspace/dns";
+static NSString *const kDnsSubdir = @"OrviaWorkspace/dns";
 static const char *kPublicDns[] = {"1.1.1.1", "8.8.8.8", "223.5.5.5"};
 
 extern void (*exit_hook)(struct task *task, int code);
@@ -55,57 +55,57 @@ extern const char *sock_tmp_prefix;
 
 #pragma mark - Console TTY (init stdio; output discarded)
 
-static int kelivo_console_write(struct tty *tty, const void *buf, size_t len, bool blocking) {
+static int orvia_console_write(struct tty *tty, const void *buf, size_t len, bool blocking) {
     (void)tty;
     (void)buf;
     (void)blocking;
     return (int)len;
 }
 
-static int kelivo_console_init(struct tty *tty) {
+static int orvia_console_init(struct tty *tty) {
     (void)tty;
     return 0;
 }
 
-static void kelivo_console_cleanup(struct tty *tty) {
+static void orvia_console_cleanup(struct tty *tty) {
     (void)tty;
 }
 
-static struct tty_driver_ops kelivo_console_ops = {
-    .init = kelivo_console_init,
-    .write = kelivo_console_write,
-    .cleanup = kelivo_console_cleanup,
+static struct tty_driver_ops orvia_console_ops = {
+    .init = orvia_console_init,
+    .write = orvia_console_write,
+    .cleanup = orvia_console_cleanup,
 };
 
-DEFINE_TTY_DRIVER(kelivo_console_driver, &kelivo_console_ops, TTY_CONSOLE_MAJOR, 8);
+DEFINE_TTY_DRIVER(orvia_console_driver, &orvia_console_ops, TTY_CONSOLE_MAJOR, 8);
 
 #pragma mark - PTY driver
 
-static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool blocking);
-static int kelivo_pty_init(struct tty *tty) {
+static int orvia_pty_write(struct tty *tty, const void *buf, size_t len, bool blocking);
+static int orvia_pty_init(struct tty *tty) {
     (void)tty;
     return 0;
 }
-static void kelivo_pty_cleanup(struct tty *tty) {
+static void orvia_pty_cleanup(struct tty *tty) {
     (void)tty;
 }
 
-static struct tty_driver_ops kelivo_pty_ops = {
-    .init = kelivo_pty_init,
-    .write = kelivo_pty_write,
-    .cleanup = kelivo_pty_cleanup,
+static struct tty_driver_ops orvia_pty_ops = {
+    .init = orvia_pty_init,
+    .write = orvia_pty_write,
+    .cleanup = orvia_pty_cleanup,
 };
 
-static struct tty_driver kelivo_pty_driver = {.ops = &kelivo_pty_ops};
+static struct tty_driver orvia_pty_driver = {.ops = &orvia_pty_ops};
 
-static bool kelivo_reverse_context_path(const char *host, char *out, size_t size) {
+static bool orvia_reverse_context_path(const char *host, char *out, size_t size) {
     uint64_t context = current && current->group ? current->group->fs_context : 0;
-    return KelivoISHReversePath(host, context, out, size);
+    return OrviaISHReversePath(host, context, out, size);
 }
 
 #pragma mark - Session / bind state
 
-@interface KelivoISHPtySession : NSObject
+@interface OrviaISHPtySession : NSObject
 @property (nonatomic, copy) NSString *sessionId;
 @property (nonatomic) int pid;
 @property (nonatomic) pid_t_ pgid;
@@ -118,18 +118,18 @@ static bool kelivo_reverse_context_path(const char *host, char *out, size_t size
 @property (nonatomic) BOOL hasDeliveredOutput;
 @end
 
-@implementation KelivoISHPtySession
+@implementation OrviaISHPtySession
 @end
 
-@interface KelivoISHKernel ()
+@interface OrviaISHKernel ()
 - (void)noteGuestExitWithPid:(int)pid code:(int)code;
 - (void)queuePtyBytes:(const void *)bytes length:(size_t)length ttyNum:(int)ttyNum;
-- (void)flushPtyOutput:(KelivoISHPtySession *)session;
+- (void)flushPtyOutput:(OrviaISHPtySession *)session;
 @end
 
 /// iSH `do_exit` passes the Linux wait(2) status (exit << 8, or signal in the
 /// low 7 bits). Flutter / the workspace channel expect a process exit code.
-static int kelivo_decode_wait_status(int status) {
+static int orvia_decode_wait_status(int status) {
     if (status < 0) return status;
     if ((status & 0x7f) == 0) {
         return (status >> 8) & 0xff;
@@ -137,30 +137,30 @@ static int kelivo_decode_wait_status(int status) {
     return 128 + (status & 0x7f);
 }
 
-static void kelivo_handle_process_exit(struct task *task, int code) {
+static void orvia_handle_process_exit(struct task *task, int code) {
     if (task->parent != NULL && task->parent->parent != NULL)
         return;
     pid_t pid = task->pid;
-    int decoded = kelivo_decode_wait_status(code);
+    int decoded = orvia_decode_wait_status(code);
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter]
-            postNotificationName:KelivoISHProcessExitedNotification
+            postNotificationName:OrviaISHProcessExitedNotification
                           object:nil
                         userInfo:@{@"pid": @(pid), @"code": @(decoded)}];
-        [[KelivoISHKernel shared] noteGuestExitWithPid:pid code:decoded];
+        [[OrviaISHKernel shared] noteGuestExitWithPid:pid code:decoded];
     });
 }
 
-static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool blocking) {
+static int orvia_pty_write(struct tty *tty, const void *buf, size_t len, bool blocking) {
     (void)blocking;
     if (len == 0) return 0;
     @autoreleasepool {
-        [[KelivoISHKernel shared] queuePtyBytes:buf length:len ttyNum:tty->num];
+        [[OrviaISHKernel shared] queuePtyBytes:buf length:len ttyNum:tty->num];
     }
     return (int)len;
 }
 
-@implementation KelivoISHKernel {
+@implementation OrviaISHKernel {
     BOOL _isBooted;
     NSString *_rootPath;
     NSString *_dataPath;
@@ -169,9 +169,9 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
     dispatch_queue_t _spawnQueue;
     NSMutableDictionary<NSString *, NSString *> *_activeBinds;
     NSMutableDictionary<NSString *, NSNumber *> *_readOnlyBinds;
-    NSMutableDictionary<NSString *, KelivoISHPtySession *> *_ptyBySession;
-    NSMutableDictionary<NSNumber *, KelivoISHPtySession *> *_ptyByPid;
-    NSMutableDictionary<NSNumber *, KelivoISHPtySession *> *_ptyByTtyNum;
+    NSMutableDictionary<NSString *, OrviaISHPtySession *> *_ptyBySession;
+    NSMutableDictionary<NSNumber *, OrviaISHPtySession *> *_ptyByPid;
+    NSMutableDictionary<NSNumber *, OrviaISHPtySession *> *_ptyByTtyNum;
     NSLock *_ptyLock;
     NSMutableSet<NSData *> *_filesystems;
 }
@@ -184,10 +184,10 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
 }
 
 + (instancetype)shared {
-    static KelivoISHKernel *instance = nil;
+    static OrviaISHKernel *instance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        instance = [[KelivoISHKernel alloc] init];
+        instance = [[OrviaISHKernel alloc] init];
     });
     return instance;
 }
@@ -197,7 +197,7 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
     if (self) {
         _isBooted = NO;
         _filesystems = [NSMutableSet set];
-        _spawnQueue = dispatch_queue_create("psyche.kelivo.workspace.ish.spawn", DISPATCH_QUEUE_SERIAL);
+        _spawnQueue = dispatch_queue_create("com.dude555afk.orvia.workspace.ish.spawn", DISPATCH_QUEUE_SERIAL);
         _activeBinds = [NSMutableDictionary dictionary];
         _readOnlyBinds = [NSMutableDictionary dictionary];
         _ptyBySession = [NSMutableDictionary dictionary];
@@ -224,19 +224,19 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
 
 - (int)bootWithRootPath:(NSString *)rootPath {
     if (_isBooted) {
-        NSLog(@"KelivoISHKernel: already booted");
+        NSLog(@"OrviaISHKernel: already booted");
         return 0;
     }
 
     int err;
-    KelivoISHInstallCrashGuards();
-    KelivoISHInstallDieGuard();
+    OrviaISHInstallCrashGuards();
+    OrviaISHInstallDieGuard();
 
     _rootPath = rootPath;
     _dataPath = [rootPath stringByAppendingPathComponent:@"data"];
     err = mount_root(&fakefs, _dataPath.fileSystemRepresentation);
     if (err < 0) {
-        NSLog(@"KelivoISHKernel: mount_root failed: %d", err);
+        NSLog(@"OrviaISHKernel: mount_root failed: %d", err);
         _rootPath = nil;
         _dataPath = nil;
         return err;
@@ -246,12 +246,12 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
     if (realpath(_dataPath.fileSystemRepresentation, canonical_data_path) != NULL) {
         fakefs_set_rootfs_data_path(canonical_data_path);
     } else {
-        NSLog(@"KelivoISHKernel: realpath(data) failed (errno=%d)", errno);
+        NSLog(@"OrviaISHKernel: realpath(data) failed (errno=%d)", errno);
     }
 
     err = become_first_process();
     if (err < 0) {
-        NSLog(@"KelivoISHKernel: become_first_process failed: %d", err);
+        NSLog(@"OrviaISHKernel: become_first_process failed: %d", err);
         return err;
     }
     current->thread = pthread_self();
@@ -267,19 +267,19 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
     [self mountDnsConfig];
     [self setUpUnixSocketPrefix];
 
-    fakefs_set_path_translate_hook(KelivoISHTranslatePath);
-    fakefs_set_path_reverse_hook(kelivo_reverse_context_path);
-    exit_hook = kelivo_handle_process_exit;
+    fakefs_set_path_translate_hook(OrviaISHTranslatePath);
+    fakefs_set_path_reverse_hook(orvia_reverse_context_path);
+    exit_hook = orvia_handle_process_exit;
 
-    tty_drivers[TTY_CONSOLE_MAJOR] = &kelivo_console_driver;
+    tty_drivers[TTY_CONSOLE_MAJOR] = &orvia_console_driver;
     set_console_device(TTY_CONSOLE_MAJOR, 1);
     err = create_stdio("/dev/console", TTY_CONSOLE_MAJOR, 1);
     if (err < 0) {
-        NSLog(@"KelivoISHKernel: create_stdio failed: %d (non-fatal)", err);
+        NSLog(@"OrviaISHKernel: create_stdio failed: %d (non-fatal)", err);
     }
 
     _isBooted = YES;
-    NSLog(@"KelivoISHKernel: kernel initialized");
+    NSLog(@"OrviaISHKernel: kernel initialized");
     return 0;
 }
 
@@ -313,7 +313,7 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
     NSDictionary *manifest = bundleURL == nil ? nil :
         [NSDictionary dictionaryWithContentsOfURL:[bundleURL URLByAppendingPathComponent:@"manifest.plist"]];
     if (manifest == nil) {
-        NSLog(@"KelivoISHKernel: RootfsPatch manifest missing from bundle");
+        NSLog(@"OrviaISHKernel: RootfsPatch manifest missing from bundle");
         return;
     }
     for (NSDictionary *entry in manifest[@"files"]) {
@@ -326,7 +326,7 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
 - (void)applyBundleOverlay {
     NSURL *overlayURL = [[NSBundle mainBundle] URLForResource:@"overlay" withExtension:nil];
     if (overlayURL == nil) {
-        NSLog(@"KelivoISHKernel: overlay folder missing from bundle");
+        NSLog(@"OrviaISHKernel: overlay folder missing from bundle");
         return;
     }
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -360,7 +360,7 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
 - (void)writeGuestFile:(NSString *)guestPath fromHostURL:(NSURL *)hostURL {
     NSData *contents = [NSData dataWithContentsOfURL:hostURL];
     if (contents == nil) {
-        NSLog(@"KelivoISHKernel: overlay read failed: %@", hostURL.path);
+        NSLog(@"OrviaISHKernel: overlay read failed: %@", hostURL.path);
         return;
     }
     [self ensureGuestParentDirs:guestPath];
@@ -370,7 +370,7 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
     struct fd *fd = generic_open(guestPath.fileSystemRepresentation,
                                  O_WRONLY_ | O_CREAT_ | O_TRUNC_, mode);
     if (IS_ERR(fd)) {
-        NSLog(@"KelivoISHKernel: overlay open %@ failed: %ld", guestPath, PTR_ERR(fd));
+        NSLog(@"OrviaISHKernel: overlay open %@ failed: %ld", guestPath, PTR_ERR(fd));
         return;
     }
     const char *bytes = contents.bytes;
@@ -378,7 +378,7 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
     while (offset < contents.length) {
         ssize_t written = fd->ops->write(fd, bytes + offset, contents.length - offset);
         if (written <= 0) {
-            NSLog(@"KelivoISHKernel: overlay write %@ failed: %zd", guestPath, written);
+            NSLog(@"OrviaISHKernel: overlay write %@ failed: %zd", guestPath, written);
             break;
         }
         offset += (size_t)written;
@@ -401,7 +401,7 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
 
     int err = fakefs_bind_mount("/etc/resolv.conf", _dnsHostPath.fileSystemRepresentation, false);
     if (err < 0) {
-        NSLog(@"KelivoISHKernel: DNS bind mount failed (%d) — writing through VFS", err);
+        NSLog(@"OrviaISHKernel: DNS bind mount failed (%d) — writing through VFS", err);
         struct task *prev = current;
         current = pid_get_task(1);
         if (current) {
@@ -468,17 +468,17 @@ static int kelivo_pty_write(struct tty *tty, const void *buf, size_t len, bool b
     NSString *content = [self dnsContentString];
     NSError *error = nil;
     if (![content writeToFile:_dnsHostPath atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
-        NSLog(@"KelivoISHKernel: DNS refresh write failed: %@", error);
+        NSLog(@"OrviaISHKernel: DNS refresh write failed: %@", error);
     }
 }
 
-static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
+static void OrviaDnsReachabilityChanged(SCNetworkReachabilityRef target,
                                          SCNetworkReachabilityFlags flags,
                                          void *info) {
     (void)target;
     (void)flags;
     @autoreleasepool {
-        KelivoISHKernel *kernel = (__bridge KelivoISHKernel *)info;
+        OrviaISHKernel *kernel = (__bridge OrviaISHKernel *)info;
         dispatch_async(dispatch_get_main_queue(), ^{
             [kernel refreshDnsConfig];
         });
@@ -493,7 +493,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
     SCNetworkReachabilityContext context = {
         .version = 0, .info = (__bridge void *)self,
         .retain = NULL, .release = NULL, .copyDescription = NULL};
-    if (!SCNetworkReachabilitySetCallback(reachability, KelivoDnsReachabilityChanged, &context) ||
+    if (!SCNetworkReachabilitySetCallback(reachability, OrviaDnsReachabilityChanged, &context) ||
         !SCNetworkReachabilitySetDispatchQueue(reachability, dispatch_get_main_queue())) {
         CFRelease(reachability);
         return;
@@ -515,7 +515,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
     const size_t kSuffixWorstCase = 12;
     size_t prefixLen = strlen(prefix.UTF8String);
     if (prefixLen + kSuffixWorstCase >= kSunPathMax) {
-        NSLog(@"KelivoISHKernel: unix socket prefix too long — keeping default");
+        NSLog(@"OrviaISHKernel: unix socket prefix too long — keeping default");
         return;
     }
     sock_tmp_prefix = strdup(prefix.UTF8String);
@@ -528,7 +528,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
     if (!_isBooted) return -1;
     // fakefs_bind_mount recursively removes its destination before binding.
     // Only replace an empty placeholder or an existing mount symlink.
-    int targetError = KelivoISHValidateMountTarget(_dataPath, linuxPath);
+    int targetError = OrviaISHValidateMountTarget(_dataPath, linuxPath);
     if (targetError < 0) return targetError;
     NSFileManager *fm = [NSFileManager defaultManager];
     BOOL isDir = NO;
@@ -536,7 +536,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
         if ([linuxPath hasPrefix:@"/mounts/"]) return -ENOENT;
         NSError *error = nil;
         if (![fm createDirectoryAtPath:hostPath withIntermediateDirectories:YES attributes:nil error:&error]) {
-            NSLog(@"KelivoISHKernel: host mkdir %@ failed: %@", hostPath, error);
+            NSLog(@"OrviaISHKernel: host mkdir %@ failed: %@", hostPath, error);
             return -1;
         }
     }
@@ -549,7 +549,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
     int err = fakefs_bind_mount(linuxPath.fileSystemRepresentation,
                                 hostPath.fileSystemRepresentation, readOnly);
     if (err < 0) {
-        NSLog(@"KelivoISHKernel: bindMount %@ -> %@ failed: %d", linuxPath, hostPath, err);
+        NSLog(@"OrviaISHKernel: bindMount %@ -> %@ failed: %d", linuxPath, hostPath, err);
         return err;
     }
     _activeBinds[linuxPath] = hostPath;
@@ -572,7 +572,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
 }
 
 - (uint64_t)filesystemContextForBinds:(NSArray<NSDictionary<NSString *, id> *> *)binds {
-    NSData *data = KelivoISHCreateFilesystem(binds);
+    NSData *data = OrviaISHCreateFilesystem(binds);
     if (!data) return 0;
     // Fork copies fs_context. Reclaim only contexts absent from the entire task
     // table, rather than freeing a shell's mapping while its children still run.
@@ -614,7 +614,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
     if (!_isBooted) return 0;
     // Check the whole snapshot before removing any existing bindings.
     for (NSDictionary<NSString *, id> *bind in binds) {
-        int err = KelivoISHValidateMountTarget(_dataPath, bind[@"guest"]);
+        int err = OrviaISHValidateMountTarget(_dataPath, bind[@"guest"]);
         if (err < 0) return err;
     }
     NSSet *desired = [NSSet setWithArray:[binds valueForKey:@"guest"]];
@@ -649,15 +649,15 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
                   env:(NSDictionary<NSString *, NSString *> *)env
                  cols:(int)cols
                  rows:(int)rows {
-    if (!_isBooted) return KelivoISHPtyOpenErrorNotBooted;
-    if (sessionId.length == 0) return KelivoISHPtyOpenErrorBadSessionId;
+    if (!_isBooted) return OrviaISHPtyOpenErrorNotBooted;
+    if (sessionId.length == 0) return OrviaISHPtyOpenErrorBadSessionId;
 
     [_ptyLock lock];
     BOOL exists = _ptyBySession[sessionId] != nil;
     [_ptyLock unlock];
     if (exists) {
-        NSLog(@"KelivoISHKernel: pty session %@ is already open", sessionId);
-        return KelivoISHPtyOpenErrorSessionExists;
+        NSLog(@"OrviaISHKernel: pty session %@ is already open", sessionId);
+        return OrviaISHPtyOpenErrorSessionExists;
     }
 
     NSMutableDictionary<NSString *, NSString *> *merged = [@{
@@ -665,15 +665,15 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
         @"HOME": @"/root",
         @"PATH": @"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
         @"LANG": @"C.UTF-8",
-        @"PS1": @"\\u@kelivo:\\w\\$ ",
+        @"PS1": @"\\u@orvia:\\w\\$ ",
     } mutableCopy];
     if (env) [merged addEntriesFromDictionary:env];
-    KelivoISHEnvironmentError environmentError;
-    NSData *environmentData = KelivoISHEncodeEnvironment(merged, &environmentError);
+    OrviaISHEnvironmentError environmentError;
+    NSData *environmentData = OrviaISHEncodeEnvironment(merged, &environmentError);
     if (environmentData == nil) {
-        return environmentError == KelivoISHEnvironmentErrorTooLarge
-            ? KelivoISHPtyOpenErrorEnvironmentTooLarge
-            : KelivoISHPtyOpenErrorInvalidEnvironment;
+        return environmentError == OrviaISHEnvironmentErrorTooLarge
+            ? OrviaISHPtyOpenErrorEnvironmentTooLarge
+            : OrviaISHPtyOpenErrorInvalidEnvironment;
     }
 
     __block int resultPid = -1;
@@ -689,7 +689,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
             }
 
             current->group->fs_context = filesystem;
-            struct tty *tty = pty_open_fake(&kelivo_pty_driver);
+            struct tty *tty = pty_open_fake(&orvia_pty_driver);
             if (IS_ERR(tty)) {
                 resultPid = (int)PTR_ERR(tty);
                 return;
@@ -742,17 +742,17 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
                 return;
             }
 
-            KelivoISHPtySession *session = [[KelivoISHPtySession alloc] init];
+            OrviaISHPtySession *session = [[OrviaISHPtySession alloc] init];
             session.sessionId = sessionId;
             session.pid = current->pid;
             session.pgid = current->group->pgid;
             session.tty = tty;
             session.pendingOutput = [NSMutableArray array];
             session.outputTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
-            __weak KelivoISHPtySession *outputSession = session;
+            __weak OrviaISHPtySession *outputSession = session;
             dispatch_source_set_timer(session.outputTimer, DISPATCH_TIME_FOREVER, DISPATCH_TIME_FOREVER, 0);
             dispatch_source_set_event_handler(session.outputTimer, ^{
-                KelivoISHPtySession *active = outputSession;
+                OrviaISHPtySession *active = outputSession;
                 if (active) [self flushPtyOutput:active];
             });
             dispatch_resume(session.outputTimer);
@@ -773,7 +773,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
 
 - (void)ptyWriteSession:(NSString *)sessionId data:(NSData *)data {
     [_ptyLock lock];
-    KelivoISHPtySession *session = _ptyBySession[sessionId];
+    OrviaISHPtySession *session = _ptyBySession[sessionId];
     struct tty *tty = session.tty;
     [_ptyLock unlock];
     if (tty && data.length > 0) {
@@ -783,7 +783,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
 
 - (void)ptyResizeSession:(NSString *)sessionId cols:(int)cols rows:(int)rows {
     [_ptyLock lock];
-    KelivoISHPtySession *session = _ptyBySession[sessionId];
+    OrviaISHPtySession *session = _ptyBySession[sessionId];
     struct tty *tty = session.tty;
     [_ptyLock unlock];
     if (!tty) return;
@@ -793,10 +793,10 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
 
 - (void)ptyCloseSession:(NSString *)sessionId {
     [_ptyLock lock];
-    KelivoISHPtySession *session = _ptyBySession[sessionId];
+    OrviaISHPtySession *session = _ptyBySession[sessionId];
     [_ptyLock unlock];
     if (!session) return;
-    [KelivoISHExecutor killGuestPid:session.pid groupId:session.pgid];
+    [OrviaISHExecutor killGuestPid:session.pid groupId:session.pgid];
 }
 
 // The guest can write one character at a time (including terminal echo).
@@ -805,7 +805,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
 - (void)queuePtyBytes:(const void *)bytes length:(size_t)length ttyNum:(int)ttyNum {
     static const NSUInteger packetBytes = 64 * 1024;
     [_ptyLock lock];
-    KelivoISHPtySession *session = _ptyByTtyNum[@(ttyNum)];
+    OrviaISHPtySession *session = _ptyByTtyNum[@(ttyNum)];
     if (!session) { [_ptyLock unlock]; return; }
     const uint8_t *cursor = bytes;
     while (length > 0) {
@@ -833,7 +833,7 @@ static void KelivoDnsReachabilityChanged(SCNetworkReachabilityRef target,
 }
 
 // Only called with _ptyLock held. Detached buffers are never mutated again.
-static NSArray<NSData *> *kelivo_take_pty_output(KelivoISHPtySession *session) {
+static NSArray<NSData *> *orvia_take_pty_output(OrviaISHPtySession *session) {
     NSMutableArray<NSData *> *packets = session.pendingOutput;
     if (session.pendingTail.length > 0) [packets addObject:session.pendingTail];
     session.pendingOutput = [NSMutableArray array];
@@ -844,15 +844,15 @@ static NSArray<NSData *> *kelivo_take_pty_output(KelivoISHPtySession *session) {
     return packets;
 }
 
-- (void)flushPtyOutput:(KelivoISHPtySession *)session {
+- (void)flushPtyOutput:(OrviaISHPtySession *)session {
     [_ptyLock lock];
     // A cancelled timer can already be queued. Never deliver into a reopened
     // session, even if its string ID or guest TTY number has been reused.
     if (_ptyBySession[session.sessionId] != session) { [_ptyLock unlock]; return; }
     dispatch_source_set_timer(session.outputTimer, DISPATCH_TIME_FOREVER, DISPATCH_TIME_FOREVER, 0);
-    NSArray<NSData *> *packets = kelivo_take_pty_output(session);
+    NSArray<NSData *> *packets = orvia_take_pty_output(session);
     NSString *sessionId = session.sessionId;
-    KelivoISHPtyDataHandler handler = self.ptyDataHandler;
+    OrviaISHPtyDataHandler handler = self.ptyDataHandler;
     [_ptyLock unlock];
     if (sessionId && handler) {
         for (NSData *packet in packets) handler(sessionId, packet);
@@ -861,12 +861,12 @@ static NSArray<NSData *> *kelivo_take_pty_output(KelivoISHPtySession *session) {
 
 - (void)noteGuestExitWithPid:(int)pid code:(int)code {
     [_ptyLock lock];
-    KelivoISHPtySession *session = _ptyByPid[@(pid)];
+    OrviaISHPtySession *session = _ptyByPid[@(pid)];
     NSArray<NSData *> *packets = nil;
     if (session) {
         dispatch_source_cancel(session.outputTimer);
         session.outputTimer = nil;
-        packets = kelivo_take_pty_output(session);
+        packets = orvia_take_pty_output(session);
         [_ptyBySession removeObjectForKey:session.sessionId];
         [_ptyByPid removeObjectForKey:@(pid)];
         if (session.tty) {
@@ -874,8 +874,8 @@ static NSArray<NSData *> *kelivo_take_pty_output(KelivoISHPtySession *session) {
         }
     }
     NSString *sessionId = session.sessionId;
-    KelivoISHPtyExitHandler handler = self.ptyExitHandler;
-    KelivoISHPtyDataHandler dataHandler = self.ptyDataHandler;
+    OrviaISHPtyExitHandler handler = self.ptyExitHandler;
+    OrviaISHPtyDataHandler dataHandler = self.ptyDataHandler;
     [_ptyLock unlock];
     // Flush before exit so ChannelPtySession cannot close ahead of its tail.
     if (sessionId && dataHandler) {

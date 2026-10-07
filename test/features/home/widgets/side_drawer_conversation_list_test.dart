@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import "../../../support/business_test_harness.dart";
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/update_provider.dart';
-import 'package:Kelivo/core/providers/backup_reminder_provider.dart';
-import 'package:Kelivo/core/providers/tag_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/features/home/widgets/side_drawer.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/update_provider.dart';
+import 'package:orvia/core/providers/backup_reminder_provider.dart';
+import 'package:orvia/core/providers/tag_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/features/home/widgets/side_drawer.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -120,7 +120,7 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp(
-      'kelivo_side_drawer_list_test_',
+      'orvia_side_drawer_list_test_',
     );
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     SideDrawer.debugConversationListBuildCount = 0;

@@ -38,7 +38,7 @@ class ScheduledTasksTest {
         }
     }
     private val app get() = RuntimeEnvironment.getApplication() as OrviaApplication
-    private val prefs get() = app.getSharedPreferences("kelivo_scheduled_tasks", Context.MODE_PRIVATE)
+    private val prefs get() = app.getSharedPreferences("orvia_scheduled_tasks", Context.MODE_PRIVATE)
     private fun task(id: String = "a", enabled: Boolean = true) = mapOf(
         "id" to id, "name" to "Morning", "prompt" to "Hello", "assistantId" to "assistant",
         "hour" to 8, "minute" to 0, "weekdays" to (1..7).toList(), "enabled" to enabled,

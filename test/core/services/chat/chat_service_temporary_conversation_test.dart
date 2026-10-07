@@ -1,7 +1,7 @@
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/token_usage.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/token_usage.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -11,10 +11,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/generation_run.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/generation_run.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 
 class _FakePathProviderPlatform extends PathProviderPlatform {
   _FakePathProviderPlatform(this.path);
@@ -41,9 +41,7 @@ void main() {
   final services = <ChatService>[];
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp(
-      'kelivo_chat_service_test_',
-    );
+    tempDir = await Directory.systemTemp.createTemp('orvia_chat_service_test_');
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     SandboxPathResolver.debugSetDirs(
       docsDir: tempDir.path,
@@ -1571,7 +1569,7 @@ void main() {
           <String, dynamic>{
             'id': 'tool-1',
             'name': 'search',
-            'arguments': <String, dynamic>{'q': 'kelivo'},
+            'arguments': <String, dynamic>{'q': 'orvia'},
             'content': 'found',
           },
         ];

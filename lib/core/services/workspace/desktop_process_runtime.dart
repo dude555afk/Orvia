@@ -278,7 +278,7 @@ class DesktopProcessRuntime extends WorkspaceRuntime {
               '-p',
               '-c',
               _unixLauncher,
-              'kelivo-shell',
+              'orvia-shell',
               spec.executable,
               ...spec.arguments(request.command),
             ]

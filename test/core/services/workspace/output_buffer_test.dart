@@ -5,7 +5,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/workspace/output_buffer.dart';
+import 'package:orvia/core/services/workspace/output_buffer.dart';
 
 void main() {
   group('BoundedStreamBuffer', () {
@@ -100,7 +100,7 @@ void main() {
 
   group('ToolOutputOffloader', () {
     test('returns inline JSON under the 32 KB threshold', () async {
-      final dir = await Directory.systemTemp.createTemp('kelivo_offload_');
+      final dir = await Directory.systemTemp.createTemp('orvia_offload_');
       addTearDown(() => dir.delete(recursive: true));
       final result = await ToolOutputOffloader.maybeOffload(
         toolCallId: 't1',
@@ -115,7 +115,7 @@ void main() {
     test(
       'offloads over-threshold output with a 4 KB preview and hint',
       () async {
-        final dir = await Directory.systemTemp.createTemp('kelivo_offload_');
+        final dir = await Directory.systemTemp.createTemp('orvia_offload_');
         addTearDown(() => dir.delete(recursive: true));
         final stdout = 'S' * 40 * 1024;
         final stderr = 'E' * 1024;

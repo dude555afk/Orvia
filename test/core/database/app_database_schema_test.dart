@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
-import 'package:Kelivo/core/database/app_database.dart';
+import 'package:orvia/core/database/app_database.dart';
 
 import 'generated_schema/schema.dart';
 
@@ -52,7 +52,7 @@ void main() {
   /// `NativeDatabase.memory` bypasses the guard in `_openExecutor`, so only a
   /// file-backed open exercises it.
   Future<Object?> openAtVersion(int version) async {
-    final directory = await Directory.systemTemp.createTemp('kelivo_schema_');
+    final directory = await Directory.systemTemp.createTemp('orvia_schema_');
     addTearDown(() async {
       if (await directory.exists()) await directory.delete(recursive: true);
     });

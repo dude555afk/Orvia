@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ============================================================================
-# Alpine Linux aarch64 rootfs for the Kelivo iOS Workspace (iSH fakefs)
+# Alpine Linux aarch64 rootfs for the Orvia iOS Workspace (iSH fakefs)
 # ============================================================================
 # Downloads Alpine minirootfs (aarch64), installs packages with apk inside
 # the host iSH CLI (including its database and install scripts),
@@ -209,7 +209,7 @@ install_apks() {
         "$ISH" -f "$FAKEFS_OUT" /bin/sh -c '
             printf "%s/v%s/main\n%s/v%s/community\n" "$1" "$2" "$1" "$2" > /etc/apk/repositories
         ' sh "$mirror" "$ALPINE_SERIES"
-        if "$ISH" -f "$FAKEFS_OUT" /bin/sh -c "$(cat "$SCRIPT_DIR/overlay/usr/local/bin/kelivo-repair-rootfs")"; then
+        if "$ISH" -f "$FAKEFS_OUT" /bin/sh -c "$(cat "$SCRIPT_DIR/overlay/usr/local/bin/orvia-repair-rootfs")"; then
             installed=1
             break
         fi
@@ -258,7 +258,7 @@ open(path, "w").write("\n".join(out) + "\n")
 PY
     fi
 
-    # Shell defaults live in overlay/etc/profile and profile.d/kelivo.sh.
+    # Shell defaults live in overlay/etc/profile and profile.d/orvia.sh.
     # The kernel applies them at every boot, including to installed rootfses.
 
     # PEP 668: allow pip in this embedded rootfs (also mirrored by overlay pip.conf).
@@ -339,7 +339,7 @@ clean() {
 main() {
     echo ""
     echo "============================================================"
-    echo "  Kelivo Alpine aarch64 fakefs rootfs"
+    echo "  Orvia Alpine aarch64 fakefs rootfs"
     echo "  Series: ${ALPINE_SERIES}.x (${ALPINE_ARCH})"
     echo "============================================================"
     echo ""

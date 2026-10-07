@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:Kelivo/features/settings/widgets/custom_theme_widgets.dart';
-import 'package:Kelivo/features/workspace/pages/workspaces_page.dart';
-import 'package:Kelivo/features/workspace/widgets/desktop_workspace_button.dart';
-import 'package:Kelivo/features/workspace/widgets/workspace_section.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/features/settings/widgets/custom_theme_widgets.dart';
+import 'package:orvia/features/workspace/pages/workspaces_page.dart';
+import 'package:orvia/features/workspace/widgets/desktop_workspace_button.dart';
+import 'package:orvia/features/workspace/widgets/workspace_section.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 
 /// Use a navigator route so nested pickers and creation dialogs receive input
 /// above this panel, and Escape/back dismisses the current surface only.

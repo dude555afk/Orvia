@@ -1,5 +1,5 @@
 //
-//  KelivoISHCrashGuards.c
+//  OrviaISHCrashGuards.c
 //  Runner
 //
 //  Adapted from Cuplivo/OpenMinis embedded-iSH crash containment (GPL-3.0;
@@ -9,7 +9,7 @@
 
 #define _XOPEN_SOURCE 700
 
-#include "KelivoISHCrashGuards.h"
+#include "OrviaISHCrashGuards.h"
 
 #include <stdarg.h>
 #include <stdint.h>
@@ -46,7 +46,7 @@ static void park_thread_forever(void) {
     }
 }
 
-static void kelivo_jit_crash_handler(int sig, siginfo_t *info, void *ctx) {
+static void orvia_jit_crash_handler(int sig, siginfo_t *info, void *ctx) {
 #if defined(__aarch64__) && defined(GUEST_ARM64)
     if ((sig == SIGSEGV || sig == SIGBUS) && in_jit) {
         ucontext_t *uc = (ucontext_t *)ctx;
@@ -92,13 +92,13 @@ static void kelivo_jit_crash_handler(int sig, siginfo_t *info, void *ctx) {
     park_thread_forever();
 }
 
-void KelivoISHInstallCrashGuards(void) {
+void OrviaISHInstallCrashGuards(void) {
     static char altstack[SIGSTKSZ];
     stack_t ss = {.ss_sp = altstack, .ss_size = SIGSTKSZ};
     sigaltstack(&ss, NULL);
 
     struct sigaction sa = {0};
-    sa.sa_sigaction = kelivo_jit_crash_handler;
+    sa.sa_sigaction = orvia_jit_crash_handler;
     sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
     sigaction(SIGSEGV, &sa, NULL);
     sigaction(SIGBUS, &sa, NULL);
@@ -106,13 +106,13 @@ void KelivoISHInstallCrashGuards(void) {
     sigaction(SIGTRAP, &sa, NULL);
 }
 
-static void kelivo_die_handler(const char *msg) {
+static void orvia_die_handler(const char *msg) {
     char buf[4096];
     int len = snprintf(buf, sizeof(buf), "\n=== iSH fatal: %s ===\n", msg);
     if (len > 0) write(STDERR_FILENO, buf, (size_t)len);
     park_thread_forever();
 }
 
-void KelivoISHInstallDieGuard(void) {
-    die_handler = kelivo_die_handler;
+void OrviaISHInstallDieGuard(void) {
+    die_handler = orvia_die_handler;
 }

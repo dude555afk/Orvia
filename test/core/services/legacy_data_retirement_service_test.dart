@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/legacy_data_retirement_service.dart';
+import 'package:orvia/core/services/legacy_data_retirement_service.dart';
 
 void main() {
   late Directory directory;
 
   setUp(() async {
-    directory = await Directory.systemTemp.createTemp('kelivo_retirement_');
+    directory = await Directory.systemTemp.createTemp('orvia_retirement_');
   });
 
   tearDown(() async {

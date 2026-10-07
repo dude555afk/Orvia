@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/chat_api_service.dart';
-import 'package:Kelivo/core/utils/multimodal_input_utils.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/chat_api_service.dart';
+import 'package:orvia/core/utils/multimodal_input_utils.dart';
 
 ProviderConfig _openAiConfig(String baseUrl) {
   return ProviderConfig(
@@ -88,7 +88,7 @@ Future<File> _tempPng(String prefix) async {
 void main() {
   group('ChatApiService text-only image filtering', () {
     test('removes OpenAI image_url parts when OCR is inactive', () async {
-      final file = await _tempPng('kelivo_openai_text_only_filter_');
+      final file = await _tempPng('orvia_openai_text_only_filter_');
       final body = await _captureJsonRequest(
         (baseUrl) {
           return ChatApiService.sendMessageStream(
@@ -172,7 +172,7 @@ void main() {
     );
 
     test('removes Claude image blocks when OCR is inactive', () async {
-      final file = await _tempPng('kelivo_claude_text_only_filter_');
+      final file = await _tempPng('orvia_claude_text_only_filter_');
       final body = await _captureJsonRequest(
         (baseUrl) {
           return ChatApiService.sendMessageStream(
@@ -205,7 +205,7 @@ void main() {
     });
 
     test('removes Gemini inline_data parts when OCR is inactive', () async {
-      final file = await _tempPng('kelivo_gemini_text_only_filter_');
+      final file = await _tempPng('orvia_gemini_text_only_filter_');
       final body = await _captureJsonRequest(
         (baseUrl) {
           return ChatApiService.sendMessageStream(

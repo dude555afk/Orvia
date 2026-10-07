@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/chat_api_service.dart';
-import 'package:Kelivo/core/services/api/providers/google_gemini.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/core/utils/multimodal_input_utils.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/chat_api_service.dart';
+import 'package:orvia/core/services/api/providers/google_gemini.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/utils/multimodal_input_utils.dart';
 import 'support/collect_generation.dart';
 
 ProviderConfig _geminiConfig(String baseUrl) {

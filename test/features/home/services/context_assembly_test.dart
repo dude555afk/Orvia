@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/logging/context_log_models.dart';
-import 'package:Kelivo/core/utils/token_estimator.dart';
-import 'package:Kelivo/features/home/services/context_assembly.dart';
-import 'package:Kelivo/features/home/services/context_usage_service.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/logging/context_log_models.dart';
+import 'package:orvia/core/utils/token_estimator.dart';
+import 'package:orvia/features/home/services/context_assembly.dart';
+import 'package:orvia/features/home/services/context_usage_service.dart';
 
 Map<String, dynamic> tagged(
   String role,
@@ -14,7 +14,7 @@ Map<String, dynamic> tagged(
 ) => {
   'role': role,
   'content': segments.map((s) => s.$2).join(),
-  kelivoContextSegmentsKey: [
+  orviaContextSegmentsKey: [
     for (final segment in segments)
       ContextSegmentTags.item(source: segment.$1, length: segment.$2.length),
   ],

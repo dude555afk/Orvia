@@ -2,15 +2,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/logging/context_log_models.dart';
-import 'package:Kelivo/core/services/logging/context_logger.dart';
-import 'package:Kelivo/core/services/search/search_tool_service.dart';
-import 'package:Kelivo/features/home/services/message_builder_service.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/logging/context_log_models.dart';
+import 'package:orvia/core/services/logging/context_logger.dart';
+import 'package:orvia/core/services/search/search_tool_service.dart';
+import 'package:orvia/features/home/services/message_builder_service.dart';
 
 import '../../../support/business_test_harness.dart';
 
@@ -56,7 +56,7 @@ MessageBuilderService _service({
 
 bool _hasSegmentsKey(List<Map<String, dynamic>> messages) {
   return messages.any(
-    (message) => message.containsKey(kelivoContextSegmentsKey),
+    (message) => message.containsKey(orviaContextSegmentsKey),
   );
 }
 
@@ -223,7 +223,7 @@ void main() {
       currentConversation: Conversation(title: 'test'),
     );
 
-    expect(apiMessages.first.containsKey(kelivoContextSegmentsKey), isTrue);
+    expect(apiMessages.first.containsKey(orviaContextSegmentsKey), isTrue);
     expect(
       apiMessages.first[MessageBuilderService.internalRevisionIdKey],
       'u1',

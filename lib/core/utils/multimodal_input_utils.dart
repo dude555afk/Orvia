@@ -4,15 +4,15 @@ import 'dart:typed_data';
 import '../models/chat_input_data.dart';
 import '../../utils/sandbox_path_resolver.dart';
 
-const String multimodalInternalMediaPathsKey = '_kelivo_media_paths';
-const String multimodalInternalRevisionIdKey = '_kelivo_revision_id';
+const String multimodalInternalMediaPathsKey = '_orvia_media_paths';
+const String multimodalInternalRevisionIdKey = '_orvia_revision_id';
 
 /// Internal message key listing a user message's document attachments as
 /// `{uri, name, mime}` entries — the `FilePart`s that are not images, audio
 /// or video. They normally reach the model as extracted text; this key lets a
 /// provider that can hand a file to a sandbox take the file itself instead.
-/// Stripped before anything reaches the wire, like the other `_kelivo_` keys.
-const String multimodalInternalDocumentPathsKey = '_kelivo_document_paths';
+/// Stripped before anything reaches the wire, like the other `_orvia_` keys.
+const String multimodalInternalDocumentPathsKey = '_orvia_document_paths';
 
 /// Extensions of files that are data to compute over rather than prose to
 /// read: a sandbox with pandas makes more of them than the context window
@@ -48,7 +48,7 @@ bool isSandboxDataFile({required String fileName, required String mime}) {
   return _sandboxDataFileExtensions.contains(ext);
 }
 
-/// One `_kelivo_document_paths` entry.
+/// One `_orvia_document_paths` entry.
 typedef InternalDocumentRef = ({String uri, String name, String mime});
 
 Map<String, dynamic> encodeInternalDocumentRef(InternalDocumentRef ref) =>
@@ -74,10 +74,10 @@ List<InternalDocumentRef> parseInternalDocumentRefs(dynamic raw) {
 /// Provider state stored against an assistant message and carried into the
 /// next request under an internal key, which every provider strips before
 /// anything reaches the wire.
-const String multimodalInternalClaudeContainerKey = '_kelivo_claude_container';
-const String multimodalInternalClaudeTurnKey = '_kelivo_claude_turn';
+const String multimodalInternalClaudeContainerKey = '_orvia_claude_container';
+const String multimodalInternalClaudeTurnKey = '_orvia_claude_turn';
 const String multimodalInternalGeminiThoughtSignatureKey =
-    '_kelivo_gemini_thought_signature';
+    '_orvia_gemini_thought_signature';
 
 bool isImageMime(String mime) => mime.toLowerCase().startsWith('image/');
 
@@ -160,7 +160,7 @@ String resolveDocumentAttachmentMime(DocumentAttachment attachment) {
   return mime;
 }
 
-/// Parsed form of one `_kelivo_media_paths` entry (legacy [String] or map).
+/// Parsed form of one `_orvia_media_paths` entry (legacy [String] or map).
 ///
 /// Wire contract:
 /// - bare [String] URI, or
@@ -210,7 +210,7 @@ InternalMediaRef? parseInternalMediaRef(
   return (uri: uri, mime: null, unavailable: false);
 }
 
-/// Encode a structured media ref for `_kelivo_media_paths`.
+/// Encode a structured media ref for `_orvia_media_paths`.
 ///
 /// Writes `{uri, mime?, unavailable?}`. Writers should skip unavailable parts
 /// rather than encoding them; [unavailable] is only for rare diagnostic cases.
@@ -228,7 +228,7 @@ Map<String, dynamic> encodeInternalMediaRef({
   };
 }
 
-/// Parse usable refs from a `_kelivo_media_paths` list value.
+/// Parse usable refs from a `_orvia_media_paths` list value.
 ///
 /// Skips unavailable map entries unless [includeUnavailable] is true.
 List<InternalMediaRef> parseInternalMediaRefs(
@@ -268,7 +268,7 @@ List<Map<String, dynamic>> encodeInternalMediaRefs(
   return out;
 }
 
-/// URI-only view of `_kelivo_media_paths` (String|Map entries).
+/// URI-only view of `_orvia_media_paths` (String|Map entries).
 /// Unavailable map entries are omitted.
 List<String> internalMediaPathsFromRaw(dynamic raw) {
   return [for (final ref in parseInternalMediaRefs(raw)) ref.uri];

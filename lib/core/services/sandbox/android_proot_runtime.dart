@@ -4,13 +4,13 @@ import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/channel_command_run.dart';
-import 'package:Kelivo/core/services/sandbox/channel_pty_session.dart';
-import 'package:Kelivo/core/services/sandbox/environment_installer.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/channel_command_run.dart';
+import 'package:orvia/core/services/sandbox/channel_pty_session.dart';
+import 'package:orvia/core/services/sandbox/environment_installer.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
 
 /// Android proot [WorkspaceRuntime] over [WorkspaceChannel].
 class AndroidProotRuntime implements WorkspaceStdioRuntime {
@@ -188,7 +188,7 @@ class AndroidProotRuntime implements WorkspaceStdioRuntime {
         env.state.phase != EnvironmentPhase.error) {
       return;
     }
-    final versionFile = File(p.join(rootfsDir.path, kKelivoVersionFile));
+    final versionFile = File(p.join(rootfsDir.path, kOrviaVersionFile));
     if (!await versionFile.exists()) return;
     final parts = (await versionFile.readAsString()).trim().split(
       RegExp(r'\s+'),

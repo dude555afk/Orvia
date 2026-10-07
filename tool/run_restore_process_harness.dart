@@ -7,7 +7,7 @@ import 'package:path/path.dart' as p;
 
 import '../integration_test/support/restore_process_control.dart';
 
-const _bundleIdentifier = 'com.psyche.kelivo.restoreharness';
+const _bundleIdentifier = 'com.dude555afk.orvia.restoreharness';
 const _integrationTestPath =
     'integration_test/restore_process_harness_test.dart';
 const _phaseTimeout = Duration(minutes: 12);
@@ -24,7 +24,7 @@ Future<void> main(List<String> arguments) async {
   final matrixRoot = Directory(
     p.join(
       containerTemporaryDirectory.path,
-      'kelivo_restore_process_harness',
+      'orvia_restore_process_harness',
       matrixRunId,
     ),
   );

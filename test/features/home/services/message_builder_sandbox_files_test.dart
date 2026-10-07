@@ -8,17 +8,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/workspace/workspace_session_sync.dart';
-import 'package:Kelivo/core/utils/multimodal_input_utils.dart';
-import 'package:Kelivo/features/home/services/message_builder_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/workspace/workspace_session_sync.dart';
+import 'package:orvia/core/utils/multimodal_input_utils.dart';
+import 'package:orvia/features/home/services/message_builder_service.dart';
 
 import '../../../support/business_test_harness.dart';
 
@@ -57,7 +57,7 @@ void main() {
   late File notes;
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp('kelivo_sandbox_files');
+    tempDir = await Directory.systemTemp.createTemp('orvia_sandbox_files');
     csv = File('${tempDir.path}/sales.csv')
       ..writeAsStringSync('region,amount\nnorth,1\n');
     notes = File('${tempDir.path}/notes.txt')..writeAsStringSync('read me');

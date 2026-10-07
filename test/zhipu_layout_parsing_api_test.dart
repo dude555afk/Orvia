@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/chat_api_service.dart';
-import 'package:Kelivo/core/services/api/providers/zhipu_layout_parsing.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/chat_api_service.dart';
+import 'package:orvia/core/services/api/providers/zhipu_layout_parsing.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
 
 ProviderConfig _config(
   String baseUrl, {
@@ -178,7 +178,7 @@ void main() {
     });
 
     test('encodes local files as data URIs', () async {
-      final dir = await Directory.systemTemp.createTemp('kelivo_glm_ocr_');
+      final dir = await Directory.systemTemp.createTemp('orvia_glm_ocr_');
       addTearDown(() => dir.delete(recursive: true));
       final file = File('${dir.path}/sample.png');
       await file.writeAsBytes(const [1, 2, 3, 4]);

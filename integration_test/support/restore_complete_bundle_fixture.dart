@@ -5,10 +5,10 @@ import 'package:crypto/crypto.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/services/backup/restore_bundle_preparation.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/services/backup/restore_bundle_preparation.dart';
 
 import 'restore_process_control.dart';
 
@@ -153,7 +153,7 @@ Future<RestoreCompleteBundleFixtureState> prepareCompleteBundleFixture(
   final manifestFile = File(p.join(source.path, 'manifest.json'));
   await manifestFile.writeAsString(
     jsonEncode({
-      'format': 'kelivo-backup',
+      'format': 'orvia-backup',
       'formatVersion': 2,
       'payloadKind': 'sqlite',
       'createdAtUtc': '2026-07-09T00:00:00.000Z',

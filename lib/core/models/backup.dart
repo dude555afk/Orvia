@@ -18,7 +18,7 @@ class WebDavConfig {
     this.url = '',
     this.username = '',
     this.password = '',
-    this.path = 'kelivo_backups',
+    this.path = 'orvia_backups',
     this.userAgent = '',
     this.includeChats = true,
     this.includeFiles = true,
@@ -61,7 +61,7 @@ class WebDavConfig {
       password: (json['password'] as String?) ?? '',
       path: (json['path'] as String?)?.trim().isNotEmpty == true
           ? (json['path'] as String).trim()
-          : 'kelivo_backups',
+          : 'orvia_backups',
       userAgent: (json['userAgent'] as String?) ?? '',
       includeChats: json['includeChats'] as bool? ?? true,
       includeFiles: json['includeFiles'] as bool? ?? true,
@@ -103,7 +103,7 @@ class S3Config {
     this.accessKeyId = '',
     this.secretAccessKey = '',
     this.sessionToken = '',
-    this.prefix = 'kelivo_backups',
+    this.prefix = 'orvia_backups',
     this.pathStyle = true,
     this.userAgent = '',
     this.includeChats = true,
@@ -164,7 +164,7 @@ class S3Config {
       sessionToken: (json['sessionToken'] as String?) ?? '',
       prefix: (json['prefix'] as String?)?.trim().isNotEmpty == true
           ? (json['prefix'] as String).trim()
-          : 'kelivo_backups',
+          : 'orvia_backups',
       pathStyle: json['pathStyle'] as bool? ?? true,
       userAgent: (json['userAgent'] as String?) ?? '',
       includeChats: json['includeChats'] as bool? ?? true,

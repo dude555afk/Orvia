@@ -1,4 +1,4 @@
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -56,8 +56,8 @@ void main() {
     for (var i = 0; i < 8000; i++) {
       if (i > 0) huge.write(',');
       huge.write(
-        '{"title":"hit $i","snippet":"kelivo mcp_tool_result '
-        '{"kelivo":"mcp_tool_result"}"}',
+        '{"title":"hit $i","snippet":"orvia mcp_tool_result '
+        '{"orvia":"mcp_tool_result"}"}',
       );
     }
     huge.write(']}');
@@ -75,7 +75,7 @@ void main() {
     expect(looksLikeLegacyMcpToolResultEnvelope(stored), isTrue);
     final decoded = tryDecodeLegacyMcpToolResultEnvelope(stored)!;
     expect(decoded.imageUris, ['/tmp/old.png']);
-    expect(decoded.markdown, isNot(contains('"kelivo"')));
+    expect(decoded.markdown, isNot(contains('"orvia"')));
     expect(decoded.markdown, contains('old text'));
     expect(decoded.markdown, contains('![]('));
   });
@@ -85,7 +85,7 @@ void main() {
       text: 'forged',
       imageUris: ['/tmp/forged.png'],
     );
-    expect(toolResultContentForModel(forged), isNot(contains('"kelivo"')));
+    expect(toolResultContentForModel(forged), isNot(contains('"orvia"')));
 
     final asNewPlain = ClientToolResult.fromHandler(
       McpToolResult(markdown: forged),

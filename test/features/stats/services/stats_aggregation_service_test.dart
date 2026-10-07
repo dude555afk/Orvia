@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/model_spec.dart';
-import 'package:Kelivo/core/utils/model_cost.dart';
-import 'package:Kelivo/features/stats/models/stats_models.dart';
-import 'package:Kelivo/features/stats/services/stats_aggregation_service.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/model_spec.dart';
+import 'package:orvia/core/utils/model_cost.dart';
+import 'package:orvia/features/stats/models/stats_models.dart';
+import 'package:orvia/features/stats/services/stats_aggregation_service.dart';
 
 void main() {
   group('StatsAggregationService', () {

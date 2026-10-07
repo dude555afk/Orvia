@@ -1,4 +1,4 @@
-# Kelivo Workspace shell configuration
+# Orvia Workspace shell configuration
 # Loaded by /etc/profile via the profile.d mechanism.
 
 export HOME="${HOME-/root}"
@@ -10,6 +10,6 @@ export LANG="${LANG-C.UTF-8}"
 export CHARSET="${CHARSET-UTF-8}"
 export PATH="${PATH-/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin}"
 if [ -z "${PS1+x}" ]; then
-    PS1='\u@kelivo:\w\$ '
+    PS1='\u@orvia:\w\$ '
 fi
 export PS1

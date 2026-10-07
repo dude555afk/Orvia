@@ -151,7 +151,7 @@ class IncomingShareHandlerTest {
     }
 
     @Test fun acceptsPublicFileUrisButNotAppPrivateFiles() {
-        val external = File.createTempFile("kelivo-share", ".zip")
+        val external = File.createTempFile("orvia-share", ".zip")
         try {
             external.writeText("public bytes")
             val payload = IncomingShareHandler.copyShare(context, share(Uri.fromFile(external)), output, "test")

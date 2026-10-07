@@ -20,7 +20,7 @@ index 1af608c..42ad4ad 100644
 +/// Host `nanosleep` is not wired to iSH's `waiting_cond`, so `send_signal`
 +/// (timeout / cancel) cannot wake a guest `sleep`. Wait on `current->pause`
 +/// instead — the same interruptible path as pause(2) / sigsuspend.
-+static int kelivo_sleep_interruptible(struct timespec *rel, struct timespec *rem) {
++static int orvia_sleep_interruptible(struct timespec *rel, struct timespec *rem) {
 +    struct timespec start;
 +    clock_gettime(CLOCK_MONOTONIC, &start);
 +    lock(&current->general_lock);
@@ -60,7 +60,7 @@ index 1af608c..42ad4ad 100644
      struct timespec rem;
 -    if (nanosleep(&req, &rem) < 0)
 -        return errno_map();
-+    int err = kelivo_sleep_interruptible(&req, rem_addr != 0 ? &rem : NULL);
++    int err = orvia_sleep_interruptible(&req, rem_addr != 0 ? &rem : NULL);
 +    if (err < 0) {
 +        if (rem_addr != 0) {
 +            struct timespec_ rem_ts = {.sec = rem.tv_sec, .nsec = rem.tv_nsec};
@@ -83,7 +83,7 @@ index 1af608c..42ad4ad 100644
      struct timespec rem;
 -    if (nanosleep(&req, &rem) < 0)
 -        return errno_map();
-+    int err = kelivo_sleep_interruptible(&req, rem_addr != 0 && !(flags & TIMER_ABSTIME_) ? &rem : NULL);
++    int err = orvia_sleep_interruptible(&req, rem_addr != 0 && !(flags & TIMER_ABSTIME_) ? &rem : NULL);
 +    if (err < 0) {
 +        if (rem_addr != 0 && !(flags & TIMER_ABSTIME_)) {
 +            struct timespec_ rem_ts = {.sec = rem.tv_sec, .nsec = rem.tv_nsec};

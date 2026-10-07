@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:Kelivo/core/models/environment_variable.dart';
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/services/api/tool_call_cancellation.dart';
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tools_service.dart';
-import 'package:Kelivo/features/home/services/tool_approval_service.dart';
+import 'package:orvia/core/models/environment_variable.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/services/api/tool_call_cancellation.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/workspace_tools_service.dart';
+import 'package:orvia/features/home/services/tool_approval_service.dart';
 
 void main() {
   for (final tool in ['write_file', 'edit_file']) {
@@ -20,7 +20,7 @@ void main() {
     ]) {
       test('$tool cancelled during $stage preserves the file', () async {
         final temp = await Directory.systemTemp.createTemp(
-          'kelivo-file-cancel-',
+          'orvia-file-cancel-',
         );
         addTearDown(() => temp.delete(recursive: true));
         final entered = Completer<void>();

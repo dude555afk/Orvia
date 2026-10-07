@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
@@ -13,7 +13,7 @@ void main() {
 
     setUp(() async {
       directory = await Directory.systemTemp.createTemp(
-        'kelivo_fork_conversation_test_',
+        'orvia_fork_conversation_test_',
       );
       repository = ChatDatabaseRepository.open(
         file: File('${directory.path}/chat.sqlite'),

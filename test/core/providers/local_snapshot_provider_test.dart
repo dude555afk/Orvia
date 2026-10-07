@@ -1,18 +1,18 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/providers/local_snapshot_provider.dart';
-import 'package:Kelivo/core/services/backup/backup_cancel_token.dart';
-import 'package:Kelivo/core/services/backup/backup_task_progress.dart';
-import 'package:Kelivo/core/services/backup/data_sync.dart';
-import 'package:Kelivo/core/services/backup/local_snapshot_schedule.dart';
-import 'package:Kelivo/core/services/backup/local_snapshot_service.dart';
-import 'package:Kelivo/core/services/backup/local_snapshot_settings.dart';
-import 'package:Kelivo/core/services/backup/local_snapshot_store.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/providers/local_snapshot_provider.dart';
+import 'package:orvia/core/services/backup/backup_cancel_token.dart';
+import 'package:orvia/core/services/backup/backup_task_progress.dart';
+import 'package:orvia/core/services/backup/data_sync.dart';
+import 'package:orvia/core/services/backup/local_snapshot_schedule.dart';
+import 'package:orvia/core/services/backup/local_snapshot_service.dart';
+import 'package:orvia/core/services/backup/local_snapshot_settings.dart';
+import 'package:orvia/core/services/backup/local_snapshot_store.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
@@ -51,7 +51,7 @@ void main() {
     }
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_snapshot_provider_');
+      root = await Directory.systemTemp.createTemp('orvia_snapshot_provider_');
       database = AppDatabase(NativeDatabase.memory());
       businessPreferences = BusinessPreferences(BusinessRepository(database));
       await businessPreferences.load();

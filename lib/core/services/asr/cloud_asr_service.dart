@@ -764,7 +764,7 @@ class _RealtimeAsrSession implements CloudAsrSession {
 
   String _nextEventId() {
     _eventSequence += 1;
-    return 'kelivo_asr_$_eventSequence';
+    return 'orvia_asr_$_eventSequence';
   }
 
   void _sendJson(Map<String, dynamic> event) {
@@ -1479,7 +1479,7 @@ Uint8List _volcengineConfigFrame(VolcengineAsrOptions options) {
     if (options.language.trim().isNotEmpty) 'language': options.language,
   };
   final body = <String, dynamic>{
-    'user': {'uid': 'kelivo'},
+    'user': {'uid': 'orvia'},
     'audio': audio,
     'request': {
       'model_name': 'bigmodel',
@@ -1734,7 +1734,7 @@ Map<String, dynamic> _openAiSessionUpdate(OpenAiRealtimeAsrOptions options) {
 }
 
 Map<String, dynamic> _dashScopeSessionUpdate(DashScopeAsrOptions options) => {
-  'event_id': 'kelivo_asr_session_update',
+  'event_id': 'orvia_asr_session_update',
   'type': 'session.update',
   'session': {
     'input_audio_format': 'pcm',

@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/android_proot_runtime.dart';
-import 'package:Kelivo/core/services/sandbox/environment_installer.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/android_proot_runtime.dart';
+import 'package:orvia/core/services/sandbox/environment_installer.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
 
 import '../../../support/business_test_harness.dart';
 import 'sandbox_channel_harness.dart';
@@ -30,8 +30,8 @@ void main() {
     await env.setState(
       const EnvironmentState(phase: EnvironmentPhase.ready, arch: 'arm64'),
     );
-    rootfsDir = await Directory.systemTemp.createTemp('kelivo_proot_rootfs_');
-    tmpDir = await Directory.systemTemp.createTemp('kelivo_proot_tmp_');
+    rootfsDir = await Directory.systemTemp.createTemp('orvia_proot_rootfs_');
+    tmpDir = await Directory.systemTemp.createTemp('orvia_proot_tmp_');
     runtime = AndroidProotRuntime(
       channel: workspace.channel,
       env: env,
@@ -86,7 +86,7 @@ void main() {
 
     test('adopts on-disk version file when prefs say not installed', () async {
       File(
-        '${rootfsDir.path}/.kelivo-version',
+        '${rootfsDir.path}/.orvia-version',
       ).writeAsStringSync('ubuntu 24.04.3 arm64\n');
       workspace.probeResult = <String, Object?>{
         'supported': true,
@@ -126,7 +126,7 @@ void main() {
         workspace.probeResult['abi'] = abi;
         await env.setState(EnvironmentState(phase: phase));
         final marker = await File(
-          '${rootfsDir.path}/$kKelivoVersionFile',
+          '${rootfsDir.path}/$kOrviaVersionFile',
         ).writeAsString('ubuntu 24.04.3 $installedArch noble\n');
         final userFile = await File(
           '${rootfsDir.path}/keep.txt',
@@ -175,7 +175,7 @@ void main() {
       ),
     );
     await File(
-      '${rootfsDir.path}/$kKelivoVersionFile',
+      '${rootfsDir.path}/$kOrviaVersionFile',
     ).writeAsString('ubuntu 24.04.3 armhf noble\n');
     expect((await runtime.status()).ready, isTrue);
     expect(env.state.arch, 'armhf');

@@ -3,12 +3,12 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/database/business_settings_router.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/model_spec.dart';
-import 'package:Kelivo/core/models/reasoning_request.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/model_spec/model_defaults_guesser.dart';
+import 'package:orvia/core/database/business_settings_router.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/model_spec.dart';
+import 'package:orvia/core/models/reasoning_request.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/model_spec/model_defaults_guesser.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

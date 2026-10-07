@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/services/backup/local_snapshot_retention.dart';
-import 'package:Kelivo/core/services/backup/local_snapshot_schedule.dart';
-import 'package:Kelivo/core/services/backup/local_snapshot_store.dart';
+import 'package:orvia/core/services/backup/local_snapshot_retention.dart';
+import 'package:orvia/core/services/backup/local_snapshot_schedule.dart';
+import 'package:orvia/core/services/backup/local_snapshot_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
@@ -13,7 +13,7 @@ void main() {
     late LocalSnapshotStore store;
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_local_snapshot_');
+      root = await Directory.systemTemp.createTemp('orvia_local_snapshot_');
       store = LocalSnapshotStore(appDataDirectory: root);
     });
 

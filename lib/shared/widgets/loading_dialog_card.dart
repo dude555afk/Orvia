@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
 
 import '../animations/widgets.dart';
 

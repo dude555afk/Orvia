@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:Kelivo/core/services/mcp/orvia_mcp_presets.dart';
+import 'package:orvia/core/services/mcp/orvia_mcp_presets.dart';
 
 void main() {
   test('starter catalogue has unique valid HTTPS endpoints', () {

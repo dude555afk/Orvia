@@ -50,7 +50,7 @@ final class BusinessStartupGate {
       developer.log(
         'Business migration degraded; entering with defaults and retaining '
         'legacy data for a future retry.',
-        name: 'Kelivo.business.migration',
+        name: 'Orvia.business.migration',
         error: error,
         stackTrace: stackTrace,
       );

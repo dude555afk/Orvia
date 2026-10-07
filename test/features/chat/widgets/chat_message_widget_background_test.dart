@@ -7,26 +7,26 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/tts_provider.dart';
-import 'package:Kelivo/core/services/api/providers/openai/chat_completions_decoder.dart';
-import 'package:Kelivo/core/services/api/providers/openai/openai_tool_transcript.dart';
-import 'package:Kelivo/core/services/api/providers/openai/responses_api.dart';
-import 'package:Kelivo/core/services/api/providers/openai/responses_decoder.dart';
-import 'package:Kelivo/core/services/api/stream/sse_event.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/features/chat/widgets/chat_message_widget.dart';
-import 'package:Kelivo/features/chat/widgets/frosted/frosted_surface.dart';
-import 'package:Kelivo/features/home/controllers/stream_controller.dart'
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/tts_provider.dart';
+import 'package:orvia/core/services/api/providers/openai/chat_completions_decoder.dart';
+import 'package:orvia/core/services/api/providers/openai/openai_tool_transcript.dart';
+import 'package:orvia/core/services/api/providers/openai/responses_api.dart';
+import 'package:orvia/core/services/api/providers/openai/responses_decoder.dart';
+import 'package:orvia/core/services/api/stream/sse_event.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/features/chat/widgets/chat_message_widget.dart';
+import 'package:orvia/features/chat/widgets/frosted/frosted_surface.dart';
+import 'package:orvia/features/home/controllers/stream_controller.dart'
     as home_stream;
-import 'package:Kelivo/features/home/services/ask_user_interaction_service.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/features/home/services/tool_approval_service.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/custom_bottom_sheet.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
+import 'package:orvia/features/home/services/ask_user_interaction_service.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/features/home/services/tool_approval_service.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/custom_bottom_sheet.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
 
 Future<SettingsProvider> _createSettings(
   ChatMessageBackgroundStyle style,
@@ -1413,7 +1413,7 @@ void main() {
                 'id': 'fc_1',
                 'call_id': 'call_late',
                 'name': 'lookup',
-                'arguments': '{"q":"kelivo"}',
+                'arguments': '{"q":"orvia"}',
               },
             }),
           ),

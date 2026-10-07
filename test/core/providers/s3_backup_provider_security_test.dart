@@ -6,12 +6,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/models/backup.dart';
-import 'package:Kelivo/core/providers/s3_backup_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/models/backup.dart';
+import 'package:orvia/core/providers/s3_backup_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
 
 class _FakePathProviderPlatform extends PathProviderPlatform {
   _FakePathProviderPlatform(this.root);
@@ -43,7 +43,7 @@ void main() {
 
     setUp(() async {
       root = await Directory.systemTemp.createTemp(
-        'kelivo_s3_provider_security_',
+        'orvia_s3_provider_security_',
       );
       previousPathProvider = PathProviderPlatform.instance;
       PathProviderPlatform.instance = _FakePathProviderPlatform(root.path);
@@ -100,7 +100,7 @@ void main() {
         );
         await provider.restoreFromItem(
           BackupFileItem(
-            href: Uri.parse('s3://backup-bucket/kelivo_backups/remote_$i.zip'),
+            href: Uri.parse('s3://backup-bucket/orvia_backups/remote_$i.zip'),
             displayName: remoteNames[i],
             size: remoteBackupBytes.length,
             lastModified: null,

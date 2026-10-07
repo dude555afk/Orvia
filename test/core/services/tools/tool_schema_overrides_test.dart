@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/models/tool_schema_override.dart';
-import 'package:Kelivo/core/services/search/search_tool_service.dart';
-import 'package:Kelivo/core/services/tools/tool_schema_overrides.dart';
-import 'package:Kelivo/features/home/services/local_tools_service.dart';
+import 'package:orvia/core/models/tool_schema_override.dart';
+import 'package:orvia/core/services/search/search_tool_service.dart';
+import 'package:orvia/core/services/tools/tool_schema_overrides.dart';
+import 'package:orvia/features/home/services/local_tools_service.dart';
 
 void main() {
   group('ToolSchemaOverrides.apply', () {

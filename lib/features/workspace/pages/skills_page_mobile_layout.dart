@@ -1,10 +1,10 @@
-import 'package:Kelivo/core/services/haptics.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skill_import.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skill_labels.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skills_pane.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
+import 'package:orvia/core/services/haptics.dart';
+import 'package:orvia/features/workspace/widgets/skills/skill_import.dart';
+import 'package:orvia/features/workspace/widgets/skills/skill_labels.dart';
+import 'package:orvia/features/workspace/widgets/skills/skills_pane.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
 import 'package:flutter/material.dart';
 
 class SkillsPageMobileLayout extends StatelessWidget {

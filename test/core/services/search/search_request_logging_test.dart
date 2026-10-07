@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/services/network/request_logger.dart';
-import 'package:Kelivo/core/services/search/providers/tavily_search_service.dart';
-import 'package:Kelivo/core/services/search/search_service.dart';
-import 'package:Kelivo/core/services/search/search_service_usage_service.dart';
+import 'package:orvia/core/services/network/request_logger.dart';
+import 'package:orvia/core/services/search/providers/tavily_search_service.dart';
+import 'package:orvia/core/services/search/search_service.dart';
+import 'package:orvia/core/services/search/search_service_usage_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
@@ -30,7 +30,7 @@ void main() {
   late PathProviderPlatform previousPathProvider;
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp('kelivo_search_logs_');
+    tempDir = await Directory.systemTemp.createTemp('orvia_search_logs_');
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     RequestLogger.saveOutput = true;

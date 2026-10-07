@@ -1,4 +1,4 @@
-#import "KelivoISHFilesystem.h"
+#import "OrviaISHFilesystem.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,7 +20,7 @@ int main(void) {
                 check([fm createDirectoryAtPath:host withIntermediateDirectories:YES attributes:nil error:nil], "mkdir");
                 [binds addObject:@{@"guest":guest, @"host":host}];
             }
-            NSData *context = KelivoISHCreateFilesystem(binds);
+            NSData *context = OrviaISHCreateFilesystem(binds);
             check(context != nil, "context creation");
             [contexts addObject:context];
         }
@@ -31,18 +31,18 @@ int main(void) {
                 for (NSString *guest in @[@"/workspace", @"/chat", @"/skills", @"/tmp"]) {
                     NSString *path = [guest stringByAppendingPathComponent:@"output.txt"];
                     char host[PATH_MAX], reverse[PATH_MAX];
-                    check(KelivoISHTranslatePath(path.UTF8String, inheritedContext, host, sizeof(host)), "forward translation");
+                    check(OrviaISHTranslatePath(path.UTF8String, inheritedContext, host, sizeof(host)), "forward translation");
                     NSString *expected = [NSString stringWithFormat:@"/%@%@/output.txt", index == 0 ? @"a" : @"b", guest];
                     check([@(host) hasSuffix:expected], "other conversation changed mapping");
-                    check(KelivoISHReversePath(host, inheritedContext, reverse, sizeof(reverse)), "reverse translation");
+                    check(OrviaISHReversePath(host, inheritedContext, reverse, sizeof(reverse)), "reverse translation");
                     check(strcmp(reverse, path.UTF8String) == 0, "cwd round trip");
-                    check(!KelivoISHTranslatePath("/workspace-other/file", inheritedContext, host, sizeof(host)), "prefix boundary");
+                    check(!OrviaISHTranslatePath("/workspace-other/file", inheritedContext, host, sizeof(host)), "prefix boundary");
                 }
             }
         }
         char out[PATH_MAX];
-        check(!KelivoISHTranslatePath("/workspace/file", 0, out, sizeof(out)), "unbound context");
-        check(KelivoISHCreateFilesystem(@[@{@"guest":@"/workspace", @"host":@"/missing-kelivo-test-root"}]) == nil, "missing root accepted");
+        check(!OrviaISHTranslatePath("/workspace/file", 0, out, sizeof(out)), "unbound context");
+        check(OrviaISHCreateFilesystem(@[@{@"guest":@"/workspace", @"host":@"/missing-orvia-test-root"}]) == nil, "missing root accepted");
         check([fm removeItemAtPath:root error:nil], "cleanup");
         puts("Concurrent filesystem context checks passed");
     }

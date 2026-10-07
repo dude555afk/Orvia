@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 
-import 'package:Kelivo/features/settings/widgets/custom_theme_widgets.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/shared/widgets/form_sheet.dart';
-import 'package:Kelivo/shared/widgets/ios_settings_rows.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/features/settings/widgets/custom_theme_widgets.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/shared/widgets/form_sheet.dart';
+import 'package:orvia/shared/widgets/ios_settings_rows.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 
 /// One choice in [showOptionSheet].
 class OptionSheetItem<T> {

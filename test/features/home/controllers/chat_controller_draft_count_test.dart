@@ -1,6 +1,6 @@
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/features/home/controllers/chat_controller.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/features/home/controllers/chat_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakeChatService extends ChatService {

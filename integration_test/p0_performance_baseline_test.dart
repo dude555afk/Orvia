@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/markdown_with_highlight.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/markdown_with_highlight.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -30,7 +30,7 @@ void main() {
     var peakRss = ProcessInfo.currentRss;
     final rssBefore = peakRss;
     final databaseRoot = await Directory.systemTemp.createTemp(
-      'kelivo_p0_profile_database_',
+      'orvia_p0_profile_database_',
     );
     try {
       final database = AppDatabase.open(
@@ -92,7 +92,7 @@ void main() {
       final d5Timings = List<FrameTiming>.from(timings);
 
       binding.reportData = {
-        'format': 'kelivo-p0-ui-profile-v1',
+        'format': 'orvia-p0-ui-profile-v1',
         'rssBeforeBytes': rssBefore,
         'rssPeakBytes': peakRss,
         'rssAfterBytes': ProcessInfo.currentRss,

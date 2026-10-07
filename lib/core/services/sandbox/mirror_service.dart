@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:http/http.dart' as http;
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/guest_scripts.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_speed_test.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/guest_scripts.dart';
+import 'package:orvia/core/services/sandbox/mirror_speed_test.dart';
 
 enum MirrorRegion { global, china, europe, asia }
 

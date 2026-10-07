@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/backup/restore_durability.dart';
+import 'package:orvia/core/services/backup/restore_durability.dart';
 
 import '../../../../integration_test/support/restore_process_control.dart';
 import '../../../../integration_test/support/restore_process_hooks.dart';
@@ -112,7 +112,7 @@ void main() {
 
     setUp(() async {
       root = await Directory.systemTemp.createTemp(
-        'kelivo_restore_process_hook_test_',
+        'orvia_restore_process_hook_test_',
       );
       appData = Directory(p.join(root.path, 'app_data'));
       await appData.create();
@@ -126,11 +126,11 @@ void main() {
       final source = File(
         p.join(
           appData.path,
-          '.kelivo_restore',
+          '.orvia_restore',
           'run_$_runId',
           'candidate',
           'database',
-          'kelivo.db',
+          'orvia.db',
         ),
       );
       await source.parent.create(recursive: true);
@@ -146,7 +146,7 @@ void main() {
 
       await hook.renameAndSync(
         source: source,
-        targetPath: p.join(appData.path, 'kelivo.db'),
+        targetPath: p.join(appData.path, 'orvia.db'),
       );
 
       expect(reached, [RestoreProcessFailpoint.candidateDatabaseMoved]);
@@ -158,16 +158,16 @@ void main() {
         final candidate = File(
           p.join(
             appData.path,
-            '.kelivo_restore',
+            '.orvia_restore',
             'run_$_runId',
             'candidate',
             'database',
-            'kelivo.db',
+            'orvia.db',
           ),
         );
         await candidate.parent.create(recursive: true);
         await candidate.writeAsBytes([1, 2, 3], flush: true);
-        final live = File(p.join(appData.path, 'kelivo.db'));
+        final live = File(p.join(appData.path, 'orvia.db'));
         final reached = <RestoreProcessFailpoint>[];
         final hook = RestoreProcessBoundaryDurability(
           appDataDirectory: appData,
@@ -196,7 +196,7 @@ void main() {
         final candidate = Directory(
           p.join(
             appData.path,
-            '.kelivo_restore',
+            '.orvia_restore',
             'run_$_runId',
             'candidate',
             'upload',
@@ -229,7 +229,7 @@ void main() {
 
     test('binds receipt publication to its terminal state', () async {
       final receipts = Directory(
-        p.join(appData.path, '.kelivo_restore', 'run_$_runId', 'receipts'),
+        p.join(appData.path, '.orvia_restore', 'run_$_runId', 'receipts'),
       );
       await receipts.create(recursive: true);
       final temporary = File(
@@ -259,7 +259,7 @@ void main() {
 
   test('durable harness JSON publishes and reads back strictly', () async {
     final root = await Directory.systemTemp.createTemp(
-      'kelivo_restore_process_json_test_',
+      'orvia_restore_process_json_test_',
     );
     addTearDown(() async {
       if (await root.exists()) await root.delete(recursive: true);
@@ -289,7 +289,7 @@ RestoreProcessHarnessControl _control({
 
 String _scenarioRoot() => p.join(
   Directory.systemTemp.path,
-  'kelivo_restore_process_matrix',
+  'orvia_restore_process_matrix',
   _matrixRunId,
   _scenarioId,
 );

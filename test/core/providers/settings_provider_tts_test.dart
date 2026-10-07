@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import '../../support/business_test_harness.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/tts/network_tts.dart';
-import 'package:Kelivo/core/services/tts/tts_text_selection.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/tts/network_tts.dart';
+import 'package:orvia/core/services/tts/tts_text_selection.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

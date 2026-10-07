@@ -432,9 +432,9 @@ class ChatGptOAuthAdapter extends ProviderOAuthAdapter {
     ...super.headers(credentials),
     if (credentials.accountId case final accountId?)
       'chatgpt-account-id': accountId,
-    'originator': 'kelivo',
+    'originator': 'orvia',
     'version': codexClientVersion,
-    'User-Agent': 'Kelivo',
+    'User-Agent': 'Orvia',
     'OpenAI-Beta': 'responses=experimental',
   };
 
@@ -540,7 +540,7 @@ class ChatGptOAuthAdapter extends ProviderOAuthAdapter {
         'state': state,
         'id_token_add_organizations': 'true',
         'codex_cli_simplified_flow': 'true',
-        'originator': 'kelivo',
+        'originator': 'orvia',
       });
       cancellation.check();
       await onPrompt(OAuthLoginPrompt(url: url, browserAuthorization: true));
@@ -782,7 +782,7 @@ class KimiOAuthAdapter extends ProviderOAuthAdapter {
     'User-Agent': 'KimiCLI/1.0',
     'X-Msh-Platform': 'kimi_cli',
     'X-Msh-Version': '1.0',
-    'X-Msh-Device-Name': 'Kelivo',
+    'X-Msh-Device-Name': 'Orvia',
     'X-Msh-Device-Model': Platform.operatingSystem,
     if (deviceId != null) 'X-Msh-Device-Id': deviceId,
   };

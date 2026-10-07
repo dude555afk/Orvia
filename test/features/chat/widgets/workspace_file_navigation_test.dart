@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:Kelivo/features/chat/widgets/produced_files_row.dart';
-import 'package:Kelivo/features/workspace/widgets/files/workspace_file_thumbnail.dart';
+import 'package:orvia/features/chat/widgets/produced_files_row.dart';
+import 'package:orvia/features/workspace/widgets/files/workspace_file_thumbnail.dart';
 
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -9,21 +9,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tool_metadata.dart';
-import 'package:Kelivo/features/chat/widgets/workspace_tool_ui.dart';
-import 'package:Kelivo/features/workspace/widgets/files/file_browser.dart';
-import 'package:Kelivo/features/workspace/widgets/preview/file_preview.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/markdown_with_highlight.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/workspace/workspace_tool_metadata.dart';
+import 'package:orvia/features/chat/widgets/workspace_tool_ui.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser.dart';
+import 'package:orvia/features/workspace/widgets/preview/file_preview.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/markdown_with_highlight.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
 
 import '../../../support/business_test_harness.dart';
 
@@ -42,7 +42,7 @@ void main() {
   late Conversation conversation;
 
   setUp(() async {
-    root = Directory.systemTemp.createTempSync('kelivo_file_navigation_');
+    root = Directory.systemTemp.createTempSync('orvia_file_navigation_');
     File(p.join(root.path, 'note.txt')).writeAsStringSync('preview content');
     Directory(p.join(root.path, 'folder')).createSync();
     File(p.join(root.path, 'folder', 'child.txt')).writeAsStringSync('child');
@@ -115,7 +115,7 @@ void main() {
                 files: [
                   WorkspaceToolFile(
                     path: '/workspace/note.txt',
-                    link: 'kelivo://workspace/note.txt',
+                    link: 'orvia://workspace/note.txt',
                   ),
                 ],
               ).toJson(),
@@ -150,12 +150,12 @@ void main() {
           harness(
             markdown
                 ? const MarkdownWithCodeHighlight(
-                    text: '[folder](kelivo://workspace/folder)',
+                    text: '[folder](orvia://workspace/folder)',
                     conversationId: 'c1',
                   )
                 : const WorkspaceFileChip(
                     path: '/workspace/folder',
-                    link: 'kelivo://workspace/folder',
+                    link: 'orvia://workspace/folder',
                     isDirectory: true,
                     conversationId: 'c1',
                   ),
@@ -207,7 +207,7 @@ void main() {
                 files: [
                   WorkspaceToolFile(
                     path: '/workspace/plot.png',
-                    link: 'kelivo://workspace/plot.png',
+                    link: 'orvia://workspace/plot.png',
                     role: WorkspaceFileRole.created,
                   ),
                 ],
@@ -236,7 +236,7 @@ void main() {
         harness(
           const WorkspaceFileChip(
             path: 'missing.txt',
-            link: 'kelivo://workspace/missing.txt',
+            link: 'orvia://workspace/missing.txt',
             conversationId: 'c1',
           ),
         ),

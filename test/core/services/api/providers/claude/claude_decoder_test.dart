@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/services/api/providers/claude/claude_decoder.dart';
-import 'package:Kelivo/core/services/api/providers/claude/claude_files.dart';
-import 'package:Kelivo/core/services/api/stream/sse_event.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/services/api/providers/claude/claude_decoder.dart';
+import 'package:orvia/core/services/api/providers/claude/claude_files.dart';
+import 'package:orvia/core/services/api/stream/sse_event.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 SseEvent _event(String type, Map<String, dynamic> data) {
@@ -943,7 +943,7 @@ void main() {
               'index': 0,
               'delta': {
                 'type': 'input_json_delta',
-                'partial_json': '{"query":"kelivo"}',
+                'partial_json': '{"query":"orvia"}',
               },
             }),
           )
@@ -973,7 +973,7 @@ void main() {
         'type': 'server_tool_use',
         'id': 'toolu_1',
         'name': 'web_search',
-        'input': {'query': 'kelivo'},
+        'input': {'query': 'orvia'},
       });
     });
 

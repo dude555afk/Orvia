@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/sandbox/ios_ish_runtime.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/sandbox/ios_ish_runtime.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
 
 import 'sandbox_channel_harness.dart';
 

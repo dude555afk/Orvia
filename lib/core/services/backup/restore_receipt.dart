@@ -44,7 +44,7 @@ final class RestoreReceipt {
     required this.previousManifestSha256,
   });
 
-  static const format = 'kelivo.restore-receipt';
+  static const format = 'orvia.restore-receipt';
   static const formatVersion = 2;
   static const candidateManifestPath = 'candidate/manifest.json';
   static const previousManifestPath = 'previous/manifest.json';

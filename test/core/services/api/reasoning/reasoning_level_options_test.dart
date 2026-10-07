@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/model_spec.dart';
-import 'package:Kelivo/core/models/reasoning_request.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/reasoning/reasoning_level_options.dart';
-import 'package:Kelivo/core/services/model_spec/model_spec_resolver.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/model_spec.dart';
+import 'package:orvia/core/models/reasoning_request.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/reasoning/reasoning_level_options.dart';
+import 'package:orvia/core/services/model_spec/model_spec_resolver.dart';
 
 import '../../../../support/business_test_harness.dart';
 
@@ -249,9 +249,9 @@ void main() {
         apiKey: 'test-key',
         baseUrl: 'https://example.com/v1',
         providerType: ProviderKind.openai,
-        models: const ['kelivo-test-effort'],
+        models: const ['orvia-test-effort'],
         modelOverrides: const {
-          'kelivo-test-effort': {
+          'orvia-test-effort': {
             'type': 'chat',
             'abilities': ['reasoning'],
             'reasoning': {
@@ -266,31 +266,31 @@ void main() {
       await settings.setProviderConfig(config.id, config);
       await settings.setReasoningChoice(
         config.id,
-        'kelivo-test-effort',
+        'orvia-test-effort',
         const ReasoningRequest(ReasoningLevel.high),
       );
 
       await commitReasoningChoice(
         settings,
         config,
-        'kelivo-test-effort',
+        'orvia-test-effort',
         null,
         const ReasoningRequest(ReasoningLevel.medium),
       );
       expect(
-        settings.reasoningChoiceFor(config.id, 'kelivo-test-effort'),
+        settings.reasoningChoiceFor(config.id, 'orvia-test-effort'),
         isNull,
       );
 
       await commitReasoningChoice(
         settings,
         config,
-        'kelivo-test-effort',
+        'orvia-test-effort',
         null,
         const ReasoningRequest(ReasoningLevel.high),
       );
       expect(
-        settings.reasoningChoiceFor(config.id, 'kelivo-test-effort'),
+        settings.reasoningChoiceFor(config.id, 'orvia-test-effort'),
         const ReasoningRequest(ReasoningLevel.high),
       );
 
@@ -302,12 +302,12 @@ void main() {
       await commitReasoningChoice(
         settings,
         config,
-        'kelivo-test-effort',
+        'orvia-test-effort',
         assistant,
         const ReasoningRequest(ReasoningLevel.low),
       );
       expect(
-        settings.reasoningChoiceFor(config.id, 'kelivo-test-effort'),
+        settings.reasoningChoiceFor(config.id, 'orvia-test-effort'),
         isNull,
       );
     },

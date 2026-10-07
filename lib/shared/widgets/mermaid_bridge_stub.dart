@@ -745,7 +745,7 @@ class _MermaidInlineWebViewState extends State<_MermaidInlineWebView> {
         return true;
       }
       // Mobile: save directly to gallery
-      final name = 'kelivo-mermaid-${DateTime.now().millisecondsSinceEpoch}';
+      final name = 'orvia-mermaid-${DateTime.now().millisecondsSinceEpoch}';
       final result = await ImageGallerySaverPlus.saveImage(
         bytes,
         quality: 100,

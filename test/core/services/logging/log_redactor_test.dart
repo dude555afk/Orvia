@@ -1,4 +1,4 @@
-import 'package:Kelivo/core/services/logging/log_redactor.dart';
+import 'package:orvia/core/services/logging/log_redactor.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

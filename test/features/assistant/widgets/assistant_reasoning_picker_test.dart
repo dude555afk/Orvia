@@ -4,13 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/models/model_spec.dart';
-import 'package:Kelivo/core/models/reasoning_request.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/features/assistant/widgets/assistant_reasoning_picker.dart';
-import 'package:Kelivo/features/chat/widgets/reasoning_level_sheet.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/custom_bottom_sheet.dart';
+import 'package:orvia/core/models/model_spec.dart';
+import 'package:orvia/core/models/reasoning_request.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/features/assistant/widgets/assistant_reasoning_picker.dart';
+import 'package:orvia/features/chat/widgets/reasoning_level_sheet.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/custom_bottom_sheet.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

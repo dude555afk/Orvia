@@ -6,11 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mcp_client/mcp_client.dart' as mcp;
-import 'package:Kelivo/core/services/sandbox/ios_ish_runtime.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/core/services/mcp/workspace_stdio_transport.dart';
-import 'package:Kelivo/core/services/mcp/workspace_stdio_command.dart';
+import 'package:orvia/core/services/sandbox/ios_ish_runtime.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/mcp/workspace_stdio_transport.dart';
+import 'package:orvia/core/services/mcp/workspace_stdio_command.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -53,7 +53,7 @@ void main() {
           command: r'''node -e '
 const http = require("http");
 const server = http.createServer((req, res) => {
-  const body = "kelivo overlay ok";
+  const body = "orvia overlay ok";
   res.writeHead(200, {"Content-Type": "text/plain", "Content-Length": Buffer.byteLength(body)});
   res.end(body);
 });
@@ -73,7 +73,7 @@ server.listen(0, "127.0.0.1", async () => {
         }
         if (event is CommandExited) expect(event.exitCode, 0);
       }
-      expect(output.toString().trim(), '200:kelivo overlay ok');
+      expect(output.toString().trim(), '200:orvia overlay ok');
     },
     skip:
         !Platform.isIOS || !const bool.fromEnvironment('MCP_STDIO_NODE_SMOKE'),
@@ -150,7 +150,7 @@ server.listen(0, "127.0.0.1", async () => {
       await expectLater(
         requireWorkspaceStdioCommand(
           runtime: runtime,
-          command: 'kelivo-nonexistent-mcp-command',
+          command: 'orvia-nonexistent-mcp-command',
           cwd: '/root',
           environment: const {},
           timeout: const Duration(seconds: 10),

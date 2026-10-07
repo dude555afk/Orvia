@@ -2385,7 +2385,7 @@ class ChatService extends ChangeNotifier {
         try {
           for (final file in regularFiles) {
             final quarantine = File(
-              '${file.path}.kelivo-gc-${candidate.assetId}-'
+              '${file.path}.orvia-gc-${candidate.assetId}-'
               '${candidate.generation}',
             );
             if (await quarantine.exists()) {

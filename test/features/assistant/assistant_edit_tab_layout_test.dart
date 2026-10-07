@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/features/assistant/utils/assistant_edit_tab_layout.dart';
+import 'package:orvia/features/assistant/utils/assistant_edit_tab_layout.dart';
 
 void main() {
   group('assistant edit tab layout', () {

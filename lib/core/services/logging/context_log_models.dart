@@ -5,7 +5,7 @@ import '../memory/memory_block_builder.dart';
 import 'log_payload_elider.dart';
 
 /// Internal per-message key. Stripped before the request is sent.
-const String kelivoContextSegmentsKey = '_kelivo_ctx_segments';
+const String orviaContextSegmentsKey = '_orvia_ctx_segments';
 
 enum ContextSource {
   systemPrompt,
@@ -158,7 +158,7 @@ class ContextSegmentTags {
   }
 
   static List<Map<String, dynamic>> read(Map<String, dynamic> message) {
-    final raw = message[kelivoContextSegmentsKey];
+    final raw = message[orviaContextSegmentsKey];
     if (raw is! List) return const <Map<String, dynamic>>[];
     return [
       for (final e in raw)
@@ -171,10 +171,10 @@ class ContextSegmentTags {
     List<Map<String, dynamic>> tags,
   ) {
     if (tags.isEmpty) {
-      message.remove(kelivoContextSegmentsKey);
+      message.remove(orviaContextSegmentsKey);
       return;
     }
-    message[kelivoContextSegmentsKey] = tags;
+    message[orviaContextSegmentsKey] = tags;
   }
 
   static void replaceWithSingle(

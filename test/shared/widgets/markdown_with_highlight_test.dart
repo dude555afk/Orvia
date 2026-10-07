@@ -3,17 +3,17 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/features/chat/pages/image_viewer_page.dart';
-import 'package:Kelivo/shared/widgets/markdown_line_lexer.dart';
-import 'package:Kelivo/shared/widgets/markdown_with_highlight.dart';
-import 'package:Kelivo/shared/widgets/export_capture_scope.dart';
-import 'package:Kelivo/shared/widgets/mermaid_image_cache.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/theme/palettes.dart';
-import 'package:Kelivo/theme/theme_factory.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/features/chat/pages/image_viewer_page.dart';
+import 'package:orvia/shared/widgets/markdown_line_lexer.dart';
+import 'package:orvia/shared/widgets/markdown_with_highlight.dart';
+import 'package:orvia/shared/widgets/export_capture_scope.dart';
+import 'package:orvia/shared/widgets/mermaid_image_cache.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/theme/palettes.dart';
+import 'package:orvia/theme/theme_factory.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -502,7 +502,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      _markdownHarness('```xml\n<config><name>Kelivo</name></config>\n```'),
+      _markdownHarness('```xml\n<config><name>Orvia</name></config>\n```'),
     );
     await tester.pump();
     expect(find.byType(SelectableHighlightView), findsOneWidget);
@@ -4600,7 +4600,7 @@ press5
       _markdownHarness('''
 <p>\u540C\u4E00\u4E2A HTML \u6BB5\u843D\u91CC\u7684\u7B2C\u4E00\u884C<br>\u8FD9\u91CC\u5E94\u8BE5\u6362\u5230\u7B2C\u4E8C\u884C。</p>
 
-\u8FD9\u91CC\u662F\u666E\u901A Markdown \u94FE\u63A5：[Kelivo GitHub](https://github.com/kelivo/Kelivo)
+\u8FD9\u91CC\u662F\u666E\u901A Markdown \u94FE\u63A5：[Orvia GitHub](https://github.com/orvia/Orvia)
 '''),
     );
     await tester.pump();

@@ -7,11 +7,11 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/theme/theme_factory.dart';
-import 'package:Kelivo/theme/palettes.dart';
-import 'package:Kelivo/core/services/backup/local_snapshot_schedule.dart';
-import 'package:Kelivo/shared/widgets/restore_failure_screen.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/theme/theme_factory.dart';
+import 'package:orvia/theme/palettes.dart';
+import 'package:orvia/core/services/backup/local_snapshot_schedule.dart';
+import 'package:orvia/shared/widgets/restore_failure_screen.dart';
 
 /// Stands in for the platform channel, which never answers under `flutter
 /// test` and would otherwise leave a pending timeout timer behind.
@@ -65,7 +65,7 @@ Future<void> settleDiagnostics(WidgetTester tester) async {
 void main() {
   setUpAll(() async {
     final font =
-        Platform.environment['KELIVO_RECOVERY_FONT'] ??
+        Platform.environment['ORVIA_RECOVERY_FONT'] ??
         'dependencies/gpt_markdown/lib/fonts/JetBrainsMono-Regular.ttf';
     final bytes = await File(font).readAsBytes();
     await (FontLoader(
@@ -162,7 +162,7 @@ void main() {
 
     setUp(() async {
       directory = await Directory.systemTemp.createTemp(
-        'kelivo_restore_failure_screen_',
+        'orvia_restore_failure_screen_',
       );
     });
 
@@ -240,7 +240,7 @@ void main() {
         expect(tester.takeException(), isNull);
         Future<void> capture(String stage) async {
           final destination =
-              Platform.environment['KELIVO_RECOVERY_SCREENSHOTS'];
+              Platform.environment['ORVIA_RECOVERY_SCREENSHOTS'];
           if (destination == null) return;
           await tester.runAsync(() async {
             final boundary =
@@ -304,7 +304,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('Restore this copy?'), findsNothing);
         expect(
-          Directory('${directory.path}/.kelivo_restore').existsSync(),
+          Directory('${directory.path}/.orvia_restore').existsSync(),
           isFalse,
         );
         expect(
@@ -361,7 +361,7 @@ void main() {
         expect(find.text('Choose a snapshot'), findsOneWidget);
         expect(restarts, 0);
         expect(
-          Directory('${directory.path}/.kelivo_restore').existsSync(),
+          Directory('${directory.path}/.orvia_restore').existsSync(),
           isFalse,
         );
       },

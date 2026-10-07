@@ -7,14 +7,14 @@ import 'package:path/path.dart' as p;
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/services/backup/restore_bundle_preparation.dart';
-import 'package:Kelivo/core/services/backup/restore_cutover_executor.dart';
-import 'package:Kelivo/core/services/backup/restore_durability.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_store.dart';
-import 'package:Kelivo/core/services/backup/restore_receipt.dart';
-import 'package:Kelivo/core/services/backup/restore_workspace_lock.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/services/backup/restore_bundle_preparation.dart';
+import 'package:orvia/core/services/backup/restore_cutover_executor.dart';
+import 'package:orvia/core/services/backup/restore_durability.dart';
+import 'package:orvia/core/services/backup/restore_previous_store.dart';
+import 'package:orvia/core/services/backup/restore_receipt.dart';
+import 'package:orvia/core/services/backup/restore_workspace_lock.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +25,7 @@ void main() {
 
     setUp(() async {
       root = await Directory.systemTemp.createTemp(
-        'kelivo_restore_cutover_test_',
+        'orvia_restore_cutover_test_',
       );
       appData = Directory(p.join(root.path, 'app_data'));
       await appData.create();
@@ -36,7 +36,7 @@ void main() {
     });
 
     test('commits database and assets in the first startup pass', () async {
-      final liveDatabase = File(p.join(appData.path, 'kelivo.db'));
+      final liveDatabase = File(p.join(appData.path, 'orvia.db'));
       await _createDatabase(liveDatabase, conversationId: 'old');
       final oldUpload = File(p.join(appData.path, 'upload', 'old.txt'));
       await oldUpload.parent.create();
@@ -77,7 +77,7 @@ void main() {
       );
       expect(
         await _conversationIds(
-          File(p.join(previous.path, 'database', 'kelivo.db')),
+          File(p.join(previous.path, 'database', 'orvia.db')),
         ),
         ['old'],
       );
@@ -108,7 +108,7 @@ void main() {
       );
 
       expect(terminal.state, RestoreReceiptState.committed);
-      expect(await _conversationIds(File(p.join(appData.path, 'kelivo.db'))), [
+      expect(await _conversationIds(File(p.join(appData.path, 'orvia.db'))), [
         'new',
       ]);
       final manifest =
@@ -127,7 +127,7 @@ void main() {
     });
 
     test('rolls back an interrupted candidate database install', () async {
-      final liveDatabase = File(p.join(appData.path, 'kelivo.db'));
+      final liveDatabase = File(p.join(appData.path, 'orvia.db'));
       await _createDatabase(liveDatabase, conversationId: 'old');
       final oldUpload = File(p.join(appData.path, 'upload', 'old.txt'));
       await oldUpload.parent.create();
@@ -164,7 +164,7 @@ void main() {
       expect(
         await _conversationIds(
           File(
-            p.join(prepared.candidateDirectory.path, 'database', 'kelivo.db'),
+            p.join(prepared.candidateDirectory.path, 'database', 'orvia.db'),
           ),
         ),
         ['new'],
@@ -182,7 +182,7 @@ void main() {
     });
 
     test('keeps a divergent committed terminal fail-closed', () async {
-      final liveDatabase = File(p.join(appData.path, 'kelivo.db'));
+      final liveDatabase = File(p.join(appData.path, 'orvia.db'));
       await _createDatabase(liveDatabase, conversationId: 'old');
       final prepared = await _prepareBundle(
         root: root,
@@ -235,7 +235,7 @@ Future<PreparedRestoreBundle> _prepareBundle({
   await extracted.create();
   final settings = File(p.join(extracted.path, 'settings.json'));
   await settings.writeAsString('{"theme":"new"}', flush: true);
-  final database = File(p.join(extracted.path, 'database', 'kelivo.db'));
+  final database = File(p.join(extracted.path, 'database', 'orvia.db'));
   await database.parent.create(recursive: true);
   await _createDatabase(database, conversationId: 'new');
   final databaseInfo = await ChatDatabaseRepository.prepareSnapshotForRestore(
@@ -243,7 +243,7 @@ Future<PreparedRestoreBundle> _prepareBundle({
   );
   final entries = <String, dynamic>{
     'settings.json': await _descriptor(settings),
-    'database/kelivo.db': await _descriptor(database),
+    'database/orvia.db': await _descriptor(database),
   };
   if (includeFiles) {
     final upload = File(p.join(extracted.path, 'upload', 'new.txt'));
@@ -254,7 +254,7 @@ Future<PreparedRestoreBundle> _prepareBundle({
   final manifest = File(p.join(extracted.path, 'manifest.json'));
   await manifest.writeAsString(
     jsonEncode({
-      'format': 'kelivo-backup',
+      'format': 'orvia-backup',
       'formatVersion': 2,
       'payloadKind': 'sqlite',
       'createdAtUtc': '2026-07-09T00:00:00.000Z',
@@ -263,7 +263,7 @@ Future<PreparedRestoreBundle> _prepareBundle({
       'includeFiles': includeFiles,
       'secretsIncluded': true,
       'database': {
-        'entry': 'database/kelivo.db',
+        'entry': 'database/orvia.db',
         'schemaVersion': databaseInfo.schemaVersion,
         'conversationCount': databaseInfo.conversationCount,
         'messageCount': databaseInfo.messageCount,
@@ -342,9 +342,9 @@ final class _ThrowAfterCandidateDatabaseRename implements RestoreDurability {
   }) async {
     await delegate.renameAndSync(source: source, targetPath: targetPath);
     if (!_didThrow &&
-        p.basename(source.path) == 'kelivo.db' &&
+        p.basename(source.path) == 'orvia.db' &&
         p.basename(source.parent.path) == 'database' &&
-        p.equals(targetPath, p.join(appDataDirectory.path, 'kelivo.db')) &&
+        p.equals(targetPath, p.join(appDataDirectory.path, 'orvia.db')) &&
         source.path.contains('${p.separator}candidate${p.separator}')) {
       _didThrow = true;
       throw StateError('injected_after_candidate_database_rename');

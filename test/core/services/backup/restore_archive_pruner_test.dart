@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/backup/restore_archive_pruner.dart';
-import 'package:Kelivo/core/services/backup/restore_workspace_lock.dart';
+import 'package:orvia/core/services/backup/restore_archive_pruner.dart';
+import 'package:orvia/core/services/backup/restore_workspace_lock.dart';
 
 void main() {
   late Directory root;
@@ -27,7 +27,7 @@ void main() {
 
   setUp(() async {
     coldStarts = 0;
-    root = await Directory.systemTemp.createTemp('kelivo_restore_prune_');
+    root = await Directory.systemTemp.createTemp('orvia_restore_prune_');
     completedRun = Directory(
       p.join(
         root.path,

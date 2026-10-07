@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/services/model_catalog/model_catalog_trim.dart';
+import 'package:orvia/core/services/model_catalog/model_catalog_trim.dart';
 
 const catalogProviderIds = <String>[
   'openai',

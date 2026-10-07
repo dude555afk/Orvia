@@ -7,24 +7,24 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/sandbox/environment_dependencies.dart';
-import 'package:Kelivo/core/services/sandbox/environment_installer.dart';
-import 'package:Kelivo/core/services/sandbox/environment_manager.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_service.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_speed_test.dart';
-import 'package:Kelivo/core/services/sandbox/rootfs_source.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/features/workspace/pages/environment_download_page.dart';
-import 'package:Kelivo/features/workspace/pages/mirror_page.dart';
-import 'package:Kelivo/features/workspace/widgets/environment/environment_dependencies_section.dart';
-import 'package:Kelivo/features/workspace/widgets/environment/environment_pane.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/theme/theme_factory.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/sandbox/environment_dependencies.dart';
+import 'package:orvia/core/services/sandbox/environment_installer.dart';
+import 'package:orvia/core/services/sandbox/environment_manager.dart';
+import 'package:orvia/core/services/sandbox/mirror_service.dart';
+import 'package:orvia/core/services/sandbox/mirror_speed_test.dart';
+import 'package:orvia/core/services/sandbox/rootfs_source.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/features/workspace/pages/environment_download_page.dart';
+import 'package:orvia/features/workspace/pages/mirror_page.dart';
+import 'package:orvia/features/workspace/widgets/environment/environment_dependencies_section.dart';
+import 'package:orvia/features/workspace/widgets/environment/environment_pane.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/theme/theme_factory.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
 
 import '../../../core/services/sandbox/dependency_test_runtime.dart'
     show DependencyTestRuntime;
@@ -113,7 +113,7 @@ void main() {
               alpine: alpine,
               mirrors: mirrors,
             );
-      final directory = await Directory.systemTemp.createTemp('kelivo_env_ui_');
+      final directory = await Directory.systemTemp.createTemp('orvia_env_ui_');
       addTearDown(() => directory.delete(recursive: true));
       installer = _Installer(env, directory);
     });

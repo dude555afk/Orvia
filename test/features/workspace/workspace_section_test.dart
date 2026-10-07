@@ -1,30 +1,30 @@
 import 'dart:io';
 
-import 'package:Kelivo/desktop/workspace_dialog.dart';
+import 'package:orvia/desktop/workspace_dialog.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/sandbox/environment_manager.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/core/services/workspace/workspace_binding_actions.dart';
-import 'package:Kelivo/features/chat/widgets/tools_sheet_row.dart';
-import 'package:Kelivo/features/workspace/pages/workspace_files_page.dart';
-import 'package:Kelivo/features/workspace/widgets/files/file_browser.dart';
-import 'package:Kelivo/features/workspace/widgets/workspace_picker.dart';
-import 'package:Kelivo/features/workspace/widgets/workspace_section.dart';
-import 'package:Kelivo/features/workspace/widgets/workspace_default_notice.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/custom_bottom_sheet.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/sandbox/environment_manager.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/workspace/workspace_binding_actions.dart';
+import 'package:orvia/features/chat/widgets/tools_sheet_row.dart';
+import 'package:orvia/features/workspace/pages/workspace_files_page.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser.dart';
+import 'package:orvia/features/workspace/widgets/workspace_picker.dart';
+import 'package:orvia/features/workspace/widgets/workspace_section.dart';
+import 'package:orvia/features/workspace/widgets/workspace_default_notice.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/custom_bottom_sheet.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -161,7 +161,7 @@ void main() {
   late SettingsProvider settings;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('kelivo_workspace_section_');
+    tempDir = Directory.systemTemp.createTempSync('orvia_workspace_section_');
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     database = AppDatabase(NativeDatabase.memory());

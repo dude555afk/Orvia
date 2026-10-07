@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/database/database_installation_gate.dart';
-import 'package:Kelivo/core/database/startup_recovery_service.dart';
-import 'package:Kelivo/core/services/backup/restore_business_lease.dart';
-import 'package:Kelivo/core/services/backup/restore_durability.dart';
-import 'package:Kelivo/core/services/backup/restore_startup_gate.dart';
-import 'package:Kelivo/core/services/backup/restore_workspace_lock.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/database/database_installation_gate.dart';
+import 'package:orvia/core/database/startup_recovery_service.dart';
+import 'package:orvia/core/services/backup/restore_business_lease.dart';
+import 'package:orvia/core/services/backup/restore_durability.dart';
+import 'package:orvia/core/services/backup/restore_startup_gate.dart';
+import 'package:orvia/core/services/backup/restore_workspace_lock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
@@ -22,7 +22,7 @@ void main() {
 
   setUp(() async {
     directory = await Directory.systemTemp.createTemp(
-      'kelivo_startup_recovery_',
+      'orvia_startup_recovery_',
     );
   });
 
@@ -101,7 +101,7 @@ void main() {
     test('sweeps inert OS junk from the restore workspace', () async {
       await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
       final completed = Directory(
-        p.join(directory.path, '.kelivo_restore', 'completed'),
+        p.join(directory.path, '.orvia_restore', 'completed'),
       )..createSync(recursive: true);
       final junk = File(p.join(completed.path, '.DS_Store'))..createSync();
       final realState = File(p.join(completed.path, 'keep.dat'))..createSync();
@@ -115,7 +115,7 @@ void main() {
 
     test('adopts a swapped database when the user repairs', () async {
       await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
-      final other = await Directory.systemTemp.createTemp('kelivo_other_');
+      final other = await Directory.systemTemp.createTemp('orvia_other_');
       addTearDown(() async => other.delete(recursive: true));
       await DatabaseInstallationGate.ensureReady(appDataDirectory: other);
       final swappedId = installedDatabaseId(other);
@@ -161,7 +161,7 @@ void main() {
         p.join(directory.path, 'images', 'a.png'),
       ).writeAsBytesSync(const [1, 2, 3]);
 
-      final destination = await Directory.systemTemp.createTemp('kelivo_dest_');
+      final destination = await Directory.systemTemp.createTemp('orvia_dest_');
       addTearDown(() async => destination.delete(recursive: true));
 
       final exported = await StartupRecoveryService.exportDataCopy(

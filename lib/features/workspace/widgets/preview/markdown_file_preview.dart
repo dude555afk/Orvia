@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/features/workspace/workspace_layout.dart';
-import 'package:Kelivo/shared/widgets/markdown_with_highlight.dart';
-import 'package:Kelivo/shared/widgets/segmented_tabs.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/features/workspace/workspace_layout.dart';
+import 'package:orvia/shared/widgets/markdown_with_highlight.dart';
+import 'package:orvia/shared/widgets/segmented_tabs.dart';
 
 import 'code_file_preview.dart';
 import 'preview_states.dart';

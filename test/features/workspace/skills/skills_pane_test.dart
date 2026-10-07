@@ -1,17 +1,17 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/models/skill_record.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/skills/skills_service.dart';
-import 'package:Kelivo/features/workspace/pages/skills_page.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skill_detail.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skill_import.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skill_labels.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/form_sheet.dart';
-import 'package:Kelivo/shared/widgets/ios_switch.dart';
-import 'package:Kelivo/shared/widgets/markdown_with_highlight.dart';
+import 'package:orvia/core/models/skill_record.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/skills/skills_service.dart';
+import 'package:orvia/features/workspace/pages/skills_page.dart';
+import 'package:orvia/features/workspace/widgets/skills/skill_detail.dart';
+import 'package:orvia/features/workspace/widgets/skills/skill_import.dart';
+import 'package:orvia/features/workspace/widgets/skills/skill_labels.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/form_sheet.dart';
+import 'package:orvia/shared/widgets/ios_switch.dart';
+import 'package:orvia/shared/widgets/markdown_with_highlight.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -48,7 +48,7 @@ void main() {
   FilePicker? previousFilePicker;
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp('kelivo_skills_pane_');
+    tempDir = await Directory.systemTemp.createTemp('orvia_skills_pane_');
     try {
       previousFilePicker = FilePicker.platform;
     } catch (_) {

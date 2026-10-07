@@ -1,9 +1,9 @@
-import 'package:Kelivo/core/models/token_usage.dart';
-import 'package:Kelivo/core/services/api/chat_api_service.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk_handler.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk_ids.dart';
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/core/models/token_usage.dart';
+import 'package:orvia/core/services/api/chat_api_service.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk_handler.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk_ids.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -13,7 +13,7 @@ void main() {
         emitToolCall(
           id: 'call_1',
           name: 'lookup',
-          arguments: const <String, dynamic>{'q': 'kelivo'},
+          arguments: const <String, dynamic>{'q': 'orvia'},
         ),
       ],
       onToolCall: (name, args, {toolCallId}) async => '{"ok":true}',
@@ -314,7 +314,7 @@ void main() {
 
       final streamResult = streamed.whereType<ToolCallResult>().single;
       expect(streamResult.output, markdown);
-      expect(streamResult.output, isNot(contains('"kelivo"')));
+      expect(streamResult.output, isNot(contains('"orvia"')));
       expect(mcpResultImageUris(readMcpResultMetadata(streamResult.metadata)), [
         'https://cdn.example.com/a.png',
         'https://cdn.example.com/b.png',

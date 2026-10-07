@@ -1,28 +1,28 @@
-import 'package:Kelivo/desktop/desktop_settings_page.dart'
+import 'package:orvia/desktop/desktop_settings_page.dart'
     show DesktopProviderDetailPane;
-import 'package:Kelivo/features/provider/pages/provider_network_page.dart';
-import 'package:Kelivo/features/provider/pages/provider_custom_request_page.dart';
-import 'package:Kelivo/features/provider/widgets/oauth_connection_info.dart';
-import 'package:Kelivo/features/provider/widgets/provider_prompt_cache_settings.dart';
-import 'package:Kelivo/shared/widgets/ios_switch.dart';
+import 'package:orvia/features/provider/pages/provider_network_page.dart';
+import 'package:orvia/features/provider/pages/provider_custom_request_page.dart';
+import 'package:orvia/features/provider/widgets/oauth_connection_info.dart';
+import 'package:orvia/features/provider/widgets/provider_prompt_cache_settings.dart';
+import 'package:orvia/shared/widgets/ios_switch.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:Kelivo/core/services/auth/provider_oauth_service.dart';
+import 'package:orvia/core/services/auth/provider_oauth_service.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/features/provider/pages/oauth_provider_detail_page.dart';
-import 'package:Kelivo/features/provider/widgets/add_provider_sheet.dart';
-import 'package:Kelivo/features/provider/widgets/oauth_account_card.dart';
-import 'package:Kelivo/features/provider/widgets/oauth_login_panel.dart';
-import 'package:Kelivo/features/provider/widgets/oauth_message_recovery.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_tile_button.dart';
-import 'package:Kelivo/theme/theme_factory.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/features/provider/pages/oauth_provider_detail_page.dart';
+import 'package:orvia/features/provider/widgets/add_provider_sheet.dart';
+import 'package:orvia/features/provider/widgets/oauth_account_card.dart';
+import 'package:orvia/features/provider/widgets/oauth_login_panel.dart';
+import 'package:orvia/features/provider/widgets/oauth_message_recovery.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_tile_button.dart';
+import 'package:orvia/theme/theme_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';

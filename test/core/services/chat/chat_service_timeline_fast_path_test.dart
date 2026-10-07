@@ -5,7 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
 
 class _FakePathProviderPlatform extends PathProviderPlatform {
   _FakePathProviderPlatform(this.path);
@@ -33,7 +33,7 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp(
-      'kelivo_timeline_fast_path_test_',
+      'orvia_timeline_fast_path_test_',
     );
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     ChatService.timelineCacheFastPathEnabled = true;

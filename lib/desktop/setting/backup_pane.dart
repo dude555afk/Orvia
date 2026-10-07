@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:Kelivo/shared/widgets/ios_time_picker.dart';
+import 'package:orvia/shared/widgets/ios_time_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -31,8 +31,8 @@ import '../../features/backup/pages/local_snapshots_page.dart';
 import '../../core/database/startup_failure_report.dart' show formatBytes;
 import '../widgets/desktop_select_dropdown.dart';
 import '../../theme/app_font_weights.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
 
 class DesktopBackupPane extends StatefulWidget {
   const DesktopBackupPane({super.key});
@@ -108,7 +108,7 @@ class _DesktopBackupPaneState extends State<DesktopBackupPane> {
       url: _url.text.trim(),
       username: _username.text.trim(),
       password: _password.text,
-      path: _path.text.trim().isEmpty ? 'kelivo_backups' : _path.text.trim(),
+      path: _path.text.trim().isEmpty ? 'orvia_backups' : _path.text.trim(),
       userAgent: _webDavUserAgent.text.trim(),
       includeChats: _includeChats,
       includeFiles: _includeFiles,
@@ -140,7 +140,7 @@ class _DesktopBackupPaneState extends State<DesktopBackupPane> {
       password: password ?? _password.text,
       path:
           path ??
-          (_path.text.trim().isEmpty ? 'kelivo_backups' : _path.text.trim()),
+          (_path.text.trim().isEmpty ? 'orvia_backups' : _path.text.trim()),
       userAgent: userAgent ?? _webDavUserAgent.text.trim(),
       includeChats: includeChats ?? _includeChats,
       includeFiles: includeFiles ?? _includeFiles,
@@ -160,7 +160,7 @@ class _DesktopBackupPaneState extends State<DesktopBackupPane> {
       secretAccessKey: _s3SecretAccessKey.text,
       sessionToken: _s3SessionToken.text,
       prefix: _s3Prefix.text.trim().isEmpty
-          ? 'kelivo_backups'
+          ? 'orvia_backups'
           : _s3Prefix.text.trim(),
       pathStyle: _s3PathStyle,
       userAgent: _s3UserAgent.text.trim(),
@@ -204,7 +204,7 @@ class _DesktopBackupPaneState extends State<DesktopBackupPane> {
       prefix:
           prefix ??
           (_s3Prefix.text.trim().isEmpty
-              ? 'kelivo_backups'
+              ? 'orvia_backups'
               : _s3Prefix.text.trim()),
       pathStyle: pathStyle ?? _s3PathStyle,
       userAgent: userAgent ?? _s3UserAgent.text.trim(),
@@ -458,7 +458,7 @@ class _DesktopBackupPaneState extends State<DesktopBackupPane> {
                           style: TextStyle(fontSize: 14),
                           decoration: _deskInputDecoration(
                             context,
-                          ).copyWith(hintText: 'kelivo_backups'),
+                          ).copyWith(hintText: 'orvia_backups'),
                           onChanged: (v) => _applyPartial(path: v),
                         ),
                       ),
@@ -736,7 +736,7 @@ class _DesktopBackupPaneState extends State<DesktopBackupPane> {
                           style: TextStyle(fontSize: 14),
                           decoration: _deskInputDecoration(
                             context,
-                          ).copyWith(hintText: 'kelivo_backups'),
+                          ).copyWith(hintText: 'orvia_backups'),
                           onChanged: (v) => _applyS3Partial(prefix: v),
                         ),
                       ),

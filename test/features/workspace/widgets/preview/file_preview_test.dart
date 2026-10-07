@@ -1,23 +1,23 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/workspace/file_link_resolver.dart';
-import 'package:Kelivo/features/chat/pages/image_viewer_page.dart';
-import 'package:Kelivo/features/settings/widgets/custom_theme_widgets.dart';
-import 'package:Kelivo/features/workspace/widgets/preview/code_file_preview.dart';
-import 'package:Kelivo/features/workspace/widgets/preview/file_preview.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/custom_bottom_sheet.dart';
-import 'package:Kelivo/shared/widgets/ios_tile_button.dart';
-import 'package:Kelivo/shared/widgets/markdown_with_highlight.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/workspace/file_link_resolver.dart';
+import 'package:orvia/features/chat/pages/image_viewer_page.dart';
+import 'package:orvia/features/settings/widgets/custom_theme_widgets.dart';
+import 'package:orvia/features/workspace/widgets/preview/code_file_preview.dart';
+import 'package:orvia/features/workspace/widgets/preview/file_preview.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/custom_bottom_sheet.dart';
+import 'package:orvia/shared/widgets/ios_tile_button.dart';
+import 'package:orvia/shared/widgets/markdown_with_highlight.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -119,12 +119,12 @@ class _RecordingResolver extends FileLinkResolver {
   _RecordingResolver(WorkspaceProvider workspaces)
     : super(workspaces: workspaces);
 
-  final List<KelivoLink> calls = <KelivoLink>[];
+  final List<OrviaLink> calls = <OrviaLink>[];
   File? result;
 
   @override
   Future<FileSystemEntity?> resolveToHostEntry(
-    KelivoLink link, {
+    OrviaLink link, {
     required String conversationId,
     required WorkspaceBinding binding,
   }) async {
@@ -227,7 +227,7 @@ void main() {
   late Directory tempDir;
 
   setUp(() {
-    tempDir = Directory.systemTemp.createTempSync('kelivo_preview_');
+    tempDir = Directory.systemTemp.createTempSync('orvia_preview_');
   });
 
   tearDown(() {
@@ -632,7 +632,7 @@ void main() {
     expect(find.byType(MarkdownWithCodeHighlight), findsNothing);
   });
 
-  testWidgets('kelivo://workspace tap calls the injected resolver', (
+  testWidgets('orvia://workspace tap calls the injected resolver', (
     tester,
   ) async {
     final previewFile = File(p.join(tempDir.path, 'foo.txt'))
@@ -674,7 +674,7 @@ void main() {
           supportedLocales: AppLocalizations.supportedLocales,
           home: const Scaffold(
             body: MarkdownWithCodeHighlight(
-              text: '[foo](kelivo://workspace/foo.txt)',
+              text: '[foo](orvia://workspace/foo.txt)',
             ),
           ),
         ),
@@ -690,7 +690,7 @@ void main() {
     }
 
     expect(resolver.calls, hasLength(1));
-    expect(resolver.calls.single.kind, KelivoLinkKind.workspaceFile);
+    expect(resolver.calls.single.kind, OrviaLinkKind.workspaceFile);
     expect(resolver.calls.single.relativePath, 'foo.txt');
     expect(find.byType(CodeFilePreview), findsOneWidget);
   });

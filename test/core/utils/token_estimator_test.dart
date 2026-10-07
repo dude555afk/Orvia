@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/providers/settings_provider.dart' show ProviderKind;
-import 'package:Kelivo/core/utils/token_estimator.dart';
+import 'package:orvia/core/providers/settings_provider.dart' show ProviderKind;
+import 'package:orvia/core/utils/token_estimator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -30,7 +30,7 @@ void main() {
         ('\u4F60\u597Dhello', 7),
         ('\u4F60\u597D\u4E16\u754C', 4),
         ('function add(a, b) {\n  return a + b;\n}', 15),
-        ('{"name":"kelivo","count":12}', 9),
+        ('{"name":"orvia","count":12}', 9),
         ('Café über uns', 4),
         ('Привет мир', 2),
         ('🏀🔥', 3),
@@ -151,7 +151,7 @@ void main() {
     final samples = <String>[
       'The quick brown fox jumps over the lazy dog.',
       'function add(a, b) {\n  return a + b;\n}',
-      '{"name":"kelivo","count":12}',
+      '{"name":"orvia","count":12}',
       '\u4EBA\u5DE5\u667A\u80FD\u6280\u672F\u53D1\u5C55\u8FC5\u901F',
       'こんにちはみなさん',
     ];
@@ -169,7 +169,7 @@ void main() {
     }
 
     final script = File(
-      '${Directory.systemTemp.path}/kelivo_tokenx_crosscheck.js',
+      '${Directory.systemTemp.path}/orvia_tokenx_crosscheck.js',
     );
     await script.writeAsString(_tokenxJsReference);
     final result = await Process.run('node', [

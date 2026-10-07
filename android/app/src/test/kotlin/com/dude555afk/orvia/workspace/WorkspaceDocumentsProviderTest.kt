@@ -47,7 +47,7 @@ class WorkspaceDocumentsProviderTest {
     fun setUp() {
         val context = RuntimeEnvironment.getApplication()
         appData = context.getDir("flutter", Context.MODE_PRIVATE).canonicalFile
-        database = SQLiteDatabase.openOrCreateDatabase(File(appData, "kelivo.db"), null)
+        database = SQLiteDatabase.openOrCreateDatabase(File(appData, "orvia.db"), null)
         database.execSQL("CREATE TABLE extension_entity_rows (kind TEXT, id TEXT, sort_order INTEGER, payload TEXT, PRIMARY KEY (kind, id))")
         database.enableWriteAheadLogging()
         provider = WorkspaceDocumentsProvider()
@@ -117,9 +117,9 @@ class WorkspaceDocumentsProviderTest {
     fun exposesNamedWorkspacesWithoutFlutterOrDuplicateDatabase() {
         workspace()
         workspace("two", "\u53E6\u4E00\u4E2A\u5DE5\u4F5C\u533A")
-        assertEquals(listOf("Kelivo"), provider.queryRoots(null).strings(Root.COLUMN_TITLE))
+        assertEquals(listOf("Orvia"), provider.queryRoots(null).strings(Root.COLUMN_TITLE))
         assertEquals(listOf("\u5DE5\u4F5C\u533A\u4E00", "\u53E6\u4E00\u4E2A\u5DE5\u4F5C\u533A"), children().strings(Document.COLUMN_DISPLAY_NAME))
-        assertTrue(File(appData, "kelivo.db").exists())
+        assertTrue(File(appData, "orvia.db").exists())
     }
 
     @Test
@@ -128,7 +128,7 @@ class WorkspaceDocumentsProviderTest {
         provider.queryRoots(arrayOf(Root.COLUMN_TITLE)).use {
             assertEquals(1, it.columnCount)
             assertTrue(it.moveToFirst())
-            assertEquals("Kelivo", it.getString(0))
+            assertEquals("Orvia", it.getString(0))
         }
         children().use {
             assertTrue(it.moveToFirst())
@@ -167,7 +167,7 @@ class WorkspaceDocumentsProviderTest {
     fun rejectsAnOpenedDescriptorThatMovedOutsideTheWorkspace() {
         val root = workspace()
         File(root, "hello.txt").writeText("hello")
-        DocumentDescriptorOsShadow.openedPath = File(appData, "kelivo.db").path
+        DocumentDescriptorOsShadow.openedPath = File(appData, "orvia.db").path
         assertThrows(FileNotFoundException::class.java) {
             provider.openDocument("workspace/one/hello.txt", "r", null)
         }
@@ -203,7 +203,7 @@ class WorkspaceDocumentsProviderTest {
                 SharedPathFileObserverShadow.emit(root, FileObserver.CREATE, "new.txt")
                 shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(200))
                 assertEquals("File notifications must survive cursor replacement", 1, notifications)
-                SharedPathFileObserverShadow.emit(appData, FileObserver.MODIFY, "kelivo.db-wal")
+                SharedPathFileObserverShadow.emit(appData, FileObserver.MODIFY, "orvia.db-wal")
                 shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(200))
                 assertEquals("Registry notifications must survive cursor replacement", 2, notifications)
             }
@@ -232,17 +232,17 @@ class WorkspaceDocumentsProviderTest {
         try {
             first.close()
             first.close()
-            SharedPathFileObserverShadow.emit(appData, FileObserver.MODIFY, "kelivo.db-shm")
+            SharedPathFileObserverShadow.emit(appData, FileObserver.MODIFY, "orvia.db-shm")
             shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(200))
             assertEquals(0, secondChanges)
             assertEquals(0, listChanges)
-            SharedPathFileObserverShadow.emit(appData, FileObserver.MODIFY, "kelivo.db-wal")
+            SharedPathFileObserverShadow.emit(appData, FileObserver.MODIFY, "orvia.db-wal")
             shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(200))
             assertEquals(1, secondChanges)
             assertEquals(1, listChanges)
             second.close()
             assertEquals(setOf(appData.path), SharedPathFileObserverShadow.activePaths())
-            SharedPathFileObserverShadow.emit(appData, FileObserver.MODIFY, "kelivo.db-wal")
+            SharedPathFileObserverShadow.emit(appData, FileObserver.MODIFY, "orvia.db-wal")
             shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(200))
             assertEquals(2, listChanges)
         } finally {
@@ -307,7 +307,7 @@ class WorkspaceDocumentsProviderTest {
         workspace("linked", kind = "linked")
         workspace("../bad")
         assertEquals(listOf("workspace/one"), children().strings(Document.COLUMN_DOCUMENT_ID))
-        assertThrows(FileNotFoundException::class.java) { provider.queryDocument("workspace/linked/kelivo.db", null) }
+        assertThrows(FileNotFoundException::class.java) { provider.queryDocument("workspace/linked/orvia.db", null) }
     }
 
     @Test
@@ -316,7 +316,7 @@ class WorkspaceDocumentsProviderTest {
         val other = workspace("two")
         File(root, "ok.txt").writeText("one")
         File(other, "ok.txt").writeText("two")
-        for (id in listOf("workspace/one/../../../kelivo.db", "workspace/one/./ok.txt", "workspace/one//ok.txt", "workspace/one/a\u0000b", "workspace/unknown", "/etc/passwd")) {
+        for (id in listOf("workspace/one/../../../orvia.db", "workspace/one/./ok.txt", "workspace/one//ok.txt", "workspace/one/a\u0000b", "workspace/unknown", "/etc/passwd")) {
             assertThrows(FileNotFoundException::class.java) { provider.queryDocument(id, null) }
         }
         assertFalse(provider.isChildDocument("workspace/one", "workspace/two/ok.txt"))
@@ -331,7 +331,7 @@ class WorkspaceDocumentsProviderTest {
         Files.createSymbolicLink(File(root, "private").toPath(), appData.toPath())
         Files.createSymbolicLink(File(root, "alias.txt").toPath(), File(root, "ok.txt").toPath())
         assertEquals(listOf("alias.txt", "ok.txt"), children("workspace/one").strings(Document.COLUMN_DISPLAY_NAME))
-        assertThrows(FileNotFoundException::class.java) { provider.openDocument("workspace/one/private/kelivo.db", "r", null) }
+        assertThrows(FileNotFoundException::class.java) { provider.openDocument("workspace/one/private/orvia.db", "r", null) }
     }
 
     @Test
@@ -340,7 +340,7 @@ class WorkspaceDocumentsProviderTest {
         root.delete()
         Files.createSymbolicLink(root.toPath(), appData.toPath())
         assertTrue(children().strings(Document.COLUMN_DOCUMENT_ID).isEmpty())
-        assertThrows(FileNotFoundException::class.java) { provider.queryDocument("workspace/one/kelivo.db", null) }
+        assertThrows(FileNotFoundException::class.java) { provider.queryDocument("workspace/one/orvia.db", null) }
     }
 
     @Test
@@ -354,7 +354,7 @@ class WorkspaceDocumentsProviderTest {
     @Test
     fun missingOrUnsupportedDatabaseIsNotCreatedOrChanged() {
         database.close()
-        val file = File(appData, "kelivo.db")
+        val file = File(appData, "orvia.db")
         file.delete()
         assertTrue(children().strings(Document.COLUMN_DOCUMENT_ID).isEmpty())
         assertFalse(file.exists())

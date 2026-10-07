@@ -6,8 +6,8 @@ import '../../icons/lucide_adapter.dart' as lucide;
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/ios_switch.dart';
 import '../../core/providers/hotkey_provider.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
+import 'package:orvia/theme/app_font_weights.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
 
 class DesktopHotkeysPane extends StatefulWidget {
   const DesktopHotkeysPane({super.key});

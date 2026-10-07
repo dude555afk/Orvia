@@ -27,7 +27,7 @@ class WorkspaceToolContext {
   }) {
     final placeholder = p.join(
       Directory.systemTemp.path,
-      'kelivo-skills-only-unused',
+      'orvia-skills-only-unused',
     );
     final epoch = DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
     return WorkspaceToolContext(

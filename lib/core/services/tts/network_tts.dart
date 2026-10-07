@@ -814,7 +814,8 @@ const Map<String, List<int>> fishAudioSampleRates = <String, List<int>>{
 int networkTtsMaxCharsPerRequest(TtsServiceOptions options) =>
     options is GroqTtsOptions ? GroqTtsOptions.maxCharsPerRequest : 220;
 
-typedef EdgeTtsSynthesizer = Future<Uint8List> Function(String text, String voice);
+typedef EdgeTtsSynthesizer =
+    Future<Uint8List> Function(String text, String voice);
 
 typedef QwenAudioWebSocketConnector =
     Future<WebSocket> Function(String url, {Map<String, dynamic>? headers});
@@ -934,14 +935,21 @@ class NetworkTtsService {
     EdgeTtsSynthesizer? synthesizer,
   ) async {
     if (await (cancelled?.call() ?? false)) throw _Cancelled();
-    final voice = opt.voice.trim().isEmpty ? 'en-US-AriaNeural' : opt.voice.trim();
+    final voice = opt.voice.trim().isEmpty
+        ? 'en-US-AriaNeural'
+        : opt.voice.trim();
     final audio = await (synthesizer ?? _synthesizeEdgeNeural)(text, voice);
     if (await (cancelled?.call() ?? false)) throw _Cancelled();
-    if (audio.isEmpty) throw const FormatException('Edge Neural returned empty audio.');
+    if (audio.isEmpty) {
+      throw const FormatException('Edge Neural returned empty audio.');
+    }
     return NetworkTtsResult(bytes: audio, mime: 'audio/mpeg');
   }
 
-  static Future<Uint8List> _synthesizeEdgeNeural(String text, String voice) async {
+  static Future<Uint8List> _synthesizeEdgeNeural(
+    String text,
+    String voice,
+  ) async {
     final tts = FlutterEdgeTts(
       voice: voice,
       outputFormat: EdgeTtsOutputFormat.audio24Khz96KbitrateMonoMp3,
@@ -1114,7 +1122,7 @@ class NetworkTtsService {
               ..headers['Content-Type'] = 'application/ssml+xml'
               ..headers['X-Microsoft-OutputFormat'] =
                   'audio-24khz-96kbitrate-mono-mp3'
-              ..headers['User-Agent'] = 'Kelivo'
+              ..headers['User-Agent'] = 'Orvia'
               ..body = body;
         resp = await c.send(req);
         if (await cancellationRequested()) {

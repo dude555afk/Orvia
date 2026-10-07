@@ -6,10 +6,10 @@ import 'package:http/http.dart' as http;
 
 import '../search_service.dart';
 
-class KelivoSearchService extends SearchService<KelivoOptions> {
-  KelivoSearchService({super.client});
+class OrviaSearchService extends SearchService<OrviaOptions> {
+  OrviaSearchService({super.client});
 
-  static const _mask = 'kelivo';
+  static const _mask = 'orvia';
   static const _payload = <int>[
     13,
     9,
@@ -48,7 +48,7 @@ class KelivoSearchService extends SearchService<KelivoOptions> {
   }
 
   @override
-  String get name => 'Kelivo';
+  String get name => 'Orvia';
 
   @override
   Widget description(BuildContext context) => const SizedBox.shrink();
@@ -57,7 +57,7 @@ class KelivoSearchService extends SearchService<KelivoOptions> {
   Future<SearchResult> search({
     required String query,
     required SearchCommonOptions commonOptions,
-    required KelivoOptions serviceOptions,
+    required OrviaOptions serviceOptions,
   }) async {
     final ownsClient = client == null;
     // Keep this off DioHttpClient so the built-in token is not written to request logs.
@@ -87,7 +87,7 @@ class KelivoSearchService extends SearchService<KelivoOptions> {
 
       return SearchResult(items: results);
     } catch (e) {
-      throw Exception('Kelivo search failed: $e');
+      throw Exception('Orvia search failed: $e');
     } finally {
       if (ownsClient) httpClient.close();
     }

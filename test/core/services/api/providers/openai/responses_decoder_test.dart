@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/services/api/providers/openai/openai_tool_transcript.dart';
-import 'package:Kelivo/core/services/api/providers/openai/responses_api.dart';
-import 'package:Kelivo/core/services/api/providers/openai/responses_decoder.dart';
-import 'package:Kelivo/core/services/api/stream/sse_event.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk_handler.dart';
-import 'package:Kelivo/features/home/services/tool_approval_service.dart';
+import 'package:orvia/core/services/api/providers/openai/openai_tool_transcript.dart';
+import 'package:orvia/core/services/api/providers/openai/responses_api.dart';
+import 'package:orvia/core/services/api/providers/openai/responses_decoder.dart';
+import 'package:orvia/core/services/api/stream/sse_event.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk_handler.dart';
+import 'package:orvia/features/home/services/tool_approval_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 SseEvent _event(Map<String, dynamic> data) => SseEvent(data: jsonEncode(data));
@@ -73,7 +73,7 @@ void main() {
           'type': 'function_call',
           'call_id': 'call_1',
           'name': 'lookup',
-          'arguments': '{"q":"kelivo"}',
+          'arguments': '{"q":"orvia"}',
         },
       }),
     );
@@ -105,7 +105,7 @@ void main() {
     final call = decoder.takeFunctionCalls().single;
     expect(call.callId, 'call_1');
     expect(call.name, 'lookup');
-    expect(call.decodedArguments['q'], 'kelivo');
+    expect(call.decodedArguments['q'], 'orvia');
     expect(decoder.citations.single['url'], 'https://example.com');
     expect(decoder.outputItems, isNotEmpty);
   });
@@ -138,7 +138,7 @@ void main() {
           'type': 'function_call',
           'call_id': 'call_1',
           'name': 'lookup',
-          'arguments': '{"q":"kelivo"}',
+          'arguments': '{"q":"orvia"}',
         },
       }),
     );
@@ -494,7 +494,7 @@ void main() {
       _event({
         'type': 'response.function_call_arguments.delta',
         'output_index': 0,
-        'delta': '{"q":"kelivo"}',
+        'delta': '{"q":"orvia"}',
       }),
     );
     expect(delta.chunks.whereType<ToolCallDelta>().single.id, 'call_1');
@@ -515,7 +515,7 @@ void main() {
         _event({
           'type': 'response.function_call_arguments.delta',
           'output_index': 0,
-          'delta': '{"q":"kelivo"}',
+          'delta': '{"q":"orvia"}',
         }),
       );
       decoder.accept(
@@ -527,7 +527,7 @@ void main() {
             'id': 'fc_1',
             'call_id': 'call_late',
             'name': 'lookup',
-            'arguments': '{"q":"kelivo"}',
+            'arguments': '{"q":"orvia"}',
           },
         }),
       );

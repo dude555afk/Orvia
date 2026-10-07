@@ -318,9 +318,9 @@ jobs:
             --icon-size 100 \
             --app-drop-link 600 185 \
             "Orvia_macos_${VERSION}.dmg" \
-            "build/macos/Build/Products/Release/kelivo.app" || true
+            "build/macos/Build/Products/Release/orvia.app" || true
           if [ ! -f "Orvia_macos_${VERSION}.dmg" ]; then
-            hdiutil create -volname Orvia -srcfolder build/macos/Build/Products/Release/kelivo.app -ov -format UDZO Orvia_macos_${VERSION}.dmg
+            hdiutil create -volname Orvia -srcfolder build/macos/Build/Products/Release/orvia.app -ov -format UDZO Orvia_macos_${VERSION}.dmg
           fi
 
       - name: 🚀 Publish to Release
@@ -442,7 +442,7 @@ jobs:
           #define MyAppName "Orvia"
           #define MyAppVersion "$env:VERSION"
           #define MyAppPublisher "Orvia"
-          #define MyAppExeName "kelivo.exe"
+          #define MyAppExeName "orvia.exe"
 
           [Setup]
           AppId={{A7B8C9D0-E1F2-4A5B-8C9D-0E1F2A3B4C5D}}
@@ -574,14 +574,14 @@ jobs:
           HERE=${SELF%/*}
           export PATH="${HERE}/usr/bin:${PATH}"
           export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
-          exec "${HERE}/usr/bin/kelivo" "$@"
+          exec "${HERE}/usr/bin/orvia" "$@"
           EOF
           chmod +x AppDir/AppRun
           
           cat > AppDir/orvia.desktop << EOF
           [Desktop Entry]
           Name=Orvia
-          Exec=kelivo
+          Exec=orvia
           Icon=orvia
           Type=Application
           Categories=Utility;
@@ -610,7 +610,7 @@ jobs:
           cp -r build/linux/x64/release/bundle/* deb/opt/orvia/
           
           mkdir -p deb/usr/bin
-          ln -s /opt/orvia/kelivo deb/usr/bin/kelivo
+          ln -s /opt/orvia/orvia deb/usr/bin/orvia
           
           cat > deb/DEBIAN/control << EOF
           Package: orvia
@@ -627,7 +627,7 @@ jobs:
           cat > deb/usr/share/applications/orvia.desktop << EOF
           [Desktop Entry]
           Name=Orvia
-          Exec=/opt/orvia/kelivo
+          Exec=/opt/orvia/orvia
           Icon=orvia
           Type=Application
           Categories=Utility;
@@ -643,12 +643,12 @@ jobs:
           fi
           install -Dm644 "$ICON_SOURCE" deb/usr/share/icons/hicolor/256x256/apps/orvia.png
           
-          cat > deb/opt/orvia/kelivo.sh << 'EOF'
+          cat > deb/opt/orvia/orvia.sh << 'EOF'
           #!/bin/bash
           cd "$(dirname "$0")"
-          ./kelivo "$@"
+          ./orvia "$@"
           EOF
-          chmod +x deb/opt/orvia/kelivo.sh
+          chmod +x deb/opt/orvia/orvia.sh
           
           dpkg-deb --build deb Orvia_linux_${VERSION}_amd64.deb
       - name: 📦 Create RPM package
@@ -689,13 +689,13 @@ jobs:
           cp -r * %{buildroot}/opt/orvia/
           
           mkdir -p %{buildroot}/usr/bin
-          ln -s /opt/orvia/kelivo %{buildroot}/usr/bin/kelivo
+          ln -s /opt/orvia/orvia %{buildroot}/usr/bin/orvia
           
           mkdir -p %{buildroot}/usr/share/applications
           cat > %{buildroot}/usr/share/applications/orvia.desktop << 'DESKTOPEOF'
           [Desktop Entry]
           Name=Orvia
-          Exec=/opt/orvia/kelivo
+          Exec=/opt/orvia/orvia
           Icon=orvia
           Type=Application
           Categories=Utility;
@@ -706,7 +706,7 @@ jobs:
           
           %files
           /opt/orvia/*
-          /usr/bin/kelivo
+          /usr/bin/orvia
           /usr/share/applications/orvia.desktop
           /usr/share/icons/hicolor/256x256/apps/orvia.png
           

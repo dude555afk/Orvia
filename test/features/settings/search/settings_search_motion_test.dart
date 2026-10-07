@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/features/settings/pages/settings_page.dart';
-import 'package:Kelivo/features/settings/widgets/settings_search_entry.dart';
-import 'package:Kelivo/features/settings/widgets/settings_search_view.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_settings_rows.dart';
-import 'package:Kelivo/theme/palettes.dart';
-import 'package:Kelivo/theme/theme_factory.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/features/settings/pages/settings_page.dart';
+import 'package:orvia/features/settings/widgets/settings_search_entry.dart';
+import 'package:orvia/features/settings/widgets/settings_search_view.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_settings_rows.dart';
+import 'package:orvia/theme/palettes.dart';
+import 'package:orvia/theme/theme_factory.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
@@ -21,8 +21,8 @@ import 'package:provider/provider.dart';
 import '../../../support/business_test_harness.dart';
 
 void main() {
-  final output = Platform.environment['KELIVO_SEARCH_MOTION_DIR'];
-  final font = Platform.environment['KELIVO_SEARCH_QA_FONT'];
+  final output = Platform.environment['ORVIA_SEARCH_MOTION_DIR'];
+  final font = Platform.environment['ORVIA_SEARCH_QA_FONT'];
   setUpAll(() async {
     if (font != null) {
       final loader = FontLoader('SettingsSearchQA');

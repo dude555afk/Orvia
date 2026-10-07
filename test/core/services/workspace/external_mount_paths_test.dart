@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:Kelivo/core/services/workspace/host_file_tools.dart';
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/workspace/host_file_tools.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
 
 void main() {
   late Directory root;
@@ -10,7 +10,7 @@ void main() {
   late List<Mount> mounts;
   const guest = '/mounts/My Notes';
   setUp(() async {
-    root = await Directory.systemTemp.createTemp('kelivo_mounts_');
+    root = await Directory.systemTemp.createTemp('orvia_mounts_');
     for (final dir in ['ws', 'chat', 'skills', 'external', 'output']) {
       Directory('${root.path}/$dir').createSync();
     }

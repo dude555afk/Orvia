@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/features/workspace/widgets/environment/environment_labels.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/features/workspace/widgets/environment/environment_labels.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
 
 void main() {
   group('formatDistroVersion', () {

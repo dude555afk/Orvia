@@ -5,8 +5,8 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/workspace/host_file_tools.dart';
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/host_file_tools.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
 
 void main() {
   late Directory tmp;
@@ -14,7 +14,7 @@ void main() {
   late String cwd;
 
   setUp(() async {
-    tmp = await Directory.systemTemp.createTemp('kelivo_host_tools_');
+    tmp = await Directory.systemTemp.createTemp('orvia_host_tools_');
     final workspace = Directory(p.join(tmp.path, 'ws'))..createSync();
     final session = Directory(p.join(tmp.path, 'session'))..createSync();
     final skills = Directory(p.join(tmp.path, 'skills'))..createSync();

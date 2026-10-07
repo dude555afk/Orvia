@@ -16,8 +16,8 @@ import '../widgets/asr_services_section.dart';
 import '../widgets/voice_service_widgets.dart';
 import '../widgets/mimo_reference_audio_picker.dart';
 import '../../../theme/app_font_weights.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
 
 class TtsServicesPage extends StatelessWidget {
   const TtsServicesPage({super.key});
@@ -1107,22 +1107,22 @@ class _NetworkTtsEditorPageState extends State<_NetworkTtsEditorPage> {
                         ),
                         if (_kind != NetworkTtsKind.edgeNeural)
                           _TtsEditorTextField(
-                          label: l10n.ttsServicesFieldApiKeyLabel,
-                          controller: _apiKeyCtl,
-                          obscure: true,
-                        ),
+                            label: l10n.ttsServicesFieldApiKeyLabel,
+                            controller: _apiKeyCtl,
+                            obscure: true,
+                          ),
                         if (_kind != NetworkTtsKind.edgeNeural)
                           _TtsEditorTextField(
-                          label: _kind == NetworkTtsKind.qwenAudio
-                              ? l10n.ttsServicesFieldWorkspaceIdLabel
-                              : l10n.ttsServicesFieldBaseUrlLabel,
-                          controller: _baseCtl,
-                          hint: _kind == NetworkTtsKind.qwenAudio
-                              ? null
-                              : _kind == NetworkTtsKind.azure
-                              ? 'https://<region>.tts.speech.microsoft.com'
-                              : _defaultBaseUrl(_kind),
-                        ),
+                            label: _kind == NetworkTtsKind.qwenAudio
+                                ? l10n.ttsServicesFieldWorkspaceIdLabel
+                                : l10n.ttsServicesFieldBaseUrlLabel,
+                            controller: _baseCtl,
+                            hint: _kind == NetworkTtsKind.qwenAudio
+                                ? null
+                                : _kind == NetworkTtsKind.azure
+                                ? 'https://<region>.tts.speech.microsoft.com'
+                                : _defaultBaseUrl(_kind),
+                          ),
                         if (_kind != NetworkTtsKind.xai &&
                             _kind != NetworkTtsKind.azure &&
                             _kind != NetworkTtsKind.edgeNeural)
@@ -1415,8 +1415,7 @@ class _NetworkTtsEditorPageState extends State<_NetworkTtsEditorPage> {
 
   void _submit() {
     final l10n = AppLocalizations.of(context)!;
-    if (_kind != NetworkTtsKind.edgeNeural &&
-        _apiKeyCtl.text.trim().isEmpty) {
+    if (_kind != NetworkTtsKind.edgeNeural && _apiKeyCtl.text.trim().isEmpty) {
       showAppSnackBar(
         context,
         message: l10n.ttsServicesValidationApiKeyRequired,
@@ -1538,7 +1537,12 @@ class _NetworkTtsEditorPageState extends State<_NetworkTtsEditorPage> {
     final voice = rawVoice.isEmpty ? _defaultVoice(_kind) : rawVoice;
     switch (_kind) {
       case NetworkTtsKind.edgeNeural:
-        return EdgeNeuralTtsOptions(id: initial?.id, enabled: true, name: name, voice: voice);
+        return EdgeNeuralTtsOptions(
+          id: initial?.id,
+          enabled: true,
+          name: name,
+          voice: voice,
+        );
       case NetworkTtsKind.openai:
         return OpenAiTtsOptions(
           id: initial?.id,

@@ -4,7 +4,7 @@ import UniformTypeIdentifiers
 /// Shared by the app and its Share extension. Only completed inbox manifests
 /// become visible to the app; each delivery owns a separate directory.
 enum IncomingShareInbox {
-  static let activationURL = URL(string: "kelivo://share")!
+  static let activationURL = URL(string: "orvia://share")!
   static let maxFiles = 32
 
   enum InboxError: Error { case unavailable, invalidFile, cancelled, empty }
@@ -27,7 +27,7 @@ enum IncomingShareInbox {
   }
 
   static func root() throws -> URL {
-    guard let group = Bundle.main.object(forInfoDictionaryKey: "KelivoShareAppGroup") as? String,
+    guard let group = Bundle.main.object(forInfoDictionaryKey: "OrviaShareAppGroup") as? String,
           let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group)
     else { throw InboxError.unavailable }
     let root = container.appendingPathComponent("IncomingShares", isDirectory: true)

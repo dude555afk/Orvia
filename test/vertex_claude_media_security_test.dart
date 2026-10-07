@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/chat_api_service.dart';
-import 'package:Kelivo/core/utils/multimodal_input_utils.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/chat_api_service.dart';
+import 'package:orvia/core/utils/multimodal_input_utils.dart';
 
 ProviderConfig _vertexClaudeConfig() {
   return ProviderConfig(
@@ -295,7 +295,7 @@ void main() {
           'image/jpeg',
         );
 
-        final dir = await Directory.systemTemp.createTemp('kelivo_vertex_jpg_');
+        final dir = await Directory.systemTemp.createTemp('orvia_vertex_jpg_');
         addTearDown(() async {
           if (await dir.exists()) await dir.delete(recursive: true);
         });

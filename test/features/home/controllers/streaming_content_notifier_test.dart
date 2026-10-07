@@ -1,5 +1,5 @@
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/features/home/controllers/streaming_content_notifier.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/features/home/controllers/streaming_content_notifier.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

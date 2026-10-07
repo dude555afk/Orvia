@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
+import 'package:orvia/core/database/app_database.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -8,7 +8,7 @@ void main() {
     'SQLite execution probe runs on the background database isolate',
     () async {
       final root = await Directory.systemTemp.createTemp(
-        'kelivo_database_isolate_probe_',
+        'orvia_database_isolate_probe_',
       );
       final database = AppDatabase.open(
         file: File('${root.path}/${AppDatabase.databaseFileName}'),
@@ -28,7 +28,7 @@ void main() {
 
   test('SQLite execution probe rejects an empty sample', () async {
     final root = await Directory.systemTemp.createTemp(
-      'kelivo_database_isolate_probe_boundary_',
+      'orvia_database_isolate_probe_boundary_',
     );
     final database = AppDatabase.open(
       file: File('${root.path}/${AppDatabase.databaseFileName}'),

@@ -7,15 +7,15 @@ import 'package:path/path.dart' as p;
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/services/backup/restore_bundle_preparation.dart';
-import 'package:Kelivo/core/services/backup/restore_cutover_executor.dart';
-import 'package:Kelivo/core/services/backup/restore_durability.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_store.dart';
-import 'package:Kelivo/core/services/backup/restore_receipt.dart';
-import 'package:Kelivo/core/services/backup/restore_startup_gate.dart';
-import 'package:Kelivo/core/services/backup/restore_workspace_lock.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/services/backup/restore_bundle_preparation.dart';
+import 'package:orvia/core/services/backup/restore_cutover_executor.dart';
+import 'package:orvia/core/services/backup/restore_durability.dart';
+import 'package:orvia/core/services/backup/restore_previous_store.dart';
+import 'package:orvia/core/services/backup/restore_receipt.dart';
+import 'package:orvia/core/services/backup/restore_startup_gate.dart';
+import 'package:orvia/core/services/backup/restore_workspace_lock.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,7 @@ void main() {
 
     setUp(() async {
       root = await Directory.systemTemp.createTemp(
-        'kelivo_restore_startup_gate_test_',
+        'orvia_restore_startup_gate_test_',
       );
       appData = Directory(p.join(root.path, 'app_data'));
       await appData.create();
@@ -66,7 +66,7 @@ void main() {
     });
 
     test('commits, revalidates, and archives in one startup pass', () async {
-      final liveDatabase = File(p.join(appData.path, 'kelivo.db'));
+      final liveDatabase = File(p.join(appData.path, 'orvia.db'));
       await _createDatabase(liveDatabase, conversationId: 'old');
       final oldUpload = File(p.join(appData.path, 'upload', 'old.txt'));
       await oldUpload.parent.create();
@@ -119,7 +119,7 @@ void main() {
     });
 
     test('reports every cutover stage in order for a pending run', () async {
-      final liveDatabase = File(p.join(appData.path, 'kelivo.db'));
+      final liveDatabase = File(p.join(appData.path, 'orvia.db'));
       await _createDatabase(liveDatabase, conversationId: 'old');
       final oldUpload = File(p.join(appData.path, 'upload', 'old.txt'));
       await oldUpload.parent.create();
@@ -156,7 +156,7 @@ void main() {
     });
 
     test('rolls back and archives in the same startup pass', () async {
-      final liveDatabase = File(p.join(appData.path, 'kelivo.db'));
+      final liveDatabase = File(p.join(appData.path, 'orvia.db'));
       await _createDatabase(liveDatabase, conversationId: 'old');
       final oldUpload = File(p.join(appData.path, 'upload', 'old.txt'));
       await oldUpload.parent.create();
@@ -203,7 +203,7 @@ void main() {
           'run_${prepared.runId}',
           'candidate',
           'database',
-          'kelivo.db',
+          'orvia.db',
         ),
       );
       expect(await _conversationIds(archivedCandidate), ['new']);
@@ -215,7 +215,7 @@ void main() {
 
     test('revalidates and archives an already-terminal active run', () async {
       await _createDatabase(
-        File(p.join(appData.path, 'kelivo.db')),
+        File(p.join(appData.path, 'orvia.db')),
         conversationId: 'old',
       );
       final prepared = await _prepareBundle(
@@ -256,7 +256,7 @@ void main() {
 
     test('resumes an interrupted terminal archive', () async {
       await _createDatabase(
-        File(p.join(appData.path, 'kelivo.db')),
+        File(p.join(appData.path, 'orvia.db')),
         conversationId: 'old',
       );
       final prepared = await _prepareBundle(
@@ -354,7 +354,7 @@ Future<PreparedRestoreBundle> _prepareBundle({
   await extracted.create();
   final settings = File(p.join(extracted.path, 'settings.json'));
   await settings.writeAsString('{"theme":"new"}', flush: true);
-  final database = File(p.join(extracted.path, 'database', 'kelivo.db'));
+  final database = File(p.join(extracted.path, 'database', 'orvia.db'));
   await database.parent.create(recursive: true);
   await _createDatabase(database, conversationId: 'new');
   final databaseInfo = await ChatDatabaseRepository.prepareSnapshotForRestore(
@@ -362,7 +362,7 @@ Future<PreparedRestoreBundle> _prepareBundle({
   );
   final entries = <String, dynamic>{
     'settings.json': await _descriptor(settings),
-    'database/kelivo.db': await _descriptor(database),
+    'database/orvia.db': await _descriptor(database),
   };
   if (includeFiles) {
     final upload = File(p.join(extracted.path, 'upload', 'new.txt'));
@@ -373,7 +373,7 @@ Future<PreparedRestoreBundle> _prepareBundle({
   final manifest = File(p.join(extracted.path, 'manifest.json'));
   await manifest.writeAsString(
     jsonEncode({
-      'format': 'kelivo-backup',
+      'format': 'orvia-backup',
       'formatVersion': 2,
       'payloadKind': 'sqlite',
       'createdAtUtc': '2026-07-09T00:00:00.000Z',
@@ -382,7 +382,7 @@ Future<PreparedRestoreBundle> _prepareBundle({
       'includeFiles': includeFiles,
       'secretsIncluded': true,
       'database': {
-        'entry': 'database/kelivo.db',
+        'entry': 'database/orvia.db',
         'schemaVersion': databaseInfo.schemaVersion,
         'conversationCount': databaseInfo.conversationCount,
         'messageCount': databaseInfo.messageCount,
@@ -461,9 +461,9 @@ final class _ThrowAfterCandidateDatabaseRename implements RestoreDurability {
   }) async {
     await delegate.renameAndSync(source: source, targetPath: targetPath);
     if (!_didThrow &&
-        p.basename(source.path) == 'kelivo.db' &&
+        p.basename(source.path) == 'orvia.db' &&
         p.basename(p.dirname(source.path)) == 'database' &&
-        p.equals(targetPath, p.join(appDataDirectory.path, 'kelivo.db')) &&
+        p.equals(targetPath, p.join(appDataDirectory.path, 'orvia.db')) &&
         source.path.contains('${p.separator}candidate${p.separator}')) {
       _didThrow = true;
       throw StateError('injected_after_candidate_database_rename');

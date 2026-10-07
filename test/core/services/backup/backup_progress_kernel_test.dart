@@ -5,9 +5,9 @@ import 'dart:io';
 import 'package:ffi/ffi.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/backup/backup_cancel_token.dart';
-import 'package:Kelivo/core/services/backup/backup_isolate_runner.dart';
-import 'package:Kelivo/core/services/backup/backup_task_progress.dart';
+import 'package:orvia/core/services/backup/backup_cancel_token.dart';
+import 'package:orvia/core/services/backup/backup_isolate_runner.dart';
+import 'package:orvia/core/services/backup/backup_task_progress.dart';
 
 void main() {
   group('BackupProgress', () {
@@ -233,7 +233,7 @@ void main() {
         final token = BackupCancelToken();
         addTearDown(token.dispose);
         final heartbeat = File(
-          '${Directory.systemTemp.path}/kelivo_backup_timeout_${identityHashCode(token)}.hb',
+          '${Directory.systemTemp.path}/orvia_backup_timeout_${identityHashCode(token)}.hb',
         );
         addTearDown(() async {
           if (await heartbeat.exists()) await heartbeat.delete();
@@ -357,7 +357,7 @@ void main() {
       'acks sqlite close after timeout returns with isolate still alive',
       () async {
         final closedMarker = File(
-          '${Directory.systemTemp.path}/kelivo_sqlite_close_after_timeout_${DateTime.now().microsecondsSinceEpoch}.marker',
+          '${Directory.systemTemp.path}/orvia_sqlite_close_after_timeout_${DateTime.now().microsecondsSinceEpoch}.marker',
         );
         if (closedMarker.existsSync()) closedMarker.deleteSync();
         final resumedMarker = File('${closedMarker.path}.resumed');
@@ -424,7 +424,7 @@ void main() {
       'cancel after VACUUM before close never interrupts a closed handle',
       () async {
         final closedMarker = File(
-          '${Directory.systemTemp.path}/kelivo_sqlite_closed_${DateTime.now().microsecondsSinceEpoch}.marker',
+          '${Directory.systemTemp.path}/orvia_sqlite_closed_${DateTime.now().microsecondsSinceEpoch}.marker',
         );
         if (closedMarker.existsSync()) closedMarker.deleteSync();
         addTearDown(() {

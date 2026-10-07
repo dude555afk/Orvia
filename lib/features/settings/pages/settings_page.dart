@@ -19,7 +19,6 @@ import 'about_page.dart';
 import 'memory_settings_page.dart';
 import 'tts_services_page.dart';
 import 'tool_schema_settings_page.dart';
-import 'sponsor_page.dart';
 import 'log_viewer_page.dart';
 import '../../search/pages/search_services_page.dart';
 import '../../backup/pages/backup_page.dart';
@@ -35,8 +34,8 @@ import '../../stats/pages/stats_page.dart';
 import '../../../core/services/storage/storage_usage_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/services/haptics.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
+import 'package:orvia/theme/app_font_weights.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -435,7 +434,7 @@ class SettingsPage extends StatelessWidget {
                 icon: Lucide.Library,
                 label: l10n.settingsPageDocs,
                 onTap: () async {
-                  final uri = Uri.parse('https://kelivo.psycheas.top/');
+                  final uri = Uri.parse('https://orvia.psycheas.top/');
                   if (!await launchUrl(uri, mode: LaunchMode.platformDefault)) {
                     await launchUrl(uri, mode: LaunchMode.externalApplication);
                   }
@@ -466,17 +465,6 @@ class SettingsPage extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (_) => const ToolSchemaSettingsPage(),
                     ),
-                  );
-                },
-              ),
-              _iosDivider(context),
-              _iosNavRow(
-                context,
-                icon: Lucide.Heart,
-                label: l10n.settingsPageSponsor,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SponsorPage()),
                   );
                 },
               ),

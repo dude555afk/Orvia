@@ -174,7 +174,7 @@ final class ChatDatabaseMetricsSnapshot {
   final int? lastCheckpointedFrames;
 
   Map<String, Object?> toSafeJson() => {
-    'format': 'kelivo-chat-database-metrics-v1',
+    'format': 'orvia-chat-database-metrics-v1',
     'operations': {
       for (final entry in operations.entries)
         entry.key.name: entry.value.toSafeJson(),

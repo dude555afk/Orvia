@@ -114,7 +114,7 @@ final class ToolCallEnd extends StreamChunk {
   final String id;
 }
 
-/// Local (Kelivo-executed) tool result.
+/// Local (Orvia-executed) tool result.
 ///
 /// Fills the matching [ToolCallPart] `content` without marking the part as a
 /// provider-hosted server tool. Provider-hosted search / code execution keep
@@ -300,7 +300,7 @@ final class RetryAttemptStart extends StreamChunk {
 ///
 /// Image events from Gemini / Responses still carry raw base64. Chat
 /// Completions and the Images API emit a complete `data:` / `http(s):` /
-/// `kelivo-file:` URL at the source so the prefix cannot be dropped later.
+/// `orvia-file:` URL at the source so the prefix cannot be dropped later.
 bool isCompleteImageUri(String data) {
   final trimmed = data.trim();
   return trimmed.startsWith('data:') ||

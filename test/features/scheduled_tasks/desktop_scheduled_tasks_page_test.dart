@@ -9,29 +9,29 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/scheduled_task.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/desktop_scheduled_tasks.dart';
-import 'package:Kelivo/core/services/scheduled_task_store.dart';
-import 'package:Kelivo/core/services/notification_service.dart';
-import 'package:Kelivo/core/services/scheduled_tasks_service.dart';
-import 'package:Kelivo/desktop/desktop_settings_page.dart';
-import 'package:Kelivo/desktop/setting/scheduled_tasks_pane.dart';
-import 'package:Kelivo/features/home/widgets/assistant_avatar.dart';
-import 'package:Kelivo/features/scheduled_tasks/pages/scheduled_task_editor_page.dart';
-import 'package:Kelivo/desktop/widgets/desktop_scheduled_task_tile.dart';
-import 'package:Kelivo/desktop/widgets/desktop_scheduled_task_form.dart';
-import 'package:Kelivo/desktop/widgets/desktop_select_dropdown.dart';
-import 'package:Kelivo/features/workspace/widgets/desktop_workspace_text_field.dart';
-import 'package:Kelivo/features/settings/widgets/custom_theme_widgets.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/theme/palettes.dart';
-import 'package:Kelivo/theme/theme_factory.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/scheduled_task.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/desktop_scheduled_tasks.dart';
+import 'package:orvia/core/services/scheduled_task_store.dart';
+import 'package:orvia/core/services/notification_service.dart';
+import 'package:orvia/core/services/scheduled_tasks_service.dart';
+import 'package:orvia/desktop/desktop_settings_page.dart';
+import 'package:orvia/desktop/setting/scheduled_tasks_pane.dart';
+import 'package:orvia/features/home/widgets/assistant_avatar.dart';
+import 'package:orvia/features/scheduled_tasks/pages/scheduled_task_editor_page.dart';
+import 'package:orvia/desktop/widgets/desktop_scheduled_task_tile.dart';
+import 'package:orvia/desktop/widgets/desktop_scheduled_task_form.dart';
+import 'package:orvia/desktop/widgets/desktop_select_dropdown.dart';
+import 'package:orvia/features/workspace/widgets/desktop_workspace_text_field.dart';
+import 'package:orvia/features/settings/widgets/custom_theme_widgets.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/theme/palettes.dart';
+import 'package:orvia/theme/theme_factory.dart';
 
 import '../../support/business_test_harness.dart';
 
@@ -53,12 +53,12 @@ void main() {
   late AssistantProvider assistants;
   late ScheduledTasksService service;
   final boundary = GlobalKey();
-  final screenshots = Platform.environment['KELIVO_SCHEDULE_SCREENSHOTS'];
+  final screenshots = Platform.environment['ORVIA_SCHEDULE_SCREENSHOTS'];
 
   setUpAll(() async {
     if (screenshots == null) return;
     final bytes = await File(
-      Platform.environment['KELIVO_PREVIEW_FONT']!,
+      Platform.environment['ORVIA_PREVIEW_FONT']!,
     ).readAsBytes();
     await (FontLoader(
       'ScheduledPreview',

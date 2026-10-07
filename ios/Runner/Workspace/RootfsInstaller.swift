@@ -38,7 +38,7 @@ enum RootfsInstallPhase: String {
 final class RootfsInstaller {
   static let shared = RootfsInstaller()
   static let resourceName = "alpine-rootfs"
-  static let bundledVersionKey = "KelivoBundledRootfsVersion"
+  static let bundledVersionKey = "OrviaBundledRootfsVersion"
   static let fallbackBundledVersion = "alpine-3.21.3-r5"
 
   /// Set when reset/replace happens after `become_first_process`. Never cleared
@@ -105,7 +105,7 @@ final class RootfsInstaller {
     isCancelled: () -> Bool = { false },
     progress: ((RootfsInstallPhase, Double) -> Void)? = nil
   ) throws {
-    if KelivoISHKernel.shared().isBooted {
+    if OrviaISHKernel.shared().isBooted {
       if let existing = installedVersion, existing != bundledVersion {
         needsRestart = true
         throw RootfsInstallerError.needsRestart
@@ -147,7 +147,7 @@ final class RootfsInstaller {
   }
 
   func reset() throws -> Bool {
-    let booted = KelivoISHKernel.shared().isBooted
+    let booted = OrviaISHKernel.shared().isBooted
     try discardRootfs(at: rootfsDir)
     if booted {
       needsRestart = true

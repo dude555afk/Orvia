@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/chat_api_service.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/chat_api_service.dart';
 
 ProviderConfig _openAiConfig(String baseUrl) {
   return ProviderConfig(
@@ -180,7 +180,7 @@ void main() {
 
     test('image outside code block is still extracted', () async {
       final dir = await Directory.systemTemp.createTemp(
-        'kelivo_code_block_test_',
+        'orvia_code_block_test_',
       );
       addTearDown(() async {
         if (await dir.exists()) await dir.delete(recursive: true);

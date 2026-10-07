@@ -2,20 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_service.dart';
-import 'package:Kelivo/features/settings/widgets/custom_theme_widgets.dart';
-import 'package:Kelivo/features/workspace/pages/mirror_page.dart';
-import 'package:Kelivo/features/workspace/pages/rootfs_browser_page.dart';
-import 'package:Kelivo/features/workspace/widgets/environment/environment_labels.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/features/workspace/workspace_layout.dart';
-import 'package:Kelivo/shared/widgets/ios_tile_button.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
-import 'package:Kelivo/shared/widgets/task_progress_dialog.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/mirror_service.dart';
+import 'package:orvia/features/settings/widgets/custom_theme_widgets.dart';
+import 'package:orvia/features/workspace/pages/mirror_page.dart';
+import 'package:orvia/features/workspace/pages/rootfs_browser_page.dart';
+import 'package:orvia/features/workspace/widgets/environment/environment_labels.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/features/workspace/workspace_layout.dart';
+import 'package:orvia/shared/widgets/ios_tile_button.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
+import 'package:orvia/shared/widgets/task_progress_dialog.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 import 'package:provider/provider.dart';
 
 abstract final class EnvironmentDialogKeys {

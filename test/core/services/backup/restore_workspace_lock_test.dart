@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/backup/restore_workspace_lock.dart';
+import 'package:orvia/core/services/backup/restore_workspace_lock.dart';
 
 void main() {
   group('RestoreWorkspaceLock', () {
@@ -13,7 +13,7 @@ void main() {
 
     setUp(() async {
       appDataDirectory = await Directory.systemTemp.createTemp(
-        'kelivo_restore_workspace_lock_test_',
+        'orvia_restore_workspace_lock_test_',
       );
       lock = RestoreWorkspaceLock(appDataDirectory: appDataDirectory);
     });

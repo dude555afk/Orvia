@@ -22,7 +22,7 @@ import 'workspace_navigation.dart';
 
 Future<FileSystemEntity?> _resolveLinkedEntry(
   BuildContext context,
-  KelivoLink link, {
+  OrviaLink link, {
   String? conversationId,
 }) async {
   final chat = context.read<ChatService?>();
@@ -50,8 +50,8 @@ Future<File?> resolveWorkspaceLinkedFile(
   String? link, {
   String? conversationId,
 }) async {
-  final parsed = link == null ? null : KelivoLink.tryParse(link);
-  if (parsed == null || parsed.kind == KelivoLinkKind.terminal) return null;
+  final parsed = link == null ? null : OrviaLink.tryParse(link);
+  if (parsed == null || parsed.kind == OrviaLinkKind.terminal) return null;
   try {
     final entry = await _resolveLinkedEntry(
       context,
@@ -71,8 +71,8 @@ Future<void> openWorkspaceLinkedFile(
   String? title,
 }) async {
   final l10n = AppLocalizations.of(context)!;
-  final parsed = link == null ? null : KelivoLink.tryParse(link);
-  if (parsed?.kind == KelivoLinkKind.terminal) {
+  final parsed = link == null ? null : OrviaLink.tryParse(link);
+  if (parsed?.kind == OrviaLinkKind.terminal) {
     WorkspaceNavigation.openTerminal(context, command: parsed!.terminalCommand);
     return;
   }
@@ -113,7 +113,7 @@ Future<void> openWorkspaceLinkedFile(
 Future<void> _showDirectory(
   BuildContext context,
   Directory directory, {
-  required KelivoLink link,
+  required OrviaLink link,
   String? conversationId,
   String? title,
 }) {

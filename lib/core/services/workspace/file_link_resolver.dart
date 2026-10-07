@@ -8,7 +8,7 @@ import '../../providers/external_mounts_provider.dart';
 import '../../../utils/app_directories.dart';
 import 'workspace_paths.dart';
 
-enum KelivoLinkKind {
+enum OrviaLinkKind {
   workspaceFile,
   chatFile,
   externalFile,
@@ -19,8 +19,8 @@ enum KelivoLinkKind {
   terminal,
 }
 
-class KelivoLink {
-  const KelivoLink({
+class OrviaLink {
+  const OrviaLink({
     required this.kind,
     required this.relativePath,
     this.conversationId,
@@ -28,7 +28,7 @@ class KelivoLink {
     this.terminalCommand,
   });
 
-  final KelivoLinkKind kind;
+  final OrviaLinkKind kind;
   final String relativePath;
   final String? conversationId;
   final String? mountId;
@@ -37,20 +37,19 @@ class KelivoLink {
   /// Absolute guest path for the referenced entry in its owning mount/session.
   String? guestPath({String? mountRoot}) {
     final root = switch (kind) {
-      KelivoLinkKind.workspaceFile => WorkspacePaths.guestWorkspace,
-      KelivoLinkKind.chatFile => WorkspacePaths.guestChat,
-      KelivoLinkKind.chatAttachment =>
-        '${WorkspacePaths.guestChat}/attachments',
-      KelivoLinkKind.chatOutput => '${WorkspacePaths.guestChat}/outputs',
-      KelivoLinkKind.skillFile => WorkspacePaths.guestSkills,
-      KelivoLinkKind.temporaryFile => WorkspacePaths.guestTmp,
-      KelivoLinkKind.externalFile => mountRoot,
-      KelivoLinkKind.terminal => null,
+      OrviaLinkKind.workspaceFile => WorkspacePaths.guestWorkspace,
+      OrviaLinkKind.chatFile => WorkspacePaths.guestChat,
+      OrviaLinkKind.chatAttachment => '${WorkspacePaths.guestChat}/attachments',
+      OrviaLinkKind.chatOutput => '${WorkspacePaths.guestChat}/outputs',
+      OrviaLinkKind.skillFile => WorkspacePaths.guestSkills,
+      OrviaLinkKind.temporaryFile => WorkspacePaths.guestTmp,
+      OrviaLinkKind.externalFile => mountRoot,
+      OrviaLinkKind.terminal => null,
     };
     return root == null ? null : p.posix.join(root, relativePath);
   }
 
-  static const String scheme = 'kelivo';
+  static const String scheme = 'orvia';
 
   /// Percent-encodes each path segment with [Uri.encodeComponent].
   /// Builders and the model prompt share this rule; [tryParse] decodes
@@ -65,14 +64,14 @@ class KelivoLink {
     return encoded.join('/');
   }
 
-  static KelivoLink? tryParse(String url) {
+  static OrviaLink? tryParse(String url) {
     final raw = url.trim();
     if (raw.isEmpty) return null;
     // Manual split: a case-insensitive regex `[^/?#]` does not match
     // non-ASCII (Dart ignoreCase + negated class), so model-emitted
-    // `kelivo://workspace/\u5458\u5DE5\u8868.csv` never parsed. Do not use [Uri]
+    // `orvia://workspace/\u5458\u5DE5\u8868.csv` never parsed. Do not use [Uri]
     // either — it would normalize `%2e%2e` / `..` away.
-    const scheme = 'kelivo://';
+    const scheme = 'orvia://';
     if (raw.length < scheme.length) return null;
     if (raw.substring(0, scheme.length).toLowerCase() != scheme) {
       return null;
@@ -97,8 +96,8 @@ class KelivoLink {
       if (query != null && query.length > 1) {
         command = Uri.splitQueryString(query.substring(1))['cmd'] ?? '';
       }
-      return KelivoLink(
-        kind: KelivoLinkKind.terminal,
+      return OrviaLink(
+        kind: OrviaLinkKind.terminal,
         relativePath: '',
         terminalCommand: command,
       );
@@ -109,25 +108,25 @@ class KelivoLink {
 
     switch (host) {
       case 'session':
-        return KelivoLink(
-          kind: KelivoLinkKind.chatFile,
+        return OrviaLink(
+          kind: OrviaLinkKind.chatFile,
           relativePath: segments.join('/'),
         );
       case 'tmp':
-        return KelivoLink(
-          kind: KelivoLinkKind.temporaryFile,
+        return OrviaLink(
+          kind: OrviaLinkKind.temporaryFile,
           relativePath: segments.join('/'),
         );
       case 'mounts':
         if (segments.isEmpty) return null;
-        return KelivoLink(
-          kind: KelivoLinkKind.externalFile,
+        return OrviaLink(
+          kind: OrviaLinkKind.externalFile,
           mountId: segments.first,
           relativePath: segments.skip(1).join('/'),
         );
       case 'workspace':
-        return KelivoLink(
-          kind: KelivoLinkKind.workspaceFile,
+        return OrviaLink(
+          kind: OrviaLinkKind.workspaceFile,
           relativePath: segments.join('/'),
         );
       case 'chat':
@@ -135,38 +134,38 @@ class KelivoLink {
         final folder = segments.first;
         final rest = segments.sublist(1);
         if (folder == 'attachments') {
-          return KelivoLink(
-            kind: KelivoLinkKind.chatAttachment,
+          return OrviaLink(
+            kind: OrviaLinkKind.chatAttachment,
             relativePath: rest.join('/'),
           );
         }
         if (folder == 'outputs') {
-          return KelivoLink(
-            kind: KelivoLinkKind.chatOutput,
+          return OrviaLink(
+            kind: OrviaLinkKind.chatOutput,
             relativePath: rest.join('/'),
           );
         }
         if (rest.isEmpty) return null;
-        // kelivo://chat/<conversationId>/… — model-emitted or explicit id.
+        // orvia://chat/<conversationId>/… — model-emitted or explicit id.
         if (!_isSafeSegment(folder)) return null;
         if (rest.first == 'attachments' || rest.first == 'outputs') {
           if (rest.length < 2) return null;
-          return KelivoLink(
+          return OrviaLink(
             kind: rest.first == 'attachments'
-                ? KelivoLinkKind.chatAttachment
-                : KelivoLinkKind.chatOutput,
+                ? OrviaLinkKind.chatAttachment
+                : OrviaLinkKind.chatOutput,
             relativePath: rest.sublist(1).join('/'),
             conversationId: folder,
           );
         }
-        return KelivoLink(
-          kind: KelivoLinkKind.chatOutput,
+        return OrviaLink(
+          kind: OrviaLinkKind.chatOutput,
           relativePath: rest.join('/'),
           conversationId: folder,
         );
       case 'skills':
-        return KelivoLink(
-          kind: KelivoLinkKind.skillFile,
+        return OrviaLink(
+          kind: OrviaLinkKind.skillFile,
           relativePath: segments.join('/'),
         );
       default:
@@ -241,7 +240,7 @@ class FileLinkResolver {
   final ExternalMountsProvider? externalMounts;
 
   Future<File?> resolveToHostFile(
-    KelivoLink link, {
+    OrviaLink link, {
     required String conversationId,
     required WorkspaceBinding binding,
   }) async {
@@ -258,38 +257,38 @@ class FileLinkResolver {
   }
 
   Future<FileSystemEntity?> resolveToHostEntry(
-    KelivoLink link, {
+    OrviaLink link, {
     required String conversationId,
     required WorkspaceBinding binding,
   }) async {
-    if (link.kind == KelivoLinkKind.terminal) return null;
+    if (link.kind == OrviaLinkKind.terminal) return null;
     if (!_isSafeRelativePath(link.relativePath)) return null;
     final sessionId = link.conversationId ?? conversationId;
     late final String root;
     switch (link.kind) {
-      case KelivoLinkKind.workspaceFile:
+      case OrviaLinkKind.workspaceFile:
         if (!binding.isBound) return null;
         await workspaces.loaded;
         final workspace = workspaces.byId(binding.workspaceId!);
         if (workspace == null) return null;
         root = await workspaces.hostRootFor(workspace);
-      case KelivoLinkKind.chatAttachment:
+      case OrviaLinkKind.chatAttachment:
         root = p.join(
           (await AppDirectories.sessionDir(sessionId)).path,
           'attachments',
         );
-      case KelivoLinkKind.chatOutput:
+      case OrviaLinkKind.chatOutput:
         root = p.join(
           (await AppDirectories.sessionDir(sessionId)).path,
           'outputs',
         );
-      case KelivoLinkKind.chatFile:
+      case OrviaLinkKind.chatFile:
         root = (await AppDirectories.sessionDir(sessionId)).path;
-      case KelivoLinkKind.skillFile:
+      case OrviaLinkKind.skillFile:
         root = (await AppDirectories.getSkillsDirectory()).path;
-      case KelivoLinkKind.temporaryFile:
+      case OrviaLinkKind.temporaryFile:
         root = Directory.systemTemp.path;
-      case KelivoLinkKind.externalFile:
+      case OrviaLinkKind.externalFile:
         final provider = externalMounts;
         if (provider == null) {
           throw const FileLinkException(FileLinkFailure.mountUnavailable);
@@ -306,7 +305,7 @@ class FileLinkResolver {
         } catch (_) {
           throw const FileLinkException(FileLinkFailure.mountUnavailable);
         }
-      case KelivoLinkKind.terminal:
+      case OrviaLinkKind.terminal:
         return null;
     }
     return _entryUnderRoot(root, link.relativePath);
@@ -318,7 +317,7 @@ class FileLinkResolver {
       return false;
     }
     if (RegExp(r'^[a-zA-Z]:').hasMatch(relativePath)) return false;
-    return relativePath.split('/').every(KelivoLink._isSafeSegment);
+    return relativePath.split('/').every(OrviaLink._isSafeSegment);
   }
 
   static FileSystemEntity? _entryUnderRoot(String root, String relativePath) {

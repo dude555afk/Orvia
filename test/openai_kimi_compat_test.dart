@@ -4,8 +4,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/chat_api_service.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/chat_api_service.dart';
 import 'support/collect_generation.dart';
 import 'support/legacy_reasoning.dart';
 
@@ -271,7 +271,7 @@ void main() {
 
     test('kimi-k3 filters remote images from every input path', () async {
       final dir = await Directory.systemTemp.createTemp(
-        'kelivo_kimi_k3_images_',
+        'orvia_kimi_k3_images_',
       );
       addTearDown(() async {
         if (await dir.exists()) {

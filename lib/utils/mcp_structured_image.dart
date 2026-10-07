@@ -17,7 +17,7 @@ const int kMcpResultVersion = 1;
 /// Compact prefix written by the previous JSON-in-content iteration.
 ///
 /// Read-only. New writes never use this envelope as [ToolCallPart] content.
-const String kMcpToolResultEnvelopePrefix = '{"kelivo":"mcp_tool_result"';
+const String kMcpToolResultEnvelopePrefix = '{"orvia":"mcp_tool_result"';
 
 /// Flattened MCP tool result. [markdown] is already in original content order.
 class McpToolResult {
@@ -138,13 +138,13 @@ bool looksLikeLegacyMcpToolResultEnvelope(String content) {
 }
 
 /// Read-only decoder for records written as
-/// `{"kelivo":"mcp_tool_result",...}`. New writes must not produce this.
+/// `{"orvia":"mcp_tool_result",...}`. New writes must not produce this.
 McpToolResult? tryDecodeLegacyMcpToolResultEnvelope(String content) {
   if (!looksLikeLegacyMcpToolResultEnvelope(content)) return null;
   try {
     final decoded = jsonDecode(content.trim());
     if (decoded is! Map) return null;
-    if (decoded['kelivo'] != kMcpToolResultKind) return null;
+    if (decoded['orvia'] != kMcpToolResultKind) return null;
     final text = (decoded['text'] ?? '').toString();
     final raw = decoded['imageUris'];
     final uris = <String>[
@@ -179,7 +179,7 @@ String encodeLegacyMcpToolResultEnvelope({
   required List<String> imageUris,
 }) {
   return jsonEncode({
-    'kelivo': kMcpToolResultKind,
+    'orvia': kMcpToolResultKind,
     'text': text,
     'imageUris': imageUris,
   });

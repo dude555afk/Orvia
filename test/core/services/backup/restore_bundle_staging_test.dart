@@ -11,16 +11,16 @@ import 'package:sqlite3/sqlite3.dart'
     as sqlite
     show sqlite3, OpenMode, SqliteException;
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/services/backup/backup_cancel_token.dart';
-import 'package:Kelivo/core/services/backup/backup_task_progress.dart';
-import 'package:Kelivo/core/services/backup/backup_isolate_runner.dart';
-import 'package:Kelivo/core/services/backup/restore_bundle_staging.dart';
-import 'package:Kelivo/core/services/backup/restore_workspace_lock.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/services/backup/backup_cancel_token.dart';
+import 'package:orvia/core/services/backup/backup_task_progress.dart';
+import 'package:orvia/core/services/backup/backup_isolate_runner.dart';
+import 'package:orvia/core/services/backup/restore_bundle_staging.dart';
+import 'package:orvia/core/services/backup/restore_workspace_lock.dart';
 
 import '../../database/generated_schema/schema_v1.dart' as v1;
 
@@ -46,7 +46,7 @@ Future<Directory> _createExtractedBundle(
   if (includeSettings) {
     await settings.writeAsString(jsonEncode(settingsData), flush: true);
   }
-  final database = File(p.join(extracted.path, 'database', 'kelivo.db'));
+  final database = File(p.join(extracted.path, 'database', 'orvia.db'));
   ChatDatabaseSnapshotInfo? databaseInfo;
   if (includeDatabase) {
     await database.parent.create(recursive: true);
@@ -67,7 +67,7 @@ Future<Directory> _createExtractedBundle(
   }
   await File(p.join(extracted.path, 'manifest.json')).writeAsString(
     jsonEncode({
-      'format': 'kelivo-backup',
+      'format': 'orvia-backup',
       'formatVersion': 2,
       'payloadKind': includeDatabase ? 'sqlite' : 'settings-only',
       'createdAtUtc': '2026-07-09T00:00:00.000Z',
@@ -77,7 +77,7 @@ Future<Directory> _createExtractedBundle(
       'secretsIncluded': true,
       if (includeDatabase)
         'database': {
-          'entry': 'database/kelivo.db',
+          'entry': 'database/orvia.db',
           'schemaVersion':
               databaseInfo?.schemaVersion ?? AppDatabase.currentSchemaVersion,
           'conversationCount': databaseInfo?.conversationCount ?? 0,
@@ -92,7 +92,7 @@ Future<Directory> _createExtractedBundle(
               }
             : {'bytes': 2, 'sha256': List.filled(64, '0').join()},
         if (includeDatabase)
-          'database/kelivo.db': {
+          'database/orvia.db': {
             'bytes': await database.length(),
             'sha256': (await sha256.bind(database.openRead()).first).toString(),
           },
@@ -114,7 +114,7 @@ Future<Directory> _createLegacyV1Bundle(
   final settings = File(p.join(extracted.path, 'settings.json'));
   await settings.writeAsString(jsonEncode({'theme': 'dark'}), flush: true);
 
-  final database = File(p.join(extracted.path, 'database', 'kelivo.db'));
+  final database = File(p.join(extracted.path, 'database', 'orvia.db'));
   await database.parent.create(recursive: true);
   final legacy = v1.DatabaseAtV1(NativeDatabase(database));
   try {
@@ -151,7 +151,7 @@ Future<Directory> _createLegacyV1Bundle(
 
   await File(p.join(extracted.path, 'manifest.json')).writeAsString(
     jsonEncode({
-      'format': 'kelivo-backup',
+      'format': 'orvia-backup',
       'formatVersion': 2,
       'payloadKind': 'sqlite',
       'createdAtUtc': '2026-07-09T00:00:00.000Z',
@@ -160,7 +160,7 @@ Future<Directory> _createLegacyV1Bundle(
       'includeFiles': false,
       'secretsIncluded': true,
       'database': {
-        'entry': 'database/kelivo.db',
+        'entry': 'database/orvia.db',
         'schemaVersion': 1,
         'conversationCount': 1,
         'messageCount': 0,
@@ -170,7 +170,7 @@ Future<Directory> _createLegacyV1Bundle(
           'bytes': await settings.length(),
           'sha256': (await sha256.bind(settings.openRead()).first).toString(),
         },
-        'database/kelivo.db': {
+        'database/orvia.db': {
           'bytes': await database.length(),
           'sha256': (await sha256.bind(database.openRead()).first).toString(),
         },
@@ -186,7 +186,7 @@ void main() {
     late Directory root;
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_staging_test_');
+      root = await Directory.systemTemp.createTemp('orvia_staging_test_');
     });
 
     tearDown(() async {
@@ -219,7 +219,7 @@ void main() {
       expect(validated.databaseInfo?.messageCount, 0);
 
       final staler = File(
-        p.join(staged.payloadDirectory.path, 'database', 'kelivo.db'),
+        p.join(staged.payloadDirectory.path, 'database', 'orvia.db'),
       );
       final raw = sqlite.sqlite3.open(
         staler.path,
@@ -242,7 +242,7 @@ void main() {
       // Make the staged source look like it came from a newer build: extra
       // column, extra table, bumped user_version, and a manifest declaring
       // that this build may still read it.
-      final database = File(p.join(extracted.path, 'database', 'kelivo.db'));
+      final database = File(p.join(extracted.path, 'database', 'orvia.db'));
       final raw = sqlite.sqlite3.open(database.path);
       raw.execute('ALTER TABLE conversation_rows ADD COLUMN future_col TEXT;');
       raw.execute('CREATE TABLE future_rows (id TEXT PRIMARY KEY);');
@@ -257,7 +257,7 @@ void main() {
       final manifestFile = File(p.join(extracted.path, 'manifest.json'));
       final manifestJson =
           jsonDecode(await manifestFile.readAsString()) as Map<String, dynamic>;
-      (manifestJson['entries'] as Map)['database/kelivo.db'] = {
+      (manifestJson['entries'] as Map)['database/orvia.db'] = {
         'bytes': await database.length(),
         'sha256': (await sha256.bind(database.openRead()).first).toString(),
       };
@@ -281,7 +281,7 @@ void main() {
       );
 
       final candidate = File(
-        p.join(staged.payloadDirectory.path, 'database', 'kelivo.db'),
+        p.join(staged.payloadDirectory.path, 'database', 'orvia.db'),
       );
       final check = sqlite.sqlite3.open(
         candidate.path,
@@ -363,7 +363,7 @@ void main() {
           );
           final candidate = AppDatabase.open(
             file: File(
-              p.join(staged.payloadDirectory.path, 'database', 'kelivo.db'),
+              p.join(staged.payloadDirectory.path, 'database', 'orvia.db'),
             ),
           );
           try {
@@ -424,7 +424,7 @@ void main() {
         expectedManifestSha256: staged.candidateManifestSha256,
       );
       expect(validated.includeChats, isTrue);
-      expect(validated.entries.keys, ['database/kelivo.db']);
+      expect(validated.entries.keys, ['database/orvia.db']);
       expect(validated.databaseInfo, isNotNull);
       expect(
         await File(

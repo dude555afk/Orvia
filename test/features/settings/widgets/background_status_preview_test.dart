@@ -1,5 +1,5 @@
-import 'package:Kelivo/core/models/mobile_background_settings.dart';
-import 'package:Kelivo/features/settings/widgets/background_status_preview.dart';
+import 'package:orvia/core/models/mobile_background_settings.dart';
+import 'package:orvia/features/settings/widgets/background_status_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

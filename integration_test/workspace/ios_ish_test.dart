@@ -2,21 +2,21 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/environment_manager.dart';
-import 'package:Kelivo/core/services/sandbox/ios_ish_runtime.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
-import 'package:Kelivo/core/services/workspace/host_file_tools.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tools_service.dart';
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/environment_manager.dart';
+import 'package:orvia/core/services/sandbox/ios_ish_runtime.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/host_file_tools.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/workspace/workspace_tools_service.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -56,7 +56,7 @@ void main() {
     await env.loaded;
     manager = IosRootfsManager(channel: channel, env: env);
 
-    final tmp = await Directory.systemTemp.createTemp('kelivo_ios_ish_');
+    final tmp = await Directory.systemTemp.createTemp('orvia_ios_ish_');
     workspaceHost = Directory(p.join(tmp.path, 'workspace'))..createSync();
     sessionHost = Directory(p.join(tmp.path, 'session'))..createSync();
     skillsHost = Directory(p.join(tmp.path, 'skills'))..createSync();
@@ -128,7 +128,7 @@ void main() {
       );
       if (probe.installed != true) await manager.install();
       final external = await Directory.systemTemp.createTemp(
-        'kelivo-cold-mount-',
+        'orvia-cold-mount-',
       );
       await File(
         p.join(external.path, 'identity'),
@@ -144,7 +144,7 @@ void main() {
         await channel.setExternalMounts(binds);
         await channel.setExternalMounts(binds);
         // Exercise both boot entry points in separate fresh app runs.
-        if (!const bool.fromEnvironment('KELIVO_TEST_IMPLICIT_BOOT')) {
+        if (!const bool.fromEnvironment('ORVIA_TEST_IMPLICIT_BOOT')) {
           await channel.boot();
         }
         final first = await runCmd('cat /mounts/cold-start-test/identity');
@@ -171,7 +171,7 @@ void main() {
       if ((await channel.probe()).installed != true) await manager.install();
       await channel.boot();
       final secondRoot = await Directory.systemTemp.createTemp(
-        'kelivo_ish_second_',
+        'orvia_ish_second_',
       );
       final secondWorkspace = await Directory(
         p.join(secondRoot.path, 'workspace'),
@@ -419,7 +419,7 @@ void main() {
 set -e
 cp --version
 for base in /tmp /workspace; do
-  dir=$(mktemp -d "$base/kelivo-cp-XXXXXX")
+  dir=$(mktemp -d "$base/orvia-cp-XXXXXX")
   printf 'new contents' > "$dir/src"
   printf 'old contents' > "$dir/dst"
   cp "$dir/src" "$dir/dst"

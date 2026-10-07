@@ -65,7 +65,7 @@ String _authorizationServerHash(Uri authorizationServer) => base64UrlEncode(
 final class _AndroidOAuthCallback implements OAuthCallback {
   _AndroidOAuthCallback(Uri authorizationServer)
     : redirectUri = Uri(
-        scheme: 'psyche.kelivo',
+        scheme: 'com.dude555afk.orvia',
         // This URI is registered with authorization servers; sharing the
         // callback implementation must not rename the registered redirect.
         host: 'mcp-oauth-callback',
@@ -121,7 +121,7 @@ final class _AndroidOAuthCallback implements OAuthCallback {
 final class _IosOAuthCallback implements OAuthCallback {
   _IosOAuthCallback(Uri authorizationServer)
     : redirectUri = Uri(
-        scheme: 'psyche.kelivo',
+        scheme: 'com.dude555afk.orvia',
         path:
             '/oauth/callback/${_authorizationServerHash(authorizationServer)}',
       );
@@ -329,6 +329,6 @@ final class _IoOAuthCallback implements OAuthCallback {
 }
 
 String _callbackPage() => '''<!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Kelivo</title></head>
-<body><p>Authorization received. You may close this window and return to Kelivo.</p>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Orvia</title></head>
+<body><p>Authorization received. You may close this window and return to Orvia.</p>
 </body></html>''';

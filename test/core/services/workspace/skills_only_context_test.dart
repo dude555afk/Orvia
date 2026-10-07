@@ -4,15 +4,15 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/workspace/workspace_tools_service.dart';
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/core/services/workspace/workspace_tools_service.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 
 void main() {
   late Directory tmp;
   late Directory skillsDir;
 
   setUp(() async {
-    tmp = await Directory.systemTemp.createTemp('kelivo_skills_only_');
+    tmp = await Directory.systemTemp.createTemp('orvia_skills_only_');
     skillsDir = Directory(p.join(tmp.path, 'skills', 'pdf-tools'))
       ..createSync(recursive: true);
     File(p.join(skillsDir.path, 'SKILL.md')).writeAsStringSync('''

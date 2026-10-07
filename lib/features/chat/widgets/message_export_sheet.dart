@@ -38,7 +38,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../theme/app_font_weights.dart';
 import '../../home/widgets/model_icon.dart';
 import '../utils/thinking_tag_parser.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
 import 'chat_message_widget.dart'
     show ChatMessageWidget, ToolUIPart, ReasoningSegment;
 
@@ -3280,7 +3280,7 @@ class _Parsed {
 }
 
 /// Display-only document ref (fileName/MIME). If future code reads [path],
-/// resolve via [SandboxPathResolver.fix] first — it may be a kelivo-file URI.
+/// resolve via [SandboxPathResolver.fix] first — it may be a orvia-file URI.
 class _DocRef {
   final String path;
   final String fileName;

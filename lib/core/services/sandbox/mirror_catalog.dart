@@ -1,4 +1,4 @@
-import 'package:Kelivo/core/models/environment_state.dart';
+import 'package:orvia/core/models/environment_state.dart';
 
 class MirrorCandidate {
   const MirrorCandidate({

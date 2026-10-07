@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/chat_api_service.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/chat_api_service.dart';
 import 'support/collect_generation.dart';
 
-/// Regression tests for https://github.com/Chevey339/kelivo/issues/764
+/// Regression tests for https://github.com/dude555afk/Orvia/issues/764
 ///
 /// Claude models served through OpenAI-compatible proxies rebuild Anthropic
 /// thinking blocks from the echoed reasoning fields. An unsigned

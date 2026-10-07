@@ -4,11 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/sandbox/rootfs_disk_usage.dart';
+import 'package:orvia/core/services/sandbox/rootfs_disk_usage.dart';
 
 void main() {
   test('measureDirectorySize sums files including meta.db', () async {
-    final root = await Directory.systemTemp.createTemp('kelivo_rootfs_size_');
+    final root = await Directory.systemTemp.createTemp('orvia_rootfs_size_');
     addTearDown(() async {
       if (await root.exists()) await root.delete(recursive: true);
     });
@@ -29,7 +29,7 @@ void main() {
   });
 
   test('measureDirectorySizeSync skips unreadable entries', () async {
-    final root = await Directory.systemTemp.createTemp('kelivo_rootfs_skip_');
+    final root = await Directory.systemTemp.createTemp('orvia_rootfs_skip_');
     addTearDown(() async {
       if (await root.exists()) await root.delete(recursive: true);
     });

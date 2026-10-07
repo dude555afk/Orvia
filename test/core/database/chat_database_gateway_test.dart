@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/chat_database_gateway.dart';
-import 'package:Kelivo/core/database/chat_database_observer.dart';
-import 'package:Kelivo/core/database/business_data.dart';
+import 'package:orvia/core/database/chat_database_gateway.dart';
+import 'package:orvia/core/database/chat_database_observer.dart';
+import 'package:orvia/core/database/business_data.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -12,7 +12,7 @@ void main() {
 
     setUp(() async {
       directory = await Directory.systemTemp.createTemp(
-        'kelivo_database_gateway_',
+        'orvia_database_gateway_',
       );
       gateway = ChatDatabaseGateway();
     });
