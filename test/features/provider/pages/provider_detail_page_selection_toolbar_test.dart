@@ -73,7 +73,7 @@ Future<void> _pumpSelectedToolbar(
   await tester.pumpWidget(
     _buildHarness(
       settings: settings,
-      locale: const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
+      locale: const Locale('en'),
       textScaler: textScaler,
       child: const ProviderDetailPage(
         keyName: 'TestProvider',
