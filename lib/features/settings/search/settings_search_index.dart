@@ -40,7 +40,6 @@ enum SettingsSearchDestination {
   toolSchemas,
   logs,
   about,
-  sponsor,
 }
 
 extension SettingsSearchDestinationDetails on SettingsSearchDestination {
@@ -84,7 +83,6 @@ extension SettingsSearchDestinationDetails on SettingsSearchDestination {
     SettingsSearchDestination.toolSchemas => l.toolSchemaSettingsPageTitle,
     SettingsSearchDestination.logs => l.settingsPageLogs,
     SettingsSearchDestination.about => l.settingsPageAbout,
-    SettingsSearchDestination.sponsor => l.settingsPageSponsor,
   };
 
   IconData get icon => switch (this) {
@@ -122,7 +120,6 @@ extension SettingsSearchDestinationDetails on SettingsSearchDestination {
     SettingsSearchDestination.toolSchemas => LucideIcons.wrench,
     SettingsSearchDestination.logs => LucideIcons.fileText,
     SettingsSearchDestination.about => LucideIcons.info,
-    SettingsSearchDestination.sponsor => LucideIcons.heart,
   };
 
   bool get isDisplaySection => switch (this) {
@@ -501,16 +498,6 @@ class SettingsSearchIndex {
       page: true,
       keywords: 'about version update ',
     );
-    if (!desktop) {
-      add(
-        'sponsor',
-        SettingsSearchDestination.sponsor,
-        (l) => l.settingsPageSponsor,
-        page: true,
-        keywords: 'sponsor donate ',
-      );
-    }
-
     // Display rows share their localized labels with the navigation anchors.
     add(
       'displaySettingsPageLanguageTitle',
