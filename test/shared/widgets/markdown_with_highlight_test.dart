@@ -409,8 +409,7 @@ void main() {
     expect(markdown, isNot(contains('\r')));
     expect(markdown, contains('![alt](${Uri.file(file.path)})'));
     expect(find.byType(Image), findsOneWidget);
-    source.value +=
-        '\n\n<details><summary>More</summary>Hidden</details>';
+    source.value += '\n\n<details><summary>More</summary>Hidden</details>';
     await tester.pumpAndSettle();
     expect(find.text('More'), findsOneWidget);
     source.value = 'Replacement **bold**';
@@ -2769,9 +2768,7 @@ A-->B
       expect(mathSpans.single.alignment, PlaceholderAlignment.baseline);
       expect(mathSpans.single.baseline, TextBaseline.alphabetic);
 
-      final paragraph = _paragraphContaining(
-'Relativistic momentum',
-      );
+      final paragraph = _paragraphContaining('Relativistic momentum');
       final mathBox = tester.renderObject<RenderBox>(_findMathWidget());
       expect(mathBox.size.height, greaterThan(30));
       expect(paragraph.size.height, greaterThanOrEqualTo(mathBox.size.height));
@@ -3078,14 +3075,9 @@ Space $a+b$ is valid.
       await tester.pump();
 
       expect(_findMathWidget(), findsNWidgets(7));
+      expect(find.textContaining('needs escaping in LaTeX'), findsOneWidget);
       expect(
-        find.textContaining('needs escaping in LaTeX'),
-        findsOneWidget,
-      );
-      expect(
-        find.textContaining(
-          r'$$ is usually used for block math. Later',
-        ),
+        find.textContaining(r'$$ is usually used for block math. Later'),
         findsOneWidget,
       );
       expect(find.textContaining(r'b$$c'), findsNothing);
@@ -3115,9 +3107,7 @@ $f((x))$，$g([x])$，$h(\{x\})$，$\langle a, b \rangle$。
       expect(_findMathWidget(), findsAtLeastNWidgets(14));
       expect(find.textContaining(r'\(A ='), findsNothing);
       expect(
-        find.textContaining(
-          r'$$ is usually used for block math',
-        ),
+        find.textContaining(r'$$ is usually used for block math'),
         findsOneWidget,
       );
       expect(find.textContaining(r'b$$c'), findsNothing);
@@ -3128,10 +3118,7 @@ $f((x))$，$g([x])$，$h(\{x\})$，$\langle a, b \rangle$。
         find.textContaining("Fermat's Last Theorem states"),
         findsOneWidget,
       );
-      expect(
-        find.textContaining('needs escaping in LaTeX'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('needs escaping in LaTeX'), findsOneWidget);
     },
   );
 
