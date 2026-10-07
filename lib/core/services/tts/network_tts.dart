@@ -940,8 +940,9 @@ class NetworkTtsService {
         : opt.voice.trim();
     final audio = await (synthesizer ?? _synthesizeEdgeNeural)(text, voice);
     if (await (cancelled?.call() ?? false)) throw _Cancelled();
-    if (audio.isEmpty)
+    if (audio.isEmpty) {
       throw const FormatException('Edge Neural returned empty audio.');
+    }
     return NetworkTtsResult(bytes: audio, mime: 'audio/mpeg');
   }
 
