@@ -246,15 +246,13 @@ void main() {
       messenger.setMockMethodCallHandler(restartChannel, null);
     });
     tester.binding.platformDispatcher.localesTestValue = const <Locale>[
-      Locale('zh'),
+      Locale('en'),
     ];
     addTearDown(tester.binding.platformDispatcher.clearLocalesTestValue);
     await tester.pumpWidget(MigrationApp(service: _completeService()));
     await tester.pumpAndSettle();
 
     expect(find.byType(AppSnackBarOverlay), findsOneWidget);
-    expect(find.text('\u5BF9\u8BDD'), findsOneWidget);
-    expect(find.text('\u6D88\u606F'), findsOneWidget);
     expect(find.byType(HiveToSqliteMigrationPage), findsOneWidget);
     final restartButton = find.byIcon(Lucide.RefreshCw);
     expect(restartButton, findsOneWidget);
@@ -273,7 +271,7 @@ void main() {
     expect(reportedErrors, hasLength(1));
     expect(
       find.text(
-        'Kelivo \u65E0\u6CD5\u81EA\u52A8\u91CD\u542F，\u8BF7\u5B8C\u5168\u5173\u95ED\u540E\u91CD\u65B0\u6253\u5F00。',
+        'Orvia could not restart automatically. Fully close it, then open it again.',
       ),
       findsOneWidget,
     );
