@@ -19,7 +19,6 @@ import 'about_page.dart';
 import 'memory_settings_page.dart';
 import 'tts_services_page.dart';
 import 'tool_schema_settings_page.dart';
-import 'sponsor_page.dart';
 import 'log_viewer_page.dart';
 import '../../search/pages/search_services_page.dart';
 import '../../backup/pages/backup_page.dart';
@@ -466,17 +465,6 @@ class SettingsPage extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (_) => const ToolSchemaSettingsPage(),
                     ),
-                  );
-                },
-              ),
-              _iosDivider(context),
-              _iosNavRow(
-                context,
-                icon: Lucide.Heart,
-                label: l10n.settingsPageSponsor,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SponsorPage()),
                   );
                 },
               ),
