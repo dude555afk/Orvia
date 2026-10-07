@@ -1139,7 +1139,7 @@ String _displayLanguage(BuildContext context, String? raw) {
   final zh = _isZh(context);
   final t = raw?.trim();
   if (t != null && t.isNotEmpty) return t;
-  return zh ? '代码' : 'Code';
+  return zh ? 'Code' : 'Code';
 }
 
 bool _isZh(BuildContext context) =>
@@ -1353,7 +1353,7 @@ String _preprocessFences(
   out = out.replaceAllMapped(inlineClosing, (m) => "${m[1]}\n```");
 
   // 5) Disambiguate Setext vs HR after label-value lines:
-  // If a line of only dashes follows a bold label line (e.g., "**作者:** 张三"),
+  // If a line of only dashes follows a bold label line (e.g., "**\u4F5C\u8005:** \u5F20\u4E09"),
   // insert a blank line so it's treated as an HR, not a Setext heading underline.
   final labelThenDash = RegExp(
     r"^(\*\*[^\n*]+\*\*.*)\n(\s*-{3,}\s*$)",
@@ -1361,7 +1361,7 @@ String _preprocessFences(
   );
   out = out.replaceAllMapped(labelThenDash, (m) => "${m[1]}\n\n${m[2]}");
 
-  // 6) Allow ATX headings starting with enumerations like "## 1.引言" or "## 1. 引言"
+  // 6) Allow ATX headings starting with enumerations like "## 1.\u5F15\u8A00" or "## 1. \u5F15\u8A00"
   // Insert a zero-width non-joiner after the dot to prevent list parsing without changing visual text.
   final atxEnum = RegExp(
     r'^([ \t]{0,3}#{1,6}[ \t]+\d+)\.([ \t]*)(\S)',
@@ -5468,7 +5468,7 @@ class InlineLatexParenScrollableMd extends InlineMd {
 }
 
 /// Single-line ATX. Opening `#{1,6}`, closing `#+`, horizontal blanks only.
-/// Shared by [AtxHeadingMd] and the `## 1.引言` preprocessor so they cannot
+/// Shared by [AtxHeadingMd] and the `## 1.\u5F15\u8A00` preprocessor so they cannot
 /// drift back into `\s` / cross-line matching.
 const String _atxHeadingLine =
     r'[ \t]{0,3}(#{1,6})[ \t]+([^\r\n\u2028\u2029]+?)(?:[ \t]+#+[ \t]*)?';
@@ -5613,7 +5613,7 @@ class SetextHeadingMd extends BlockMd {
   }
 }
 
-// Label-value strong lines like "**作者:** 张三" should not render as heading-sized text
+// Label-value strong lines like "**\u4F5C\u8005:** \u5F20\u4E09" should not render as heading-sized text
 class LabelValueLineMd extends InlineMd {
   @override
   // Treat this as an inline transform so it only affects the matched
@@ -5621,10 +5621,10 @@ class LabelValueLineMd extends InlineMd {
   bool get inline => false;
 
   @override
-  // 同时匹配两种写法：
-  // 1) **标签:** 值   （冒号在加粗内）
-  // 2) **标签**: 值   （冒号在加粗外）
-  // 支持半角/全角冒号
+  // \u540C\u65F6\u5339\u914D\u4E24\u79CD\u5199\u6CD5：
+  // 1) **\u6807\u7B7E:** \u503C   （\u5192\u53F7\u5728\u52A0\u7C97\u5185）
+  // 2) **\u6807\u7B7E**: \u503C   （\u5192\u53F7\u5728\u52A0\u7C97\u5916）
+  // \u652F\u6301\u534A\u89D2/\u5168\u89D2\u5192\u53F7
   RegExp get exp =>
       RegExp(r"(?:(?:^|\n)\*\*([^*]+?)\*\*\s*[：:]?\s+(.+)$)", multiLine: true);
 
@@ -5633,14 +5633,14 @@ class LabelValueLineMd extends InlineMd {
     final match = exp.firstMatch(text);
     if (match == null) return TextSpan(text: text, style: config.style);
 
-    // 提取并规范化标签与值
+    // \u63D0\u53D6\u5E76\u89C4\u8303\u5316\u6807\u7B7E\u4E0E\u503C
     var rawLabel = (match.group(1) ?? '').trim();
     final value = (match.group(2) ?? '').trim();
-    // 如果标签末尾自带冒号，去掉以避免重复
+    // \u5982\u679C\u6807\u7B7E\u672B\u5C3E\u81EA\u5E26\u5192\u53F7，\u53BB\u6389\u4EE5\u907F\u514D\u91CD\u590D
     rawLabel = rawLabel.replaceFirst(RegExp(r"[：:]+$"), '');
 
     final t = Theme.of(context).textTheme;
-    // 继承基础样式，确保字间距/行高一致
+    // \u7EE7\u627F\u57FA\u7840\u6837\u5F0F，\u786E\u4FDD\u5B57\u95F4\u8DDD/\u884C\u9AD8\u4E00\u81F4
     final base = (config.style ?? t.bodyMedium ?? TextStyle(fontSize: 14));
     final labelStyle = base.copyWith(
       fontWeight: AppFontWeights.strong,
@@ -5651,7 +5651,7 @@ class LabelValueLineMd extends InlineMd {
       color: _markdownInkColor(context, 0.92),
     );
 
-    // 将值部分继续按 markdown 解析，保证链接/引用等语法正常
+    // \u5C06\u503C\u90E8\u5206\u7EE7\u7EED\u6309 markdown \u89E3\u6790，\u4FDD\u8BC1\u94FE\u63A5/\u5F15\u7528\u7B49\u8BED\u6CD5\u6B63\u5E38
     final valueChildren = MarkdownComponent.generate(
       context,
       value,
@@ -5659,7 +5659,7 @@ class LabelValueLineMd extends InlineMd {
       true,
     );
 
-    // 返回 TextSpan（而非 WidgetSpan）以保证在外层 RichText/SelectionArea 中可选择复制
+    // \u8FD4\u56DE TextSpan（\u800C\u975E WidgetSpan）\u4EE5\u4FDD\u8BC1\u5728\u5916\u5C42 RichText/SelectionArea \u4E2D\u53EF\u9009\u62E9\u590D\u5236
     return TextSpan(
       children: [
         TextSpan(text: rawLabel, style: labelStyle),

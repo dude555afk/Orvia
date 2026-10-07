@@ -114,7 +114,7 @@ void main() {
       final messages = <dynamic>[];
       final sub = transport.onMessage.listen(messages.add);
       runtime.output('ordinary log\n', stderr: true);
-      final data = utf8.encode('{"text":"你好"}\n{"id":2}\n');
+      final data = utf8.encode('{"text":"\u4F60\u597D"}\n{"id":2}\n');
       for (final byte in data) {
         runtime.events.add(
           CommandOutput(OutputStreamKind.stdout, Uint8List.fromList([byte])),
@@ -122,7 +122,7 @@ void main() {
       }
       await Future<void>.delayed(Duration.zero);
       expect(messages, [
-        {'text': '你好'},
+        {'text': '\u4F60\u597D'},
         {'id': 2},
       ]);
       transport.close();
@@ -259,13 +259,13 @@ void main() {
       );
       final messages = <dynamic>[];
       final sub = transport.onMessage.listen(messages.add);
-      await transport.send({'id': 42, 'text': '你好'}).done;
+      await transport.send({'id': 42, 'text': '\u4F60\u597D'}).done;
       for (var i = 0; i < 100 && messages.length < 2; i++) {
         await Future<void>.delayed(const Duration(milliseconds: 10));
       }
       expect(messages, [
         {'argument': "space and apostrophe's"},
-        {'id': 42, 'text': '你好'},
+        {'id': 42, 'text': '\u4F60\u597D'},
       ]);
       transport.close();
       await transport.onClose;

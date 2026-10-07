@@ -62,7 +62,7 @@ void main() {
     () async {
       File(
         p.join(cwd, 'minified.txt'),
-      ).writeAsStringSync('${'😀中' * 20000}\r\nnext\rlast\n');
+      ).writeAsStringSync('${'😀\u4E2D' * 20000}\r\nnext\rlast\n');
       final first = await tools.readFile('minified.txt', cwd: cwd);
       expect(
         utf8.encode(first.text!).length,

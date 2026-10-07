@@ -362,7 +362,7 @@ more text
               role: 'assistant',
               conversationId: 'conversation-assistant-attachments',
               parts: const [
-                TextPart('这是助手附图'),
+                TextPart('\u8FD9\u662F\u52A9\u624B\u9644\u56FE'),
                 FilePart(
                   uri: '/tmp/report.pdf',
                   name: 'report.pdf',

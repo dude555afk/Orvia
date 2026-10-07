@@ -148,7 +148,7 @@ void main() {
         'data: ${jsonEncode(<String, dynamic>{
           'choices': <Map<String, dynamic>>[
             <String, dynamic>{
-              'delta': <String, dynamic>{'content': '正文仍然保留。'},
+              'delta': <String, dynamic>{'content': '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。'},
               'finish_reason': null,
             },
           ],
@@ -160,8 +160,8 @@ void main() {
       input.addError(transportError, transportStack);
       await errorSeen.future.timeout(const Duration(seconds: 1));
 
-      expect(textAtError, '正文仍然保留。');
-      expect(handler.toResult().text, '正文仍然保留。');
+      expect(textAtError, '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。');
+      expect(handler.toResult().text, '\u6B63\u6587\u4ECD\u7136\u4FDD\u7559。');
       expect(timeline, <String>['data', 'error']);
       expect(receivedError, same(transportError));
       expect(receivedStack.toString(), transportStack.toString());

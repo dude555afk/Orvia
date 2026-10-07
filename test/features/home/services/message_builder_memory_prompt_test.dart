@@ -87,7 +87,7 @@ void main() {
     await preferences.load();
     settings = SettingsProvider(preferences);
     await settings.loaded;
-    await settings.setMemoryPromptLang('zh');
+    await settings.setMemoryPromptLang('en');
   });
 
   tearDown(() async {
@@ -284,7 +284,7 @@ void main() {
         assistant: assistant.copyWith(enableMemory: false),
         apiMessages: const [],
         currentMessageId: 'u-new',
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
       );
 
       expect(result.prefix, isEmpty);
@@ -304,7 +304,7 @@ void main() {
           assistant: assistant,
           apiMessages: const [],
           currentMessageId: 'u-new',
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         );
 
         expect(result.prefix, isEmpty);
@@ -344,10 +344,10 @@ void main() {
         assistant: assistant,
         apiMessages: apiMessages,
         currentMessageId: 'u-new',
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
       );
 
-      expect(result.prefix, contains(MemoryPrompts.introFullZh));
+      expect(result.prefix, contains(MemoryPrompts.introFullEn));
       expect(result.prefix, contains('<user_memory type="identity">'));
       expect(result.prefix, isNot(contains('<user_memory_update>')));
       expect(result.hash, isNotNull);
@@ -365,12 +365,12 @@ void main() {
       );
       final profileBlock = MemoryBlockBuilder.buildProfileBlock(
         fields: fields,
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
       );
       final memoryBlock = MemoryBlockBuilder.buildMemoryBlock(
         visible: visible,
         totalByType: totals,
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: 10,
       );
       final hash = MemoryBlockBuilder.hashBlocks(profileBlock, memoryBlock);
@@ -413,7 +413,7 @@ void main() {
         assistant: assistant,
         apiMessages: apiMessages,
         currentMessageId: 'u-new',
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
       );
 
       expect(result.prefix, isEmpty);
@@ -461,10 +461,10 @@ void main() {
         assistant: assistant,
         apiMessages: apiMessages,
         currentMessageId: 'u-new',
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
       );
 
-      expect(result.prefix, contains(MemoryPrompts.introFullZh));
+      expect(result.prefix, contains(MemoryPrompts.introFullEn));
       expect(result.prefix, isNot(contains('<user_memory_update>')));
       expect(result.persistHash, isTrue);
       expect(result.hash, isNotNull);
@@ -494,7 +494,7 @@ void main() {
           },
         ],
         currentMessageId: 'u1',
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
       );
       await chatRepository.freezeMessagePrompt(
         revisionId: 'u1',
@@ -524,7 +524,7 @@ void main() {
           },
         ],
         currentMessageId: 'u-new',
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
       );
 
       // The stale snapshot on u1 is dropped at send time instead of being
@@ -559,12 +559,12 @@ void main() {
         final hash = MemoryBlockBuilder.hashBlocks(
           MemoryBlockBuilder.buildProfileBlock(
             fields: fields,
-            lang: MemoryPromptLang.zh,
+            lang: MemoryPromptLang.en,
           ),
           MemoryBlockBuilder.buildMemoryBlock(
             visible: visible,
             totalByType: totals,
-            lang: MemoryPromptLang.zh,
+            lang: MemoryPromptLang.en,
             maxItems: 10,
           ),
         );
@@ -606,7 +606,7 @@ void main() {
           assistant: assistant,
           apiMessages: apiMessages,
           currentMessageId: 'u-new',
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         );
 
         expect(result.prefix, isEmpty);
@@ -651,7 +651,7 @@ void main() {
           assistant: assistant,
           apiMessages: apiMessages,
           currentMessageId: 'u1',
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           pass: pass,
         );
         pass.snapshotCarriers.add('u1');
@@ -661,11 +661,11 @@ void main() {
           assistant: assistant,
           apiMessages: apiMessages,
           currentMessageId: 'u2',
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           pass: pass,
         );
 
-        expect(first.prefix, contains(MemoryPrompts.introFullZh));
+        expect(first.prefix, contains(MemoryPrompts.introFullEn));
         expect(second.prefix, isEmpty);
         expect(second.hash, isNull);
       },
@@ -688,12 +688,12 @@ void main() {
         final oldHash = MemoryBlockBuilder.hashBlocks(
           MemoryBlockBuilder.buildProfileBlock(
             fields: fields,
-            lang: MemoryPromptLang.zh,
+            lang: MemoryPromptLang.en,
           ),
           MemoryBlockBuilder.buildMemoryBlock(
             visible: visible,
             totalByType: totals,
-            lang: MemoryPromptLang.zh,
+            lang: MemoryPromptLang.en,
             maxItems: 10,
           ),
         );
@@ -744,12 +744,12 @@ void main() {
           assistant: assistant,
           apiMessages: apiMessages,
           currentMessageId: 'u-new',
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         );
 
         expect(
           result.prefix,
-          contains(MemoryPrompts.introFullZh),
+          contains(MemoryPrompts.introFullEn),
           reason:
               'Writing injectedMemoryHash before comparing makes the change '
               'branch unreachable (appendix item 6).',
@@ -910,7 +910,7 @@ void main() {
         );
 
         final content = apiMessages.single['content'] as String;
-        expect(content, contains(MemoryPrompts.introFullZh));
+        expect(content, contains(MemoryPrompts.introFullEn));
         expect(content, contains('<user_memory type="identity">'));
         expect(content, endsWith('what is my name'));
 
@@ -1151,7 +1151,7 @@ void main() {
         );
         final profileBlock = MemoryBlockBuilder.buildProfileBlock(
           fields: await chatRepository.readProfileFields(),
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         );
         final memoryBlock = MemoryBlockBuilder.buildMemoryBlock(
           visible: await chatRepository.queryVisibleMemories(
@@ -1160,13 +1160,13 @@ void main() {
           totalByType: await chatRepository.countVisibleMemoriesByType(
             assistantId: 'assistant-1',
           ),
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           maxItems: 10,
         );
         final prefix = MemoryBlockBuilder.buildFullSnapshotPrefix(
           profileBlock,
           memoryBlock,
-          MemoryPromptLang.zh,
+          MemoryPromptLang.en,
         );
         final payload = '${prefix}hello';
         await chatRepository.freezeMessagePrompt(
@@ -1278,7 +1278,7 @@ void main() {
         final sent = secondTurn.map((m) => m['content'].toString()).join('\n');
         expect(sent, isNot(contains('User likes Flutter.')));
         expect(sent, isNot(contains('<user_profile/>')));
-        expect(sent, isNot(contains(MemoryPrompts.introFullZh)));
+        expect(sent, isNot(contains(MemoryPrompts.introFullEn)));
         expect(secondTurn.first['content'], 'hi');
         expect(
           await chatRepository.getConversationInjectedMemoryHash('conv-2'),
@@ -1314,7 +1314,7 @@ void main() {
 
       final profileBlock = MemoryBlockBuilder.buildProfileBlock(
         fields: await chatRepository.readProfileFields(),
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
       );
       final memoryBlock = MemoryBlockBuilder.buildMemoryBlock(
         visible: await chatRepository.queryVisibleMemories(
@@ -1323,7 +1323,7 @@ void main() {
         totalByType: await chatRepository.countVisibleMemoriesByType(
           assistantId: 'assistant-1',
         ),
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: 10,
       );
       // u2 carries the snapshot the conversation's hash names; u1 carries an
@@ -1336,7 +1336,7 @@ void main() {
         '<user_memory type="workflow"/>\n'
         '<user_memory type="voice"/>\n'
         '<user_memory type="instruction"/>\n',
-        MemoryPromptLang.zh,
+        MemoryPromptLang.en,
       );
       await chatRepository.freezeMessagePrompt(
         revisionId: 'u1',
@@ -1349,7 +1349,7 @@ void main() {
         revisionId: 'u2',
         conversationId: 'conv-1',
         payload:
-            '${MemoryBlockBuilder.buildFullSnapshotPrefix(profileBlock, memoryBlock, MemoryPromptLang.zh)}again',
+            '${MemoryBlockBuilder.buildFullSnapshotPrefix(profileBlock, memoryBlock, MemoryPromptLang.en)}again',
         carriesMemorySnapshot: true,
         injectedMemoryHash: Value(
           MemoryBlockBuilder.hashBlocks(profileBlock, memoryBlock),
@@ -1396,7 +1396,7 @@ void main() {
     ) async {
       final profileBlock = MemoryBlockBuilder.buildProfileBlock(
         fields: await chatRepository.readProfileFields(),
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
       );
       final memoryBlock = MemoryBlockBuilder.buildMemoryBlock(
         visible: await chatRepository.queryVisibleMemories(
@@ -1405,14 +1405,14 @@ void main() {
         totalByType: await chatRepository.countVisibleMemoriesByType(
           assistantId: assistantId,
         ),
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: 10,
       );
       return (
         prefix: MemoryBlockBuilder.buildFullSnapshotPrefix(
           profileBlock,
           memoryBlock,
-          MemoryPromptLang.zh,
+          MemoryPromptLang.en,
         ),
         hash: MemoryBlockBuilder.hashBlocks(profileBlock, memoryBlock),
       );
@@ -1601,7 +1601,7 @@ void main() {
         final stale = MemoryBlockBuilder.buildFullSnapshotPrefix(
           MemoryBlockBuilder.buildProfileBlock(
             fields: const [],
-            lang: MemoryPromptLang.zh,
+            lang: MemoryPromptLang.en,
           ),
           '<user_memory type="identity">\n'
           '- [2026-08-01] stale entry\n'
@@ -1609,7 +1609,7 @@ void main() {
           '<user_memory type="workflow"/>\n'
           '<user_memory type="voice"/>\n'
           '<user_memory type="instruction"/>\n',
-          MemoryPromptLang.zh,
+          MemoryPromptLang.en,
         );
         await chatRepository.freezeMessagePrompt(
           revisionId: 'u2',
@@ -1735,9 +1735,9 @@ void main() {
             },
           ],
           currentMessageId: 'u1',
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         );
-        expect(first.prefix, contains(MemoryPrompts.introFullZh));
+        expect(first.prefix, contains(MemoryPrompts.introFullEn));
         await chatRepository.freezeMessagePrompt(
           revisionId: 'u1',
           conversationId: 'conv-1',
@@ -1763,7 +1763,7 @@ void main() {
             },
           ],
           currentMessageId: 'u2',
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         );
         expect(same.prefix, isEmpty);
 
@@ -1779,10 +1779,10 @@ void main() {
             },
           ],
           currentMessageId: 'u3',
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         );
 
-        expect(healed.prefix, contains(MemoryPrompts.introFullZh));
+        expect(healed.prefix, contains(MemoryPrompts.introFullEn));
         expect(healed.prefix, isNot(contains('<user_memory_update>')));
       },
     );
@@ -1817,11 +1817,11 @@ void main() {
         final after = (apiAfter.first['content'] ?? '').toString();
 
         expect(after, before);
-        expect(before, contains('## 长期记忆'));
-        expect(before, contains(MemoryPrompts.rulesPastConversationRecallZh));
+        expect(before, contains('## Long-term memory'));
+        expect(before, contains(MemoryPrompts.rulesPastConversationRecallEn));
         expect(before, isNot(contains('<memories>')));
         expect(before, isNot(contains('<recent_chats>')));
-        expect(before, isNot(contains('当前时间是')));
+        expect(before, isNot(contains('The current time is')));
       },
     );
 
@@ -1845,8 +1845,8 @@ void main() {
         );
 
         final content = (api.first['content'] ?? '').toString();
-        expect(content, contains(MemoryPrompts.rulesPastConversationRecallZh));
-        expect(content, isNot(contains('## 长期记忆')));
+        expect(content, contains(MemoryPrompts.rulesPastConversationRecallEn));
+        expect(content, isNot(contains('## Long-term memory')));
       },
     );
 

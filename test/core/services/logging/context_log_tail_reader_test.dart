@@ -90,14 +90,19 @@ void main() {
   });
 
   test('reconstructs a line split across tiny chunks including CJK', () async {
-    final file = fileWith('${line('中文', assistant: '助手名称')}\n${line('尾')}\n');
+    final file = fileWith(
+      '${line('\u4E2D\u6587', assistant: '\u52A9\u624B\u540D\u79F0')}\n${line('\u5C3E')}\n',
+    );
     final page = await ContextLogTailReader.readPage(
       file: file,
       limit: 10,
       chunkSize: 7,
     );
-    expect(page.snapshots.map((s) => s.conversationId), ['尾', '中文']);
-    expect(page.snapshots.last.assistantName, '助手名称');
+    expect(page.snapshots.map((s) => s.conversationId), [
+      '\u5C3E',
+      '\u4E2D\u6587',
+    ]);
+    expect(page.snapshots.last.assistantName, '\u52A9\u624B\u540D\u79F0');
     expect(page.hasMore, isFalse);
   });
 

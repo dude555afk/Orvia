@@ -112,7 +112,7 @@ void main() {
       localModelInstalledChecker: (_) async => true,
       localTranscriber: (options, pcm16) async {
         transcribedAudio = pcm16;
-        return '本地识别';
+        return '\u672C\u5730\u8BC6\u522B';
       },
     );
     addTearDown(provider.dispose);
@@ -125,7 +125,7 @@ void main() {
     capture.add(chunk);
     await Future<void>.delayed(Duration.zero);
 
-    expect(await provider.finish(), '本地识别');
+    expect(await provider.finish(), '\u672C\u5730\u8BC6\u522B');
     expect(transcribedAudio, chunk);
     expect(provider.state, AsrSessionState.idle);
   });

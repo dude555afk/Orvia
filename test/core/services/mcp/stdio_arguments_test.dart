@@ -20,7 +20,7 @@ void main() {
       r'C:\Users\My Files',
       r'$HOME',
       r'\',
-      '中文 😀',
+      '\u4E2D\u6587 😀',
     ];
     expect(StdioArguments.parse(StdioArguments.format(args)), args);
     for (final arg in args) {

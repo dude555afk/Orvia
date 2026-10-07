@@ -270,8 +270,8 @@ void main() {
         pad(2),
       ], terminator: '\n\n\n\n');
       await expectStableHeight('CJK paragraphs', [
-        '这是一个中文段落。' * 12,
-        '这是另一个中文段落。' * 12,
+        '\u8FD9\u662F\u4E00\u4E2A\u4E2D\u6587\u6BB5\u843D。' * 12,
+        '\u8FD9\u662F\u53E6\u4E00\u4E2A\u4E2D\u6587\u6BB5\u843D。' * 12,
         pad(1),
       ]);
     });

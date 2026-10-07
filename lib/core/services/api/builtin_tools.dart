@@ -231,8 +231,8 @@ abstract class BuiltInToolsHelper {
                 providerId.contains('volc') ||
                 providerId.contains('ark') ||
                 providerName.contains('doubao') ||
-                providerName.contains('火山') ||
-                providerName.contains('方舟')));
+                providerName.contains('\u706B\u5C71') ||
+                providerName.contains('\u65B9\u821F')));
   }
 
   static bool isMimoProvider(ProviderConfig? cfg) {
@@ -244,7 +244,7 @@ abstract class BuiltInToolsHelper {
         host.contains('mimo') ||
         providerId.contains('mimo') ||
         providerName.contains('mimo') ||
-        providerName.contains('小米');
+        providerName.contains('\u5C0F\u7C73');
   }
 
   static bool isMoonshotProvider(ProviderConfig? cfg) {
@@ -258,7 +258,7 @@ abstract class BuiltInToolsHelper {
         providerId.contains('kimi') ||
         providerName.contains('moonshot') ||
         providerName.contains('kimi') ||
-        providerName.contains('月之暗面');
+        providerName.contains('\u6708\u4E4B\u6697\u9762');
   }
 
   static bool isZhipuProvider(ProviderConfig? cfg) {
@@ -270,9 +270,9 @@ abstract class BuiltInToolsHelper {
         host.contains('bigmodel') ||
         host == 'api.z.ai' ||
         providerId.contains('zhipu') ||
-        providerId.contains('智谱') ||
+        providerId.contains('\u667A\u8C31') ||
         providerName.contains('zhipu') ||
-        providerName.contains('智谱');
+        providerName.contains('\u667A\u8C31');
   }
 
   static bool supportsBuiltInSearchForModel({

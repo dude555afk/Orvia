@@ -5,7 +5,7 @@ import '../search_service.dart';
 
 class ZhipuSearchService extends SearchService<ZhipuOptions> {
   @override
-  String get name => 'Zhipu (智谱)';
+  String get name => 'Zhipu';
 
   @override
   Widget description(BuildContext context) {

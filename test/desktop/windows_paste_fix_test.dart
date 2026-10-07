@@ -100,8 +100,8 @@ void main() {
     }
     await tester.pump();
     expect(controller.text, 'history');
-    await tester.enterText(find.byType(TextField), '普通输入');
-    expect(controller.text, '普通输入');
+    await tester.enterText(find.byType(TextField), '\u666E\u901A\u8F93\u5165');
+    expect(controller.text, '\u666E\u901A\u8F93\u5165');
     expect(HardwareKeyboard.instance.physicalKeysPressed, isEmpty);
   });
 

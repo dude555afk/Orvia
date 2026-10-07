@@ -80,7 +80,7 @@ class ChatInputSection extends StatelessWidget {
     this.onPickPhotos,
     this.onUploadFiles,
     this.onToggleLearningMode,
-    this.onOpenWorldBook, // 新增世界书支持桌面端
+    this.onOpenWorldBook, // \u65B0\u589E\u4E16\u754C\u4E66\u652F\u6301\u684C\u9762\u7AEF
     this.onLongPressLearning,
     this.onClearContext,
     this.onCompressContext,

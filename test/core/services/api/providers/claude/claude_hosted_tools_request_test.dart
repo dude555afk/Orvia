@@ -441,7 +441,7 @@ void main() {
           ),
           modelId: 'deepseek-v4-flash',
           messages: const [
-            {'role': 'user', 'content': '搜索一下kelivo'},
+            {'role': 'user', 'content': '\u641C\u7D22\u4E00\u4E0Bkelivo'},
           ],
           stream: true,
           sseRounds: const [deepSeekSearchRound],
@@ -500,7 +500,7 @@ void main() {
           ),
           modelId: 'claude-sonnet-4-6',
           messages: const [
-            {'role': 'user', 'content': '搜索一下kelivo'},
+            {'role': 'user', 'content': '\u641C\u7D22\u4E00\u4E0Bkelivo'},
           ],
           stream: true,
           sseRounds: const [downgradedRound, plainRound],

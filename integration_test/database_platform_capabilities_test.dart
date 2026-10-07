@@ -111,7 +111,7 @@ Future<Map<String, Object>> _verifySqliteCapabilities(Directory root) async {
       "CREATE VIRTUAL TABLE capability_fts USING fts5(content, tokenize='unicode61');",
     );
     source.execute('INSERT INTO capability_fts(content) VALUES (?);', [
-      'database capability 中文测试',
+      'database capability \u4E2D\u6587\u6D4B\u8BD5',
     ]);
     expect(
       source.select(
@@ -125,14 +125,14 @@ Future<Map<String, Object>> _verifySqliteCapabilities(Directory root) async {
         source.select(
               'SELECT COUNT(*) AS count FROM capability_fts '
               'WHERE capability_fts MATCH ?;',
-              ['中文'],
+              ['\u4E2D\u6587'],
             ).single['count']
             as int;
     expect(
       source.select(
         'SELECT COUNT(*) AS count FROM capability_fts '
         'WHERE capability_fts MATCH ?;',
-        ['中文测试'],
+        ['\u4E2D\u6587\u6D4B\u8BD5'],
       ).single['count'],
       1,
     );

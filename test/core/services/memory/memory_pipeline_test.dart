@@ -173,7 +173,8 @@ void main() {
       (
         message: ChatMessage(
           role: 'user',
-          content: '我是大学生，学软件工程。',
+          content:
+              '\u6211\u662F\u5927\u5B66\u751F，\u5B66\u8F6F\u4EF6\u5DE5\u7A0B。',
           conversationId: conversationId,
         ),
         order: endOrder - 1,
@@ -181,7 +182,7 @@ void main() {
       (
         message: ChatMessage(
           role: 'assistant',
-          content: '了解了。',
+          content: '\u4E86\u89E3\u4E86。',
           conversationId: conversationId,
         ),
         order: endOrder,
@@ -233,8 +234,8 @@ void main() {
         msgs,
         MemoryPromptLang.zh,
       );
-      expect(zh, contains('用户：'));
-      expect(zh, contains('助手：'));
+      expect(zh, contains('User:'));
+      expect(zh, contains('Assistant:'));
       expect(zh, contains('hello  world'));
       expect(zh, isNot(contains('/tmp/a.png')));
       expect(zh, isNot(contains('[image:')));
@@ -349,7 +350,7 @@ void main() {
         window: sampleWindow(conversationId: convo.id, endOrder: 5),
         llmCall: (prompt) async {
           calls++;
-          expect(prompt, contains('分析以下对话'));
+          expect(prompt, contains('\u5206\u6790\u4EE5\u4E0B\u5BF9\u8BDD'));
           return '<gate><user_memory>false</user_memory></gate>';
         },
       );
@@ -425,7 +426,7 @@ void main() {
           if (step == 2) {
             return '''
 <extracted>
-<item type="identity">用户是大学生，学习软件工程。</item>
+<item type="identity">\u7528\u6237\u662F\u5927\u5B66\u751F，\u5B66\u4E60\u8F6F\u4EF6\u5DE5\u7A0B。</item>
 </extracted>
 ''';
           }
@@ -493,7 +494,7 @@ void main() {
             return '<gate><user_memory>true</user_memory></gate>';
           }
           if (step == 2) {
-            return '<extracted><item type="identity">用户希望被称为小明。</item></extracted>';
+            return '<extracted><item type="identity">\u7528\u6237\u5E0C\u671B\u88AB\u79F0\u4E3A\u5C0F\u660E。</item></extracted>';
           }
           if (step == 3) {
             return jsonEncode({'action': 'NEW', 'relatedIds': <String>[]});

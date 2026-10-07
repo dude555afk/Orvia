@@ -177,16 +177,16 @@ class DesktopTrayController with TrayListener, WindowListener {
 
   @override
   void onTrayIconRightMouseDown() async {
-    // Right‑click: 弹出托盘菜单。
-    // 使用内部标记防止在一次交互周期内重复弹出，
-    // 否则在某些 Windows 环境下会看到第二个偏移的菜单。
+    // Right‑click: \u5F39\u51FA\u6258\u76D8\u83DC\u5355。
+    // \u4F7F\u7528\u5185\u90E8\u6807\u8BB0\u9632\u6B62\u5728\u4E00\u6B21\u4EA4\u4E92\u5468\u671F\u5185\u91CD\u590D\u5F39\u51FA，
+    // \u5426\u5219\u5728\u67D0\u4E9B Windows \u73AF\u5883\u4E0B\u4F1A\u770B\u5230\u7B2C\u4E8C\u4E2A\u504F\u79FB\u7684\u83DC\u5355。
     if (_contextMenuOpen) {
       return;
     }
     _contextMenuOpen = true;
     try {
-      // Windows 环境下建议在弹出菜单前尝试聚焦窗口，
-      // 以避免部分环境中菜单不会在点击其他地方时自动关闭。
+      // Windows \u73AF\u5883\u4E0B\u5EFA\u8BAE\u5728\u5F39\u51FA\u83DC\u5355\u524D\u5C1D\u8BD5\u805A\u7126\u7A97\u53E3，
+      // \u4EE5\u907F\u514D\u90E8\u5206\u73AF\u5883\u4E2D\u83DC\u5355\u4E0D\u4F1A\u5728\u70B9\u51FB\u5176\u4ED6\u5730\u65B9\u65F6\u81EA\u52A8\u5173\u95ED。
       if (defaultTargetPlatform == TargetPlatform.windows) {
         try {
           await windowManager.focus();
@@ -194,15 +194,15 @@ class DesktopTrayController with TrayListener, WindowListener {
       }
       await trayManager.popUpContextMenu();
     } catch (_) {}
-    // 无论是点击菜单项还是点击其他地方关闭菜单，
-    // popUpContextMenu 都会在菜单关闭后返回，这里统一重置标记。
+    // \u65E0\u8BBA\u662F\u70B9\u51FB\u83DC\u5355\u9879\u8FD8\u662F\u70B9\u51FB\u5176\u4ED6\u5730\u65B9\u5173\u95ED\u83DC\u5355，
+    // popUpContextMenu \u90FD\u4F1A\u5728\u83DC\u5355\u5173\u95ED\u540E\u8FD4\u56DE，\u8FD9\u91CC\u7EDF\u4E00\u91CD\u7F6E\u6807\u8BB0。
     _contextMenuOpen = false;
   }
 
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
-    // 任一菜单项被点击视为一次菜单交互结束，
-    // 额外保险地解除防抖标记（即使 Future 尚未完成）。
+    // \u4EFB\u4E00\u83DC\u5355\u9879\u88AB\u70B9\u51FB\u89C6\u4E3A\u4E00\u6B21\u83DC\u5355\u4EA4\u4E92\u7ED3\u675F，
+    // \u989D\u5916\u4FDD\u9669\u5730\u89E3\u9664\u9632\u6296\u6807\u8BB0（\u5373\u4F7F Future \u5C1A\u672A\u5B8C\u6210）。
     _contextMenuOpen = false;
   }
 

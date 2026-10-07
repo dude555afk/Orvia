@@ -551,20 +551,20 @@ void main() {
 
     unawaited(
       provider.speakSystem(
-        '保留\n'
-        '``print("行内代码")``\n'
+        '\u4FDD\u7559\n'
+        '``print("\u884C\u5185\u4EE3\u7801")``\n'
         '~~~dart\n'
-        'print("波浪线围栏");\n'
+        'print("\u6CE2\u6D6A\u7EBF\u56F4\u680F");\n'
         '~~~\n'
         '```dart\n'
-        'print("未闭合围栏");',
+        'print("\u672A\u95ED\u5408\u56F4\u680F");',
       ),
     );
     await _waitUntil(
       () => provider.playbackState.status == TtsPlaybackStatus.playing,
     );
 
-    expect(spokenTexts.last, '保留');
+    expect(spokenTexts.last, '\u4FDD\u7559');
   });
 
   test('network replay uses cached audio only when enabled', () async {

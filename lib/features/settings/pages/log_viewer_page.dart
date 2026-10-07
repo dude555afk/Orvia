@@ -165,14 +165,7 @@ class _LogViewerPageState extends State<LogViewerPage>
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
-    final locale = Localizations.localeOf(context);
-
-    String appTabLabel() {
-      if (locale.languageCode.toLowerCase() == 'zh') {
-        return l10n.flutterLogSettingTitle.replaceAll(RegExp(r'(打印|列印)$'), '');
-      }
-      return l10n.storageSpaceSubLogsFlutter;
-    }
+    String appTabLabel() => l10n.storageSpaceSubLogsFlutter;
 
     return Scaffold(
       appBar: AppBar(

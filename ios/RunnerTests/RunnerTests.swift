@@ -34,22 +34,22 @@ class IncomingShareHandlerTests: XCTestCase {
   func testShareTextIsPreservedAlongsideFileAndImageAttachments() {
     for type in ["public.file-url", "public.png"] {
       let item = NSExtensionItem()
-      item.attributedContentText = NSAttributedString(string: "请总结这份文件")
+      item.attributedContentText = NSAttributedString(string: "\u{8BF7}\u{603B}\u{7ED3}\u{8FD9}\u{4EFD}\u{6587}\u{4EF6}")
       item.attachments = [NSItemProvider(item: NSData(), typeIdentifier: type)]
 
-      XCTAssertEqual(IncomingShareInbox.textContents(in: [item]), ["请总结这份文件"])
+      XCTAssertEqual(IncomingShareInbox.textContents(in: [item]), ["\u{8BF7}\u{603B}\u{7ED3}\u{8FD9}\u{4EFD}\u{6587}\u{4EF6}"])
       XCTAssertEqual(item.attachments?.count, 1)
     }
   }
 
   func testShareTextKeepsItemOrderAndSkipsMissingOrEmptyText() {
-    let items = ["第一段", nil, "", "第二段"].map { text in
+    let items = ["\u{7B2C}\u{4E00}\u{6BB5}", nil, "", "\u{7B2C}\u{4E8C}\u{6BB5}"].map { text in
       let item = NSExtensionItem()
       item.attributedContentText = text.map { NSAttributedString(string: $0) }
       return item
     }
 
-    XCTAssertEqual(IncomingShareInbox.textContents(in: items), ["第一段", "第二段"])
+    XCTAssertEqual(IncomingShareInbox.textContents(in: items), ["\u{7B2C}\u{4E00}\u{6BB5}", "\u{7B2C}\u{4E8C}\u{6BB5}"])
   }
 
   @MainActor

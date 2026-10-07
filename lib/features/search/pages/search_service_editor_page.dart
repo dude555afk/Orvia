@@ -2626,7 +2626,7 @@ String _serviceTypeName(BuildContext context, String type) {
     case 'you':
       return l10n.searchServiceNameYou;
     case 'kelivo':
-      return l10n.searchServiceNameKelivo;
+      return l10n.searchServiceNameOrvia;
     default:
       return type;
   }
@@ -2675,7 +2675,7 @@ const _providerTypes = <({String type, String brand})>[
 Widget searchServiceEditorPagePreview() {
   return MaterialApp(
     debugShowCheckedModeBanner: false,
-    locale: const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
+    locale: const Locale('en'),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     theme: buildLightTheme(null),
@@ -2705,7 +2705,7 @@ Widget searchServiceEditorPagePreview() {
 Widget anySearchServiceEditorPagePreview() {
   return MaterialApp(
     debugShowCheckedModeBanner: false,
-    locale: const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
+    locale: const Locale('en'),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     theme: buildLightTheme(null),
@@ -2764,7 +2764,7 @@ Widget _searchUsageCardPreview({
 }) {
   return MaterialApp(
     debugShowCheckedModeBanner: false,
-    locale: const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
+    locale: const Locale('en'),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     theme: buildLightTheme(null),

@@ -14,7 +14,7 @@ void main() {
       r'\\server\share\a.png',
       r'/tmp/has space.png',
       r'/tmp/percent%20ok.png',
-      '/tmp/照片.png',
+      '/tmp/\u7167\u7247.png',
       r'/tmp/back\slash.png',
     ];
 

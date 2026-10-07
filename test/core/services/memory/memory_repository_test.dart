@@ -508,7 +508,7 @@ void main() {
         await putEntry(
           id: 'mem_cjk00001',
           type: MemoryType.identity,
-          content: '用户喜欢跨平台开发',
+          content: '\u7528\u6237\u559C\u6B22\u8DE8\u5E73\u53F0\u5F00\u53D1',
           updatedAt: t1,
           createdAt: t0,
         );
@@ -568,7 +568,7 @@ void main() {
         // CJK substring
         final cjk = await chatRepository.searchMemories(
           assistantId: null,
-          tokens: ['跨平台'],
+          tokens: ['\u8DE8\u5E73\u53F0'],
           matchAll: true,
         );
         expect(cjk.map((e) => e.id), ['mem_cjk00001']);

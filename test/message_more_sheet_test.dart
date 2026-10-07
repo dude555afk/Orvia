@@ -53,30 +53,39 @@ Future<void> _openMoreSheet(
 }
 
 void main() {
-  testWidgets('多版本消息菜单显示删除全部版本', (tester) async {
-    await _openMoreSheet(tester, canDeleteAllVersions: true);
+  testWidgets(
+    '\u591A\u7248\u672C\u6D88\u606F\u83DC\u5355\u663E\u793A\u5220\u9664\u5168\u90E8\u7248\u672C',
+    (tester) async {
+      await _openMoreSheet(tester, canDeleteAllVersions: true);
 
-    expect(find.text('Select Messages'), findsOneWidget);
-    expect(find.text('Create Branch'), findsOneWidget);
-    expect(find.text('Delete This Version'), findsOneWidget);
-    expect(find.text('Delete All Versions'), findsOneWidget);
-  });
+      expect(find.text('Select Messages'), findsOneWidget);
+      expect(find.text('Create Branch'), findsOneWidget);
+      expect(find.text('Delete This Version'), findsOneWidget);
+      expect(find.text('Delete All Versions'), findsOneWidget);
+    },
+  );
 
-  testWidgets('单版本消息菜单不显示删除全部版本', (tester) async {
-    await _openMoreSheet(tester, canDeleteAllVersions: false);
+  testWidgets(
+    '\u5355\u7248\u672C\u6D88\u606F\u83DC\u5355\u4E0D\u663E\u793A\u5220\u9664\u5168\u90E8\u7248\u672C',
+    (tester) async {
+      await _openMoreSheet(tester, canDeleteAllVersions: false);
 
-    expect(find.text('Select Messages'), findsOneWidget);
-    expect(find.text('Delete This Version'), findsOneWidget);
-    expect(find.text('Delete All Versions'), findsNothing);
-  });
+      expect(find.text('Select Messages'), findsOneWidget);
+      expect(find.text('Delete This Version'), findsOneWidget);
+      expect(find.text('Delete All Versions'), findsNothing);
+    },
+  );
 
-  testWidgets('临时会话消息菜单不显示创建分支', (tester) async {
-    await _openMoreSheet(
-      tester,
-      canDeleteAllVersions: false,
-      canCreateBranch: false,
-    );
+  testWidgets(
+    '\u4E34\u65F6\u4F1A\u8BDD\u6D88\u606F\u83DC\u5355\u4E0D\u663E\u793A\u521B\u5EFA\u5206\u652F',
+    (tester) async {
+      await _openMoreSheet(
+        tester,
+        canDeleteAllVersions: false,
+        canCreateBranch: false,
+      );
 
-    expect(find.text('Create Branch'), findsNothing);
-  });
+      expect(find.text('Create Branch'), findsNothing);
+    },
+  );
 }

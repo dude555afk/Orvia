@@ -1,5 +1,5 @@
 import 'package:Kelivo/features/settings/search/settings_search_index.dart';
-import 'package:Kelivo/l10n/app_localizations_zh.dart';
+import 'package:Kelivo/l10n/app_localizations_en.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -8,18 +8,18 @@ void main() {
   test('settings search index and keystroke timings', () {
     final build = Stopwatch()..start();
     final index = SettingsSearchIndex(
-      AppLocalizationsZh(),
+      AppLocalizationsEn(),
       platform: TargetPlatform.macOS,
     );
     build.stop();
     const queries = [
-      '字',
-      '字体',
-      '语言',
+      'font',
       'font size',
+      'language',
       'tool cards',
-      '聊天',
-      '不存在的设置',
+      'chat',
+      'message style',
+      'nonexistent setting',
       'api key',
     ];
     for (var i = 0; i < 100; i++) {

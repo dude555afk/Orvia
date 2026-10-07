@@ -31,7 +31,10 @@ void main() {
       messenger.setMockMethodCallHandler(SystemChannels.platform, null);
     });
     final source = ValueNotifier(
-      List.generate(200, (i) => 'final value$i = "中文 $i";').join('\n'),
+      List.generate(
+        200,
+        (i) => 'final value$i = "\u4E2D\u6587 $i";',
+      ).join('\n'),
     );
     await tester.pumpWidget(
       MaterialApp(

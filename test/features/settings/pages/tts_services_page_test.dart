@@ -301,9 +301,15 @@ void main() {
     expect(find.byType(VoiceServiceSelectRow<String>), findsOneWidget);
 
     Future<void> selectProvider(String current, String next) async {
-      await tester.tap(find.text(current).first);
+      final currentFinder = find.text(current).first;
+      await tester.ensureVisible(currentFinder);
       await tester.pumpAndSettle();
-      await tester.tap(find.text(next).last);
+      await tester.tap(currentFinder);
+      await tester.pumpAndSettle();
+      final nextFinder = find.text(next).last;
+      await tester.ensureVisible(nextFinder);
+      await tester.pumpAndSettle();
+      await tester.tap(nextFinder);
       await tester.pumpAndSettle();
     }
 

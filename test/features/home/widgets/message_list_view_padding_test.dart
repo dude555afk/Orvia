@@ -107,13 +107,115 @@ void main() {
     },
   );
 
-  testWidgets('macOS 消息列表滚动不主动清除文本选区焦点', (tester) async {
-    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
+  testWidgets(
+    'macOS \u6D88\u606F\u5217\u8868\u6EDA\u52A8\u4E0D\u4E3B\u52A8\u6E05\u9664\u6587\u672C\u9009\u533A\u7126\u70B9',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
 
-    try {
+      try {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: MessageListView(
+                scrollController: scrollController,
+                listController: listController,
+                messages: const [],
+                byGroup: const {},
+                versionSelections: const {},
+                reasoning: const {},
+                reasoningSegments: const {},
+                contentSplits: const {},
+                toolParts: const {},
+                translations: const {},
+                selecting: false,
+                selectedItems: const {},
+                dividerPadding: EdgeInsets.zero,
+                processingFilesMessageId: processingFilesMessageId,
+              ),
+            ),
+          ),
+        );
+
+        final listView = tester.widget<SuperListView>(
+          find.byType(SuperListView),
+        );
+        expect(
+          listView.keyboardDismissBehavior,
+          ScrollViewKeyboardDismissBehavior.manual,
+        );
+        expect(listView.delayPopulatingCacheArea, isFalse);
+        expect(listView.clipBehavior, Clip.hardEdge);
+        // SuperListView 0.4.1 still forwards this constructor value through the
+        // legacy ScrollView property on current Flutter.
+        // ignore: deprecated_member_use
+        expect(listView.cacheExtent, 600);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+        scrollController.dispose();
+        listController.dispose();
+        processingFilesMessageId.dispose();
+      }
+    },
+  );
+
+  testWidgets(
+    'Android \u6D88\u606F\u5217\u8868\u6EDA\u52A8\u4ECD\u7136\u6536\u8D77\u952E\u76D8',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
+
+      try {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: MessageListView(
+                scrollController: scrollController,
+                listController: listController,
+                messages: const [],
+                byGroup: const {},
+                versionSelections: const {},
+                reasoning: const {},
+                reasoningSegments: const {},
+                contentSplits: const {},
+                toolParts: const {},
+                translations: const {},
+                selecting: false,
+                selectedItems: const {},
+                dividerPadding: EdgeInsets.zero,
+                processingFilesMessageId: processingFilesMessageId,
+              ),
+            ),
+          ),
+        );
+
+        final listView = tester.widget<SuperListView>(
+          find.byType(SuperListView),
+        );
+        expect(
+          listView.keyboardDismissBehavior,
+          ScrollViewKeyboardDismissBehavior.onDrag,
+        );
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+        scrollController.dispose();
+        listController.dispose();
+        processingFilesMessageId.dispose();
+      }
+    },
+  );
+
+  testWidgets(
+    '\u6D88\u606F\u5217\u8868\u5E95\u90E8\u7559\u767D\u4F7F\u7528\u4F20\u5165\u7684\u8F93\u5165\u6846\u8986\u76D6\u9AD8\u5EA6',
+    (tester) async {
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -132,37 +234,28 @@ void main() {
               selectedItems: const {},
               dividerPadding: EdgeInsets.zero,
               processingFilesMessageId: processingFilesMessageId,
+              bottomContentPadding: 144,
             ),
           ),
         ),
       );
 
       final listView = tester.widget<SuperListView>(find.byType(SuperListView));
-      expect(
-        listView.keyboardDismissBehavior,
-        ScrollViewKeyboardDismissBehavior.manual,
-      );
-      expect(listView.delayPopulatingCacheArea, isFalse);
-      expect(listView.clipBehavior, Clip.hardEdge);
-      // SuperListView 0.4.1 still forwards this constructor value through the
-      // legacy ScrollView property on current Flutter.
-      // ignore: deprecated_member_use
-      expect(listView.cacheExtent, 600);
-    } finally {
-      debugDefaultTargetPlatformOverride = null;
+      expect((listView.padding as EdgeInsets).bottom, 144);
+
       scrollController.dispose();
       listController.dispose();
       processingFilesMessageId.dispose();
-    }
-  });
+    },
+  );
 
-  testWidgets('Android 消息列表滚动仍然收起键盘', (tester) async {
-    debugDefaultTargetPlatformOverride = TargetPlatform.android;
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
+  testWidgets(
+    '\u6D88\u606F\u5217\u8868\u9876\u90E8\u7559\u767D\u4F7F\u7528\u4F20\u5165\u7684\u5BFC\u822A\u680F\u8986\u76D6\u9AD8\u5EA6',
+    (tester) async {
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
 
-    try {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -181,357 +274,37 @@ void main() {
               selectedItems: const {},
               dividerPadding: EdgeInsets.zero,
               processingFilesMessageId: processingFilesMessageId,
+              topContentPadding: 88,
+              bottomContentPadding: 144,
             ),
           ),
         ),
       );
 
       final listView = tester.widget<SuperListView>(find.byType(SuperListView));
-      expect(
-        listView.keyboardDismissBehavior,
-        ScrollViewKeyboardDismissBehavior.onDrag,
-      );
-    } finally {
-      debugDefaultTargetPlatformOverride = null;
+      expect((listView.padding as EdgeInsets).top, 88);
+      expect((listView.padding as EdgeInsets).bottom, 144);
+
       scrollController.dispose();
       listController.dispose();
       processingFilesMessageId.dispose();
-    }
-  });
+    },
+  );
 
-  testWidgets('消息列表底部留白使用传入的输入框覆盖高度', (tester) async {
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
+  testWidgets(
+    '\u7F6E\u9876\u6D41\u5F0F\u6307\u793A\u5668\u6FC0\u6D3B\u65F6\u4FDD\u7559\u989D\u5916\u5E95\u90E8\u7A7A\u95F4',
+    (tester) async {
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: MessageListView(
-            scrollController: scrollController,
-            listController: listController,
-            messages: const [],
-            byGroup: const {},
-            versionSelections: const {},
-            reasoning: const {},
-            reasoningSegments: const {},
-            contentSplits: const {},
-            toolParts: const {},
-            translations: const {},
-            selecting: false,
-            selectedItems: const {},
-            dividerPadding: EdgeInsets.zero,
-            processingFilesMessageId: processingFilesMessageId,
-            bottomContentPadding: 144,
-          ),
-        ),
-      ),
-    );
-
-    final listView = tester.widget<SuperListView>(find.byType(SuperListView));
-    expect((listView.padding as EdgeInsets).bottom, 144);
-
-    scrollController.dispose();
-    listController.dispose();
-    processingFilesMessageId.dispose();
-  });
-
-  testWidgets('消息列表顶部留白使用传入的导航栏覆盖高度', (tester) async {
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: MessageListView(
-            scrollController: scrollController,
-            listController: listController,
-            messages: const [],
-            byGroup: const {},
-            versionSelections: const {},
-            reasoning: const {},
-            reasoningSegments: const {},
-            contentSplits: const {},
-            toolParts: const {},
-            translations: const {},
-            selecting: false,
-            selectedItems: const {},
-            dividerPadding: EdgeInsets.zero,
-            processingFilesMessageId: processingFilesMessageId,
-            topContentPadding: 88,
-            bottomContentPadding: 144,
-          ),
-        ),
-      ),
-    );
-
-    final listView = tester.widget<SuperListView>(find.byType(SuperListView));
-    expect((listView.padding as EdgeInsets).top, 88);
-    expect((listView.padding as EdgeInsets).bottom, 144);
-
-    scrollController.dispose();
-    listController.dispose();
-    processingFilesMessageId.dispose();
-  });
-
-  testWidgets('置顶流式指示器激活时保留额外底部空间', (tester) async {
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: MessageListView(
-            scrollController: scrollController,
-            listController: listController,
-            messages: const [],
-            byGroup: const {},
-            versionSelections: const {},
-            reasoning: const {},
-            reasoningSegments: const {},
-            contentSplits: const {},
-            toolParts: const {},
-            translations: const {},
-            selecting: false,
-            selectedItems: const {},
-            dividerPadding: EdgeInsets.zero,
-            processingFilesMessageId: processingFilesMessageId,
-            isPinnedIndicatorActive: true,
-            bottomContentPadding: 144,
-          ),
-        ),
-      ),
-    );
-
-    final listView = tester.widget<SuperListView>(find.byType(SuperListView));
-    expect((listView.padding as EdgeInsets).bottom, 156);
-
-    scrollController.dispose();
-    listController.dispose();
-    processingFilesMessageId.dispose();
-  });
-
-  testWidgets('流式思考更新缺少起始时间时保留已有计时起点', (tester) async {
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
-    final streamingNotifier = StreamingContentNotifier();
-    const messageId = 'reasoning-streaming-message';
-    final startAt = DateTime.now().subtract(const Duration(seconds: 7));
-    final reasoning = <String, stream_ctrl.ReasoningData>{
-      messageId: stream_ctrl.ReasoningData()
-        ..text = 'initial thinking'
-        ..startAt = startAt
-        ..expanded = false,
-    };
-    final messages = <ChatMessage>[
-      ChatMessage(
-        id: messageId,
-        role: 'assistant',
-        content: '',
-        conversationId: 'conversation-1',
-        isStreaming: true,
-      ),
-    ];
-    streamingNotifier.getNotifier(messageId);
-
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(
-            value: SettingsProvider(createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(
-            value: AssistantProvider(
-              preferences: createBusinessTestPreferences(),
-            ),
-          ),
-          ChangeNotifierProvider.value(
-            value: TtsProvider(preferences: createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(value: AskUserInteractionService()),
-          ChangeNotifierProvider.value(value: ToolApprovalService()),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
+      await tester.pumpWidget(
+        MaterialApp(
           home: Scaffold(
             body: MessageListView(
               scrollController: scrollController,
               listController: listController,
-              messages: messages,
-              byGroup: const {},
-              versionSelections: const {},
-              reasoning: reasoning,
-              reasoningSegments: const {},
-              contentSplits: const {},
-              toolParts: const {},
-              translations: const {},
-              selecting: false,
-              selectedItems: const {},
-              dividerPadding: EdgeInsets.zero,
-              processingFilesMessageId: processingFilesMessageId,
-              bottomContentPadding: 16,
-              streamingContentNotifier: streamingNotifier,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    streamingNotifier.updateReasoning(
-      messageId,
-      reasoningText: 'updated thinking',
-    );
-    await tester.pump();
-
-    expect(reasoning[messageId]!.startAt, startAt);
-
-    scrollController.dispose();
-    listController.dispose();
-    processingFilesMessageId.dispose();
-    streamingNotifier.dispose();
-  });
-
-  testWidgets('思考卡内部滚动不暂停流式正文更新', (tester) async {
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
-    final streamingNotifier = StreamingContentNotifier();
-    const messageId = 'nested-reasoning-scroll-message';
-    final reasoningText = List.filled(40, 'reasoning line').join('\n');
-    final messages = <ChatMessage>[
-      ChatMessage(
-        id: messageId,
-        role: 'assistant',
-        content: 'initial nested answer',
-        conversationId: 'conversation-1',
-        isStreaming: true,
-      ),
-    ];
-    final reasoning = <String, stream_ctrl.ReasoningData>{
-      messageId: stream_ctrl.ReasoningData()
-        ..text = reasoningText
-        ..startAt = DateTime.now().subtract(const Duration(seconds: 3))
-        ..expanded = false,
-    };
-    streamingNotifier.getNotifier(messageId);
-
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(
-            value: SettingsProvider(createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(
-            value: AssistantProvider(
-              preferences: createBusinessTestPreferences(),
-            ),
-          ),
-          ChangeNotifierProvider.value(
-            value: TtsProvider(preferences: createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(value: AskUserInteractionService()),
-          ChangeNotifierProvider.value(value: ToolApprovalService()),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: MessageListView(
-              scrollController: scrollController,
-              listController: listController,
-              messages: messages,
-              byGroup: const {},
-              versionSelections: const {},
-              reasoning: reasoning,
-              reasoningSegments: const {},
-              contentSplits: const {},
-              toolParts: const {},
-              translations: const {},
-              selecting: false,
-              selectedItems: const {},
-              dividerPadding: EdgeInsets.zero,
-              processingFilesMessageId: processingFilesMessageId,
-              bottomContentPadding: 16,
-              streamingContentNotifier: streamingNotifier,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    await tester.pump(const Duration(milliseconds: 320));
-
-    final innerScroll = find.byType(SingleChildScrollView).first;
-    await tester.drag(innerScroll, const Offset(0, 40));
-    await tester.pump();
-
-    streamingNotifier.updateContent(
-      messageId,
-      'updated after nested reasoning scroll',
-      3,
-    );
-    await tester.pump();
-
-    expect(find.text('updated after nested reasoning scroll'), findsOneWidget);
-
-    scrollController.dispose();
-    listController.dispose();
-    processingFilesMessageId.dispose();
-    streamingNotifier.dispose();
-  });
-
-  testWidgets('用户拖动离开底部时暂停应用流式内容更新', (tester) async {
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
-    final streamingNotifier = StreamingContentNotifier();
-    final messages = <ChatMessage>[
-      for (var i = 0; i < 18; i++)
-        ChatMessage(
-          id: 'message-$i',
-          role: 'assistant',
-          content: '\n\n\n\n\n\n\n\n',
-          conversationId: 'conversation-1',
-        ),
-      ChatMessage(
-        id: 'streaming-message',
-        role: 'assistant',
-        content: 'initial stream content',
-        conversationId: 'conversation-1',
-        isStreaming: true,
-      ),
-    ];
-    streamingNotifier.getNotifier('streaming-message');
-
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(
-            value: SettingsProvider(createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(
-            value: AssistantProvider(
-              preferences: createBusinessTestPreferences(),
-            ),
-          ),
-          ChangeNotifierProvider.value(
-            value: TtsProvider(preferences: createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(value: AskUserInteractionService()),
-          ChangeNotifierProvider.value(value: ToolApprovalService()),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: MessageListView(
-              scrollController: scrollController,
-              listController: listController,
-              messages: messages,
+              messages: const [],
               byGroup: const {},
               versionSelections: const {},
               reasoning: const {},
@@ -543,719 +316,1056 @@ void main() {
               selectedItems: const {},
               dividerPadding: EdgeInsets.zero,
               processingFilesMessageId: processingFilesMessageId,
-              bottomContentPadding: 16,
-              streamingContentNotifier: streamingNotifier,
+              isPinnedIndicatorActive: true,
+              bottomContentPadding: 144,
             ),
           ),
         ),
-      ),
-    );
+      );
 
-    scrollController.jumpTo(scrollController.position.maxScrollExtent);
-    await tester.pump();
+      final listView = tester.widget<SuperListView>(find.byType(SuperListView));
+      expect((listView.padding as EdgeInsets).bottom, 156);
 
-    final gesture = await tester.startGesture(
-      tester.getCenter(find.byType(SuperListView)),
-    );
-    await gesture.moveBy(const Offset(0, 96));
-    await tester.pump();
+      scrollController.dispose();
+      listController.dispose();
+      processingFilesMessageId.dispose();
+    },
+  );
 
-    streamingNotifier.updateContent(
-      'streaming-message',
-      'updated while dragging',
-      3,
-    );
-    await tester.pump();
-
-    expect(find.text('initial stream content'), findsOneWidget);
-    expect(find.text('updated while dragging'), findsNothing);
-
-    await tester.pump(const Duration(milliseconds: 220));
-    expect(find.text('initial stream content'), findsOneWidget);
-    expect(find.text('updated while dragging'), findsNothing);
-
-    await gesture.up();
-    await tester.pump(const Duration(milliseconds: 220));
-
-    expect(find.text('updated while dragging'), findsOneWidget);
-
-    scrollController.dispose();
-    listController.dispose();
-    processingFilesMessageId.dispose();
-    streamingNotifier.dispose();
-  });
-
-  testWidgets('贴近底部时用户滚动仍登记意图并在松手后恢复流式内容', (tester) async {
-    var userIntentCalls = 0;
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
-    final streamingNotifier = StreamingContentNotifier();
-    final messages = <ChatMessage>[
-      for (var i = 0; i < 18; i++)
+  testWidgets(
+    '\u6D41\u5F0F\u601D\u8003\u66F4\u65B0\u7F3A\u5C11\u8D77\u59CB\u65F6\u95F4\u65F6\u4FDD\u7559\u5DF2\u6709\u8BA1\u65F6\u8D77\u70B9',
+    (tester) async {
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
+      final streamingNotifier = StreamingContentNotifier();
+      const messageId = 'reasoning-streaming-message';
+      final startAt = DateTime.now().subtract(const Duration(seconds: 7));
+      final reasoning = <String, stream_ctrl.ReasoningData>{
+        messageId: stream_ctrl.ReasoningData()
+          ..text = 'initial thinking'
+          ..startAt = startAt
+          ..expanded = false,
+      };
+      final messages = <ChatMessage>[
         ChatMessage(
-          id: 'bottom-message-$i',
+          id: messageId,
           role: 'assistant',
-          content: '\n\n\n\n\n\n\n\n',
+          content: '',
           conversationId: 'conversation-1',
+          isStreaming: true,
         ),
-      ChatMessage(
-        id: 'bottom-streaming-message',
-        role: 'assistant',
-        content: 'initial bottom stream content',
-        conversationId: 'conversation-1',
-        isStreaming: true,
-      ),
-    ];
-    streamingNotifier.getNotifier('bottom-streaming-message');
+      ];
+      streamingNotifier.getNotifier(messageId);
 
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(
-            value: SettingsProvider(createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(
-            value: AssistantProvider(
-              preferences: createBusinessTestPreferences(),
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: SettingsProvider(createBusinessTestPreferences()),
             ),
-          ),
-          ChangeNotifierProvider.value(
-            value: TtsProvider(preferences: createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(value: AskUserInteractionService()),
-          ChangeNotifierProvider.value(value: ToolApprovalService()),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: MessageListView(
-              scrollController: scrollController,
-              listController: listController,
-              messages: messages,
-              byGroup: const {},
-              versionSelections: const {},
-              reasoning: const {},
-              reasoningSegments: const {},
-              contentSplits: const {},
-              toolParts: const {},
-              translations: const {},
-              selecting: false,
-              selectedItems: const {},
-              dividerPadding: EdgeInsets.zero,
-              processingFilesMessageId: processingFilesMessageId,
-              bottomContentPadding: 16,
-              streamingContentNotifier: streamingNotifier,
-              onUserScrollIntent: () => userIntentCalls++,
+            ChangeNotifierProvider.value(
+              value: AssistantProvider(
+                preferences: createBusinessTestPreferences(),
+              ),
+            ),
+            ChangeNotifierProvider.value(
+              value: TtsProvider(preferences: createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(value: AskUserInteractionService()),
+            ChangeNotifierProvider.value(value: ToolApprovalService()),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: MessageListView(
+                scrollController: scrollController,
+                listController: listController,
+                messages: messages,
+                byGroup: const {},
+                versionSelections: const {},
+                reasoning: reasoning,
+                reasoningSegments: const {},
+                contentSplits: const {},
+                toolParts: const {},
+                translations: const {},
+                selecting: false,
+                selectedItems: const {},
+                dividerPadding: EdgeInsets.zero,
+                processingFilesMessageId: processingFilesMessageId,
+                bottomContentPadding: 16,
+                streamingContentNotifier: streamingNotifier,
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
 
-    scrollController.jumpTo(scrollController.position.maxScrollExtent);
-    await tester.pump();
+      streamingNotifier.updateReasoning(
+        messageId,
+        reasoningText: 'updated thinking',
+      );
+      await tester.pump();
 
-    final gesture = await tester.startGesture(
-      tester.getCenter(find.byType(SuperListView)),
-    );
-    await gesture.moveBy(const Offset(0, 8));
-    await tester.pump();
-    await gesture.moveBy(const Offset(0, -4));
-    await tester.pump();
+      expect(reasoning[messageId]!.startAt, startAt);
 
-    expect(userIntentCalls, 0);
-    expect(
-      scrollController.position.maxScrollExtent - scrollController.offset,
-      lessThanOrEqualTo(56),
-    );
+      scrollController.dispose();
+      listController.dispose();
+      processingFilesMessageId.dispose();
+      streamingNotifier.dispose();
+    },
+  );
 
-    streamingNotifier.updateContent(
-      'bottom-streaming-message',
-      'updated while still near bottom',
-      3,
-    );
-    await tester.pump();
-
-    expect(find.text('updated while still near bottom'), findsNothing);
-
-    await gesture.up();
-    await tester.pump(const Duration(milliseconds: 220));
-    expect(userIntentCalls, 1);
-    expect(find.text('updated while still near bottom'), findsOneWidget);
-
-    scrollController.dispose();
-    listController.dispose();
-    processingFilesMessageId.dispose();
-    streamingNotifier.dispose();
-  });
-
-  testWidgets('滚轮滚动时暂停应用流式内容更新', (tester) async {
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
-    final streamingNotifier = StreamingContentNotifier();
-    final messages = <ChatMessage>[
-      for (var i = 0; i < 18; i++)
+  testWidgets(
+    '\u601D\u8003\u5361\u5185\u90E8\u6EDA\u52A8\u4E0D\u6682\u505C\u6D41\u5F0F\u6B63\u6587\u66F4\u65B0',
+    (tester) async {
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
+      final streamingNotifier = StreamingContentNotifier();
+      const messageId = 'nested-reasoning-scroll-message';
+      final reasoningText = List.filled(40, 'reasoning line').join('\n');
+      final messages = <ChatMessage>[
         ChatMessage(
-          id: 'wheel-message-$i',
+          id: messageId,
           role: 'assistant',
-          content: '\n\n\n\n\n\n\n\n',
+          content: 'initial nested answer',
           conversationId: 'conversation-1',
+          isStreaming: true,
         ),
-      ChatMessage(
-        id: 'wheel-streaming-message',
-        role: 'assistant',
-        content: 'initial wheel stream content',
-        conversationId: 'conversation-1',
-        isStreaming: true,
-      ),
-    ];
-    streamingNotifier.getNotifier('wheel-streaming-message');
+      ];
+      final reasoning = <String, stream_ctrl.ReasoningData>{
+        messageId: stream_ctrl.ReasoningData()
+          ..text = reasoningText
+          ..startAt = DateTime.now().subtract(const Duration(seconds: 3))
+          ..expanded = false,
+      };
+      streamingNotifier.getNotifier(messageId);
 
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(
-            value: SettingsProvider(createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(
-            value: AssistantProvider(
-              preferences: createBusinessTestPreferences(),
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: SettingsProvider(createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(
+              value: AssistantProvider(
+                preferences: createBusinessTestPreferences(),
+              ),
+            ),
+            ChangeNotifierProvider.value(
+              value: TtsProvider(preferences: createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(value: AskUserInteractionService()),
+            ChangeNotifierProvider.value(value: ToolApprovalService()),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: MessageListView(
+                scrollController: scrollController,
+                listController: listController,
+                messages: messages,
+                byGroup: const {},
+                versionSelections: const {},
+                reasoning: reasoning,
+                reasoningSegments: const {},
+                contentSplits: const {},
+                toolParts: const {},
+                translations: const {},
+                selecting: false,
+                selectedItems: const {},
+                dividerPadding: EdgeInsets.zero,
+                processingFilesMessageId: processingFilesMessageId,
+                bottomContentPadding: 16,
+                streamingContentNotifier: streamingNotifier,
+              ),
             ),
           ),
-          ChangeNotifierProvider.value(
-            value: TtsProvider(preferences: createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(value: AskUserInteractionService()),
-          ChangeNotifierProvider.value(value: ToolApprovalService()),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: MessageListView(
-              scrollController: scrollController,
-              listController: listController,
-              messages: messages,
-              byGroup: const {},
-              versionSelections: const {},
-              reasoning: const {},
-              reasoningSegments: const {},
-              contentSplits: const {},
-              toolParts: const {},
-              translations: const {},
-              selecting: false,
-              selectedItems: const {},
-              dividerPadding: EdgeInsets.zero,
-              processingFilesMessageId: processingFilesMessageId,
-              bottomContentPadding: 16,
-              streamingContentNotifier: streamingNotifier,
-            ),
-          ),
         ),
-      ),
-    );
+      );
 
-    scrollController.jumpTo(scrollController.position.maxScrollExtent);
-    await tester.pump();
+      await tester.pump(const Duration(milliseconds: 320));
 
-    final pointer = TestPointer(1, PointerDeviceKind.mouse);
-    await tester.sendEventToBinding(
-      pointer.hover(tester.getCenter(find.byType(SuperListView))),
-    );
-    await tester.sendEventToBinding(pointer.scroll(const Offset(0, -96)));
-    await tester.pump();
+      final innerScroll = find.byType(SingleChildScrollView).first;
+      await tester.drag(innerScroll, const Offset(0, 40));
+      await tester.pump();
 
-    streamingNotifier.updateContent(
-      'wheel-streaming-message',
-      'updated while wheel scrolling',
-      3,
-    );
-    await tester.pump();
+      streamingNotifier.updateContent(
+        messageId,
+        'updated after nested reasoning scroll',
+        3,
+      );
+      await tester.pump();
 
-    expect(find.text('initial wheel stream content'), findsOneWidget);
-    expect(find.text('updated while wheel scrolling'), findsNothing);
+      expect(
+        find.text('updated after nested reasoning scroll'),
+        findsOneWidget,
+      );
 
-    await tester.pump(const Duration(milliseconds: 220));
+      scrollController.dispose();
+      listController.dispose();
+      processingFilesMessageId.dispose();
+      streamingNotifier.dispose();
+    },
+  );
 
-    expect(find.text('updated while wheel scrolling'), findsOneWidget);
-
-    scrollController.dispose();
-    listController.dispose();
-    processingFilesMessageId.dispose();
-    streamingNotifier.dispose();
-  });
-
-  testWidgets('未布局的长消息按内容长度估算高度而非默认 100px', (tester) async {
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
-    final longBody = List<String>.filled(
-      120,
-      '这是一段用于撑高消息气泡的长文本，重复出现以便估算高度。',
-    ).join('\n');
-    final messages = <ChatMessage>[
-      for (var i = 0; i < 40; i++)
+  testWidgets(
+    '\u7528\u6237\u62D6\u52A8\u79BB\u5F00\u5E95\u90E8\u65F6\u6682\u505C\u5E94\u7528\u6D41\u5F0F\u5185\u5BB9\u66F4\u65B0',
+    (tester) async {
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
+      final streamingNotifier = StreamingContentNotifier();
+      final messages = <ChatMessage>[
+        for (var i = 0; i < 18; i++)
+          ChatMessage(
+            id: 'message-$i',
+            role: 'assistant',
+            content: '\n\n\n\n\n\n\n\n',
+            conversationId: 'conversation-1',
+          ),
         ChatMessage(
-          id: 'long-message-$i',
-          role: i.isEven ? 'user' : 'assistant',
-          content: longBody,
-          conversationId: 'conversation-1',
-        ),
-    ];
-
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(
-            value: SettingsProvider(createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(
-            value: AssistantProvider(
-              preferences: createBusinessTestPreferences(),
-            ),
-          ),
-          ChangeNotifierProvider.value(
-            value: TtsProvider(preferences: createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(
-            value: UserProvider(preferences: createBusinessTestPreferences()),
-          ),
-          ChangeNotifierProvider.value(value: AskUserInteractionService()),
-          ChangeNotifierProvider.value(value: ToolApprovalService()),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: MessageListView(
-              scrollController: scrollController,
-              listController: listController,
-              messages: messages,
-              byGroup: const {},
-              versionSelections: const {},
-              reasoning: const {},
-              reasoningSegments: const {},
-              contentSplits: const {},
-              toolParts: const {},
-              translations: const {},
-              selecting: false,
-              selectedItems: const {},
-              dividerPadding: EdgeInsets.zero,
-              processingFilesMessageId: processingFilesMessageId,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    // The tail of the list never entered layout, so its extents are still
-    // estimates. A flat default (100px) makes the total extent — and with it a
-    // bottom-pinned scroll offset — lurch every time one of them is measured.
-    final tail = listController.extentForIndex(messages.length - 1);
-    expect(tail.$2, isTrue, reason: 'tail item should still be estimated');
-    expect(tail.$1, greaterThan(2000));
-
-    scrollController.dispose();
-    listController.dispose();
-    processingFilesMessageId.dispose();
-  });
-
-  testWidgets('估算高度跟随系统无障碍字体缩放', (tester) async {
-    final listController = ListController();
-    final body = List<String>.filled(
-      120,
-      '这是一段用于撑高消息气泡的长文本，重复出现以便估算高度。',
-    ).join('\n');
-    final messages = <ChatMessage>[
-      for (var i = 0; i < 40; i++)
-        ChatMessage(
-          id: 'scaled-message-$i',
+          id: 'streaming-message',
           role: 'assistant',
-          content: body,
+          content: 'initial stream content',
           conversationId: 'conversation-1',
+          isStreaming: true,
         ),
-    ];
+      ];
+      streamingNotifier.getNotifier('streaming-message');
 
-    await _pumpEstimatorHarness(
-      tester,
-      messages,
-      listController,
-      textScale: 2.0,
-    );
-    final tail = listController.extentForIndex(39);
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: SettingsProvider(createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(
+              value: AssistantProvider(
+                preferences: createBusinessTestPreferences(),
+              ),
+            ),
+            ChangeNotifierProvider.value(
+              value: TtsProvider(preferences: createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(value: AskUserInteractionService()),
+            ChangeNotifierProvider.value(value: ToolApprovalService()),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: MessageListView(
+                scrollController: scrollController,
+                listController: listController,
+                messages: messages,
+                byGroup: const {},
+                versionSelections: const {},
+                reasoning: const {},
+                reasoningSegments: const {},
+                contentSplits: const {},
+                toolParts: const {},
+                translations: const {},
+                selecting: false,
+                selectedItems: const {},
+                dividerPadding: EdgeInsets.zero,
+                processingFilesMessageId: processingFilesMessageId,
+                bottomContentPadding: 16,
+                streamingContentNotifier: streamingNotifier,
+              ),
+            ),
+          ),
+        ),
+      );
 
-    // Items render at the system scale times the chat scale. Ignoring the
-    // system half leaves the estimate at the unscaled ~2900px for this body,
-    // while the real bubble is about four times that.
-    expect(tail.$2, isTrue);
-    expect(tail.$1, greaterThan(6000));
+      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      await tester.pump();
 
-    listController.dispose();
-  });
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byType(SuperListView)),
+      );
+      await gesture.moveBy(const Offset(0, 96));
+      await tester.pump();
 
-  testWidgets('折叠的内联思考块不计入估算高度', (tester) async {
-    final listController = ListController();
-    final thinking = List<String>.filled(200, '这是一段很长的思考内容。').join('\n');
+      streamingNotifier.updateContent(
+        'streaming-message',
+        'updated while dragging',
+        3,
+      );
+      await tester.pump();
 
-    await _pumpEstimatorHarness(
-      tester,
-      _estimatorMessages('<think>\n$thinking\n</think>\n简短的正文回答。'),
-      listController,
-    );
-    final tail = listController.extentForIndex(39);
+      expect(find.text('initial stream content'), findsOneWidget);
+      expect(find.text('updated while dragging'), findsNothing);
 
-    // Only the one visible line plus a collapsed card renders; counting the
-    // 200 hidden lines would inflate the scroll range by orders of magnitude.
-    expect(tail.$2, isTrue);
-    expect(tail.$1, lessThan(400));
+      await tester.pump(const Duration(milliseconds: 220));
+      expect(find.text('initial stream content'), findsOneWidget);
+      expect(find.text('updated while dragging'), findsNothing);
 
-    listController.dispose();
-  });
+      await gesture.up();
+      await tester.pump(const Duration(milliseconds: 220));
 
-  testWidgets('展开思考时估算高度计入思考正文', (tester) async {
-    final listController = ListController();
-    final thinking = List<String>.filled(200, '这是一段很长的思考内容。').join('\n');
+      expect(find.text('updated while dragging'), findsOneWidget);
 
-    await _pumpEstimatorHarness(
-      tester,
-      _estimatorMessages('<think>\n$thinking\n</think>\n简短的正文回答。'),
-      listController,
-      collapseThinking: false,
-    );
-    final tail = listController.extentForIndex(39);
+      scrollController.dispose();
+      listController.dispose();
+      processingFilesMessageId.dispose();
+      streamingNotifier.dispose();
+    },
+  );
 
-    // With auto-collapse off the whole block is on screen, so skipping it
-    // would under-estimate by thousands of pixels.
-    expect(tail.$2, isTrue);
-    expect(tail.$1, greaterThan(4000));
+  testWidgets(
+    '\u8D34\u8FD1\u5E95\u90E8\u65F6\u7528\u6237\u6EDA\u52A8\u4ECD\u767B\u8BB0\u610F\u56FE\u5E76\u5728\u677E\u624B\u540E\u6062\u590D\u6D41\u5F0F\u5185\u5BB9',
+    (tester) async {
+      var userIntentCalls = 0;
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
+      final streamingNotifier = StreamingContentNotifier();
+      final messages = <ChatMessage>[
+        for (var i = 0; i < 18; i++)
+          ChatMessage(
+            id: 'bottom-message-$i',
+            role: 'assistant',
+            content: '\n\n\n\n\n\n\n\n',
+            conversationId: 'conversation-1',
+          ),
+        ChatMessage(
+          id: 'bottom-streaming-message',
+          role: 'assistant',
+          content: 'initial bottom stream content',
+          conversationId: 'conversation-1',
+          isStreaming: true,
+        ),
+      ];
+      streamingNotifier.getNotifier('bottom-streaming-message');
 
-    listController.dispose();
-  });
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: SettingsProvider(createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(
+              value: AssistantProvider(
+                preferences: createBusinessTestPreferences(),
+              ),
+            ),
+            ChangeNotifierProvider.value(
+              value: TtsProvider(preferences: createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(value: AskUserInteractionService()),
+            ChangeNotifierProvider.value(value: ToolApprovalService()),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: MessageListView(
+                scrollController: scrollController,
+                listController: listController,
+                messages: messages,
+                byGroup: const {},
+                versionSelections: const {},
+                reasoning: const {},
+                reasoningSegments: const {},
+                contentSplits: const {},
+                toolParts: const {},
+                translations: const {},
+                selecting: false,
+                selectedItems: const {},
+                dividerPadding: EdgeInsets.zero,
+                processingFilesMessageId: processingFilesMessageId,
+                bottomContentPadding: 16,
+                streamingContentNotifier: streamingNotifier,
+                onUserScrollIntent: () => userIntentCalls++,
+              ),
+            ),
+          ),
+        ),
+      );
 
-  testWidgets('用户消息里的字面量 think 标签仍计入估算高度', (tester) async {
-    final listController = ListController();
-    final thinking = List<String>.filled(200, '这是一段很长的思考内容。').join('\n');
+      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      await tester.pump();
 
-    await _pumpEstimatorHarness(
-      tester,
-      _estimatorMessages(
-        '<think>\n$thinking\n</think>\n简短的正文回答。',
-        role: 'user',
-      ),
-      listController,
-    );
-    final tail = listController.extentForIndex(39);
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byType(SuperListView)),
+      );
+      await gesture.moveBy(const Offset(0, 8));
+      await tester.pump();
+      await gesture.moveBy(const Offset(0, -4));
+      await tester.pump();
 
-    // A user message renders its text verbatim — there is no thinking card.
-    expect(tail.$2, isTrue);
-    expect(tail.$1, greaterThan(4000));
+      expect(userIntentCalls, 0);
+      expect(
+        scrollController.position.maxScrollExtent - scrollController.offset,
+        lessThanOrEqualTo(56),
+      );
 
-    listController.dispose();
-  });
+      streamingNotifier.updateContent(
+        'bottom-streaming-message',
+        'updated while still near bottom',
+        3,
+      );
+      await tester.pump();
 
-  testWidgets('估算高度忽略 Markdown 链接里的目标地址', (tester) async {
-    final listController = ListController();
-    final target = 'https://example.com/${'a' * 4000}';
+      expect(find.text('updated while still near bottom'), findsNothing);
 
-    await _pumpEstimatorHarness(
-      tester,
-      _estimatorMessages('[x]($target)'),
-      listController,
-    );
-    final tail = listController.extentForIndex(39);
+      await gesture.up();
+      await tester.pump(const Duration(milliseconds: 220));
+      expect(userIntentCalls, 1);
+      expect(find.text('updated while still near bottom'), findsOneWidget);
 
-    // The link renders as the single character `x`; counting the hidden target
-    // would invent hundreds of lines of scroll range.
-    expect(tail.$2, isTrue);
-    expect(tail.$1, lessThan(200));
+      scrollController.dispose();
+      listController.dispose();
+      processingFilesMessageId.dispose();
+      streamingNotifier.dispose();
+    },
+  );
 
-    listController.dispose();
-  });
+  testWidgets(
+    '\u6EDA\u8F6E\u6EDA\u52A8\u65F6\u6682\u505C\u5E94\u7528\u6D41\u5F0F\u5185\u5BB9\u66F4\u65B0',
+    (tester) async {
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
+      final streamingNotifier = StreamingContentNotifier();
+      final messages = <ChatMessage>[
+        for (var i = 0; i < 18; i++)
+          ChatMessage(
+            id: 'wheel-message-$i',
+            role: 'assistant',
+            content: '\n\n\n\n\n\n\n\n',
+            conversationId: 'conversation-1',
+          ),
+        ChatMessage(
+          id: 'wheel-streaming-message',
+          role: 'assistant',
+          content: 'initial wheel stream content',
+          conversationId: 'conversation-1',
+          isStreaming: true,
+        ),
+      ];
+      streamingNotifier.getNotifier('wheel-streaming-message');
 
-  testWidgets('估算高度不把超长代码行按换行折算', (tester) async {
-    final listController = ListController();
-    final codeLine = 'x' * 4000;
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: SettingsProvider(createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(
+              value: AssistantProvider(
+                preferences: createBusinessTestPreferences(),
+              ),
+            ),
+            ChangeNotifierProvider.value(
+              value: TtsProvider(preferences: createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(value: AskUserInteractionService()),
+            ChangeNotifierProvider.value(value: ToolApprovalService()),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: MessageListView(
+                scrollController: scrollController,
+                listController: listController,
+                messages: messages,
+                byGroup: const {},
+                versionSelections: const {},
+                reasoning: const {},
+                reasoningSegments: const {},
+                contentSplits: const {},
+                toolParts: const {},
+                translations: const {},
+                selecting: false,
+                selectedItems: const {},
+                dividerPadding: EdgeInsets.zero,
+                processingFilesMessageId: processingFilesMessageId,
+                bottomContentPadding: 16,
+                streamingContentNotifier: streamingNotifier,
+              ),
+            ),
+          ),
+        ),
+      );
 
-    await _pumpEstimatorHarness(
-      tester,
-      _estimatorMessages('```json\n$codeLine\n```'),
-      listController,
-    );
-    final tail = listController.extentForIndex(39);
+      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      await tester.pump();
 
-    // Code blocks scroll horizontally instead of wrapping, so one long line
-    // stays one line.
-    expect(tail.$2, isTrue);
-    expect(tail.$1, lessThan(300));
+      final pointer = TestPointer(1, PointerDeviceKind.mouse);
+      await tester.sendEventToBinding(
+        pointer.hover(tester.getCenter(find.byType(SuperListView))),
+      );
+      await tester.sendEventToBinding(pointer.scroll(const Offset(0, -96)));
+      await tester.pump();
 
-    listController.dispose();
-  });
+      streamingNotifier.updateContent(
+        'wheel-streaming-message',
+        'updated while wheel scrolling',
+        3,
+      );
+      await tester.pump();
 
-  testWidgets('代码块换行时估算高度按换行折算', (tester) async {
-    final listController = ListController();
-    final codeLine = 'x' * 4000;
+      expect(find.text('initial wheel stream content'), findsOneWidget);
+      expect(find.text('updated while wheel scrolling'), findsNothing);
 
-    await _pumpEstimatorHarness(
-      tester,
-      _estimatorMessages('```json\n$codeLine\n```'),
-      listController,
-      wrapCodeBlocks: true,
-    );
-    final tail = listController.extentForIndex(39);
+      await tester.pump(const Duration(milliseconds: 220));
 
-    // Desktop (and mobile with the wrap setting on) renders the same line as
-    // dozens of rows; the horizontal-scroll case above estimates it at under
-    // 300px, so treating every renderer as scrolling under-estimates badly.
-    expect(tail.$2, isTrue);
-    expect(tail.$1, greaterThan(900));
+      expect(find.text('updated while wheel scrolling'), findsOneWidget);
 
-    listController.dispose();
-  });
+      scrollController.dispose();
+      listController.dispose();
+      processingFilesMessageId.dispose();
+      streamingNotifier.dispose();
+    },
+  );
 
-  testWidgets('展开的独立思考内容计入估算高度', (tester) async {
-    final listController = ListController();
-    final reasoningText = List.filled(200, '这是一段很长的思考内容。').join('\n');
-
-    await _pumpEstimatorHarness(
-      tester,
-      _estimatorMessages('简短的正文回答。'),
-      listController,
-      reasoning: {
+  testWidgets(
+    '\u672A\u5E03\u5C40\u7684\u957F\u6D88\u606F\u6309\u5185\u5BB9\u957F\u5EA6\u4F30\u7B97\u9AD8\u5EA6\u800C\u975E\u9ED8\u8BA4 100px',
+    (tester) async {
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
+      final longBody = List<String>.filled(
+        120,
+        '\u8FD9\u662F\u4E00\u6BB5\u7528\u4E8E\u6491\u9AD8\u6D88\u606F\u6C14\u6CE1\u7684\u957F\u6587\u672C，\u91CD\u590D\u51FA\u73B0\u4EE5\u4FBF\u4F30\u7B97\u9AD8\u5EA6。',
+      ).join('\n');
+      final messages = <ChatMessage>[
         for (var i = 0; i < 40; i++)
-          'estimator-message-$i': stream_ctrl.ReasoningData()
-            ..text = reasoningText
-            ..expanded = true,
-      },
-    );
-    final tail = listController.extentForIndex(39);
+          ChatMessage(
+            id: 'long-message-$i',
+            role: i.isEven ? 'user' : 'assistant',
+            content: longBody,
+            conversationId: 'conversation-1',
+          ),
+      ];
 
-    // Reasoning lives outside message.content; ignoring it estimates a
-    // reasoning-heavy message an order of magnitude too short.
-    expect(tail.$2, isTrue);
-    expect(tail.$1, greaterThan(3000));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: SettingsProvider(createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(
+              value: AssistantProvider(
+                preferences: createBusinessTestPreferences(),
+              ),
+            ),
+            ChangeNotifierProvider.value(
+              value: TtsProvider(preferences: createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(
+              value: UserProvider(preferences: createBusinessTestPreferences()),
+            ),
+            ChangeNotifierProvider.value(value: AskUserInteractionService()),
+            ChangeNotifierProvider.value(value: ToolApprovalService()),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: MessageListView(
+                scrollController: scrollController,
+                listController: listController,
+                messages: messages,
+                byGroup: const {},
+                versionSelections: const {},
+                reasoning: const {},
+                reasoningSegments: const {},
+                contentSplits: const {},
+                toolParts: const {},
+                translations: const {},
+                selecting: false,
+                selectedItems: const {},
+                dividerPadding: EdgeInsets.zero,
+                processingFilesMessageId: processingFilesMessageId,
+              ),
+            ),
+          ),
+        ),
+      );
 
-    listController.dispose();
-  });
+      // The tail of the list never entered layout, so its extents are still
+      // estimates. A flat default (100px) makes the total extent — and with it a
+      // bottom-pinned scroll offset — lurch every time one of them is measured.
+      final tail = listController.extentForIndex(messages.length - 1);
+      expect(tail.$2, isTrue, reason: 'tail item should still be estimated');
+      expect(tail.$1, greaterThan(2000));
 
-  testWidgets('折叠的独立思考内容只按固定卡片高度估算', (tester) async {
-    final listController = ListController();
-    final reasoningText = List.filled(200, '这是一段很长的思考内容。').join('\n');
+      scrollController.dispose();
+      listController.dispose();
+      processingFilesMessageId.dispose();
+    },
+  );
 
-    await _pumpEstimatorHarness(
-      tester,
-      _estimatorMessages('简短的正文回答。'),
-      listController,
-      reasoning: {
+  testWidgets(
+    '\u4F30\u7B97\u9AD8\u5EA6\u8DDF\u968F\u7CFB\u7EDF\u65E0\u969C\u788D\u5B57\u4F53\u7F29\u653E',
+    (tester) async {
+      final listController = ListController();
+      final body = List<String>.filled(
+        120,
+        '\u8FD9\u662F\u4E00\u6BB5\u7528\u4E8E\u6491\u9AD8\u6D88\u606F\u6C14\u6CE1\u7684\u957F\u6587\u672C，\u91CD\u590D\u51FA\u73B0\u4EE5\u4FBF\u4F30\u7B97\u9AD8\u5EA6。',
+      ).join('\n');
+      final messages = <ChatMessage>[
         for (var i = 0; i < 40; i++)
-          'estimator-message-$i': stream_ctrl.ReasoningData()
-            ..text = reasoningText
-            ..expanded = false,
-      },
-    );
-    final tail = listController.extentForIndex(39);
+          ChatMessage(
+            id: 'scaled-message-$i',
+            role: 'assistant',
+            content: body,
+            conversationId: 'conversation-1',
+          ),
+      ];
 
-    expect(tail.$2, isTrue);
-    expect(tail.$1, lessThan(400));
+      await _pumpEstimatorHarness(
+        tester,
+        messages,
+        listController,
+        textScale: 2.0,
+      );
+      final tail = listController.extentForIndex(39);
 
-    listController.dispose();
-  });
+      // Items render at the system scale times the chat scale. Ignoring the
+      // system half leaves the estimate at the unscaled ~2900px for this body,
+      // while the real bubble is about four times that.
+      expect(tail.$2, isTrue);
+      expect(tail.$1, greaterThan(6000));
 
-  testWidgets('顶部增量载入变高消息时保持当前可见消息位置', (tester) async {
-    final key = GlobalKey<_PrependingMessageListHarnessState>();
-    await tester.pumpWidget(_PrependingMessageListHarness(key: key));
+      listController.dispose();
+    },
+  );
 
-    final state = key.currentState!;
-    final target = find.byKey(const ValueKey<String>('window-message-0'));
-    expect(target, findsOneWidget);
-    final topBeforePrepend = tester.getTopLeft(target).dy;
+  testWidgets(
+    '\u6298\u53E0\u7684\u5185\u8054\u601D\u8003\u5757\u4E0D\u8BA1\u5165\u4F30\u7B97\u9AD8\u5EA6',
+    (tester) async {
+      final listController = ListController();
+      final thinking = List<String>.filled(
+        200,
+        '\u8FD9\u662F\u4E00\u6BB5\u5F88\u957F\u7684\u601D\u8003\u5185\u5BB9。',
+      ).join('\n');
 
-    state.prependMessages();
-    await tester.pumpAndSettle();
+      await _pumpEstimatorHarness(
+        tester,
+        _estimatorMessages(
+          '<think>\n$thinking\n</think>\n\u7B80\u77ED\u7684\u6B63\u6587\u56DE\u7B54。',
+        ),
+        listController,
+      );
+      final tail = listController.extentForIndex(39);
 
-    expect(target, findsOneWidget);
-    expect(
-      tester.getTopLeft(target).dy,
-      moreOrLessEquals(topBeforePrepend, epsilon: 1),
-    );
-  });
+      // Only the one visible line plus a collapsed card renders; counting the
+      // 200 hidden lines would inflate the scroll range by orders of magnitude.
+      expect(tail.$2, isTrue);
+      expect(tail.$1, lessThan(400));
 
-  testWidgets('等长窗口向前滑动时保持当前可见消息位置', (tester) async {
-    final key = GlobalKey<_PrependingMessageListHarnessState>();
-    await tester.pumpWidget(_PrependingMessageListHarness(key: key));
+      listController.dispose();
+    },
+  );
 
-    final state = key.currentState!;
-    final target = find.byKey(const ValueKey<String>('window-message-0'));
-    expect(target, findsOneWidget);
-    final topBeforeShift = tester.getTopLeft(target).dy;
+  testWidgets(
+    '\u5C55\u5F00\u601D\u8003\u65F6\u4F30\u7B97\u9AD8\u5EA6\u8BA1\u5165\u601D\u8003\u6B63\u6587',
+    (tester) async {
+      final listController = ListController();
+      final thinking = List<String>.filled(
+        200,
+        '\u8FD9\u662F\u4E00\u6BB5\u5F88\u957F\u7684\u601D\u8003\u5185\u5BB9。',
+      ).join('\n');
 
-    state.shiftWindowEarlier();
-    await tester.pumpAndSettle();
+      await _pumpEstimatorHarness(
+        tester,
+        _estimatorMessages(
+          '<think>\n$thinking\n</think>\n\u7B80\u77ED\u7684\u6B63\u6587\u56DE\u7B54。',
+        ),
+        listController,
+        collapseThinking: false,
+      );
+      final tail = listController.extentForIndex(39);
 
-    expect(target, findsOneWidget);
-    expect(
-      tester.getTopLeft(target).dy,
-      moreOrLessEquals(topBeforeShift, epsilon: 1),
-    );
-  });
+      // With auto-collapse off the whole block is on screen, so skipping it
+      // would under-estimate by thousands of pixels.
+      expect(tail.$2, isTrue);
+      expect(tail.$1, greaterThan(4000));
 
-  testWidgets('编辑可见窗口内的消息后保持原有阅读锚点', (tester) async {
-    final key = GlobalKey<_PrependingMessageListHarnessState>();
-    await tester.pumpWidget(_PrependingMessageListHarness(key: key));
+      listController.dispose();
+    },
+  );
 
-    final state = key.currentState!;
-    state.listController.jumpToItem(
-      index: 15,
-      scrollController: state.scrollController,
-      alignment: 0.2,
-    );
-    await tester.pumpAndSettle();
+  testWidgets(
+    '\u7528\u6237\u6D88\u606F\u91CC\u7684\u5B57\u9762\u91CF think \u6807\u7B7E\u4ECD\u8BA1\u5165\u4F30\u7B97\u9AD8\u5EA6',
+    (tester) async {
+      final listController = ListController();
+      final thinking = List<String>.filled(
+        200,
+        '\u8FD9\u662F\u4E00\u6BB5\u5F88\u957F\u7684\u601D\u8003\u5185\u5BB9。',
+      ).join('\n');
 
-    final target = find.byKey(const ValueKey<String>('window-message-15'));
-    expect(target, findsOneWidget);
-    final topBeforeEdit = tester.getTopLeft(target).dy;
+      await _pumpEstimatorHarness(
+        tester,
+        _estimatorMessages(
+          '<think>\n$thinking\n</think>\n\u7B80\u77ED\u7684\u6B63\u6587\u56DE\u7B54。',
+          role: 'user',
+        ),
+        listController,
+      );
+      final tail = listController.extentForIndex(39);
 
-    state.editMessageAboveAnchor();
-    await tester.pumpAndSettle();
+      // A user message renders its text verbatim — there is no thinking card.
+      expect(tail.$2, isTrue);
+      expect(tail.$1, greaterThan(4000));
 
-    expect(target, findsOneWidget);
-    expect(
-      tester.getTopLeft(target).dy,
-      moreOrLessEquals(topBeforeEdit, epsilon: 1),
-    );
-  });
+      listController.dispose();
+    },
+  );
 
-  testWidgets('删除视口上方的消息后保持当前可见消息位置', (tester) async {
-    final key = GlobalKey<_PrependingMessageListHarnessState>();
-    await tester.pumpWidget(_PrependingMessageListHarness(key: key));
+  testWidgets(
+    '\u4F30\u7B97\u9AD8\u5EA6\u5FFD\u7565 Markdown \u94FE\u63A5\u91CC\u7684\u76EE\u6807\u5730\u5740',
+    (tester) async {
+      final listController = ListController();
+      final target = 'https://example.com/${'a' * 4000}';
 
-    final state = key.currentState!;
-    state.listController.jumpToItem(
-      index: 15,
-      scrollController: state.scrollController,
-      alignment: 0.2,
-    );
-    await tester.pumpAndSettle();
+      await _pumpEstimatorHarness(
+        tester,
+        _estimatorMessages('[x]($target)'),
+        listController,
+      );
+      final tail = listController.extentForIndex(39);
 
-    final target = find.byKey(const ValueKey<String>('window-message-15'));
-    expect(target, findsOneWidget);
-    final topBeforeDelete = tester.getTopLeft(target).dy;
+      // The link renders as the single character `x`; counting the hidden target
+      // would invent hundreds of lines of scroll range.
+      expect(tail.$2, isTrue);
+      expect(tail.$1, lessThan(200));
 
-    // A deletion in the middle of the window is neither a prefix nor a
-    // suffix of the old slot list; without an explicit removal diff the list
-    // would drop every measured height and drift while re-measuring.
-    state.deleteMessage('window-message-5');
-    await tester.pumpAndSettle();
+      listController.dispose();
+    },
+  );
 
-    expect(target, findsOneWidget);
-    expect(
-      tester.getTopLeft(target).dy,
-      moreOrLessEquals(topBeforeDelete, epsilon: 1),
-    );
-  });
+  testWidgets(
+    '\u4F30\u7B97\u9AD8\u5EA6\u4E0D\u628A\u8D85\u957F\u4EE3\u7801\u884C\u6309\u6362\u884C\u6298\u7B97',
+    (tester) async {
+      final listController = ListController();
+      final codeLine = 'x' * 4000;
 
-  testWidgets('删除视口下方的消息不移动当前可见内容', (tester) async {
-    final key = GlobalKey<_PrependingMessageListHarnessState>();
-    await tester.pumpWidget(_PrependingMessageListHarness(key: key));
+      await _pumpEstimatorHarness(
+        tester,
+        _estimatorMessages('```json\n$codeLine\n```'),
+        listController,
+      );
+      final tail = listController.extentForIndex(39);
 
-    final state = key.currentState!;
-    state.listController.jumpToItem(
-      index: 15,
-      scrollController: state.scrollController,
-      alignment: 0.2,
-    );
-    await tester.pumpAndSettle();
+      // Code blocks scroll horizontally instead of wrapping, so one long line
+      // stays one line.
+      expect(tail.$2, isTrue);
+      expect(tail.$1, lessThan(300));
 
-    final target = find.byKey(const ValueKey<String>('window-message-15'));
-    expect(target, findsOneWidget);
-    final topBeforeDelete = tester.getTopLeft(target).dy;
+      listController.dispose();
+    },
+  );
 
-    state.deleteMessage('window-message-25');
-    await tester.pumpAndSettle();
+  testWidgets(
+    '\u4EE3\u7801\u5757\u6362\u884C\u65F6\u4F30\u7B97\u9AD8\u5EA6\u6309\u6362\u884C\u6298\u7B97',
+    (tester) async {
+      final listController = ListController();
+      final codeLine = 'x' * 4000;
 
-    expect(target, findsOneWidget);
-    expect(
-      tester.getTopLeft(target).dy,
-      moreOrLessEquals(topBeforeDelete, epsilon: 1),
-    );
-  });
+      await _pumpEstimatorHarness(
+        tester,
+        _estimatorMessages('```json\n$codeLine\n```'),
+        listController,
+        wrapCodeBlocks: true,
+      );
+      final tail = listController.extentForIndex(39);
 
-  testWidgets('展开的长思考卡在场时删除消息仍保持可见位置', (tester) async {
-    final key = GlobalKey<_PrependingMessageListHarnessState>();
-    await tester.pumpWidget(
-      _PrependingMessageListHarness(
-        key: key,
-        initialReasoning: {
-          // A tall expanded reasoning card whose height the extent estimator
-          // can only approximate; the anchor restore must not inherit that
-          // estimation error.
-          'window-message-13': stream_ctrl.ReasoningData()
-            ..text = List.filled(120, '思考内容行，足够长以撑出很高的思考卡片。').join('\n')
-            ..expanded = true
-            ..startAt = DateTime(2026, 1, 1)
-            ..finishedAt = DateTime(2026, 1, 1, 0, 0, 5),
+      // Desktop (and mobile with the wrap setting on) renders the same line as
+      // dozens of rows; the horizontal-scroll case above estimates it at under
+      // 300px, so treating every renderer as scrolling under-estimates badly.
+      expect(tail.$2, isTrue);
+      expect(tail.$1, greaterThan(900));
+
+      listController.dispose();
+    },
+  );
+
+  testWidgets(
+    '\u5C55\u5F00\u7684\u72EC\u7ACB\u601D\u8003\u5185\u5BB9\u8BA1\u5165\u4F30\u7B97\u9AD8\u5EA6',
+    (tester) async {
+      final listController = ListController();
+      final reasoningText = List.filled(
+        200,
+        '\u8FD9\u662F\u4E00\u6BB5\u5F88\u957F\u7684\u601D\u8003\u5185\u5BB9。',
+      ).join('\n');
+
+      await _pumpEstimatorHarness(
+        tester,
+        _estimatorMessages('\u7B80\u77ED\u7684\u6B63\u6587\u56DE\u7B54。'),
+        listController,
+        reasoning: {
+          for (var i = 0; i < 40; i++)
+            'estimator-message-$i': stream_ctrl.ReasoningData()
+              ..text = reasoningText
+              ..expanded = true,
         },
-      ),
-    );
+      );
+      final tail = listController.extentForIndex(39);
 
-    final state = key.currentState!;
-    state.listController.jumpToItem(
-      index: 15,
-      scrollController: state.scrollController,
-      alignment: 0.2,
-    );
-    await tester.pumpAndSettle();
+      // Reasoning lives outside message.content; ignoring it estimates a
+      // reasoning-heavy message an order of magnitude too short.
+      expect(tail.$2, isTrue);
+      expect(tail.$1, greaterThan(3000));
 
-    final target = find.byKey(const ValueKey<String>('window-message-15'));
-    expect(target, findsOneWidget);
-    final topBeforeDelete = tester.getTopLeft(target).dy;
+      listController.dispose();
+    },
+  );
 
-    state.deleteMessage('window-message-5');
-    await tester.pumpAndSettle();
+  testWidgets(
+    '\u6298\u53E0\u7684\u72EC\u7ACB\u601D\u8003\u5185\u5BB9\u53EA\u6309\u56FA\u5B9A\u5361\u7247\u9AD8\u5EA6\u4F30\u7B97',
+    (tester) async {
+      final listController = ListController();
+      final reasoningText = List.filled(
+        200,
+        '\u8FD9\u662F\u4E00\u6BB5\u5F88\u957F\u7684\u601D\u8003\u5185\u5BB9。',
+      ).join('\n');
 
-    expect(target, findsOneWidget);
-    expect(
-      tester.getTopLeft(target).dy,
-      moreOrLessEquals(topBeforeDelete, epsilon: 1),
-    );
-  });
+      await _pumpEstimatorHarness(
+        tester,
+        _estimatorMessages('\u7B80\u77ED\u7684\u6B63\u6587\u56DE\u7B54。'),
+        listController,
+        reasoning: {
+          for (var i = 0; i < 40; i++)
+            'estimator-message-$i': stream_ctrl.ReasoningData()
+              ..text = reasoningText
+              ..expanded = false,
+        },
+      );
+      final tail = listController.extentForIndex(39);
 
-  testWidgets('删除动画将消息淡出收起并拼接相邻消息', (tester) async {
-    final key = GlobalKey<_PrependingMessageListHarnessState>();
-    await tester.pumpWidget(_PrependingMessageListHarness(key: key));
+      expect(tail.$2, isTrue);
+      expect(tail.$1, lessThan(400));
 
-    final state = key.currentState!;
-    state.listController.jumpToItem(
-      index: 10,
-      scrollController: state.scrollController,
-      alignment: 0.2,
-    );
-    await tester.pumpAndSettle();
+      listController.dispose();
+    },
+  );
 
-    final removing = find.byKey(const ValueKey<String>('window-message-10'));
-    final below = find.byKey(const ValueKey<String>('window-message-11'));
-    final removingHeight = tester.getSize(removing).height;
-    final belowTopBefore = tester.getTopLeft(below).dy;
+  testWidgets(
+    '\u9876\u90E8\u589E\u91CF\u8F7D\u5165\u53D8\u9AD8\u6D88\u606F\u65F6\u4FDD\u6301\u5F53\u524D\u53EF\u89C1\u6D88\u606F\u4F4D\u7F6E',
+    (tester) async {
+      final key = GlobalKey<_PrependingMessageListHarnessState>();
+      await tester.pumpWidget(_PrependingMessageListHarness(key: key));
 
-    state.markRemoving('window-message-10');
-    await tester.pump();
-    await tester.pump(ChatLayoutConstants.slotRemovalAnimationDuration);
+      final state = key.currentState!;
+      final target = find.byKey(const ValueKey<String>('window-message-0'));
+      expect(target, findsOneWidget);
+      final topBeforePrepend = tester.getTopLeft(target).dy;
 
-    // The animated slot has collapsed to zero height and the message below
-    // has spliced up into its place; the actual data removal afterwards is
-    // then invisible.
-    expect(tester.getSize(removing).height, lessThan(1));
-    expect(
-      tester.getTopLeft(below).dy,
-      moreOrLessEquals(belowTopBefore - removingHeight, epsilon: 1.5),
-    );
+      state.prependMessages();
+      await tester.pumpAndSettle();
 
-    state.deleteMessage('window-message-10');
-    await tester.pumpAndSettle();
-    expect(removing, findsNothing);
-  });
+      expect(target, findsOneWidget);
+      expect(
+        tester.getTopLeft(target).dy,
+        moreOrLessEquals(topBeforePrepend, epsilon: 1),
+      );
+    },
+  );
+
+  testWidgets(
+    '\u7B49\u957F\u7A97\u53E3\u5411\u524D\u6ED1\u52A8\u65F6\u4FDD\u6301\u5F53\u524D\u53EF\u89C1\u6D88\u606F\u4F4D\u7F6E',
+    (tester) async {
+      final key = GlobalKey<_PrependingMessageListHarnessState>();
+      await tester.pumpWidget(_PrependingMessageListHarness(key: key));
+
+      final state = key.currentState!;
+      final target = find.byKey(const ValueKey<String>('window-message-0'));
+      expect(target, findsOneWidget);
+      final topBeforeShift = tester.getTopLeft(target).dy;
+
+      state.shiftWindowEarlier();
+      await tester.pumpAndSettle();
+
+      expect(target, findsOneWidget);
+      expect(
+        tester.getTopLeft(target).dy,
+        moreOrLessEquals(topBeforeShift, epsilon: 1),
+      );
+    },
+  );
+
+  testWidgets(
+    '\u7F16\u8F91\u53EF\u89C1\u7A97\u53E3\u5185\u7684\u6D88\u606F\u540E\u4FDD\u6301\u539F\u6709\u9605\u8BFB\u951A\u70B9',
+    (tester) async {
+      final key = GlobalKey<_PrependingMessageListHarnessState>();
+      await tester.pumpWidget(_PrependingMessageListHarness(key: key));
+
+      final state = key.currentState!;
+      state.listController.jumpToItem(
+        index: 15,
+        scrollController: state.scrollController,
+        alignment: 0.2,
+      );
+      await tester.pumpAndSettle();
+
+      final target = find.byKey(const ValueKey<String>('window-message-15'));
+      expect(target, findsOneWidget);
+      final topBeforeEdit = tester.getTopLeft(target).dy;
+
+      state.editMessageAboveAnchor();
+      await tester.pumpAndSettle();
+
+      expect(target, findsOneWidget);
+      expect(
+        tester.getTopLeft(target).dy,
+        moreOrLessEquals(topBeforeEdit, epsilon: 1),
+      );
+    },
+  );
+
+  testWidgets(
+    '\u5220\u9664\u89C6\u53E3\u4E0A\u65B9\u7684\u6D88\u606F\u540E\u4FDD\u6301\u5F53\u524D\u53EF\u89C1\u6D88\u606F\u4F4D\u7F6E',
+    (tester) async {
+      final key = GlobalKey<_PrependingMessageListHarnessState>();
+      await tester.pumpWidget(_PrependingMessageListHarness(key: key));
+
+      final state = key.currentState!;
+      state.listController.jumpToItem(
+        index: 15,
+        scrollController: state.scrollController,
+        alignment: 0.2,
+      );
+      await tester.pumpAndSettle();
+
+      final target = find.byKey(const ValueKey<String>('window-message-15'));
+      expect(target, findsOneWidget);
+      final topBeforeDelete = tester.getTopLeft(target).dy;
+
+      // A deletion in the middle of the window is neither a prefix nor a
+      // suffix of the old slot list; without an explicit removal diff the list
+      // would drop every measured height and drift while re-measuring.
+      state.deleteMessage('window-message-5');
+      await tester.pumpAndSettle();
+
+      expect(target, findsOneWidget);
+      expect(
+        tester.getTopLeft(target).dy,
+        moreOrLessEquals(topBeforeDelete, epsilon: 1),
+      );
+    },
+  );
+
+  testWidgets(
+    '\u5220\u9664\u89C6\u53E3\u4E0B\u65B9\u7684\u6D88\u606F\u4E0D\u79FB\u52A8\u5F53\u524D\u53EF\u89C1\u5185\u5BB9',
+    (tester) async {
+      final key = GlobalKey<_PrependingMessageListHarnessState>();
+      await tester.pumpWidget(_PrependingMessageListHarness(key: key));
+
+      final state = key.currentState!;
+      state.listController.jumpToItem(
+        index: 15,
+        scrollController: state.scrollController,
+        alignment: 0.2,
+      );
+      await tester.pumpAndSettle();
+
+      final target = find.byKey(const ValueKey<String>('window-message-15'));
+      expect(target, findsOneWidget);
+      final topBeforeDelete = tester.getTopLeft(target).dy;
+
+      state.deleteMessage('window-message-25');
+      await tester.pumpAndSettle();
+
+      expect(target, findsOneWidget);
+      expect(
+        tester.getTopLeft(target).dy,
+        moreOrLessEquals(topBeforeDelete, epsilon: 1),
+      );
+    },
+  );
+
+  testWidgets(
+    '\u5C55\u5F00\u7684\u957F\u601D\u8003\u5361\u5728\u573A\u65F6\u5220\u9664\u6D88\u606F\u4ECD\u4FDD\u6301\u53EF\u89C1\u4F4D\u7F6E',
+    (tester) async {
+      final key = GlobalKey<_PrependingMessageListHarnessState>();
+      await tester.pumpWidget(
+        _PrependingMessageListHarness(
+          key: key,
+          initialReasoning: {
+            // A tall expanded reasoning card whose height the extent estimator
+            // can only approximate; the anchor restore must not inherit that
+            // estimation error.
+            'window-message-13': stream_ctrl.ReasoningData()
+              ..text = List.filled(
+                120,
+                '\u601D\u8003\u5185\u5BB9\u884C，\u8DB3\u591F\u957F\u4EE5\u6491\u51FA\u5F88\u9AD8\u7684\u601D\u8003\u5361\u7247。',
+              ).join('\n')
+              ..expanded = true
+              ..startAt = DateTime(2026, 1, 1)
+              ..finishedAt = DateTime(2026, 1, 1, 0, 0, 5),
+          },
+        ),
+      );
+
+      final state = key.currentState!;
+      state.listController.jumpToItem(
+        index: 15,
+        scrollController: state.scrollController,
+        alignment: 0.2,
+      );
+      await tester.pumpAndSettle();
+
+      final target = find.byKey(const ValueKey<String>('window-message-15'));
+      expect(target, findsOneWidget);
+      final topBeforeDelete = tester.getTopLeft(target).dy;
+
+      state.deleteMessage('window-message-5');
+      await tester.pumpAndSettle();
+
+      expect(target, findsOneWidget);
+      expect(
+        tester.getTopLeft(target).dy,
+        moreOrLessEquals(topBeforeDelete, epsilon: 1),
+      );
+    },
+  );
+
+  testWidgets(
+    '\u5220\u9664\u52A8\u753B\u5C06\u6D88\u606F\u6DE1\u51FA\u6536\u8D77\u5E76\u62FC\u63A5\u76F8\u90BB\u6D88\u606F',
+    (tester) async {
+      final key = GlobalKey<_PrependingMessageListHarnessState>();
+      await tester.pumpWidget(_PrependingMessageListHarness(key: key));
+
+      final state = key.currentState!;
+      state.listController.jumpToItem(
+        index: 10,
+        scrollController: state.scrollController,
+        alignment: 0.2,
+      );
+      await tester.pumpAndSettle();
+
+      final removing = find.byKey(const ValueKey<String>('window-message-10'));
+      final below = find.byKey(const ValueKey<String>('window-message-11'));
+      final removingHeight = tester.getSize(removing).height;
+      final belowTopBefore = tester.getTopLeft(below).dy;
+
+      state.markRemoving('window-message-10');
+      await tester.pump();
+      await tester.pump(ChatLayoutConstants.slotRemovalAnimationDuration);
+
+      // The animated slot has collapsed to zero height and the message below
+      // has spliced up into its place; the actual data removal afterwards is
+      // then invisible.
+      expect(tester.getSize(removing).height, lessThan(1));
+      expect(
+        tester.getTopLeft(below).dy,
+        moreOrLessEquals(belowTopBefore - removingHeight, epsilon: 1.5),
+      );
+
+      state.deleteMessage('window-message-10');
+      await tester.pumpAndSettle();
+      expect(removing, findsNothing);
+    },
+  );
 }
 
 class _PrependingMessageListHarness extends StatefulWidget {

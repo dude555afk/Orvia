@@ -181,16 +181,16 @@ void main() {
           appendLogs(utf8.encode('log$i\n'));
         }
         final before = run.tailLines;
-        final replacement = utf8.encode('\r完成 😀');
+        final replacement = utf8.encode('\r\u5B8C\u6210 😀');
         for (var i = 0; i < 3; i++) {
           appendProgress(Uint8List.fromList([replacement[i]]));
           expect(run.tailLines, before);
         }
         appendProgress(Uint8List.fromList(replacement.sublist(3)));
         expect(run.tailLines.length, 200);
-        expect(run.tailLines.last, '完成 😀');
+        expect(run.tailLines.last, '\u5B8C\u6210 😀');
         run.complete(status: ToolRunStatus.succeeded, exitCode: 0);
-        expect(run.tailLines.last, '完成 😀');
+        expect(run.tailLines.last, '\u5B8C\u6210 😀');
       },
     );
 

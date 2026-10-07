@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 enum RestoreMode {
-  overwrite, // 完全覆盖：清空本地后恢复
-  merge, // 增量合并：智能去重
+  overwrite, // \u5B8C\u5168\u8986\u76D6：\u6E05\u7A7A\u672C\u5730\u540E\u6062\u590D
+  merge, // \u589E\u91CF\u5408\u5E76：\u667A\u80FD\u53BB\u91CD
 }
 
 class WebDavConfig {

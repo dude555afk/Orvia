@@ -42,7 +42,7 @@ void main() {
   test(
     'CJK text survives an incomplete UTF8 sequence at the probe boundary',
     () async {
-      final expected = '文件内容' * 2000;
+      final expected = '\u6587\u4EF6\u5185\u5BB9' * 2000;
       final file = File('${directory.path}/notes.txt')
         ..writeAsStringSync(expected);
       expect(

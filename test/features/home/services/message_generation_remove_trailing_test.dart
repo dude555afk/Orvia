@@ -19,39 +19,45 @@ ChatMessage _message({
 
 void main() {
   group('MessageGenerationService.collectTrailingMessageIdsForRemoval', () {
-    test('删除截断点之后不属于保留分组的消息', () {
-      final messages = <ChatMessage>[
-        _message(id: 'u1', role: 'user', groupId: 'u1'),
-        _message(id: 'a1-v0', role: 'assistant', groupId: 'a1'),
-        _message(id: 'u2', role: 'user', groupId: 'u2'),
-        _message(id: 'a2-v0', role: 'assistant', groupId: 'a2'),
-        _message(id: 'a1-v1', role: 'assistant', groupId: 'a1'),
-      ];
+    test(
+      '\u5220\u9664\u622A\u65AD\u70B9\u4E4B\u540E\u4E0D\u5C5E\u4E8E\u4FDD\u7559\u5206\u7EC4\u7684\u6D88\u606F',
+      () {
+        final messages = <ChatMessage>[
+          _message(id: 'u1', role: 'user', groupId: 'u1'),
+          _message(id: 'a1-v0', role: 'assistant', groupId: 'a1'),
+          _message(id: 'u2', role: 'user', groupId: 'u2'),
+          _message(id: 'a2-v0', role: 'assistant', groupId: 'a2'),
+          _message(id: 'a1-v1', role: 'assistant', groupId: 'a1'),
+        ];
 
-      final result =
-          MessageGenerationService.collectTrailingMessageIdsForRemoval(
-            messages: messages,
-            lastKeep: 1,
-            targetGroupId: 'a1',
-          );
+        final result =
+            MessageGenerationService.collectTrailingMessageIdsForRemoval(
+              messages: messages,
+              lastKeep: 1,
+              targetGroupId: 'a1',
+            );
 
-      expect(result, ['u2', 'a2-v0']);
-    });
+        expect(result, ['u2', 'a2-v0']);
+      },
+    );
 
-    test('截断点已经在底部时不删除消息', () {
-      final messages = <ChatMessage>[
-        _message(id: 'u1', role: 'user', groupId: 'u1'),
-        _message(id: 'a1-v0', role: 'assistant', groupId: 'a1'),
-      ];
+    test(
+      '\u622A\u65AD\u70B9\u5DF2\u7ECF\u5728\u5E95\u90E8\u65F6\u4E0D\u5220\u9664\u6D88\u606F',
+      () {
+        final messages = <ChatMessage>[
+          _message(id: 'u1', role: 'user', groupId: 'u1'),
+          _message(id: 'a1-v0', role: 'assistant', groupId: 'a1'),
+        ];
 
-      final result =
-          MessageGenerationService.collectTrailingMessageIdsForRemoval(
-            messages: messages,
-            lastKeep: 1,
-            targetGroupId: 'a1',
-          );
+        final result =
+            MessageGenerationService.collectTrailingMessageIdsForRemoval(
+              messages: messages,
+              lastKeep: 1,
+              targetGroupId: 'a1',
+            );
 
-      expect(result, isEmpty);
-    });
+        expect(result, isEmpty);
+      },
+    );
   });
 }

@@ -17,7 +17,7 @@ import '../../shared/widgets/snackbar.dart';
 import '../../theme/app_font_weights.dart';
 import 'package:Kelivo/theme/app_semantic_colors.dart';
 
-/// Desktop: TTS (语音服务) right-side pane
+/// Desktop: TTS (\u8BED\u97F3\u670D\u52A1) right-side pane
 /// Adapts mobile TTS page to desktop with hoverable list card style
 /// similar to DesktopSearchServicesPane.
 class DesktopTtsServicesPane extends StatefulWidget {
@@ -1171,7 +1171,9 @@ Future<TtsServiceOptions?> _showNetworkDialog(
                               label: l10n.ttsServicesDialogProviderType,
                               value: networkTtsKindDisplayName(kind),
                               options: [
-                                networkTtsKindDisplayName(NetworkTtsKind.edgeNeural),
+                                networkTtsKindDisplayName(
+                                  NetworkTtsKind.edgeNeural,
+                                ),
                                 networkTtsKindDisplayName(
                                   NetworkTtsKind.openai,
                                 ),
@@ -1200,7 +1202,10 @@ Future<TtsServiceOptions?> _showNetworkDialog(
                               onSelected: (picked) {
                                 final previousKind = kind;
                                 setState(() {
-                                  if (picked == networkTtsKindDisplayName(NetworkTtsKind.edgeNeural)) {
+                                  if (picked ==
+                                      networkTtsKindDisplayName(
+                                        NetworkTtsKind.edgeNeural,
+                                      )) {
                                     kind = NetworkTtsKind.edgeNeural;
                                   }
                                   if (picked ==
@@ -1326,23 +1331,23 @@ Future<TtsServiceOptions?> _showNetworkDialog(
                             const SizedBox(height: 6),
                             if (kind != NetworkTtsKind.edgeNeural)
                               _InputRow(
-                              label: l10n.ttsServicesFieldApiKeyLabel,
-                              controller: apiKeyCtl,
-                              obscure: true,
-                            ),
+                                label: l10n.ttsServicesFieldApiKeyLabel,
+                                controller: apiKeyCtl,
+                                obscure: true,
+                              ),
                             const SizedBox(height: 6),
                             if (kind != NetworkTtsKind.edgeNeural)
                               _InputRow(
-                              label: kind == NetworkTtsKind.qwenAudio
-                                  ? l10n.ttsServicesFieldWorkspaceIdLabel
-                                  : l10n.ttsServicesFieldBaseUrlLabel,
-                              controller: baseCtl,
-                              hint: kind == NetworkTtsKind.qwenAudio
-                                  ? null
-                                  : kind == NetworkTtsKind.azure
-                                  ? 'https://<region>.tts.speech.microsoft.com'
-                                  : _defaultBaseUrl(kind),
-                            ),
+                                label: kind == NetworkTtsKind.qwenAudio
+                                    ? l10n.ttsServicesFieldWorkspaceIdLabel
+                                    : l10n.ttsServicesFieldBaseUrlLabel,
+                                controller: baseCtl,
+                                hint: kind == NetworkTtsKind.qwenAudio
+                                    ? null
+                                    : kind == NetworkTtsKind.azure
+                                    ? 'https://<region>.tts.speech.microsoft.com'
+                                    : _defaultBaseUrl(kind),
+                              ),
                             const SizedBox(height: 6),
                             if (kind != NetworkTtsKind.xai &&
                                 kind != NetworkTtsKind.azure &&
@@ -1674,7 +1679,8 @@ Future<TtsServiceOptions?> _showNetworkDialog(
                               final voice = rawVoice.isEmpty
                                   ? _defaultVoice(kind)
                                   : rawVoice;
-                              if ((kind != NetworkTtsKind.edgeNeural && apiKey.isEmpty) ||
+                              if ((kind != NetworkTtsKind.edgeNeural &&
+                                      apiKey.isEmpty) ||
                                   (kind == NetworkTtsKind.azure &&
                                       !isValidAzureTtsEndpoint(base))) {
                                 return;

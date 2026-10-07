@@ -5,14 +5,17 @@ void main() {
   group('TtsTextChunker', () {
     test('splits long text on sentence boundaries', () {
       final chunks = TtsTextChunker.split(
-        '第一句很短。第二句也不长！Third sentence is readable. '
+        '\u7B2C\u4E00\u53E5\u5F88\u77ED。\u7B2C\u4E8C\u53E5\u4E5F\u4E0D\u957F！Third sentence is readable. '
         'Fourth sentence should start a new chunk.',
         maxChunkLength: 32,
       );
 
       expect(chunks, hasLength(greaterThan(1)));
       expect(chunks.every((chunk) => chunk.text.length <= 32), isTrue);
-      expect(chunks.first.text, '第一句很短。第二句也不长！');
+      expect(
+        chunks.first.text,
+        '\u7B2C\u4E00\u53E5\u5F88\u77ED。\u7B2C\u4E8C\u53E5\u4E5F\u4E0D\u957F！',
+      );
       expect(chunks.first.startOffset, 0);
       expect(chunks[1].startOffset, chunks.first.text.length);
     });

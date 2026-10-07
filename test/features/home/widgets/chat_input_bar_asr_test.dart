@@ -105,7 +105,7 @@ void main() {
     await settings.setAsrServices(<AsrServiceOptions>[option]);
     final backend = _FakeSystemBackend();
     final asr = AsrProvider(systemService: SystemAsrService(backend: backend));
-    final controller = TextEditingController(text: '保留内容')
+    final controller = TextEditingController(text: '\u4FDD\u7559\u5185\u5BB9')
       ..selection = const TextSelection(baseOffset: 1, extentOffset: 3);
     final original = controller.value;
     addTearDown(asr.dispose);
@@ -116,7 +116,7 @@ void main() {
     );
     await tester.tap(find.byTooltip('Voice input'));
     await tester.pump();
-    backend.emitTranscript('临时识别', false);
+    backend.emitTranscript('\u4E34\u65F6\u8BC6\u522B', false);
     await tester.pump();
 
     await tester.tap(find.byTooltip('Discard recording'));

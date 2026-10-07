@@ -24,45 +24,49 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  testWidgets('解析文件条只出现在正在解析的那条助手消息上', (tester) async {
-    final scrollController = scroll_ctrl.ChatAutoFollowScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
-    addTearDown(scrollController.dispose);
-    addTearDown(listController.dispose);
-    addTearDown(processingFilesMessageId.dispose);
+  testWidgets(
+    '\u89E3\u6790\u6587\u4EF6\u6761\u53EA\u51FA\u73B0\u5728\u6B63\u5728\u89E3\u6790\u7684\u90A3\u6761\u52A9\u624B\u6D88\u606F\u4E0A',
+    (tester) async {
+      final scrollController = scroll_ctrl.ChatAutoFollowScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
+      addTearDown(scrollController.dispose);
+      addTearDown(listController.dispose);
+      addTearDown(processingFilesMessageId.dispose);
 
-    await tester.pumpWidget(
-      _harness(
-        scrollController: scrollController,
-        listController: listController,
-        processingFilesMessageId: processingFilesMessageId,
-      ),
-    );
-    await tester.pump();
-
-    expect(find.byType(FileProcessingIndicator), findsNothing);
-
-    processingFilesMessageId.value = 'assistant-2';
-    await tester.pump();
-
-    expect(find.byType(FileProcessingIndicator), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byWidgetPredicate(
-          (widget) =>
-              widget is ChatMessageWidget && widget.message.id == 'assistant-2',
+      await tester.pumpWidget(
+        _harness(
+          scrollController: scrollController,
+          listController: listController,
+          processingFilesMessageId: processingFilesMessageId,
         ),
-        matching: find.byType(FileProcessingIndicator),
-      ),
-      findsOneWidget,
-    );
+      );
+      await tester.pump();
 
-    processingFilesMessageId.value = null;
-    await tester.pump();
+      expect(find.byType(FileProcessingIndicator), findsNothing);
 
-    expect(find.byType(FileProcessingIndicator), findsNothing);
-  });
+      processingFilesMessageId.value = 'assistant-2';
+      await tester.pump();
+
+      expect(find.byType(FileProcessingIndicator), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byWidgetPredicate(
+            (widget) =>
+                widget is ChatMessageWidget &&
+                widget.message.id == 'assistant-2',
+          ),
+          matching: find.byType(FileProcessingIndicator),
+        ),
+        findsOneWidget,
+      );
+
+      processingFilesMessageId.value = null;
+      await tester.pump();
+
+      expect(find.byType(FileProcessingIndicator), findsNothing);
+    },
+  );
 }
 
 Widget _harness({

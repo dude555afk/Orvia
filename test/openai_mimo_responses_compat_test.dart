@@ -43,10 +43,10 @@ void main() {
           charset: 'utf-8',
         );
         request.response.write(
-          'data: ${jsonEncode({'type': 'response.reasoning_text.delta', 'sequence_number': 1, 'output_index': 0, 'content_index': 0, 'item_id': 'reasoning-mimo', 'delta': '先比较两个小数。'})}\n\n',
+          'data: ${jsonEncode({'type': 'response.reasoning_text.delta', 'sequence_number': 1, 'output_index': 0, 'content_index': 0, 'item_id': 'reasoning-mimo', 'delta': '\u5148\u6BD4\u8F83\u4E24\u4E2A\u5C0F\u6570。'})}\n\n',
         );
         request.response.write(
-          'data: ${jsonEncode({'type': 'response.output_text.delta', 'sequence_number': 2, 'output_index': 1, 'content_index': 0, 'item_id': 'message-mimo', 'delta': '9.8 更大。'})}\n\n',
+          'data: ${jsonEncode({'type': 'response.output_text.delta', 'sequence_number': 2, 'output_index': 1, 'content_index': 0, 'item_id': 'message-mimo', 'delta': '9.8 \u66F4\u5927。'})}\n\n',
         );
         request.response.write(
           'data: ${jsonEncode({
@@ -73,7 +73,7 @@ void main() {
         config: _mimoConfig(baseUrl),
         modelId: 'mimo-v2.5-pro',
         messages: const [
-          {'role': 'user', 'content': '9.11 和 9.8 哪个大？'},
+          {'role': 'user', 'content': '9.11 \u548C 9.8 \u54EA\u4E2A\u5927？'},
         ],
         reasoning: legacyBudget(2000),
       ).toList();
@@ -81,8 +81,11 @@ void main() {
       expect(requestBody['reasoning'], {'effort': 'low'});
       expect(requestBody.containsKey('thinking'), isFalse);
       expect(requestBody.containsKey('reasoning_effort'), isFalse);
-      expect(chunks.joinedReasoning, '先比较两个小数。');
-      expect(chunks.joinedContent, contains('9.8 更大。'));
+      expect(
+        chunks.joinedReasoning,
+        '\u5148\u6BD4\u8F83\u4E24\u4E2A\u5C0F\u6570。',
+      );
+      expect(chunks.joinedContent, contains('9.8 \u66F4\u5927。'));
       expect(chunks.isGenerationDone, isTrue);
       expect(chunks.lastUsage?.cachedTokens, 64);
       expect(chunks.lastUsage?.reasoningTokens, 20);
@@ -113,7 +116,10 @@ void main() {
                   'type': 'reasoning',
                   'status': 'completed',
                   'content': [
-                    {'type': 'reasoning_text', 'text': '先分析问题。'},
+                    {
+                      'type': 'reasoning_text',
+                      'text': '\u5148\u5206\u6790\u95EE\u9898。',
+                    },
                   ],
                 },
                 {
@@ -122,11 +128,14 @@ void main() {
                   'status': 'completed',
                   'role': 'assistant',
                   'content': [
-                    {'type': 'output_text', 'text': '这是答案。'},
+                    {
+                      'type': 'output_text',
+                      'text': '\u8FD9\u662F\u7B54\u6848。',
+                    },
                   ],
                 },
               ],
-              'output_text': '这是答案。',
+              'output_text': '\u8FD9\u662F\u7B54\u6848。',
               'usage': {
                 'input_tokens': 50,
                 'input_tokens_details': {'cached_tokens': 32},
@@ -144,15 +153,15 @@ void main() {
           config: _mimoConfig(baseUrl),
           modelId: 'mimo-v2.5-pro',
           messages: const [
-            {'role': 'user', 'content': '请回答问题'},
+            {'role': 'user', 'content': '\u8BF7\u56DE\u7B54\u95EE\u9898'},
           ],
           stream: false,
         ).toList();
 
         expect(requestBody.containsKey('reasoning'), isFalse);
         expect(requestBody.containsKey('thinking'), isFalse);
-        expect(chunks.joinedContent, '这是答案。');
-        expect(chunks.joinedReasoning, '先分析问题。');
+        expect(chunks.joinedContent, '\u8FD9\u662F\u7B54\u6848。');
+        expect(chunks.joinedReasoning, '\u5148\u5206\u6790\u95EE\u9898。');
         expect(chunks.lastUsage?.cachedTokens, 32);
         expect(chunks.lastUsage?.totalTokens, 60);
       },

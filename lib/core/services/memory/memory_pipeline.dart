@@ -188,8 +188,10 @@ class MemoryPipelineService {
     List<ChatMessage> window,
     MemoryPromptLang lang,
   ) {
-    final userPrefix = lang == MemoryPromptLang.zh ? '用户：' : 'User: ';
-    final assistantPrefix = lang == MemoryPromptLang.zh ? '助手：' : 'Assistant: ';
+    final userPrefix = lang == MemoryPromptLang.zh ? 'User: ' : 'User: ';
+    final assistantPrefix = lang == MemoryPromptLang.zh
+        ? 'Assistant: '
+        : 'Assistant: ';
     final lines = <String>[];
     for (final m in window) {
       String prefix;
@@ -248,7 +250,7 @@ class MemoryPipelineService {
     }
   }
 
-  /// Manual "整理记忆" — bypasses autoOrganize + N-turns; still needs model.
+  /// Manual "\u6574\u7406\u8BB0\u5FC6" — bypasses autoOrganize + N-turns; still needs model.
   Future<MemoryOrganizeResult> runNow({
     required String conversationId,
     required String assistantId,

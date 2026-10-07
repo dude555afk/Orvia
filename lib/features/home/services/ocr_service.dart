@@ -5,7 +5,7 @@ import '../../../core/providers/settings_provider.dart';
 import '../../../core/services/api/chat_api_service.dart';
 import '../../../core/services/api/retry_policy.dart';
 
-/// OCR 缓存条目
+/// OCR \u7F13\u5B58\u6761\u76EE
 class OcrCacheEntry {
   OcrCacheEntry({required this.text});
   final String text;
@@ -25,12 +25,12 @@ class OcrPrepareSession {
   int get artifactSize => artifactTextsByHash.length;
 }
 
-/// OCR 图片处理服务
+/// OCR Image\u5904\u7406\u670D\u52A1
 ///
-/// 功能：
-/// - 运行 OCR 识别图片内容
-/// - 管理 OCR 缓存（内存 LRU → 请求级 artifact 快照 → SQLite → OCR 模型）
-/// - 包装 OCR 结果为 XML 格式
+/// \u529F\u80FD：
+/// - \u8FD0\u884C OCR \u8BC6\u522BImage\u5185\u5BB9
+/// - \u7BA1\u7406 OCR \u7F13\u5B58（\u5185\u5B58 LRU → \u8BF7\u6C42\u7EA7 artifact \u5FEB\u7167 → SQLite → OCR \u6A21\u578B）
+/// - \u5305\u88C5 OCR \u7ED3\u679C\u4E3A XML \u683C\u5F0F
 class OcrService {
   OcrService({
     this.maxCacheEntries = 48,
@@ -46,7 +46,7 @@ class OcrService {
   static const String defaultOcrUserPrompt =
       'Please perform OCR on the attached image(s) and return only the extracted text and visual descriptions.';
 
-  /// LRU 缓存最大条目数
+  /// LRU \u7F13\u5B58\u6700\u5927\u6761\u76EE\u6570
   final int maxCacheEntries;
 
   /// Resolve image path/data-URL → content SHA-256.
@@ -70,16 +70,16 @@ class OcrService {
   /// Reports OCR model request failures without interrupting the chat request.
   void Function(Object error)? onError;
 
-  /// OCR 缓存 (memoryKey -> cached OCR text)
+  /// OCR \u7F13\u5B58 (memoryKey -> cached OCR text)
   final Map<String, OcrCacheEntry> _cache = <String, OcrCacheEntry>{};
 
-  /// LRU 顺序列表 (最旧的在前)
+  /// LRU \u987A\u5E8F\u5217\u8868 (\u6700\u65E7\u7684\u5728\u524D)
   final List<String> _cacheOrder = <String>[];
 
-  /// 获取缓存条目数量（用于测试/调试）
+  /// \u83B7\u53D6\u7F13\u5B58\u6761\u76EE\u6570\u91CF（\u7528\u4E8E\u6D4B\u8BD5/\u8C03\u8BD5）
   int get cacheSize => _cache.length;
 
-  /// 清除缓存
+  /// \u6E05\u9664\u7F13\u5B58
   void clearCache() {
     _cache.clear();
     _cacheOrder.clear();
@@ -89,7 +89,7 @@ class OcrService {
     return '$memoryKeyPrefix$contentHash';
   }
 
-  /// 构建发给 OCR 模型的消息。提示词为空时不附加 system，以兼容 GLM-OCR 等专用接口。
+  /// \u6784\u5EFA\u53D1\u7ED9 OCR \u6A21\u578B\u7684\u6D88\u606F。\u63D0\u793A\u8BCD\u4E3A\u7A7A\u65F6\u4E0D\u9644\u52A0 system，\u4EE5\u517C\u5BB9 GLM-OCR \u7B49\u4E13\u7528\u63A5\u53E3。
   static List<Map<String, dynamic>> buildOcrRequestMessages(String prompt) {
     final trimmed = prompt.trim();
     return <Map<String, dynamic>>[
@@ -98,13 +98,13 @@ class OcrService {
     ];
   }
 
-  /// 运行 OCR 识别图片内容
+  /// \u8FD0\u884C OCR \u8BC6\u522BImage\u5185\u5BB9
   ///
-  /// [imagePaths] 图片路径列表
-  /// [context] BuildContext 用于获取 SettingsProvider
+  /// [imagePaths] Image\u8DEF\u5F84\u5217\u8868
+  /// [context] BuildContext \u7528\u4E8E\u83B7\u53D6 SettingsProvider
   /// [requestId] conversation send id; Stop cancels this OCR request too
   ///
-  /// 返回识别的文本内容，失败时返回 null
+  /// \u8FD4\u56DE\u8BC6\u522B\u7684\u6587\u672C\u5185\u5BB9，\u5931\u8D25\u65F6\u8FD4\u56DE null
   Future<String?> runOcrForImages(
     List<String> imagePaths,
     BuildContext context, {
@@ -157,7 +157,7 @@ class OcrService {
     return out;
   }
 
-  /// 缓存 OCR 文本结果（按内容哈希）
+  /// \u7F13\u5B58 OCR \u6587\u672C\u7ED3\u679C（\u6309\u5185\u5BB9\u54C8\u5E0C）
   void cacheOcrText(String contentHash, String text) {
     final hash = contentHash.trim();
     if (hash.isEmpty) return;
@@ -167,17 +167,17 @@ class OcrService {
     _cacheOrder.remove(key);
     _cacheOrder.add(key);
 
-    // LRU 淘汰：移除最旧的条目
+    // LRU \u6DD8\u6C70：\u79FB\u9664\u6700\u65E7\u7684\u6761\u76EE
     while (_cacheOrder.length > maxCacheEntries) {
       final oldest = _cacheOrder.removeAt(0);
       _cache.remove(oldest);
     }
   }
 
-  /// 获取缓存的 OCR 文本
+  /// \u83B7\u53D6\u7F13\u5B58\u7684 OCR \u6587\u672C
   ///
-  /// 返回缓存的文本，不存在时返回 null
-  /// 访问时会更新 LRU 顺序
+  /// \u8FD4\u56DE\u7F13\u5B58\u7684\u6587\u672C，\u4E0D\u5B58\u5728\u65F6\u8FD4\u56DE null
+  /// \u8BBF\u95EE\u65F6\u4F1A\u66F4\u65B0 LRU \u987A\u5E8F
   String? getCachedOcrText(String contentHash) {
     final hash = contentHash.trim();
     if (hash.isEmpty) return null;
@@ -270,15 +270,15 @@ class OcrService {
     return session;
   }
 
-  /// 获取图片的 OCR 文本（优先使用缓存）
+  /// \u83B7\u53D6Image\u7684 OCR \u6587\u672C（\u4F18\u5148\u4F7F\u7528\u7F13\u5B58）
   ///
-  /// [imagePaths] 图片路径列表
-  /// [context] BuildContext 用于获取 SettingsProvider
-  /// [revisionId] 带图 user 消息 revision，用于 SQLite 持久化
+  /// [imagePaths] Image\u8DEF\u5F84\u5217\u8868
+  /// [context] BuildContext \u7528\u4E8E\u83B7\u53D6 SettingsProvider
+  /// [revisionId] \u5E26\u56FE user \u6D88\u606F revision，\u7528\u4E8E SQLite \u6301\u4E45\u5316
   /// [session] optional per-prepare snapshot from [prefetchPersistedOcr]
   /// [requestId] conversation send id so chat Stop also cancels OCR backoff
   ///
-  /// 返回合并后的 OCR 文本，失败时返回 null
+  /// \u8FD4\u56DE\u5408\u5E76\u540E\u7684 OCR \u6587\u672C，\u5931\u8D25\u65F6\u8FD4\u56DE null
   Future<String?> getOcrTextForImages(
     List<String> imagePaths,
     BuildContext context, {
@@ -413,11 +413,11 @@ class OcrService {
     return out.isEmpty ? null : out;
   }
 
-  /// 包装 OCR 文本为 XML 格式
+  /// \u5305\u88C5 OCR \u6587\u672C\u4E3A XML \u683C\u5F0F
   ///
-  /// [ocrText] OCR 识别的原始文本
+  /// [ocrText] OCR \u8BC6\u522B\u7684\u539F\u59CB\u6587\u672C
   ///
-  /// 返回包装后的 XML 格式文本
+  /// \u8FD4\u56DE\u5305\u88C5\u540E\u7684 XML \u683C\u5F0F\u6587\u672C
   String wrapOcrBlock(String ocrText) {
     final buf = StringBuffer();
     buf.writeln(

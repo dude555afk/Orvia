@@ -431,14 +431,7 @@ void main() {
     },
   );
 
-  for (final change in [
-    'profile',
-    'create',
-    'edit',
-    'delete',
-    'language',
-    'limit',
-  ]) {
+  for (final change in ['profile', 'create', 'edit', 'delete', 'limit']) {
     testWidgets(
       '$change invalidates the prepared notification using actual injected memory',
       (tester) async {
@@ -470,8 +463,6 @@ void main() {
               await memories.updateContent(memoryId, 'Prefers tea');
             case 'delete':
               await memories.hardDelete(memoryId);
-            case 'language':
-              await settings.setMemoryPromptLang('zh');
             case 'limit':
               await settings.setMemoryInjectionMaxItems(1);
           }

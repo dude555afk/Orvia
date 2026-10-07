@@ -5,7 +5,7 @@ import '../search_service.dart';
 
 class MetasoSearchService extends SearchService<MetasoOptions> {
   @override
-  String get name => 'Metaso (秘塔)';
+  String get name => 'Metaso';
 
   @override
   Widget description(BuildContext context) {

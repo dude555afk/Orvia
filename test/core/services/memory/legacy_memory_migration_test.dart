@@ -23,14 +23,15 @@ void main() {
           LegacyMemoryMigrationInput(
             legacyId: 1,
             assistantId: 'assistant-1',
-            content: '用户喜欢“简洁”的回答。',
+            content:
+                '\u7528\u6237\u559C\u6B22“\u7B80\u6D01”\u7684\u56DE\u7B54。',
           ),
         ],
         ids: const [7],
       );
 
       expect(prompt, contains('Do not rewrite, translate'));
-      expect(prompt, contains('用户喜欢'));
+      expect(prompt, contains('\u7528\u6237\u559C\u6B22'));
       expect(prompt, contains('"id":7'));
     });
 
@@ -40,7 +41,8 @@ void main() {
           LegacyMemoryMigrationInput(
             legacyId: 1,
             assistantId: 'assistant-1',
-            content: '用户喜欢“简洁”的回答。',
+            content:
+                '\u7528\u6237\u559C\u6B22“\u7B80\u6D01”\u7684\u56DE\u7B54。',
           ),
         ],
         ids: const [7],
@@ -680,7 +682,8 @@ void main() {
       () async {
         final harness = await createBusinessTestHarness();
         final repository = MemoryRepository(harness.preferences);
-        const original = '用户喜欢“简洁”的回答。';
+        const original =
+            '\u7528\u6237\u559C\u6B22“\u7B80\u6D01”\u7684\u56DE\u7B54。';
         final service = LegacyMemoryMigrationService(
           repository: repository,
           delay: (_) async {},

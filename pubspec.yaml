@@ -40,7 +40,7 @@ dependencies:
   desktop_drop: ^0.7.1
   hotkey_manager: ^0.2.3
 
-  # Localizations for Chinese/English UI strings
+  # Localizations for UI strings
   flutter_localizations:
     sdk: flutter
   provider: ^6.0.5

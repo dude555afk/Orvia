@@ -111,7 +111,7 @@ void main() {
       'bold': '**$_kelivoLink**',
       'two on one line': '$_kelivoLink $_kelivoLink',
       'table': '| file |\n| --- |\n| $_kelivoLink |',
-      'chinese no space': '查看$_kelivoLink',
+      'chinese no space': '\u67E5\u770B$_kelivoLink',
     };
 
     for (final entry in contexts.entries) {

@@ -138,7 +138,7 @@ void main() {
       final message = (await chatService.loadMessages('topic-1')).single;
       expect(message.id, 'msg-1');
       expect(message.role, 'user');
-      expect(message.content, '你好 from block');
+      expect(message.content, '\u4F60\u597D from block');
       expect(message.modelId, 'gpt-test');
       expect(message.providerId, 'openai');
 

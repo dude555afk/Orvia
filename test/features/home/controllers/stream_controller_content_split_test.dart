@@ -214,9 +214,12 @@ void main() {
 
   test('StreamingState resumes from existing assistant content', () {
     final settings = SettingsProvider(createBusinessTestPreferences());
-    final state = buildStreamingStateWithContent(settings, '先确认一下。');
+    final state = buildStreamingStateWithContent(
+      settings,
+      '\u5148\u786E\u8BA4\u4E00\u4E0B。',
+    );
 
-    expect(state.fullContentRaw, '先确认一下。');
+    expect(state.fullContentRaw, '\u5148\u786E\u8BA4\u4E00\u4E0B。');
   });
 
   test('finishReasoningAndPersist no longer writes content splits', () async {
@@ -290,7 +293,7 @@ void main() {
     final message = ChatMessage(
       id: 'assistant-1',
       role: 'assistant',
-      content: '让我帮你搜索一下',
+      content: '\u8BA9\u6211\u5E2E\u4F60\u641C\u7D22\u4E00\u4E0B',
       conversationId: 'conversation-1',
       reasoningSegmentsJson:
           '{"v":2,"segments":[],"contentSplits":{"offsets":[],"reasoningCounts":[],"toolCounts":[]}}',

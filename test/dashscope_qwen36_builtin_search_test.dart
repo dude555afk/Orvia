@@ -122,7 +122,7 @@ void main() {
             ),
             modelId: 'qwen3.6-plus',
             messages: const <Map<String, dynamic>>[
-              {'role': 'user', 'content': '杭州天气'},
+              {'role': 'user', 'content': '\u676D\u5DDE\u5929\u6C14'},
             ],
             stream: false,
           ).toList();
@@ -177,7 +177,7 @@ void main() {
             ),
             modelId: 'qwen3.6-flash',
             messages: const <Map<String, dynamic>>[
-              {'role': 'user', 'content': '杭州天气'},
+              {'role': 'user', 'content': '\u676D\u5DDE\u5929\u6C14'},
             ],
             stream: false,
           ).toList();

@@ -13,20 +13,20 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: ChatSuggestionBubbles(
-            suggestions: const ['继续', '举例', '总结'],
+            suggestions: const ['\u7EE7\u7EED', '\u4E3E\u4F8B', '\u603B\u7ED3'],
             onTap: tapped.add,
           ),
         ),
       ),
     );
 
-    expect(find.text('继续'), findsOneWidget);
-    expect(find.text('举例'), findsOneWidget);
-    expect(find.text('总结'), findsOneWidget);
+    expect(find.text('\u7EE7\u7EED'), findsOneWidget);
+    expect(find.text('\u4E3E\u4F8B'), findsOneWidget);
+    expect(find.text('\u603B\u7ED3'), findsOneWidget);
 
-    await tester.tap(find.text('举例'));
+    await tester.tap(find.text('\u4E3E\u4F8B'));
     await tester.pump();
 
-    expect(tapped, ['举例']);
+    expect(tapped, ['\u4E3E\u4F8B']);
   });
 }

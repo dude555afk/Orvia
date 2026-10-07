@@ -8,8 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 String groupFor(String id, {ModelType type = ModelType.chat}) {
   return ModelGrouping.groupFor(
     ModelSpec(id: id, displayName: id, type: type),
-    embeddingsLabel: '嵌入模型',
-    otherLabel: '其他模型',
+    embeddingsLabel: '\u5D4C\u5165\u6A21\u578B',
+    otherLabel: '\u5176\u4ED6\u6A21\u578B',
   );
 }
 
@@ -146,7 +146,7 @@ void main() {
         'ringbuffer',
         'custom-model',
       ]) {
-        expect(groupFor(id), '其他模型', reason: id);
+        expect(groupFor(id), '\u5176\u4ED6\u6A21\u578B', reason: id);
         expect(BrandAssets.assetForName(id), isNull, reason: id);
       }
     });
@@ -177,9 +177,12 @@ void main() {
         'mistral-embed',
         'jina-embeddings-v3',
       ]) {
-        expect(groupFor(id), '嵌入模型');
+        expect(groupFor(id), '\u5D4C\u5165\u6A21\u578B');
       }
-      expect(groupFor('k3', type: ModelType.embedding), '嵌入模型');
+      expect(
+        groupFor('k3', type: ModelType.embedding),
+        '\u5D4C\u5165\u6A21\u578B',
+      );
     });
 
     test('keeps the existing Gemini and Claude subgroups', () {

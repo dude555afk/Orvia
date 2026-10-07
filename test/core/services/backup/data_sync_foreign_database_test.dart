@@ -80,65 +80,71 @@ void main() {
       return file;
     }
 
-    test('把一份独立数据库打成标准备份归档', () async {
-      final source = await writeDatabase('kelivo.db.displaced-0001', 'aside');
-      final live = await writeDatabase('live.sqlite', 'current');
-      final liveDatabase = AppDatabase.open(file: live);
-      File? archive;
-      try {
-        archive = await DataSync(
-          chatService: ChatService(),
-          businessRepository: BusinessRepository(liveDatabase),
-        ).prepareBackupFileFromDatabase(source);
+    test(
+      '\u628A\u4E00\u4EFD\u72EC\u7ACB\u6570\u636E\u5E93\u6253\u6210\u6807\u51C6\u5907\u4EFD\u5F52\u6863',
+      () async {
+        final source = await writeDatabase('kelivo.db.displaced-0001', 'aside');
+        final live = await writeDatabase('live.sqlite', 'current');
+        final liveDatabase = AppDatabase.open(file: live);
+        File? archive;
+        try {
+          archive = await DataSync(
+            chatService: ChatService(),
+            businessRepository: BusinessRepository(liveDatabase),
+          ).prepareBackupFileFromDatabase(source);
 
-        final manifest = _entryFrom(archive, 'manifest.json');
-        expect(manifest['format'], 'kelivo-backup');
-        expect(manifest['payloadKind'], 'sqlite');
-        expect(manifest['includeChats'], isTrue);
-        // 附件不进本地副本：它们和活库在同一块盘上。
-        expect(manifest['includeFiles'], isFalse);
-        expect(
-          (manifest['database'] as Map)['schemaVersion'],
-          AppDatabase.currentSchemaVersion,
-        );
+          final manifest = _entryFrom(archive, 'manifest.json');
+          expect(manifest['format'], 'kelivo-backup');
+          expect(manifest['payloadKind'], 'sqlite');
+          expect(manifest['includeChats'], isTrue);
+          // \u9644\u4EF6\u4E0D\u8FDB\u672C\u5730\u526F\u672C：\u5B83\u4EEC\u548C\u6D3B\u5E93\u5728\u540C\u4E00\u5757\u76D8\u4E0A。
+          expect(manifest['includeFiles'], isFalse);
+          expect(
+            (manifest['database'] as Map)['schemaVersion'],
+            AppDatabase.currentSchemaVersion,
+          );
 
-        final settings = _entryFrom(archive, 'settings.json');
-        final providers =
-            jsonDecode(settings['provider_configs_v1'] as String) as Map;
-        // 关键：设置必须来自被打包的那份库，而不是当前活着的那份。
-        expect((providers['only'] as Map)['apiKey'], 'aside');
-      } finally {
-        await liveDatabase.close();
-        await DataSync.cleanupTemporaryBackupFile(archive);
-      }
-    });
+          final settings = _entryFrom(archive, 'settings.json');
+          final providers =
+              jsonDecode(settings['provider_configs_v1'] as String) as Map;
+          // \u5173\u952E：\u8BBE\u7F6E\u5FC5\u987B\u6765\u81EA\u88AB\u6253\u5305\u7684\u90A3\u4EFD\u5E93，\u800C\u4E0D\u662F\u5F53\u524D\u6D3B\u7740\u7684\u90A3\u4EFD。
+          expect((providers['only'] as Map)['apiKey'], 'aside');
+        } finally {
+          await liveDatabase.close();
+          await DataSync.cleanupTemporaryBackupFile(archive);
+        }
+      },
+    );
 
-    test('归档自带数据库，不引用原文件', () async {
-      final source = await writeDatabase('kelivo.db.displaced-0002', 'aside');
-      final live = await writeDatabase('live.sqlite', 'current');
-      final liveDatabase = AppDatabase.open(file: live);
-      File? archive;
-      try {
-        archive = await DataSync(
-          chatService: ChatService(),
-          businessRepository: BusinessRepository(liveDatabase),
-        ).prepareBackupFileFromDatabase(source);
+    test(
+      '\u5F52\u6863\u81EA\u5E26\u6570\u636E\u5E93，\u4E0D\u5F15\u7528\u539F\u6587\u4EF6',
+      () async {
+        final source = await writeDatabase('kelivo.db.displaced-0002', 'aside');
+        final live = await writeDatabase('live.sqlite', 'current');
+        final liveDatabase = AppDatabase.open(file: live);
+        File? archive;
+        try {
+          archive = await DataSync(
+            chatService: ChatService(),
+            businessRepository: BusinessRepository(liveDatabase),
+          ).prepareBackupFileFromDatabase(source);
 
-        final entries = ZipDecoder()
-            .decodeBytes(await archive.readAsBytes())
-            .files
-            .map((file) => file.name)
-            .toSet();
-        expect(entries, contains('database/kelivo.db'));
-        expect(entries, contains('settings.json'));
-        expect(entries, contains('manifest.json'));
-      } finally {
-        await liveDatabase.close();
-        await DataSync.cleanupTemporaryBackupFile(archive);
-      }
-    });
+          final entries = ZipDecoder()
+              .decodeBytes(await archive.readAsBytes())
+              .files
+              .map((file) => file.name)
+              .toSet();
+          expect(entries, contains('database/kelivo.db'));
+          expect(entries, contains('settings.json'));
+          expect(entries, contains('manifest.json'));
+        } finally {
+          await liveDatabase.close();
+          await DataSync.cleanupTemporaryBackupFile(archive);
+        }
+      },
+    );
 
-    test('不修改源副本', () async {
+    test('\u4E0D\u4FEE\u6539\u6E90\u526F\u672C', () async {
       final source = await writeDatabase('kelivo.db.displaced-0003', 'aside');
       final before = await source.readAsBytes();
       final live = await writeDatabase('live.sqlite', 'current');
@@ -156,20 +162,23 @@ void main() {
       }
     });
 
-    test('源文件不存在时明确报错', () async {
-      final live = await writeDatabase('live.sqlite', 'current');
-      final liveDatabase = AppDatabase.open(file: live);
-      try {
-        await expectLater(
-          DataSync(
-            chatService: ChatService(),
-            businessRepository: BusinessRepository(liveDatabase),
-          ).prepareBackupFileFromDatabase(File('${root.path}/missing.db')),
-          throwsA(isA<FileSystemException>()),
-        );
-      } finally {
-        await liveDatabase.close();
-      }
-    });
+    test(
+      '\u6E90\u6587\u4EF6\u4E0D\u5B58\u5728\u65F6\u660E\u786E\u62A5\u9519',
+      () async {
+        final live = await writeDatabase('live.sqlite', 'current');
+        final liveDatabase = AppDatabase.open(file: live);
+        try {
+          await expectLater(
+            DataSync(
+              chatService: ChatService(),
+              businessRepository: BusinessRepository(liveDatabase),
+            ).prepareBackupFileFromDatabase(File('${root.path}/missing.db')),
+            throwsA(isA<FileSystemException>()),
+          );
+        } finally {
+          await liveDatabase.close();
+        }
+      },
+    );
   });
 }

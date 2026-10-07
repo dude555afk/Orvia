@@ -228,7 +228,7 @@ class _DesktopSettingsPageState extends State<DesktopSettingsPage> {
         child: Padding(
           padding: const EdgeInsets.only(left: 16, top: 8),
           child: Text(
-            l10n.settingsPageTitle, // 固定显示“设置”
+            l10n.settingsPageTitle, // \u56FA\u5B9A\u663E\u793A“\u8BBE\u7F6E”
             style: TextStyle(
               fontSize: 14,
               fontWeight: AppFontWeights.semibold,

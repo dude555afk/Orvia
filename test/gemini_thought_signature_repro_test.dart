@@ -695,7 +695,7 @@ void main() {
           ),
           modelId: 'gemini-3.1-pro-preview',
           messages: const [
-            {'role': 'user', 'content': '查 Kelivo'},
+            {'role': 'user', 'content': '\u67E5 Kelivo'},
             {
               'role': 'assistant',
               'content': '\n\n',
@@ -738,7 +738,7 @@ void main() {
                 },
               },
             },
-            {'role': 'user', 'content': '继续总结'},
+            {'role': 'user', 'content': '\u7EE7\u7EED\u603B\u7ED3'},
           ],
           tools: const [
             {
@@ -808,7 +808,7 @@ void main() {
           ),
           modelId: 'gemini-3.1-pro-preview',
           messages: const [
-            {'role': 'user', 'content': '查 Kelivo'},
+            {'role': 'user', 'content': '\u67E5 Kelivo'},
             {
               'role': 'assistant',
               'content': '\n\n',
@@ -842,7 +842,7 @@ void main() {
               'name': 'fetch_markdown',
               'content': '{"result":"ok"}',
             },
-            {'role': 'user', 'content': '继续总结'},
+            {'role': 'user', 'content': '\u7EE7\u7EED\u603B\u7ED3'},
           ],
           tools: const [
             {

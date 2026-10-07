@@ -166,7 +166,7 @@ void main() {
           segmentDurationSec: 60,
           enableItn: false,
           enableTimestamp: true,
-          hotwords: const ['Kelivo', '阶跃星辰'],
+          hotwords: const ['Kelivo', '\u9636\u8DC3\u661F\u8FB0'],
         ),
       ];
 

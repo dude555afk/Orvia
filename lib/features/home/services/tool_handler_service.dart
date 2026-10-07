@@ -32,12 +32,12 @@ import 'built_in_tool_names.dart';
 import 'local_tools_service.dart';
 import 'tool_approval_service.dart';
 
-/// 工具调用处理服务
+/// \u5DE5\u5177\u8C03\u7528\u5904\u7406\u670D\u52A1
 ///
-/// 处理各类工具调用：
-/// - MCP 工具
-/// - Memory 工具 (§10)
-/// - Search 工具
+/// \u5904\u7406\u5404\u7C7B\u5DE5\u5177\u8C03\u7528：
+/// - MCP \u5DE5\u5177
+/// - Memory \u5DE5\u5177 (§10)
+/// - Search \u5DE5\u5177
 class ToolHandlerService {
   ToolHandlerService({required this.contextProvider});
 

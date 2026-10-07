@@ -38,83 +38,95 @@ Future<void> _pumpBar(WidgetTester tester, Widget child) async {
 }
 
 void main() {
-  testWidgets('分享导出栏不展示删除操作', (tester) async {
-    await _pumpBar(
-      tester,
-      ChatSelectionExportBar(
-        onExportMarkdown: () {},
-        onExportTxt: () {},
-        onExportImage: () {},
-        showThinkingTools: false,
-        showThinkingContent: false,
-        onToggleThinkingTools: () {},
-        onToggleThinkingContent: () {},
-      ),
-    );
+  testWidgets(
+    '\u5206\u4EAB\u5BFC\u51FA\u680F\u4E0D\u5C55\u793A\u5220\u9664\u64CD\u4F5C',
+    (tester) async {
+      await _pumpBar(
+        tester,
+        ChatSelectionExportBar(
+          onExportMarkdown: () {},
+          onExportTxt: () {},
+          onExportImage: () {},
+          showThinkingTools: false,
+          showThinkingContent: false,
+          onToggleThinkingTools: () {},
+          onToggleThinkingContent: () {},
+        ),
+      );
 
-    expect(find.text('TXT'), findsOneWidget);
-    expect(find.text('MD'), findsOneWidget);
-    expect(find.text('Image'), findsOneWidget);
-    expect(find.text('Delete Selected'), findsNothing);
-    expect(find.text('Delete This Version'), findsNothing);
-    expect(find.text('Delete All Versions'), findsNothing);
-  });
+      expect(find.text('TXT'), findsOneWidget);
+      expect(find.text('MD'), findsOneWidget);
+      expect(find.text('Image'), findsOneWidget);
+      expect(find.text('Delete Selected'), findsNothing);
+      expect(find.text('Delete This Version'), findsNothing);
+      expect(find.text('Delete All Versions'), findsNothing);
+    },
+  );
 
-  testWidgets('删除栏在单版本选择时只展示普通删除', (tester) async {
-    var currentVersionDeletes = 0;
-    var allVersionDeletes = 0;
+  testWidgets(
+    '\u5220\u9664\u680F\u5728\u5355\u7248\u672C\u9009\u62E9\u65F6\u53EA\u5C55\u793A\u666E\u901A\u5220\u9664',
+    (tester) async {
+      var currentVersionDeletes = 0;
+      var allVersionDeletes = 0;
 
-    await _pumpBar(
-      tester,
-      ChatSelectionDeleteBar(
-        hasMultiVersionSelection: false,
-        onDeleteCurrentVersions: () {
-          currentVersionDeletes++;
-        },
-        onDeleteAllVersions: () {
-          allVersionDeletes++;
-        },
-      ),
-    );
+      await _pumpBar(
+        tester,
+        ChatSelectionDeleteBar(
+          hasMultiVersionSelection: false,
+          onDeleteCurrentVersions: () {
+            currentVersionDeletes++;
+          },
+          onDeleteAllVersions: () {
+            allVersionDeletes++;
+          },
+        ),
+      );
 
-    expect(find.text('Delete'), findsOneWidget);
-    expect(find.text('Delete This Version'), findsNothing);
-    expect(find.text('Delete All Versions'), findsNothing);
-    expect(tester.getSize(find.byType(IosCardPress)).width, closeTo(396, 0.1));
-    expect(
-      tester.widget<Text>(find.text('Delete')).style?.fontWeight,
-      AppFontWeights.medium,
-    );
+      expect(find.text('Delete'), findsOneWidget);
+      expect(find.text('Delete This Version'), findsNothing);
+      expect(find.text('Delete All Versions'), findsNothing);
+      expect(
+        tester.getSize(find.byType(IosCardPress)).width,
+        closeTo(396, 0.1),
+      );
+      expect(
+        tester.widget<Text>(find.text('Delete')).style?.fontWeight,
+        AppFontWeights.medium,
+      );
 
-    await tester.tap(find.text('Delete'));
-    expect(currentVersionDeletes, 1);
-    expect(allVersionDeletes, 0);
-  });
+      await tester.tap(find.text('Delete'));
+      expect(currentVersionDeletes, 1);
+      expect(allVersionDeletes, 0);
+    },
+  );
 
-  testWidgets('删除栏在多版本选择时展示本版本和全部版本', (tester) async {
-    var currentVersionDeletes = 0;
-    var allVersionDeletes = 0;
+  testWidgets(
+    '\u5220\u9664\u680F\u5728\u591A\u7248\u672C\u9009\u62E9\u65F6\u5C55\u793A\u672C\u7248\u672C\u548C\u5168\u90E8\u7248\u672C',
+    (tester) async {
+      var currentVersionDeletes = 0;
+      var allVersionDeletes = 0;
 
-    await _pumpBar(
-      tester,
-      ChatSelectionDeleteBar(
-        hasMultiVersionSelection: true,
-        onDeleteCurrentVersions: () {
-          currentVersionDeletes++;
-        },
-        onDeleteAllVersions: () {
-          allVersionDeletes++;
-        },
-      ),
-    );
+      await _pumpBar(
+        tester,
+        ChatSelectionDeleteBar(
+          hasMultiVersionSelection: true,
+          onDeleteCurrentVersions: () {
+            currentVersionDeletes++;
+          },
+          onDeleteAllVersions: () {
+            allVersionDeletes++;
+          },
+        ),
+      );
 
-    expect(find.text('Delete This Version'), findsOneWidget);
-    expect(find.text('Delete All Versions'), findsOneWidget);
+      expect(find.text('Delete This Version'), findsOneWidget);
+      expect(find.text('Delete All Versions'), findsOneWidget);
 
-    await tester.tap(find.text('Delete This Version'));
-    await tester.tap(find.text('Delete All Versions'));
+      await tester.tap(find.text('Delete This Version'));
+      await tester.tap(find.text('Delete All Versions'));
 
-    expect(currentVersionDeletes, 1);
-    expect(allVersionDeletes, 1);
-  });
+      expect(currentVersionDeletes, 1);
+      expect(allVersionDeletes, 1);
+    },
+  );
 }

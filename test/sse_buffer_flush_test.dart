@@ -30,10 +30,10 @@ void main() {
         });
 
         const fragments = <String>[
-          '*被窝裹住，她反而笑得更',
-          '甜*\n\n*懒懒地、',
-          '黏糊糊地*\n\n对',
-          '……后面的内容仍然保留。',
+          '*\u88AB\u7A9D\u88F9\u4F4F，\u5979\u53CD\u800C\u7B11\u5F97\u66F4',
+          '\u751C*\n\n*\u61D2\u61D2\u5730、',
+          '\u9ECF\u7CCA\u7CCA\u5730*\n\n\u5BF9',
+          '……\u540E\u9762\u7684\u5185\u5BB9\u4ECD\u7136\u4FDD\u7559。',
         ];
         server.listen((request) async {
           await request.drain<void>();
@@ -79,7 +79,10 @@ void main() {
       });
 
       var requestCount = 0;
-      const fragments = <String>['*气音*', '\n\n……我要吃了。'];
+      const fragments = <String>[
+        '*\u6C14\u97F3*',
+        '\n\n……\u6211\u8981\u5403\u4E86。',
+      ];
       server.listen((request) async {
         requestCount += 1;
         await request.drain<void>();

@@ -14,88 +14,72 @@ import '../../../shared/widgets/section_card.dart';
 class LanguageOption {
   final String code;
   final String displayName;
-  final String displayNameZh;
+  final String nativeName;
   final String flag;
 
   const LanguageOption({
     required this.code,
     required this.displayName,
-    required this.displayNameZh,
+    required this.nativeName,
     required this.flag,
   });
 }
 
 const List<LanguageOption> supportedLanguages = [
   LanguageOption(
-    code: 'zh-CN',
-    displayName: 'Simplified Chinese',
-    displayNameZh: '简体中文',
-    flag: '🇨🇳',
-  ),
-  LanguageOption(
     code: 'en',
     displayName: 'English',
-    displayNameZh: 'English',
+    nativeName: 'English',
     flag: '🇺🇸',
-  ),
-  LanguageOption(
-    code: 'zh-TW',
-    displayName: 'Traditional Chinese',
-    displayNameZh: '繁體中文',
-    flag: '🇨🇳',
   ),
   LanguageOption(
     code: 'ja',
     displayName: 'Japanese',
-    displayNameZh: '日本語',
+    nativeName: 'Japanese',
     flag: '🇯🇵',
   ),
   LanguageOption(
     code: 'ko',
     displayName: 'Korean',
-    displayNameZh: '한국어',
+    nativeName: '한국어',
     flag: '🇰🇷',
   ),
   LanguageOption(
     code: 'fr',
     displayName: 'French',
-    displayNameZh: 'Français',
+    nativeName: 'Français',
     flag: '🇫🇷',
   ),
   LanguageOption(
     code: 'de',
     displayName: 'German',
-    displayNameZh: 'Deutsch',
+    nativeName: 'Deutsch',
     flag: '🇩🇪',
   ),
   LanguageOption(
     code: 'it',
     displayName: 'Italian',
-    displayNameZh: 'Italiano',
+    nativeName: 'Italiano',
     flag: '🇮🇹',
   ),
   LanguageOption(
     code: 'es',
     displayName: 'Spanish',
-    displayNameZh: 'Español',
+    nativeName: 'Español',
     flag: '🇪🇸',
   ),
-  // LanguageOption(code: 'pt', displayName: 'Portuguese', displayNameZh: 'Português', flag: '🇵🇹'),
-  // LanguageOption(code: 'ru', displayName: 'Russian', displayNameZh: 'Русский', flag: '🇷🇺'),
-  // LanguageOption(code: 'ar', displayName: 'Arabic', displayNameZh: 'العربية', flag: '🇸🇦'),
-  // LanguageOption(code: 'hi', displayName: 'Hindi', displayNameZh: 'हिन्दी', flag: '🇮🇳'),
-  // LanguageOption(code: 'th', displayName: 'Thai', displayNameZh: 'ไทย', flag: '🇹🇭'),
-  // LanguageOption(code: 'vi', displayName: 'Vietnamese', displayNameZh: 'Tiếng Việt', flag: '🇻🇳'),
+  // LanguageOption(code: 'pt', displayName: 'Portuguese', nativeName: 'Português', flag: '🇵🇹'),
+  // LanguageOption(code: 'ru', displayName: 'Russian', nativeName: 'Русский', flag: '🇷🇺'),
+  // LanguageOption(code: 'ar', displayName: 'Arabic', nativeName: 'العربية', flag: '🇸🇦'),
+  // LanguageOption(code: 'hi', displayName: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳'),
+  // LanguageOption(code: 'th', displayName: 'Thai', nativeName: 'ไทย', flag: '🇹🇭'),
+  // LanguageOption(code: 'vi', displayName: 'Vietnamese', nativeName: 'Tiếng Việt', flag: '🇻🇳'),
 ];
 
 String _displayNameFor(AppLocalizations l10n, String languageCode) {
   switch (languageCode) {
-    case 'zh-CN':
-      return l10n.languageDisplaySimplifiedChinese;
     case 'en':
       return l10n.languageDisplayEnglish;
-    case 'zh-TW':
-      return l10n.languageDisplayTraditionalChinese;
     case 'ja':
       return l10n.languageDisplayJapanese;
     case 'ko':
@@ -147,7 +131,7 @@ Future<LanguageOption?> showLanguageSelector(BuildContext context) async {
       onTap: () => selected = const LanguageOption(
         code: '__clear__',
         displayName: 'Clear Translation',
-        displayNameZh: '清空翻译',
+        nativeName: 'Clear translation',
         flag: '',
       ),
       danger: true,
@@ -227,7 +211,7 @@ class _LanguageSelectSheetState extends State<_LanguageSelectSheet> {
                               const LanguageOption(
                                 code: '__clear__',
                                 displayName: 'Clear Translation',
-                                displayNameZh: '清空翻译',
+                                nativeName: 'Clear translation',
                                 flag: '',
                               ),
                             );

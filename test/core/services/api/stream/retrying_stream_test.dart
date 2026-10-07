@@ -30,7 +30,7 @@ void main() {
       shouldRetry: (e) => shouldRetryError(e, _fastRetry()),
       attempt: (i) async* {
         attempts++;
-        if (i == 0) throw Exception('HTTP 429: 访问量过大');
+        if (i == 0) throw Exception('HTTP 429: \u8BBF\u95EE\u91CF\u8FC7\u5927');
         yield 7;
       },
     ).toList();

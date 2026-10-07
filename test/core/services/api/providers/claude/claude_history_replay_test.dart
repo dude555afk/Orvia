@@ -35,7 +35,10 @@ String _assistantText(List<Map> messages) => messages
 /// One finished web search turn, as the app persists it: the card's tool call
 /// carries the blocks the API sent, and the card summary is the tool message.
 const _webSearchHistory = <Map<String, dynamic>>[
-  {'role': 'user', 'content': '京都有什么好玩的'},
+  {
+    'role': 'user',
+    'content': '\u4EAC\u90FD\u6709\u4EC0\u4E48\u597D\u73A9\u7684',
+  },
   {
     'role': 'assistant',
     'content': '\n\n',
@@ -47,7 +50,7 @@ const _webSearchHistory = <Map<String, dynamic>>[
         'metadata': {
           'anthropic': {
             'assistant_blocks': [
-              {'type': 'text', 'text': '我先搜索一下。'},
+              {'type': 'text', 'text': '\u6211\u5148\u641C\u7D22\u4E00\u4E0B。'},
               {
                 'type': 'server_tool_use',
                 'id': 'srvtoolu_1',
@@ -78,7 +81,10 @@ const _webSearchHistory = <Map<String, dynamic>>[
     'name': 'search_web',
     'content': '{"items":[{"title":"Example","url":"https://example.com"}]}',
   },
-  {'role': 'user', 'content': '第一条具体怎么说的'},
+  {
+    'role': 'user',
+    'content': '\u7B2C\u4E00\u6761\u5177\u4F53\u600E\u4E48\u8BF4\u7684',
+  },
 ];
 
 /// A relay round whose thinking came back redacted before the tool call.
@@ -160,7 +166,7 @@ void main() {
                   'type': 'server_tool_use',
                   'id': 'srvtoolu_paused',
                   'name': 'web_search',
-                  'input': {'query': '京都'},
+                  'input': {'query': '\u4EAC\u90FD'},
                 },
                 {
                   'type': 'web_search_tool_result',
@@ -195,7 +201,7 @@ void main() {
       final (:bodies, :chunks, paths: _) = await captureClaudeExchange(
         modelId: 'claude-sonnet-4-6',
         messages: const [
-          {'role': 'user', 'content': '查一下 Kelivo'},
+          {'role': 'user', 'content': '\u67E5\u4E00\u4E0B Kelivo'},
           {
             'role': 'assistant',
             'content': '\n\n',
@@ -212,7 +218,7 @@ void main() {
                     'assistant_blocks': [
                       {
                         'type': 'thinking',
-                        'thinking': '需要先查资料。',
+                        'thinking': '\u9700\u8981\u5148\u67E5\u8D44\u6599。',
                         'signature': 'sig-claude-history',
                       },
                       {
@@ -233,7 +239,7 @@ void main() {
             'name': 'lookup',
             'content': '{"result":"ok"}',
           },
-          {'role': 'user', 'content': '继续总结'},
+          {'role': 'user', 'content': '\u7EE7\u7EED\u603B\u7ED3'},
         ],
       );
 
@@ -243,7 +249,10 @@ void main() {
       final toolResultContent = (messages[2]['content'] as List).cast<Map>();
 
       expect(assistantContent[0]['type'], 'thinking');
-      expect(assistantContent[0]['thinking'], '需要先查资料。');
+      expect(
+        assistantContent[0]['thinking'],
+        '\u9700\u8981\u5148\u67E5\u8D44\u6599。',
+      );
       expect(assistantContent[0]['signature'], 'sig-claude-history');
       expect(assistantContent[1]['type'], 'tool_use');
       expect(assistantContent[1]['id'], 'toolu_1');
@@ -262,7 +271,7 @@ void main() {
           config: claudeConfig().copyWith(id: 'OpenRouter', name: 'OpenRouter'),
           modelId: 'claude-opus-4-6',
           messages: const [
-            {'role': 'user', 'content': '查一下 Kelivo'},
+            {'role': 'user', 'content': '\u67E5\u4E00\u4E0B Kelivo'},
           ],
           tools: const [
             {
@@ -327,7 +336,8 @@ void main() {
                       'assistant_blocks': [
                         {
                           'type': 'thinking',
-                          'thinking': '需要记录这个偏好。',
+                          'thinking':
+                              '\u9700\u8981\u8BB0\u5F55\u8FD9\u4E2A\u504F\u597D。',
                           'signature': 'sig-memory-turn',
                         },
                         {
@@ -384,7 +394,7 @@ void main() {
         final body = await captureClaudeRequestBody(
           modelId: 'claude-sonnet-4-6',
           messages: const [
-            {'role': 'user', 'content': '查两个信息'},
+            {'role': 'user', 'content': '\u67E5\u4E24\u4E2A\u4FE1\u606F'},
             {
               'role': 'assistant',
               'content': '\n\n',
@@ -449,7 +459,7 @@ void main() {
               'name': 'lookup',
               'content': '{"result":"Claude ok"}',
             },
-            {'role': 'user', 'content': '继续总结'},
+            {'role': 'user', 'content': '\u7EE7\u7EED\u603B\u7ED3'},
           ],
         );
 
@@ -505,7 +515,10 @@ void main() {
             isFalse,
           );
         }
-        expect(messages.last['content'], '第一条具体怎么说的');
+        expect(
+          messages.last['content'],
+          '\u7B2C\u4E00\u6761\u5177\u4F53\u600E\u4E48\u8BF4\u7684',
+        );
       },
     );
 
@@ -613,19 +626,19 @@ void main() {
         config: claudeConfig(baseUrl: officialBaseUrl),
         modelId: 'claude-sonnet-4-6',
         messages: [
-          {'role': 'user', 'content': '画个图'},
+          {'role': 'user', 'content': '\u753B\u4E2A\u56FE'},
           {
             'role': 'assistant',
-            'content': '画好了',
+            'content': '\u753B\u597D\u4E86',
             multimodalInternalMediaPathsKey: [file.path],
           },
-          {'role': 'user', 'content': '哪根柱子最高'},
+          {'role': 'user', 'content': '\u54EA\u6839\u67F1\u5B50\u6700\u9AD8'},
         ],
       );
 
       final messages = (body['messages'] as List).cast<Map>();
       // The API rejects an image block in an assistant turn outright.
-      expect(messages[1]['content'], '画好了');
+      expect(messages[1]['content'], '\u753B\u597D\u4E86');
       final followUp = (messages[2]['content'] as List).cast<Map>();
       expect(followUp.map((part) => part['type']).toList(), [
         'text',
@@ -633,7 +646,7 @@ void main() {
         'text',
       ]);
       expect(followUp[1]['source']['data'], 'AQIDBA==');
-      expect(followUp.last['text'], '哪根柱子最高');
+      expect(followUp.last['text'], '\u54EA\u6839\u67F1\u5B50\u6700\u9AD8');
     });
 
     test('an image on the last assistant turn has nowhere to go', () async {
@@ -652,10 +665,10 @@ void main() {
         config: claudeConfig(baseUrl: officialBaseUrl),
         modelId: 'claude-sonnet-4-6',
         messages: [
-          {'role': 'user', 'content': '画个图'},
+          {'role': 'user', 'content': '\u753B\u4E2A\u56FE'},
           {
             'role': 'assistant',
-            'content': '画好了',
+            'content': '\u753B\u597D\u4E86',
             multimodalInternalMediaPathsKey: [file.path],
           },
         ],
@@ -681,7 +694,7 @@ void main() {
         // What MessageBuilder emits for a turn that ran code and drew a chart:
         // the card message, the hosted result, then the text with the image.
         const blocks = [
-          {'type': 'text', 'text': '我来画。'},
+          {'type': 'text', 'text': '\u6211\u6765\u753B。'},
           {
             'type': 'server_tool_use',
             'id': 'srvtoolu_plot',
@@ -701,13 +714,13 @@ void main() {
               ],
             },
           },
-          {'type': 'text', 'text': '画好了'},
+          {'type': 'text', 'text': '\u753B\u597D\u4E86'},
         ];
         final body = await captureClaudeRequestBody(
           config: claudeConfig(baseUrl: officialBaseUrl),
           modelId: 'claude-sonnet-4-6',
           messages: [
-            {'role': 'user', 'content': '画个图'},
+            {'role': 'user', 'content': '\u753B\u4E2A\u56FE'},
             {
               'role': 'assistant',
               'content': '\n\n',
@@ -733,11 +746,11 @@ void main() {
             },
             {
               'role': 'assistant',
-              'content': '我来画。画好了',
+              'content': '\u6211\u6765\u753B。\u753B\u597D\u4E86',
               multimodalInternalMediaPathsKey: [file.path],
               multimodalInternalClaudeContainerKey: '{"id":"container_1"}',
             },
-            {'role': 'user', 'content': '哪根柱子最高'},
+            {'role': 'user', 'content': '\u54EA\u6839\u67F1\u5B50\u6700\u9AD8'},
           ],
         );
 
@@ -764,7 +777,7 @@ void main() {
           'text',
         ]);
         expect(followUp[1]['source']['data'], 'AQIDBA==');
-        expect(followUp.last['text'], '哪根柱子最高');
+        expect(followUp.last['text'], '\u54EA\u6839\u67F1\u5B50\u6700\u9AD8');
       },
     );
 
@@ -784,16 +797,19 @@ void main() {
         config: claudeConfig(baseUrl: officialBaseUrl),
         modelId: 'claude-sonnet-4-6',
         messages: [
-          {'role': 'user', 'content': '画个图'},
-          {'role': 'assistant', 'content': '画好了 ![](${file.path}) 请看'},
-          {'role': 'user', 'content': '哪根柱子最高'},
+          {'role': 'user', 'content': '\u753B\u4E2A\u56FE'},
+          {
+            'role': 'assistant',
+            'content': '\u753B\u597D\u4E86 ![](${file.path}) \u8BF7\u770B',
+          },
+          {'role': 'user', 'content': '\u54EA\u6839\u67F1\u5B50\u6700\u9AD8'},
         ],
       );
 
       final messages = (body['messages'] as List).cast<Map>();
       // The image is carried into the next user turn; the assistant keeps
       // only its words, not a path the model cannot open.
-      expect(messages[1]['content'], '画好了  请看');
+      expect(messages[1]['content'], '\u753B\u597D\u4E86  \u8BF7\u770B');
       final followUp = (messages[2]['content'] as List).cast<Map>();
       expect(followUp.map((part) => part['type']).toList(), [
         'text',
@@ -808,7 +824,7 @@ void main() {
         // Stopping the stream between `server_tool_use` and its result block
         // persists the call without an output.
         const interruptedBlocks = [
-          {'type': 'text', 'text': '我先查一下。'},
+          {'type': 'text', 'text': '\u6211\u5148\u67E5\u4E00\u4E0B。'},
           {
             'type': 'server_tool_use',
             'id': 'srvtoolu_stopped',
@@ -820,7 +836,7 @@ void main() {
           config: claudeConfig(baseUrl: officialBaseUrl),
           modelId: 'claude-sonnet-4-6',
           messages: const [
-            {'role': 'user', 'content': '看看这个页面'},
+            {'role': 'user', 'content': '\u770B\u770B\u8FD9\u4E2A\u9875\u9762'},
             {
               'role': 'assistant',
               'content': '\n\n',
@@ -844,7 +860,10 @@ void main() {
               'name': 'web_fetch',
               'content': '{"items":[]}',
             },
-            {'role': 'user', 'content': '算了，直接说吧'},
+            {
+              'role': 'user',
+              'content': '\u7B97\u4E86，\u76F4\u63A5\u8BF4\u5427',
+            },
           ],
         );
 
@@ -861,7 +880,10 @@ void main() {
           expect(types, isNot(contains('server_tool_use')));
           expect(types, isNot(contains('tool_result')));
         }
-        expect(messages.last['content'], '算了，直接说吧');
+        expect(
+          messages.last['content'],
+          '\u7B97\u4E86，\u76F4\u63A5\u8BF4\u5427',
+        );
       },
     );
 
@@ -873,7 +895,7 @@ void main() {
         // one can be answered, and the second opens with the hosted result.
         // Each card recorded the responses up to the one that last wrote it.
         const firstResponse = [
-          {'type': 'text', 'text': '我查一下。'},
+          {'type': 'text', 'text': '\u6211\u67E5\u4E00\u4E0B。'},
           {
             'type': 'server_tool_use',
             'id': 'srvtoolu_deferred',
@@ -893,16 +915,16 @@ void main() {
             'tool_use_id': 'srvtoolu_deferred',
             'content': {'type': 'web_fetch_result', 'url': 'https://e.com'},
           },
-          {'type': 'text', 'text': '查到了。'},
+          {'type': 'text', 'text': '\u67E5\u5230\u4E86。'},
         ];
         final body = await captureClaudeRequestBody(
           config: claudeConfig(baseUrl: officialBaseUrl),
           modelId: 'claude-sonnet-4-6',
           messages: const [
-            {'role': 'user', 'content': '看看这个页面'},
+            {'role': 'user', 'content': '\u770B\u770B\u8FD9\u4E2A\u9875\u9762'},
             {
               'role': 'assistant',
-              'content': '我查一下。查到了。',
+              'content': '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
               'tool_calls': [
                 {
                   'id': 'srvtoolu_deferred',
@@ -938,7 +960,7 @@ void main() {
               'name': 'create_memory',
               'content': 'test',
             },
-            {'role': 'user', 'content': '再说说'},
+            {'role': 'user', 'content': '\u518D\u8BF4\u8BF4'},
           ],
         );
 
@@ -967,7 +989,7 @@ void main() {
           'text',
         ]);
         expect(second.first['tool_use_id'], first[1]['id']);
-        expect(messages[4]['content'], '再说说');
+        expect(messages[4]['content'], '\u518D\u8BF4\u8BF4');
       },
     );
 
@@ -997,13 +1019,13 @@ void main() {
             'tool_use_id': 'srvtoolu_deferred',
             'content': {'type': 'web_fetch_result', 'url': 'https://e.com'},
           },
-          {'type': 'text', 'text': '查到了。'},
+          {'type': 'text', 'text': '\u67E5\u5230\u4E86。'},
         ];
         final body = await captureClaudeRequestBody(
           config: claudeConfig(baseUrl: officialBaseUrl),
           modelId: 'claude-sonnet-4-6',
           messages: const [
-            {'role': 'user', 'content': '看看这个页面'},
+            {'role': 'user', 'content': '\u770B\u770B\u8FD9\u4E2A\u9875\u9762'},
             {
               'role': 'assistant',
               'content': '',
@@ -1042,8 +1064,8 @@ void main() {
               'name': 'create_memory',
               'content': 'test',
             },
-            {'role': 'assistant', 'content': '查到了。'},
-            {'role': 'user', 'content': '再说说'},
+            {'role': 'assistant', 'content': '\u67E5\u5230\u4E86。'},
+            {'role': 'user', 'content': '\u518D\u8BF4\u8BF4'},
           ],
         );
 
@@ -1060,7 +1082,7 @@ void main() {
           'web_fetch_tool_result',
           'text',
         ]);
-        expect(second.last['text'], '查到了。');
+        expect(second.last['text'], '\u67E5\u5230\u4E86。');
       },
     );
 
@@ -1071,28 +1093,32 @@ void main() {
         // hosted call and a client one, so each client result closes the
         // response that declared it and the next opens with the hosted result.
         final firstResponse = [
-          {'type': 'text', 'text': '我查一下。'},
+          {'type': 'text', 'text': '\u6211\u67E5\u4E00\u4E0B。'},
           hostedCall('srvtoolu_1', 'https://example.com/1'),
           clientCall('toolu_client_1', 'one'),
         ];
         final secondResponse = [
           hostedResult('srvtoolu_1', 'https://e.com/1'),
-          {'type': 'text', 'text': '再查一下。'},
+          {'type': 'text', 'text': '\u518D\u67E5\u4E00\u4E0B。'},
           hostedCall('srvtoolu_2', 'https://example.com/2'),
           clientCall('toolu_client_2', 'two'),
         ];
         final thirdResponse = [
           hostedResult('srvtoolu_2', 'https://e.com/2'),
-          {'type': 'text', 'text': '查到了。'},
+          {'type': 'text', 'text': '\u67E5\u5230\u4E86。'},
         ];
         final body = await captureClaudeRequestBody(
           config: claudeConfig(baseUrl: officialBaseUrl),
           modelId: 'claude-sonnet-4-6',
           messages: [
-            {'role': 'user', 'content': '看看这两个页面'},
+            {
+              'role': 'user',
+              'content': '\u770B\u770B\u8FD9\u4E24\u4E2A\u9875\u9762',
+            },
             {
               'role': 'assistant',
-              'content': '我查一下。再查一下。查到了。',
+              'content':
+                  '\u6211\u67E5\u4E00\u4E0B。\u518D\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
               'tool_calls': [
                 replayCall('srvtoolu_1', 'web_fetch', [
                   firstResponse,
@@ -1112,7 +1138,7 @@ void main() {
             },
             toolResult('toolu_client_1', 'create_memory', 'one'),
             toolResult('toolu_client_2', 'create_memory', 'two'),
-            {'role': 'user', 'content': '再说说'},
+            {'role': 'user', 'content': '\u518D\u8BF4\u8BF4'},
           ],
         );
 
@@ -1140,7 +1166,7 @@ void main() {
         ]);
         expect(_resultIds(messages[4]), ['toolu_client_2']);
         expect(_blockTypes(messages[5]), ['web_fetch_tool_result', 'text']);
-        expect(messages[6]['content'], '再说说');
+        expect(messages[6]['content'], '\u518D\u8BF4\u8BF4');
       },
     );
 
@@ -1149,7 +1175,7 @@ void main() {
       // that call never arrived, so replaying its result would point at a
       // `tool_use` no longer in the history.
       final firstResponse = [
-        {'type': 'text', 'text': '我查一下。'},
+        {'type': 'text', 'text': '\u6211\u67E5\u4E00\u4E0B。'},
         hostedCall('srvtoolu_1', 'https://example.com/1'),
         clientCall('toolu_client_1', 'one'),
       ];
@@ -1163,10 +1189,13 @@ void main() {
         config: claudeConfig(baseUrl: officialBaseUrl),
         modelId: 'claude-sonnet-4-6',
         messages: [
-          {'role': 'user', 'content': '看看这两个页面'},
+          {
+            'role': 'user',
+            'content': '\u770B\u770B\u8FD9\u4E24\u4E2A\u9875\u9762',
+          },
           {
             'role': 'assistant',
-            'content': '我查一下。',
+            'content': '\u6211\u67E5\u4E00\u4E0B。',
             'tool_calls': [
               replayCall('srvtoolu_1', 'web_fetch', [
                 firstResponse,
@@ -1206,19 +1235,23 @@ void main() {
       // the order recorded, the thinking block first as Anthropic requires,
       // and the persisted text folds into the turn instead of repeating it.
       final firstResponse = [
-        {'type': 'thinking', 'thinking': '先查页面。', 'signature': 'sig-handoff'},
-        {'type': 'text', 'text': '我查一下。'},
+        {
+          'type': 'thinking',
+          'thinking': '\u5148\u67E5\u9875\u9762。',
+          'signature': 'sig-handoff',
+        },
+        {'type': 'text', 'text': '\u6211\u67E5\u4E00\u4E0B。'},
         hostedCall('srvtoolu_relay', 'https://example.com'),
         clientCall('toolu_client', 'test'),
       ];
       final secondResponse = [
         hostedResult('srvtoolu_relay', 'https://e.com'),
-        {'type': 'text', 'text': '查到了。'},
+        {'type': 'text', 'text': '\u67E5\u5230\u4E86。'},
       ];
       final body = await captureClaudeRequestBody(
         modelId: 'claude-sonnet-4-6',
         messages: [
-          {'role': 'user', 'content': '看看这个页面'},
+          {'role': 'user', 'content': '\u770B\u770B\u8FD9\u4E2A\u9875\u9762'},
           // The shape the app persists: the message holding the cards has no
           // text of its own, and the turn's text follows as its own message.
           {
@@ -1234,8 +1267,11 @@ void main() {
           },
           toolResult('srvtoolu_relay', 'web_fetch', '{"url":"https://e.com"}'),
           toolResult('toolu_client', 'create_memory', 'test'),
-          {'role': 'assistant', 'content': '我查一下。查到了。'},
-          {'role': 'user', 'content': '再说说'},
+          {
+            'role': 'assistant',
+            'content': '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+          },
+          {'role': 'user', 'content': '\u518D\u8BF4\u8BF4'},
         ],
       );
 
@@ -1252,7 +1288,10 @@ void main() {
       // The turn's text, in the order the API wrote it and only once: the
       // persisted message aggregates it, so it must fold into the turn rather
       // than replay on top of it.
-      expect(_assistantText(messages), '我查一下。查到了。');
+      expect(
+        _assistantText(messages),
+        '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+      );
       // Both calls replay as client tools, each with its result.
       final calls = assistant
           .where((block) => block['type'] == 'tool_use')
@@ -1282,7 +1321,7 @@ void main() {
         final body = await captureClaudeRequestBody(
           modelId: 'claude-sonnet-4-6',
           messages: [
-            {'role': 'user', 'content': '看看这个页面'},
+            {'role': 'user', 'content': '\u770B\u770B\u8FD9\u4E2A\u9875\u9762'},
             {
               'role': 'assistant',
               'content': '\n\n',
@@ -1301,7 +1340,7 @@ void main() {
             ),
             toolResult('toolu_client', 'create_memory', 'test'),
             {'role': 'assistant', 'content': 'checking'},
-            {'role': 'user', 'content': '再说说'},
+            {'role': 'user', 'content': '\u518D\u8BF4\u8BF4'},
           ],
         );
 
@@ -1339,7 +1378,7 @@ void main() {
         config: claudeConfig(baseUrl: officialBaseUrl),
         modelId: 'claude-sonnet-4-6',
         messages: [
-          {'role': 'user', 'content': '看看这个页面'},
+          {'role': 'user', 'content': '\u770B\u770B\u8FD9\u4E2A\u9875\u9762'},
           {
             'role': 'assistant',
             'content': 'checking',
@@ -1353,7 +1392,7 @@ void main() {
           },
           toolResult('toolu_client', 'create_memory', 'test'),
           {'role': 'assistant', 'content': 'checking'},
-          {'role': 'user', 'content': '再说说'},
+          {'role': 'user', 'content': '\u518D\u8BF4\u8BF4'},
         ],
       );
 
@@ -1395,16 +1434,16 @@ void main() {
             'tool_use_id': 'srvtoolu_deferred',
             'content': {'type': 'web_fetch_result', 'url': 'https://e.com'},
           },
-          {'type': 'text', 'text': '查到了。'},
+          {'type': 'text', 'text': '\u67E5\u5230\u4E86。'},
         ];
         final body = await captureClaudeRequestBody(
           config: claudeConfig(baseUrl: officialBaseUrl),
           modelId: 'claude-sonnet-4-6',
           messages: const [
-            {'role': 'user', 'content': '看看这个页面'},
+            {'role': 'user', 'content': '\u770B\u770B\u8FD9\u4E2A\u9875\u9762'},
             {
               'role': 'assistant',
-              'content': '查到了。',
+              'content': '\u67E5\u5230\u4E86。',
               'tool_calls': [
                 {
                   'id': 'srvtoolu_deferred',
@@ -1463,18 +1502,18 @@ void main() {
       // survives, so it has to carry the earlier response too or the call and
       // the text before it would be lost.
       final firstResponse = [
-        {'type': 'text', 'text': '我查一下。'},
+        {'type': 'text', 'text': '\u6211\u67E5\u4E00\u4E0B。'},
         hostedCall('srvtoolu_paused', 'https://example.com'),
       ];
       final secondResponse = [
         hostedResult('srvtoolu_paused', 'https://e.com'),
-        {'type': 'text', 'text': '查到了。'},
+        {'type': 'text', 'text': '\u67E5\u5230\u4E86。'},
       ];
       final body = await captureClaudeRequestBody(
         config: claudeConfig(baseUrl: officialBaseUrl),
         modelId: 'claude-sonnet-4-6',
         messages: [
-          {'role': 'user', 'content': '看看这个页面'},
+          {'role': 'user', 'content': '\u770B\u770B\u8FD9\u4E2A\u9875\u9762'},
           {
             'role': 'assistant',
             'content': '\n\n',
@@ -1486,8 +1525,11 @@ void main() {
             ],
           },
           toolResult('srvtoolu_paused', 'web_fetch', '{"url":"https://e.com"}'),
-          {'role': 'assistant', 'content': '我查一下。查到了。'},
-          {'role': 'user', 'content': '再说说'},
+          {
+            'role': 'assistant',
+            'content': '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+          },
+          {'role': 'user', 'content': '\u518D\u8BF4\u8BF4'},
         ],
       );
 
@@ -1504,26 +1546,29 @@ void main() {
         'web_fetch_tool_result',
         'text',
       ]);
-      expect(_assistantText(messages), '我查一下。查到了。');
+      expect(
+        _assistantText(messages),
+        '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+      );
     });
 
     test('a stored turn replays as its responses', () async {
       // The turn stored against the message is the whole recording; the cards
       // only name the calls.
       final firstResponse = [
-        {'type': 'text', 'text': '我查一下。'},
+        {'type': 'text', 'text': '\u6211\u67E5\u4E00\u4E0B。'},
         hostedCall('srvtoolu_1', 'https://example.com'),
         clientCall('toolu_client_1', 'first'),
       ];
       final secondResponse = [
         hostedResult('srvtoolu_1', 'https://e.com'),
-        {'type': 'text', 'text': '查到了。'},
+        {'type': 'text', 'text': '\u67E5\u5230\u4E86。'},
       ];
       final body = await captureClaudeRequestBody(
         config: claudeConfig(baseUrl: officialBaseUrl),
         modelId: 'claude-sonnet-4-6',
         messages: [
-          {'role': 'user', 'content': '看看这个页面'},
+          {'role': 'user', 'content': '\u770B\u770B\u8FD9\u4E2A\u9875\u9762'},
           storedTurn(
             [firstResponse, secondResponse],
             [
@@ -1533,8 +1578,11 @@ void main() {
           ),
           toolResult('srvtoolu_1', 'web_fetch', '{"url":"https://e.com"}'),
           toolResult('toolu_client_1', 'create_memory', 'saved'),
-          {'role': 'assistant', 'content': '我查一下。查到了。'},
-          {'role': 'user', 'content': '再说说'},
+          {
+            'role': 'assistant',
+            'content': '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+          },
+          {'role': 'user', 'content': '\u518D\u8BF4\u8BF4'},
         ],
       );
 
@@ -1549,7 +1597,10 @@ void main() {
       expect(_blockTypes(messages[1]), ['text', 'server_tool_use', 'tool_use']);
       expect(_resultIds(messages[2]), ['toolu_client_1']);
       expect(_blockTypes(messages[3]), ['web_fetch_tool_result', 'text']);
-      expect(_assistantText(messages), '我查一下。查到了。');
+      expect(
+        _assistantText(messages),
+        '\u6211\u67E5\u4E00\u4E0B。\u67E5\u5230\u4E86。',
+      );
     });
 
     test('every turn shape replays as one assistant message', () async {
@@ -1731,7 +1782,7 @@ void main() {
       final body = await captureClaudeRequestBody(
         modelId: 'claude-sonnet-4-6',
         messages: const [
-          {'role': 'user', 'content': '几点了'},
+          {'role': 'user', 'content': '\u51E0\u70B9\u4E86'},
           {
             'role': 'assistant',
             'content': '',
@@ -1744,7 +1795,7 @@ void main() {
             ],
           },
           {'role': 'tool', 'tool_call_id': 'toolu_empty', 'content': ''},
-          {'role': 'user', 'content': '那算了'},
+          {'role': 'user', 'content': '\u90A3\u7B97\u4E86'},
         ],
       );
 

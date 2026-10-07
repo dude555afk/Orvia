@@ -118,9 +118,11 @@ void main() {
     'decodes link-only labels once and preserves their original targets',
     () {
       const cases = {
-        'kelivo://workspace/%E6%96%B0%E6%96%87%E4%BB%B6.txt': '新文件.txt',
-        'kelivo://chat/outputs/报告%20終稿.txt': '报告 終稿.txt',
-        'kelivo://workspace/資料/한글.txt': '資料/한글.txt',
+        'kelivo://workspace/%E6%96%B0%E6%96%87%E4%BB%B6.txt':
+            '\u65B0\u6587\u4EF6.txt',
+        'kelivo://chat/outputs/\u62A5\u544A%20\u7D42\u7A3F.txt':
+            '\u62A5\u544A \u7D42\u7A3F.txt',
+        'kelivo://workspace/\u8CC7\u6599/한글.txt': '\u8CC7\u6599/한글.txt',
         'kelivo://workspace/literal%2520%25.txt': 'literal%20%.txt',
         'kelivo://workspace/invalid%ZZ.txt':
             'kelivo://workspace/invalid%ZZ.txt',
@@ -137,9 +139,12 @@ void main() {
   );
 
   test('keeps explicit file paths literal', () {
-    const path = '/workspace/原始%20文件.txt';
+    const path = '/workspace/\u539F\u59CB%20\u6587\u4EF6.txt';
     final entry = collectProducedFileEntries([
-      _write(links: ['kelivo://workspace/原始%2520文件.txt'], files: [path]),
+      _write(
+        links: ['kelivo://workspace/\u539F\u59CB%2520\u6587\u4EF6.txt'],
+        files: [path],
+      ),
     ]).single;
     expect(entry.label, path);
   });
@@ -166,14 +171,14 @@ void main() {
       ),
     );
 
-    expect(find.text('新文件.txt'), findsOneWidget);
+    expect(find.text('\u65B0\u6587\u4EF6.txt'), findsOneWidget);
     expect(find.text('%E6%96%B0%E6%96%87%E4%BB%B6.txt'), findsNothing);
     final chip = tester.widget<WorkspaceFileChip>(
       find.byType(WorkspaceFileChip),
     );
     expect(chip.link, link);
     expect(chip.conversationId, 'c1');
-    expect(find.byTooltip('新文件.txt'), findsOneWidget);
+    expect(find.byTooltip('\u65B0\u6587\u4EF6.txt'), findsOneWidget);
   });
 
   testWidgets('limits visible chips and shows +N', (tester) async {

@@ -71,7 +71,7 @@ void main() {
                 List.generate(
                   count,
                   (i) =>
-                      'Paragraph $i **加粗** reasoning 中文内容。'
+                      'Paragraph $i **\u52A0\u7C97** reasoning \u4E2D\u6587\u5185\u5BB9。'
                       ' Keep rendering Markdown while the response grows.',
                 ).join(
                   shape == 'paragraphs'
@@ -255,10 +255,10 @@ void main() {
                 final delta = shape == 'paragraphs' && i % 10 == 0
                     ? '\n\nNext **paragraph** '
                     : richAppend
-                    ? ' **新增粗体** 和 *斜体*，继续推导。'
+                    ? ' **\u65B0\u589E\u7C97\u4F53** \u548C *\u659C\u4F53*，\u7EE7\u7EED\u63A8\u5BFC。'
                     : seconds > 0
-                    ? ' 持续思考并追加内容，保持 Markdown、文字选择及毛玻璃效果。'
-                    : ' 新增输出。';
+                    ? ' \u6301\u7EED\u601D\u8003\u5E76\u8FFD\u52A0\u5185\u5BB9，\u4FDD\u6301 Markdown、\u6587\u5B57\u9009\u62E9\u53CA\u6BDB\u73BB\u7483\u6548\u679C。'
+                    : ' \u65B0\u589E\u8F93\u51FA。';
                 source.value += delta;
                 if (timeline) {
                   if (reasoning) {
