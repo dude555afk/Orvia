@@ -250,7 +250,7 @@ void main() {
       final gate = trace.steps[0];
       expect(
         gate.prompt,
-        contains('\u7528\u6237：\u6211\u662F\u5927\u5B66\u751F'),
+        contains('User: \u6211\u662F\u5927\u5B66\u751F'),
       );
       expect(gate.rawResponse, contains('<user_memory>true'));
       expect(gate.parsedResult, 'worthRemembering');
