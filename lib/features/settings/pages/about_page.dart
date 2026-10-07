@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 import '../../../core/providers/settings_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/ios_switch.dart';
-import '../../../shared/widgets/qq_group_join_sheet.dart';
 import '../../../shared/widgets/snackbar.dart';
 import '../../../core/services/haptics.dart';
 import 'debug_page.dart';
@@ -502,23 +501,11 @@ class _AboutPageState extends State<AboutPage> {
                 onTap: null, // informational only
               ),
               _iosDivider(context),
-              _iosNavRow(
-                context,
-                icon: Lucide.Earth,
-                label: l10n.aboutPageWebsite,
-                onTap: () async {
-                  final uri = Uri.parse('https://kelivo.psycheas.top/');
-                  if (!await launchUrl(uri, mode: LaunchMode.platformDefault)) {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  }
-                },
-              ),
-              _iosDivider(context),
               _iosNavRowSvgLeading(
                 context,
                 svgAsset: 'assets/icons/github.svg',
                 label: l10n.aboutPageGithub,
-                onTap: () => _openUrl('https://github.com/Chevey339/kelivo'),
+                onTap: () => _openUrl('https://github.com/dude555afk/Orvia'),
               ),
               _iosDivider(context),
               _iosNavRow(
@@ -526,22 +513,8 @@ class _AboutPageState extends State<AboutPage> {
                 icon: Lucide.FileText,
                 label: l10n.aboutPageLicense,
                 onTap: () => _openUrl(
-                  'https://github.com/Chevey339/kelivo/blob/master/LICENSE',
+                  'https://github.com/dude555afk/Orvia/blob/main/LICENSE',
                 ),
-              ),
-              _iosDivider(context),
-              _iosNavRowSvgLeading(
-                context,
-                svgAsset: 'assets/icons/tencent-qq.svg',
-                label: l10n.aboutPageJoinQQGroup,
-                onTap: () => showQQGroupJoinSheet(context: context),
-              ),
-              _iosDivider(context),
-              _iosNavRowSvgLeading(
-                context,
-                svgAsset: 'assets/icons/discord.svg',
-                label: l10n.aboutPageJoinDiscord,
-                onTap: () => _openUrl('https://discord.gg/Tb8DyvvV5T'),
               ),
             ],
           ),
