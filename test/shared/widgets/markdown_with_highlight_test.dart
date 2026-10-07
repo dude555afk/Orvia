@@ -410,7 +410,7 @@ void main() {
     expect(markdown, contains('![alt](${Uri.file(file.path)})'));
     expect(find.byType(Image), findsOneWidget);
     source.value +=
-        '\n\n<details><summary>\u66F4\u591A</summary>\u9690\u85CF</details>';
+        '\n\n<details><summary>More</summary>Hidden</details>';
     await tester.pumpAndSettle();
     expect(find.text('More'), findsOneWidget);
     source.value = 'Replacement **bold**';
@@ -930,9 +930,9 @@ Inline ***strong emphasis*** text.
     _overrideMarkdownTablePlatform(TargetPlatform.android);
     await tester.pumpWidget(
       _markdownHarness('''
-| \u9879\u76EE | \u72B6\u6001 |
+| Item | Status |
 | :---: | :---: |
-| \u5355\u5B57 |   \u4E2D   |
+| Word |   Medium   |
 ''', width: 360),
     );
     await tester.pump();
@@ -2687,9 +2687,10 @@ A-->B
     (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       try {
+        final cjkGlyphText = String.fromCharCode(0x975e);
         await tester.pumpWidget(
           _markdownHarness(
-            r'\u51FA\u73B0 \(0 = \text{\u975E\u96F6\u5E38\u6570\u7684\u77DB\u76FE}\)',
+            'Text \\(0 = \\text{$cjkGlyphText}\\)',
             theme: buildLightThemeForScheme(ThemePalettes.defaultPalette.light),
           ),
         );
@@ -2697,7 +2698,7 @@ A-->B
 
         final cjkGlyph = tester
             .widgetList<RichText>(find.byType(RichText))
-            .firstWhere((widget) => widget.text.toPlainText() == '\u975E');
+            .firstWhere((widget) => widget.text.toPlainText() == cjkGlyphText);
 
         expect(cjkGlyph.text.style?.fontFamily, contains('KaTeX_Main'));
         expect(
@@ -2747,7 +2748,7 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          r'\u76F8\u5BF9\u8BBA\u52A8\u91CF\u516C\u5F0F：$p = \frac{mv}{\sqrt{1 - \frac{v^2}{c^2}}}$',
+          r'Relativistic momentum: $p = \frac{mv}{\sqrt{1 - \frac{v^2}{c^2}}}$',
         ),
       );
       await tester.pump();
@@ -2769,7 +2770,7 @@ A-->B
       expect(mathSpans.single.baseline, TextBaseline.alphabetic);
 
       final paragraph = _paragraphContaining(
-        '\u76F8\u5BF9\u8BBA\u52A8\u91CF\u516C\u5F0F',
+'Relativistic momentum',
       );
       final mathBox = tester.renderObject<RenderBox>(_findMathWidget());
       expect(mathBox.size.height, greaterThan(30));
@@ -2835,13 +2836,13 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(r'''
-\u4EF7\u683C $10 \u4E0D\u6E32\u67D3。
+Price $10 should not render.
 
-\u8303\u56F4$\pm 2$ \u6709\u6548。
+Range$\pm 2$ is valid.
 
-\u6807\u70B9：$x+y$。
+Punctuation: $x+y$.
 
-\u7A7A\u683C $a+b$ \u6709\u6548。
+Space $a+b$ is valid.
 '''),
       );
       await tester.pump();
@@ -2859,7 +2860,7 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          r'（$PaCO_2$ \u964D\u81F3 30）\u8303\u56F4$\pm 2$，\u76EE\u6807$SpO_2$。',
+          r'($PaCO_2$ drops to 30), range $\pm 2$, target $SpO_2$.',
         ),
       );
       await tester.pump();
@@ -2876,7 +2877,7 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          r'\u8574\u542B\u7684\u80FD\u91CF\u9AD8\u8FBE $9 \times 10^{16} \, \text{J}$，\u76F8\u5F53\u4E8E\u7EA6 2100 \u4E07\u5428 TNT \u70B8\u836F\u7684\u7206\u70B8\u5F53\u91CF。\u592A\u9633\u6BCF\u79D2\u5C06\u7EA6 $4.3 \times 10^9 \, \text{kg}$ \u7684\u8D28\u91CF\u8F6C\u5316\u4E3A\u80FD\u91CF',
+          r'Energy reaches $9 \times 10^{16} \, \text{J}$, equivalent to about 21 million tons of TNT. The sun converts about $4.3 \times 10^9 \, \text{kg}$ of mass into energy each second.',
         ),
       );
       await tester.pump();
@@ -2885,12 +2886,12 @@ A-->B
       expect(find.textContaining(r'$9 \times'), findsNothing);
       expect(find.textContaining(r'$4.3 \times'), findsNothing);
       expect(
-        find.textContaining('\u76F8\u5F53\u4E8E\u7EA6 2100 \u4E07\u5428 TNT'),
+        find.textContaining('equivalent to about 21 million tons of TNT'),
         findsOneWidget,
       );
       expect(
         find.textContaining(
-          r'，\u76F8\u5F53\u4E8E\u7EA6 2100 \u4E07\u5428 TNT \u70B8\u836F\u7684\u7206\u70B8\u5F53\u91CF。\u592A\u9633\u6BCF\u79D2\u5C06\u7EA6 $4.3',
+          r', equivalent to about 21 million tons of TNT. The sun converts about $4.3',
         ),
         findsNothing,
       );
@@ -2902,7 +2903,7 @@ A-->B
   ) async {
     await tester.pumpWidget(
       _markdownHarness(
-        r'\u96C6\u5408\(A = {x \in \mathbb{R} : x^2 < 4}\)\u7B49\u4EF7\u4E8E\u5F00\u533A\u95F4。',
+        r'Set \(A = {x \in \mathbb{R} : x^2 < 4}\) is equivalent to an open interval.',
       ),
     );
     await tester.pump();
@@ -2910,7 +2911,7 @@ A-->B
     expect(_findMathWidget(), findsOneWidget);
     expect(find.textContaining(r'\(A ='), findsNothing);
     expect(
-      find.textContaining('\u7B49\u4EF7\u4E8E\u5F00\u533A\u95F4'),
+      find.textContaining('is equivalent to an open interval'),
       findsOneWidget,
     );
   });
@@ -2920,7 +2921,7 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          r'\u96C6\u5408$A = \{x \in \mathbb{R} : x^2 < 4\}$\u7B49\u4EF7\u4E8E\u5F00\u533A\u95F4。',
+          r'Set $A = \{x \in \mathbb{R} : x^2 < 4\}$ is equivalent to an open interval.',
         ),
       );
       await tester.pump();
@@ -2935,7 +2936,7 @@ A-->B
       expect(find.textContaining(r'\(A ='), findsNothing);
       expect(find.textContaining(r'$A ='), findsNothing);
       expect(
-        find.textContaining('\u7B49\u4EF7\u4E8E\u5F00\u533A\u95F4'),
+        find.textContaining('is equivalent to an open interval'),
         findsOneWidget,
       );
     },
@@ -3071,25 +3072,25 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          r'$\&$\u5728LaTeX\u4E2D\u9700\u8981\u8F6C\u4E49，\u800C$$\u7B26\u53F7\u901A\u5E38\u7528\u4E8E\u5757\u7EA7\u516C\u5F0F。\u540E\u6587$a$$b$$c$。$x$$=$$1$。\u7ED3\u675F',
+          r'$\&$ needs escaping in LaTeX, while $$ is usually used for block math. Later $a$$b$$c$. $x$$=$$1$. End',
         ),
       );
       await tester.pump();
 
       expect(_findMathWidget(), findsNWidgets(7));
       expect(
-        find.textContaining('\u5728LaTeX\u4E2D\u9700\u8981\u8F6C\u4E49'),
+        find.textContaining('needs escaping in LaTeX'),
         findsOneWidget,
       );
       expect(
         find.textContaining(
-          r'$$\u7B26\u53F7\u901A\u5E38\u7528\u4E8E\u5757\u7EA7\u516C\u5F0F。\u540E\u6587',
+          r'$$ is usually used for block math. Later',
         ),
         findsOneWidget,
       );
       expect(find.textContaining(r'b$$c'), findsNothing);
       expect(find.textContaining(r'x$$=$$1'), findsNothing);
-      expect(find.textContaining('Ended'), findsOneWidget);
+      expect(find.textContaining('End'), findsOneWidget);
     },
   );
 
@@ -3098,11 +3099,11 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(r'''
-\u96C6\u5408\(A = {x \in \mathbb{R} : x^2 < 4}\)\u7B49\u4EF7\u4E8E\u5F00\u533A\u95F4$(-2, 2)$。
+Set \(A = {x \in \mathbb{R} : x^2 < 4}\) is equivalent to the open interval $(-2, 2)$.
 
-$\&$\u5728LaTeX\u4E2D\u9700\u8981\u8F6C\u4E49，\u800C$$\u7B26\u53F7\u901A\u5E38\u7528\u4E8E\u5757\u7EA7\u516C\u5F0F。
+$\&$ needs escaping in LaTeX, while $$ is usually used for block math.
 
-> \u8D39\u9A6C\u5927\u5B9A\u7406\u6307\u51FA：\u5F53\u6574\u6570$n > 2$\u65F6，\u65B9\u7A0B$x^n + y^n = z^n$\u6CA1\u6709\u6B63\u6574\u6570\u89E3。
+> Fermat's Last Theorem states: when integer $n > 2$, the equation $x^n + y^n = z^n$ has no positive integer solutions.
 
 $a$$b$$c$。$x$$=$$1$。
 
@@ -3115,7 +3116,7 @@ $f((x))$，$g([x])$，$h(\{x\})$，$\langle a, b \rangle$。
       expect(find.textContaining(r'\(A ='), findsNothing);
       expect(
         find.textContaining(
-          r'$$\u7B26\u53F7\u901A\u5E38\u7528\u4E8E\u5757\u7EA7\u516C\u5F0F',
+          r'$$ is usually used for block math',
         ),
         findsOneWidget,
       );
@@ -3124,11 +3125,11 @@ $f((x))$，$g([x])$，$h(\{x\})$，$\langle a, b \rangle$。
       expect(find.textContaining(r'$n > 2$'), findsNothing);
       expect(find.textContaining(r'$f((x))$'), findsNothing);
       expect(
-        find.textContaining('\u8D39\u9A6C\u5927\u5B9A\u7406\u6307\u51FA'),
+        find.textContaining("Fermat's Last Theorem states"),
         findsOneWidget,
       );
       expect(
-        find.textContaining('\u5728LaTeX\u4E2D\u9700\u8981\u8F6C\u4E49'),
+        find.textContaining('needs escaping in LaTeX'),
         findsOneWidget,
       );
     },
@@ -4538,7 +4539,7 @@ press5
   ) async {
     await tester.pumpWidget(
       _markdownHarness(
-        '<p>\u7B2C\u4E00\u6BB5<br>\u7B2C\u4E8C\u884C</p><p><a href="https://example.com">\u94FE\u63A5</a></p>',
+        '<p>First paragraph<br>Second line</p><p><a href="https://example.com">Linked</a></p>',
       ),
     );
     await tester.pump();
@@ -4546,7 +4547,7 @@ press5
     final richTexts = tester.widgetList<RichText>(find.byType(RichText));
     final plainText = richTexts.map((w) => w.text.toPlainText()).join('\n');
 
-    expect(plainText, contains('\u7B2C\u4E00\u6BB5\n\u7B2C\u4E8C\u884C'));
+    expect(plainText, contains('First paragraph\nSecond line'));
     expect(plainText, isNot(contains('<p>')));
     expect(plainText, isNot(contains('<br>')));
     expect(plainText, isNot(contains('<a href=')));
