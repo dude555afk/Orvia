@@ -182,7 +182,7 @@ class UpdateProvider extends ChangeNotifier {
       } ??
           info.downloads['androidArm64'] ??
           info.downloads['android'] ??
-          info.downloads.values.firstOrNull;
+          (info.downloads.isNotEmpty ? info.downloads.values.first : null);
       if (url == null || url.isEmpty) {
         throw StateError('No compatible Android APK is available');
       }
