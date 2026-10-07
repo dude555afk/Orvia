@@ -606,7 +606,8 @@ void main() {
       await scheduler.save(
         ScheduledTask.fromJson({
           ...scheduler.tasks.single.toJson(),
-          'preparationPrompt': '只输出一句自然的问候',
+          'preparationPrompt':
+              '\u53EA\u8F93\u51FA\u4E00\u53E5\u81EA\u7136\u7684\u95EE\u5019',
         }),
       );
       expect(run().id, id);

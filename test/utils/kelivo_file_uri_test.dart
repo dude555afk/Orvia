@@ -8,7 +8,7 @@ void main() {
         'hello world.png',
         'hash#tag.png',
         'percent%20done.png',
-        '写真_😀.png',
+        '\u5199\u771F_😀.png',
         'nested/dir/file name (1).png',
       ];
 

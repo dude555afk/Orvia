@@ -86,7 +86,7 @@ void main() {
   testWidgets('long files reach the final chunk and copy the original source', (
     tester,
   ) async {
-    final source = '${'first 神谕 😀\r\n' * 32098}LAST-LINE\r\n';
+    final source = '${'first \u795E\u8C15 😀\r\n' * 32098}LAST-LINE\r\n';
     final file = File(p.join(tempDir.path, 'long.txt'))
       ..writeAsStringSync(source);
     final document = (await tester.runAsync(
@@ -344,7 +344,7 @@ void main() {
   testWidgets('wrap and non-wrap gutters share the same unstyled column', (
     tester,
   ) async {
-    final long = List.filled(40, '神谕').join();
+    final long = List.filled(40, '\u795E\u8C15').join();
     final file = File(p.join(tempDir.path, 'signs.json'))
       ..writeAsStringSync('$long\nshort\n$long\n');
 
@@ -378,7 +378,7 @@ void main() {
     // wrapped line has to push the following numbers down with it.
     final long = List.filled(60, 'M').join();
     final file = File(p.join(tempDir.path, 'mixed.json'))
-      ..writeAsStringSync('{"a": "神谕 skill"}\n$long\n{"b": 1}\n');
+      ..writeAsStringSync('{"a": "\u795E\u8C15 skill"}\n$long\n{"b": 1}\n');
 
     await tester.pumpWidget(
       _app(

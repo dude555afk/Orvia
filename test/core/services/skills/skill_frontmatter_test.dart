@@ -119,7 +119,7 @@ description: ""
 
     test('falls back when nothing remains', () {
       expect(slugify('!!!'), 'skill');
-      expect(slugify('表格'), 'skill');
+      expect(slugify('\u8868\u683C'), 'skill');
     });
   });
 }

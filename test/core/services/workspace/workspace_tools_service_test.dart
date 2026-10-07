@@ -174,7 +174,7 @@ void main() {
   test(
     'environment injection uses raw values but shell and file results are private',
     () async {
-      const secret = 'test-token-秘密-123';
+      const secret = 'test-token-\u79D8\u5BC6-123';
       var config = EnvironmentExecutionConfig(variables: {'TOKEN': secret});
       final runtime = FakeWorkspaceRuntime(useRealProcess: true);
       final tools = service(
@@ -438,7 +438,7 @@ void main() {
           CommandOutput(OutputStreamKind.stderr, utf8.encode('10%\r')),
           CommandOutput(
             OutputStreamKind.stdout,
-            utf8.encode('\r\x1b[32m完成 😀'),
+            utf8.encode('\r\x1b[32m\u5B8C\u6210 😀'),
           ),
           CommandOutput(OutputStreamKind.stderr, utf8.encode('100%\r')),
           CommandOutput(OutputStreamKind.stdout, utf8.encode('\x1b[0m\r')),
@@ -458,7 +458,7 @@ void main() {
         final payload = jsonOf(result);
         final meta = metaOf(result);
         final run = registry.of('progress', conversationId: 'conv-1')!;
-        expect(payload['stdout'], 'header\n完成 😀');
+        expect(payload['stdout'], 'header\n\u5B8C\u6210 😀');
         expect(payload['stderr'], '100%\n');
         expect(payload['truncated'], isNot(true));
         expect(payload['output_file'], isNull);
@@ -466,7 +466,7 @@ void main() {
         expect(meta.stderrPreview, payload['stderr']);
         expect(run.stdoutSoFar, payload['stdout']);
         expect(run.stderrSoFar, payload['stderr']);
-        expect(run.tailLines, ['header', '完成 😀', '100%']);
+        expect(run.tailLines, ['header', '\u5B8C\u6210 😀', '100%']);
         expect(run.totalBytes, greaterThan(128 * 1024));
         expect(run.stdoutTruncated, isFalse);
       },
@@ -912,7 +912,9 @@ void main() {
     () async {
       final tools = service();
       final context = ctx(sandboxed: true);
-      final fileName = Platform.isWindows ? 'report 报告.txt' : 'report:报告.txt';
+      final fileName = Platform.isWindows
+          ? 'report \u62A5\u544A.txt'
+          : 'report:\u62A5\u544A.txt';
       final path = '/workspace/$fileName';
       final write = metaOf(
         await tools.handle(context, 'write_file', {

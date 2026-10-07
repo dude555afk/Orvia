@@ -97,34 +97,37 @@ void main() {
     },
   );
 
-  test('collapseVersions 按真实版本号选择消息', () {
-    final service = MessageBuilderService(
-      chatService: _FakeChatService(const {}),
-      contextProvider: _FakeBuildContext(),
-    );
+  test(
+    'collapseVersions \u6309\u771F\u5B9E\u7248\u672C\u53F7\u9009\u62E9\u6D88\u606F',
+    () {
+      final service = MessageBuilderService(
+        chatService: _FakeChatService(const {}),
+        contextProvider: _FakeBuildContext(),
+      );
 
-    final collapsed = service.collapseVersions(
-      [
-        _message(
-          id: 'v1',
-          role: 'assistant',
-          content: 'selected',
-          groupId: 'answer',
-          version: 1,
-        ),
-        _message(
-          id: 'v2',
-          role: 'assistant',
-          content: 'not selected',
-          groupId: 'answer',
-          version: 2,
-        ),
-      ],
-      const {'answer': 1},
-    );
+      final collapsed = service.collapseVersions(
+        [
+          _message(
+            id: 'v1',
+            role: 'assistant',
+            content: 'selected',
+            groupId: 'answer',
+            version: 1,
+          ),
+          _message(
+            id: 'v2',
+            role: 'assistant',
+            content: 'not selected',
+            groupId: 'answer',
+            version: 2,
+          ),
+        ],
+        const {'answer': 1},
+      );
 
-    expect(collapsed.single.id, 'v1');
-  });
+      expect(collapsed.single.id, 'v1');
+    },
+  );
 
   group('MessageBuilderService.parseInputFromMessage', () {
     test('reads image/file parts without marker strings', () {
@@ -278,75 +281,81 @@ void main() {
       },
     );
 
-    test('默认将视频和音频 FilePart 纳入媒体路径供 API 使用', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService(const {}),
-        contextProvider: _FakeBuildContext(),
-      );
+    test(
+      '\u9ED8\u8BA4\u5C06\u89C6\u9891\u548C\u97F3\u9891 FilePart \u7EB3\u5165\u5A92\u4F53\u8DEF\u5F84\u4F9B API \u4F7F\u7528',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService(const {}),
+          contextProvider: _FakeBuildContext(),
+        );
 
-      final input = service.parseInputFromMessage(
-        ChatMessage(
-          role: 'user',
-          conversationId: 'c1',
-          parts: const [
-            TextPart('media'),
-            FilePart(
-              uri: 'C:/tmp/clip.mp4',
-              name: 'clip.mp4',
-              mime: 'video/mp4',
-            ),
-            FilePart(
-              uri: 'C:/tmp/audio.wav',
-              name: 'audio.wav',
-              mime: 'audio/wav',
-            ),
-          ],
-        ),
-      );
+        final input = service.parseInputFromMessage(
+          ChatMessage(
+            role: 'user',
+            conversationId: 'c1',
+            parts: const [
+              TextPart('media'),
+              FilePart(
+                uri: 'C:/tmp/clip.mp4',
+                name: 'clip.mp4',
+                mime: 'video/mp4',
+              ),
+              FilePart(
+                uri: 'C:/tmp/audio.wav',
+                name: 'audio.wav',
+                mime: 'audio/wav',
+              ),
+            ],
+          ),
+        );
 
-      expect(input.text, 'media');
-      expect(input.imagePaths, ['C:/tmp/clip.mp4', 'C:/tmp/audio.wav']);
-      expect(input.documents.map((document) => document.fileName), [
-        'clip.mp4',
-        'audio.wav',
-      ]);
-    });
+        expect(input.text, 'media');
+        expect(input.imagePaths, ['C:/tmp/clip.mp4', 'C:/tmp/audio.wav']);
+        expect(input.documents.map((document) => document.fileName), [
+          'clip.mp4',
+          'audio.wav',
+        ]);
+      },
+    );
 
-    test('编辑恢复草稿时不把视频和音频 FilePart 伪装成图片', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService(const {}),
-        contextProvider: _FakeBuildContext(),
-      );
+    test(
+      '\u7F16\u8F91\u6062\u590D\u8349\u7A3F\u65F6\u4E0D\u628A\u89C6\u9891\u548C\u97F3\u9891 FilePart \u4F2A\u88C5\u6210\u56FE\u7247',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService(const {}),
+          contextProvider: _FakeBuildContext(),
+        );
 
-      final input = service.parseInputFromMessage(
-        ChatMessage(
-          role: 'user',
-          conversationId: 'c1',
-          parts: const [
-            TextPart('media'),
-            ImagePart(uri: 'C:/tmp/photo.png', mime: 'image/png'),
-            FilePart(
-              uri: 'C:/tmp/clip.mp4',
-              name: 'clip.mp4',
-              mime: 'video/mp4',
-            ),
-            FilePart(
-              uri: 'C:/tmp/audio.wav',
-              name: 'audio.wav',
-              mime: 'audio/wav',
-            ),
-          ],
-        ),
-        includeMediaFilePathsAsImages: false,
-      );
+        final input = service.parseInputFromMessage(
+          ChatMessage(
+            role: 'user',
+            conversationId: 'c1',
+            parts: const [
+              TextPart('media'),
+              ImagePart(uri: 'C:/tmp/photo.png', mime: 'image/png'),
+              FilePart(
+                uri: 'C:/tmp/clip.mp4',
+                name: 'clip.mp4',
+                mime: 'video/mp4',
+              ),
+              FilePart(
+                uri: 'C:/tmp/audio.wav',
+                name: 'audio.wav',
+                mime: 'audio/wav',
+              ),
+            ],
+          ),
+          includeMediaFilePathsAsImages: false,
+        );
 
-      expect(input.text, 'media');
-      expect(input.imagePaths, ['C:/tmp/photo.png']);
-      expect(input.documents.map((document) => document.fileName), [
-        'clip.mp4',
-        'audio.wav',
-      ]);
-    });
+        expect(input.text, 'media');
+        expect(input.imagePaths, ['C:/tmp/photo.png']);
+        expect(input.documents.map((document) => document.fileName), [
+          'clip.mp4',
+          'audio.wav',
+        ]);
+      },
+    );
   });
 
   group('MessageBuilderService.buildApiMessages media paths', () {
@@ -551,49 +560,64 @@ void main() {
   });
 
   group('MessageBuilderService.buildApiMessages', () {
-    test('有工具调用时会把 reasoning_content 回填到 assistant tool 消息', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({
-          'a1': [
-            {
-              'id': 'call_1',
-              'name': 'get_weather',
-              'arguments': {'location': 'Hangzhou', 'date': '2026-04-25'},
-              'content': 'Cloudy 7~13°C',
-            },
+    test(
+      '\u6709\u5DE5\u5177\u8C03\u7528\u65F6\u4F1A\u628A reasoning_content \u56DE\u586B\u5230 assistant tool \u6D88\u606F',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({
+            'a1': [
+              {
+                'id': 'call_1',
+                'name': 'get_weather',
+                'arguments': {'location': 'Hangzhou', 'date': '2026-04-25'},
+                'content': 'Cloudy 7~13°C',
+              },
+            ],
+          }),
+          contextProvider: _FakeBuildContext(),
+        );
+
+        final apiMessages = service.buildApiMessages(
+          messages: [
+            _message(
+              id: 'u1',
+              role: 'user',
+              content:
+                  '\u676D\u5DDE\u660E\u5929\u5929\u6C14\u600E\u4E48\u6837？',
+            ),
+            _message(
+              id: 'a1',
+              role: 'assistant',
+              content: '\u660E\u5929\u591A\u4E91，7 \u5230 13 \u5EA6。',
+              reasoningText:
+                  '\u5148\u5224\u65AD\u65E5\u671F，\u518D\u67E5\u8BE2\u5929\u6C14。',
+            ),
           ],
-        }),
-        contextProvider: _FakeBuildContext(),
-      );
+          versionSelections: const {},
+          currentConversation: Conversation(title: 'test'),
+          includeToolMessages: true,
+        );
 
-      final apiMessages = service.buildApiMessages(
-        messages: [
-          _message(id: 'u1', role: 'user', content: '杭州明天天气怎么样？'),
-          _message(
-            id: 'a1',
-            role: 'assistant',
-            content: '明天多云，7 到 13 度。',
-            reasoningText: '先判断日期，再查询天气。',
-          ),
-        ],
-        versionSelections: const {},
-        currentConversation: Conversation(title: 'test'),
-        includeToolMessages: true,
-      );
+        final assistantToolMessage = apiMessages.firstWhere(
+          (message) =>
+              message['role'] == 'assistant' && message['tool_calls'] is List,
+        );
+        final finalAssistantMessage = apiMessages.lastWhere(
+          (message) =>
+              message['role'] == 'assistant' && message['tool_calls'] == null,
+        );
 
-      final assistantToolMessage = apiMessages.firstWhere(
-        (message) =>
-            message['role'] == 'assistant' && message['tool_calls'] is List,
-      );
-      final finalAssistantMessage = apiMessages.lastWhere(
-        (message) =>
-            message['role'] == 'assistant' && message['tool_calls'] == null,
-      );
-
-      expect(assistantToolMessage['content'], '\n\n');
-      expect(assistantToolMessage['reasoning_content'], '先判断日期，再查询天气。');
-      expect(finalAssistantMessage['reasoning_content'], '先判断日期，再查询天气。');
-    });
+        expect(assistantToolMessage['content'], '\n\n');
+        expect(
+          assistantToolMessage['reasoning_content'],
+          '\u5148\u5224\u65AD\u65E5\u671F，\u518D\u67E5\u8BE2\u5929\u6C14。',
+        );
+        expect(
+          finalAssistantMessage['reasoning_content'],
+          '\u5148\u5224\u65AD\u65E5\u671F，\u518D\u67E5\u8BE2\u5929\u6C14。',
+        );
+      },
+    );
 
     test(
       'a stored Claude turn rides on the tool message, the container on both',
@@ -619,7 +643,7 @@ void main() {
 
         final apiMessages = service.buildApiMessages(
           messages: [
-            _message(id: 'u1', role: 'user', content: '看看'),
+            _message(id: 'u1', role: 'user', content: '\u770B\u770B'),
             _message(id: 'a1', role: 'assistant', content: 'hi'),
           ],
           versionSelections: const {},
@@ -659,9 +683,9 @@ void main() {
 
       final apiMessages = service.buildApiMessages(
         messages: [
-          _message(id: 'u1', role: 'user', content: '你好'),
-          _message(id: 'a1', role: 'assistant', content: '你好呀'),
-          _message(id: 'u2', role: 'user', content: '再见'),
+          _message(id: 'u1', role: 'user', content: '\u4F60\u597D'),
+          _message(id: 'a1', role: 'assistant', content: '\u4F60\u597D\u5440'),
+          _message(id: 'u2', role: 'user', content: '\u518D\u89C1'),
         ],
         versionSelections: const {},
         currentConversation: Conversation(title: 'test'),
@@ -696,7 +720,7 @@ void main() {
 
         final apiMessages = service.buildApiMessages(
           messages: [
-            _message(id: 'u1', role: 'user', content: '跑一下'),
+            _message(id: 'u1', role: 'user', content: '\u8DD1\u4E00\u4E0B'),
             _message(id: 'a1', role: 'assistant', content: ''),
           ],
           versionSelections: const {},
@@ -715,676 +739,768 @@ void main() {
       },
     );
 
-    test('reasoningText 为空时不会伪造 reasoning_content', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({
-          'a1': [
-            {
-              'id': 'call_1',
-              'name': 'get_date',
-              'arguments': <String, dynamic>{},
-              'content': '2026-04-24',
-            },
-          ],
-        }),
-        contextProvider: _FakeBuildContext(),
-      );
-
-      final apiMessages = service.buildApiMessages(
-        messages: [
-          _message(id: 'u1', role: 'user', content: '今天几号？'),
-          _message(
-            id: 'a1',
-            role: 'assistant',
-            content: '今天是 2026-04-24。',
-            reasoningText: '',
-          ),
-        ],
-        versionSelections: const {},
-        currentConversation: Conversation(title: 'test'),
-        includeToolMessages: true,
-      );
-
-      final assistantToolMessage = apiMessages.firstWhere(
-        (message) =>
-            message['role'] == 'assistant' && message['tool_calls'] is List,
-      );
-      final finalAssistantMessage = apiMessages.lastWhere(
-        (message) =>
-            message['role'] == 'assistant' && message['tool_calls'] == null,
-      );
-
-      expect(assistantToolMessage.containsKey('reasoning_content'), isFalse);
-      expect(finalAssistantMessage.containsKey('reasoning_content'), isFalse);
-    });
-
-    test('reasoning_details 只挂在最终 assistant 消息，不重复到 tool call 消息', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({
-          'a1': [
-            {
-              'id': 'call_1',
-              'name': 'get_weather',
-              'arguments': {'location': 'Hangzhou'},
-              'content': 'Cloudy 7~13°C',
-            },
-          ],
-        }),
-        contextProvider: _FakeBuildContext(),
-      );
-
-      const reasoningDetails = [
-        {
-          'type': 'reasoning.text',
-          'text': 'final round thinking',
-          'signature': 'sig-final',
-        },
-      ];
-      final apiMessages = service.buildApiMessages(
-        messages: [
-          _message(id: 'u1', role: 'user', content: '杭州明天天气怎么样？'),
-          ChatMessage(
-            id: 'a1',
-            role: 'assistant',
-            content: '明天多云，7 到 13 度。',
-            conversationId: 'conversation-1',
-            reasoningSegmentsJson:
-                '{"v":2,"segments":[],"reasoningDetails":[{"type":"reasoning.text","text":"final round thinking","signature":"sig-final"}]}',
-          ),
-        ],
-        versionSelections: const {},
-        currentConversation: Conversation(title: 'test'),
-        includeToolMessages: true,
-      );
-
-      final assistantToolMessage = apiMessages.firstWhere(
-        (message) =>
-            message['role'] == 'assistant' && message['tool_calls'] is List,
-      );
-      final finalAssistantMessage = apiMessages.lastWhere(
-        (message) =>
-            message['role'] == 'assistant' && message['tool_calls'] == null,
-      );
-
-      // Replaying the same reasoning on both assistant messages makes
-      // OpenRouter/Anthropic reject the history; only the final message may
-      // carry it.
-      expect(assistantToolMessage.containsKey('reasoning_details'), isFalse);
-      expect(finalAssistantMessage['reasoning_details'], reasoningDetails);
-    });
-
-    test('恢复工具回答续写时只发送 tool call 和 tool result', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({
-          'a1': [
-            {
-              'id': 'call_1',
-              'name': 'ask_user_input_v0',
-              'arguments': {
-                'questions': [
-                  {
-                    'id': 'scope',
-                    'question': '选哪个范围？',
-                    'type': 'single',
-                    'options': ['最小', '完整'],
-                  },
-                ],
-              },
-              'content':
-                  '{"type":"ask_user_answer","answers":{"scope":{"type":"single","value":"完整","custom":false,"skipped":false}}}',
-            },
-          ],
-        }),
-        contextProvider: _FakeBuildContext(),
-      );
-
-      final apiMessages = service.buildApiMessages(
-        messages: [
-          _message(id: 'u1', role: 'user', content: '开始吧'),
-          _message(id: 'a1', role: 'assistant', content: ''),
-        ],
-        versionSelections: const {},
-        currentConversation: Conversation(title: 'test'),
-        includeToolMessages: true,
-      );
-
-      expect(
-        apiMessages.where(
-          (message) =>
-              message['role'] == 'assistant' && message['tool_calls'] == null,
-        ),
-        isEmpty,
-      );
-      expect(
-        apiMessages.where(
-          (message) =>
-              message['role'] == 'assistant' && message['tool_calls'] is List,
-        ),
-        hasLength(1),
-      );
-      expect(
-        apiMessages.where((message) => message['role'] == 'tool'),
-        hasLength(1),
-      );
-    });
-
-    test('传入消息缺少 reasoningText 时会从已持久化消息兜底回填', () {
-      final persistedAssistant = _message(
-        id: 'a1',
-        role: 'assistant',
-        content: '现在是北京时间下午三点。',
-        reasoningText: '先调用时间工具，再整理成中文时间。',
-      );
-      final service = MessageBuilderService(
-        chatService: _FakeChatService(
-          {
+    test(
+      'reasoningText \u4E3A\u7A7A\u65F6\u4E0D\u4F1A\u4F2A\u9020 reasoning_content',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({
             'a1': [
               {
                 'id': 'call_1',
-                'name': 'get-current-time',
-                'arguments': {'timeZone': 'Asia/Shanghai'},
-                'content': 'Friday, 2026-04-24 15:25:41',
+                'name': 'get_date',
+                'arguments': <String, dynamic>{},
+                'content': '2026-04-24',
               },
             ],
+          }),
+          contextProvider: _FakeBuildContext(),
+        );
+
+        final apiMessages = service.buildApiMessages(
+          messages: [
+            _message(
+              id: 'u1',
+              role: 'user',
+              content: '\u4ECA\u5929\u51E0\u53F7？',
+            ),
+            _message(
+              id: 'a1',
+              role: 'assistant',
+              content: '\u4ECA\u5929\u662F 2026-04-24。',
+              reasoningText: '',
+            ),
+          ],
+          versionSelections: const {},
+          currentConversation: Conversation(title: 'test'),
+          includeToolMessages: true,
+        );
+
+        final assistantToolMessage = apiMessages.firstWhere(
+          (message) =>
+              message['role'] == 'assistant' && message['tool_calls'] is List,
+        );
+        final finalAssistantMessage = apiMessages.lastWhere(
+          (message) =>
+              message['role'] == 'assistant' && message['tool_calls'] == null,
+        );
+
+        expect(assistantToolMessage.containsKey('reasoning_content'), isFalse);
+        expect(finalAssistantMessage.containsKey('reasoning_content'), isFalse);
+      },
+    );
+
+    test(
+      'reasoning_details \u53EA\u6302\u5728\u6700\u7EC8 assistant \u6D88\u606F，\u4E0D\u91CD\u590D\u5230 tool call \u6D88\u606F',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({
+            'a1': [
+              {
+                'id': 'call_1',
+                'name': 'get_weather',
+                'arguments': {'location': 'Hangzhou'},
+                'content': 'Cloudy 7~13°C',
+              },
+            ],
+          }),
+          contextProvider: _FakeBuildContext(),
+        );
+
+        const reasoningDetails = [
+          {
+            'type': 'reasoning.text',
+            'text': 'final round thinking',
+            'signature': 'sig-final',
           },
-          persistedMessages: [
-            _message(id: 'u1', role: 'user', content: '现在几点了'),
-            persistedAssistant,
+        ];
+        final apiMessages = service.buildApiMessages(
+          messages: [
+            _message(
+              id: 'u1',
+              role: 'user',
+              content:
+                  '\u676D\u5DDE\u660E\u5929\u5929\u6C14\u600E\u4E48\u6837？',
+            ),
+            ChatMessage(
+              id: 'a1',
+              role: 'assistant',
+              content: '\u660E\u5929\u591A\u4E91，7 \u5230 13 \u5EA6。',
+              conversationId: 'conversation-1',
+              reasoningSegmentsJson:
+                  '{"v":2,"segments":[],"reasoningDetails":[{"type":"reasoning.text","text":"final round thinking","signature":"sig-final"}]}',
+            ),
           ],
-        ),
-        contextProvider: _FakeBuildContext(),
-      );
+          versionSelections: const {},
+          currentConversation: Conversation(title: 'test'),
+          includeToolMessages: true,
+        );
 
-      final apiMessages = service.buildApiMessages(
-        messages: [
-          _message(id: 'u1', role: 'user', content: '现在几点了'),
-          _message(id: 'a1', role: 'assistant', content: '现在是北京时间下午三点。'),
-        ],
-        versionSelections: const {},
-        currentConversation: Conversation(title: 'test'),
-        includeToolMessages: true,
-      );
+        final assistantToolMessage = apiMessages.firstWhere(
+          (message) =>
+              message['role'] == 'assistant' && message['tool_calls'] is List,
+        );
+        final finalAssistantMessage = apiMessages.lastWhere(
+          (message) =>
+              message['role'] == 'assistant' && message['tool_calls'] == null,
+        );
 
-      final assistantToolMessage = apiMessages.firstWhere(
-        (message) =>
-            message['role'] == 'assistant' && message['tool_calls'] is List,
-      );
-      final finalAssistantMessage = apiMessages.lastWhere(
-        (message) =>
-            message['role'] == 'assistant' && message['tool_calls'] == null,
-      );
+        // Replaying the same reasoning on both assistant messages makes
+        // OpenRouter/Anthropic reject the history; only the final message may
+        // carry it.
+        expect(assistantToolMessage.containsKey('reasoning_details'), isFalse);
+        expect(finalAssistantMessage['reasoning_details'], reasoningDetails);
+      },
+    );
 
-      expect(assistantToolMessage['reasoning_content'], '先调用时间工具，再整理成中文时间。');
-      expect(finalAssistantMessage['reasoning_content'], '先调用时间工具，再整理成中文时间。');
-    });
-
-    test('关闭 OpenAI 工具消息重建时不额外注入 assistant tool 消息', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({
-          'a1': [
-            {
-              'id': 'call_1',
-              'name': 'get_weather',
-              'arguments': {'location': 'Hangzhou'},
-              'content': 'Cloudy',
-            },
-          ],
-        }),
-        contextProvider: _FakeBuildContext(),
-      );
-
-      final apiMessages = service.buildApiMessages(
-        messages: [
-          _message(id: 'u1', role: 'user', content: '帮我查天气'),
-          _message(
-            id: 'a1',
-            role: 'assistant',
-            content: '明天多云。',
-            reasoningText: '先查日期，再查天气。',
-          ),
-        ],
-        versionSelections: const {},
-        currentConversation: Conversation(title: 'test'),
-        includeToolMessages: false,
-      );
-
-      expect(
-        apiMessages.where((message) => message['tool_calls'] is List),
-        isEmpty,
-      );
-    });
-
-    test('工具历史会保留 provider 元数据供 Claude 和 Gemini 重放', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({
-          'a1': [
-            {
-              'id': 'call_1',
-              'name': 'lookup',
-              'arguments': {'query': 'Kelivo'},
-              'content': '{"result":"ok"}',
-              'metadata': {
-                'anthropic': {
-                  'assistant_blocks': [
+    test(
+      '\u6062\u590D\u5DE5\u5177\u56DE\u7B54\u7EED\u5199\u65F6\u53EA\u53D1\u9001 tool call \u548C tool result',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({
+            'a1': [
+              {
+                'id': 'call_1',
+                'name': 'ask_user_input_v0',
+                'arguments': {
+                  'questions': [
                     {
-                      'type': 'thinking',
-                      'thinking': '需要查询资料。',
-                      'signature': 'sig-claude',
-                    },
-                    {
-                      'type': 'tool_use',
-                      'id': 'call_1',
-                      'name': 'lookup',
-                      'input': {'query': 'Kelivo'},
+                      'id': 'scope',
+                      'question': '\u9009\u54EA\u4E2A\u8303\u56F4？',
+                      'type': 'single',
+                      'options': ['\u6700\u5C0F', '\u5B8C\u6574'],
                     },
                   ],
                 },
-                'google': {
-                  'part': {
-                    'functionCall': {
-                      'name': 'lookup',
-                      'args': {'query': 'Kelivo'},
+                'content':
+                    '{"type":"ask_user_answer","answers":{"scope":{"type":"single","value":"\u5B8C\u6574","custom":false,"skipped":false}}}',
+              },
+            ],
+          }),
+          contextProvider: _FakeBuildContext(),
+        );
+
+        final apiMessages = service.buildApiMessages(
+          messages: [
+            _message(id: 'u1', role: 'user', content: '\u5F00\u59CB\u5427'),
+            _message(id: 'a1', role: 'assistant', content: ''),
+          ],
+          versionSelections: const {},
+          currentConversation: Conversation(title: 'test'),
+          includeToolMessages: true,
+        );
+
+        expect(
+          apiMessages.where(
+            (message) =>
+                message['role'] == 'assistant' && message['tool_calls'] == null,
+          ),
+          isEmpty,
+        );
+        expect(
+          apiMessages.where(
+            (message) =>
+                message['role'] == 'assistant' && message['tool_calls'] is List,
+          ),
+          hasLength(1),
+        );
+        expect(
+          apiMessages.where((message) => message['role'] == 'tool'),
+          hasLength(1),
+        );
+      },
+    );
+
+    test(
+      '\u4F20\u5165\u6D88\u606F\u7F3A\u5C11 reasoningText \u65F6\u4F1A\u4ECE\u5DF2\u6301\u4E45\u5316\u6D88\u606F\u515C\u5E95\u56DE\u586B',
+      () {
+        final persistedAssistant = _message(
+          id: 'a1',
+          role: 'assistant',
+          content:
+              '\u73B0\u5728\u662F\u5317\u4EAC\u65F6\u95F4\u4E0B\u5348\u4E09\u70B9。',
+          reasoningText:
+              '\u5148\u8C03\u7528\u65F6\u95F4\u5DE5\u5177，\u518D\u6574\u7406\u6210\u4E2D\u6587\u65F6\u95F4。',
+        );
+        final service = MessageBuilderService(
+          chatService: _FakeChatService(
+            {
+              'a1': [
+                {
+                  'id': 'call_1',
+                  'name': 'get-current-time',
+                  'arguments': {'timeZone': 'Asia/Shanghai'},
+                  'content': 'Friday, 2026-04-24 15:25:41',
+                },
+              ],
+            },
+            persistedMessages: [
+              _message(
+                id: 'u1',
+                role: 'user',
+                content: '\u73B0\u5728\u51E0\u70B9\u4E86',
+              ),
+              persistedAssistant,
+            ],
+          ),
+          contextProvider: _FakeBuildContext(),
+        );
+
+        final apiMessages = service.buildApiMessages(
+          messages: [
+            _message(
+              id: 'u1',
+              role: 'user',
+              content: '\u73B0\u5728\u51E0\u70B9\u4E86',
+            ),
+            _message(
+              id: 'a1',
+              role: 'assistant',
+              content:
+                  '\u73B0\u5728\u662F\u5317\u4EAC\u65F6\u95F4\u4E0B\u5348\u4E09\u70B9。',
+            ),
+          ],
+          versionSelections: const {},
+          currentConversation: Conversation(title: 'test'),
+          includeToolMessages: true,
+        );
+
+        final assistantToolMessage = apiMessages.firstWhere(
+          (message) =>
+              message['role'] == 'assistant' && message['tool_calls'] is List,
+        );
+        final finalAssistantMessage = apiMessages.lastWhere(
+          (message) =>
+              message['role'] == 'assistant' && message['tool_calls'] == null,
+        );
+
+        expect(
+          assistantToolMessage['reasoning_content'],
+          '\u5148\u8C03\u7528\u65F6\u95F4\u5DE5\u5177，\u518D\u6574\u7406\u6210\u4E2D\u6587\u65F6\u95F4。',
+        );
+        expect(
+          finalAssistantMessage['reasoning_content'],
+          '\u5148\u8C03\u7528\u65F6\u95F4\u5DE5\u5177，\u518D\u6574\u7406\u6210\u4E2D\u6587\u65F6\u95F4。',
+        );
+      },
+    );
+
+    test(
+      '\u5173\u95ED OpenAI \u5DE5\u5177\u6D88\u606F\u91CD\u5EFA\u65F6\u4E0D\u989D\u5916\u6CE8\u5165 assistant tool \u6D88\u606F',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({
+            'a1': [
+              {
+                'id': 'call_1',
+                'name': 'get_weather',
+                'arguments': {'location': 'Hangzhou'},
+                'content': 'Cloudy',
+              },
+            ],
+          }),
+          contextProvider: _FakeBuildContext(),
+        );
+
+        final apiMessages = service.buildApiMessages(
+          messages: [
+            _message(
+              id: 'u1',
+              role: 'user',
+              content: '\u5E2E\u6211\u67E5\u5929\u6C14',
+            ),
+            _message(
+              id: 'a1',
+              role: 'assistant',
+              content: '\u660E\u5929\u591A\u4E91。',
+              reasoningText:
+                  '\u5148\u67E5\u65E5\u671F，\u518D\u67E5\u5929\u6C14。',
+            ),
+          ],
+          versionSelections: const {},
+          currentConversation: Conversation(title: 'test'),
+          includeToolMessages: false,
+        );
+
+        expect(
+          apiMessages.where((message) => message['tool_calls'] is List),
+          isEmpty,
+        );
+      },
+    );
+
+    test(
+      '\u5DE5\u5177\u5386\u53F2\u4F1A\u4FDD\u7559 provider \u5143\u6570\u636E\u4F9B Claude \u548C Gemini \u91CD\u653E',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({
+            'a1': [
+              {
+                'id': 'call_1',
+                'name': 'lookup',
+                'arguments': {'query': 'Kelivo'},
+                'content': '{"result":"ok"}',
+                'metadata': {
+                  'anthropic': {
+                    'assistant_blocks': [
+                      {
+                        'type': 'thinking',
+                        'thinking': '\u9700\u8981\u67E5\u8BE2\u8D44\u6599。',
+                        'signature': 'sig-claude',
+                      },
+                      {
+                        'type': 'tool_use',
+                        'id': 'call_1',
+                        'name': 'lookup',
+                        'input': {'query': 'Kelivo'},
+                      },
+                    ],
+                  },
+                  'google': {
+                    'part': {
+                      'functionCall': {
+                        'name': 'lookup',
+                        'args': {'query': 'Kelivo'},
+                      },
+                      'thoughtSignature': 'sig-gemini',
                     },
-                    'thoughtSignature': 'sig-gemini',
                   },
                 },
               },
-            },
+            ],
+          }),
+          contextProvider: _FakeBuildContext(),
+        );
+
+        final apiMessages = service.buildApiMessages(
+          messages: [
+            _message(id: 'u1', role: 'user', content: '\u67E5 Kelivo'),
+            _message(
+              id: 'a1',
+              role: 'assistant',
+              content: '\u67E5\u5230\u4E86。',
+            ),
           ],
-        }),
-        contextProvider: _FakeBuildContext(),
-      );
+          versionSelections: const {},
+          currentConversation: Conversation(title: 'test'),
+          includeToolMessages: true,
+        );
 
-      final apiMessages = service.buildApiMessages(
-        messages: [
-          _message(id: 'u1', role: 'user', content: '查 Kelivo'),
-          _message(id: 'a1', role: 'assistant', content: '查到了。'),
-        ],
-        versionSelections: const {},
-        currentConversation: Conversation(title: 'test'),
-        includeToolMessages: true,
-      );
+        final assistantToolMessage = apiMessages.firstWhere(
+          (message) => message['tool_calls'] is List,
+        );
+        final toolMessage = apiMessages.firstWhere(
+          (message) => message['role'] == 'tool',
+        );
+        final toolCall =
+            (assistantToolMessage['tool_calls'] as List).single
+                as Map<String, dynamic>;
 
-      final assistantToolMessage = apiMessages.firstWhere(
-        (message) => message['tool_calls'] is List,
-      );
-      final toolMessage = apiMessages.firstWhere(
-        (message) => message['role'] == 'tool',
-      );
-      final toolCall =
-          (assistantToolMessage['tool_calls'] as List).single
-              as Map<String, dynamic>;
+        expect(
+          toolCall['metadata']['anthropic']['assistant_blocks'],
+          isNotEmpty,
+        );
+        expect(
+          toolCall['metadata']['google']['part']['thoughtSignature'],
+          'sig-gemini',
+        );
+        expect(
+          toolMessage['metadata']['google']['part']['thoughtSignature'],
+          'sig-gemini',
+        );
+      },
+    );
 
-      expect(toolCall['metadata']['anthropic']['assistant_blocks'], isNotEmpty);
-      expect(
-        toolCall['metadata']['google']['part']['thoughtSignature'],
-        'sig-gemini',
-      );
-      expect(
-        toolMessage['metadata']['google']['part']['thoughtSignature'],
-        'sig-gemini',
-      );
-    });
-
-    test('工具历史会保留 OpenAI 兼容 Gemini 的 extra_content', () {
-      const extraContent = <String, dynamic>{
-        'google': <String, dynamic>{'thought_signature': 'sig-create-memory'},
-      };
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({
-          'a1': [
-            {
-              'id': 'call_mem',
-              'name': 'create_memory',
-              'arguments': {'content': 'note'},
-              'content': '{"ok":true}',
-              'metadata': {
-                'google': {'extra_content': extraContent},
-              },
-            },
-          ],
-        }),
-        contextProvider: _FakeBuildContext(),
-      );
-
-      final apiMessages = service.buildApiMessages(
-        messages: [
-          _message(id: 'u1', role: 'user', content: 'remember this'),
-          _message(id: 'a1', role: 'assistant', content: 'saved'),
-        ],
-        versionSelections: const {},
-        currentConversation: Conversation(title: 'test'),
-        includeToolMessages: true,
-      );
-
-      final toolCall =
-          (apiMessages.firstWhere(
-                        (message) => message['tool_calls'] is List,
-                      )['tool_calls']
-                      as List)
-                  .single
-              as Map<String, dynamic>;
-
-      expect(toolCall['metadata']['google']['extra_content'], extraContent);
-    });
-
-    test('未完成的工具占位事件不会被重建为 API tool call', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({
-          'a1': [
-            {
-              'id': 'call_1',
-              'name': 'create_memory',
-              'arguments': {'content': 'test'},
-              'content': null,
-              'metadata': {
-                'anthropic': {
-                  'assistant_blocks': [
-                    {
-                      'type': 'tool_use',
-                      'id': 'call_1',
-                      'name': 'create_memory',
-                      'input': {'content': 'test'},
-                    },
-                  ],
+    test(
+      '\u5DE5\u5177\u5386\u53F2\u4F1A\u4FDD\u7559 OpenAI \u517C\u5BB9 Gemini \u7684 extra_content',
+      () {
+        const extraContent = <String, dynamic>{
+          'google': <String, dynamic>{'thought_signature': 'sig-create-memory'},
+        };
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({
+            'a1': [
+              {
+                'id': 'call_mem',
+                'name': 'create_memory',
+                'arguments': {'content': 'note'},
+                'content': '{"ok":true}',
+                'metadata': {
+                  'google': {'extra_content': extraContent},
                 },
               },
-            },
+            ],
+          }),
+          contextProvider: _FakeBuildContext(),
+        );
+
+        final apiMessages = service.buildApiMessages(
+          messages: [
+            _message(id: 'u1', role: 'user', content: 'remember this'),
+            _message(id: 'a1', role: 'assistant', content: 'saved'),
           ],
-        }),
-        contextProvider: _FakeBuildContext(),
-      );
+          versionSelections: const {},
+          currentConversation: Conversation(title: 'test'),
+          includeToolMessages: true,
+        );
 
-      final apiMessages = service.buildApiMessages(
-        messages: [
-          _message(id: 'u1', role: 'user', content: '记一下'),
-          _message(id: 'a1', role: 'assistant', content: '稍后继续。'),
-          _message(id: 'u2', role: 'user', content: 'ok'),
-        ],
-        versionSelections: const {},
-        currentConversation: Conversation(title: 'test'),
-        includeToolMessages: true,
-      );
+        final toolCall =
+            (apiMessages.firstWhere(
+                          (message) => message['tool_calls'] is List,
+                        )['tool_calls']
+                        as List)
+                    .single
+                as Map<String, dynamic>;
 
-      expect(
-        apiMessages.where((message) => message['tool_calls'] is List),
-        isEmpty,
-      );
-      expect(
-        apiMessages.where((message) => message['role'] == 'tool'),
-        isEmpty,
-      );
-      expect(apiMessages.map((message) => message['content']).toList(), [
-        '记一下',
-        '稍后继续。',
-        'ok',
-      ]);
-    });
+        expect(toolCall['metadata']['google']['extra_content'], extraContent);
+      },
+    );
 
-    test('user 消息会附带内部 revision id，strip 后不再出现', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({}),
-        contextProvider: _FakeBuildContext(),
-      );
+    test(
+      '\u672A\u5B8C\u6210\u7684\u5DE5\u5177\u5360\u4F4D\u4E8B\u4EF6\u4E0D\u4F1A\u88AB\u91CD\u5EFA\u4E3A API tool call',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({
+            'a1': [
+              {
+                'id': 'call_1',
+                'name': 'create_memory',
+                'arguments': {'content': 'test'},
+                'content': null,
+                'metadata': {
+                  'anthropic': {
+                    'assistant_blocks': [
+                      {
+                        'type': 'tool_use',
+                        'id': 'call_1',
+                        'name': 'create_memory',
+                        'input': {'content': 'test'},
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          }),
+          contextProvider: _FakeBuildContext(),
+        );
 
-      final apiMessages = service.buildApiMessages(
-        messages: [
-          _message(id: 'u1', role: 'user', content: 'hello'),
-          _message(id: 'a1', role: 'assistant', content: 'hi'),
-        ],
-        versionSelections: const {},
-        currentConversation: Conversation(title: 'test'),
-      );
+        final apiMessages = service.buildApiMessages(
+          messages: [
+            _message(id: 'u1', role: 'user', content: '\u8BB0\u4E00\u4E0B'),
+            _message(
+              id: 'a1',
+              role: 'assistant',
+              content: '\u7A0D\u540E\u7EE7\u7EED。',
+            ),
+            _message(id: 'u2', role: 'user', content: 'ok'),
+          ],
+          versionSelections: const {},
+          currentConversation: Conversation(title: 'test'),
+          includeToolMessages: true,
+        );
 
-      expect(apiMessages.first['role'], 'user');
-      expect(
-        apiMessages.first[MessageBuilderService.internalRevisionIdKey],
-        'u1',
-      );
-      expect(
-        apiMessages.last.containsKey(
-          MessageBuilderService.internalRevisionIdKey,
-        ),
-        isFalse,
-      );
+        expect(
+          apiMessages.where((message) => message['tool_calls'] is List),
+          isEmpty,
+        );
+        expect(
+          apiMessages.where((message) => message['role'] == 'tool'),
+          isEmpty,
+        );
+        expect(apiMessages.map((message) => message['content']).toList(), [
+          '\u8BB0\u4E00\u4E0B',
+          '\u7A0D\u540E\u7EE7\u7EED。',
+          'ok',
+        ]);
+      },
+    );
 
-      service.stripInternalRevisionIds(apiMessages);
-      expect(
-        apiMessages.any(
-          (message) => message.containsKey(multimodalInternalRevisionIdKey),
-        ),
-        isFalse,
-      );
-    });
+    test(
+      'user \u6D88\u606F\u4F1A\u9644\u5E26\u5185\u90E8 revision id，strip \u540E\u4E0D\u518D\u51FA\u73B0',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({}),
+          contextProvider: _FakeBuildContext(),
+        );
 
-    test('WorldBook 注入后的最终裁剪会限制发送消息数', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({}),
-        contextProvider: _FakeBuildContext(),
-      );
-      // prepareApiMessages injects WorldBook against the full history, then
-      // applies a single context trim before OCR — only when the assistant
-      // opts into limitContextMessages (default is unlimited, D-30).
-      final apiMessages = <Map<String, dynamic>>[
-        {'role': 'system', 'content': 'system'},
-        for (var index = 0; index < 6; index++)
+        final apiMessages = service.buildApiMessages(
+          messages: [
+            _message(id: 'u1', role: 'user', content: 'hello'),
+            _message(id: 'a1', role: 'assistant', content: 'hi'),
+          ],
+          versionSelections: const {},
+          currentConversation: Conversation(title: 'test'),
+        );
+
+        expect(apiMessages.first['role'], 'user');
+        expect(
+          apiMessages.first[MessageBuilderService.internalRevisionIdKey],
+          'u1',
+        );
+        expect(
+          apiMessages.last.containsKey(
+            MessageBuilderService.internalRevisionIdKey,
+          ),
+          isFalse,
+        );
+
+        service.stripInternalRevisionIds(apiMessages);
+        expect(
+          apiMessages.any(
+            (message) => message.containsKey(multimodalInternalRevisionIdKey),
+          ),
+          isFalse,
+        );
+      },
+    );
+
+    test(
+      'WorldBook \u6CE8\u5165\u540E\u7684\u6700\u7EC8\u88C1\u526A\u4F1A\u9650\u5236\u53D1\u9001\u6D88\u606F\u6570',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({}),
+          contextProvider: _FakeBuildContext(),
+        );
+        // prepareApiMessages injects WorldBook against the full history, then
+        // applies a single context trim before OCR — only when the assistant
+        // opts into limitContextMessages (default is unlimited, D-30).
+        final apiMessages = <Map<String, dynamic>>[
+          {'role': 'system', 'content': 'system'},
+          for (var index = 0; index < 6; index++)
+            {
+              'role': index.isEven ? 'user' : 'assistant',
+              'content': 'message-$index',
+            },
+          {'role': 'user', 'content': 'worldbook-top'},
+          {'role': 'user', 'content': 'worldbook-bottom'},
+        ];
+
+        service.applyContextLimit(
+          apiMessages,
+          const Assistant(
+            id: 'assistant-1',
+            name: 'test',
+            contextMessageSize: 4,
+            limitContextMessages: true,
+          ),
+        );
+        expect(apiMessages.length, 5); // system + 4
+        expect(apiMessages.first['role'], 'system');
+        // Images in dropped history are never OCR'd because OCR runs after this trim.
+        expect(
+          apiMessages.any(
+            (m) => (m['content'] ?? '').toString() == 'message-0',
+          ),
+          isFalse,
+        );
+      },
+    );
+
+    test(
+      '\u4E0A\u4E0B\u6587\u88C1\u526A\u4F1A\u4E22\u6389\u5386\u53F2\u56FE\u7247\u6D88\u606F\u5E76\u4FDD\u7559\u5185\u90E8 revision id',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({}),
+          contextProvider: _FakeBuildContext(),
+        );
+
+        final apiMessages = <Map<String, dynamic>>[
+          for (var index = 0; index < 6; index++)
+            if (index.isEven)
+              {
+                'role': 'user',
+                'content': 'u$index',
+                MessageBuilderService.internalMediaPathsKey: [
+                  '/img-$index.png',
+                ],
+                MessageBuilderService.internalRevisionIdKey: 'u$index',
+              }
+            else
+              {'role': 'assistant', 'content': 'a$index'},
+        ];
+
+        service.applyContextLimit(
+          apiMessages,
+          const Assistant(
+            id: 'assistant-1',
+            name: 'test',
+            contextMessageSize: 2,
+            limitContextMessages: true,
+          ),
+        );
+
+        expect(apiMessages, hasLength(2));
+        final retainedMediaPaths = apiMessages
+            .expand(
+              (message) =>
+                  (message[MessageBuilderService.internalMediaPathsKey]
+                      as List?) ??
+                  const [],
+            )
+            .map((path) => path.toString())
+            .toList();
+        expect(retainedMediaPaths, isNot(contains('/img-0.png')));
+        expect(retainedMediaPaths, isNot(contains('/img-2.png')));
+        expect(retainedMediaPaths, contains('/img-4.png'));
+
+        final retainedUser = apiMessages.firstWhere(
+          (message) => message['role'] == 'user',
+        );
+        expect(
+          retainedUser[MessageBuilderService.internalRevisionIdKey],
+          isNotNull,
+        );
+        expect(retainedUser[MessageBuilderService.internalMediaPathsKey], [
+          '/img-4.png',
+        ]);
+        expect(
+          (retainedUser['content'] ?? '').toString(),
+          isNot(contains('[image:')),
+        );
+      },
+    );
+
+    test(
+      '\u65E0\u9650\u5236\u4E0A\u4E0B\u6587\u4E0D\u4F1A\u88C1\u6389\u4E00\u5343\u6761\u4EE5\u4E0A\u7684\u6D88\u606F',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({}),
+          contextProvider: _FakeBuildContext(),
+        );
+        final apiMessages = <Map<String, dynamic>>[
+          for (var index = 0; index < 1507; index++)
+            {
+              'role': index.isEven ? 'user' : 'assistant',
+              'content': 'message-$index',
+            },
+        ];
+
+        service.applyContextLimit(
+          apiMessages,
+          const Assistant(
+            id: 'assistant-1',
+            name: 'test',
+            limitContextMessages: false,
+          ),
+        );
+
+        expect(apiMessages, hasLength(1507));
+        expect(apiMessages.first['content'], 'message-0');
+        expect(apiMessages.last['content'], 'message-1506');
+      },
+    );
+
+    test(
+      '\u4E0A\u4E0B\u6587\u88C1\u526A\u4E0D\u4F1A\u4FDD\u7559\u7F3A\u5C11 tool result \u7684 assistant tool call',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({}),
+          contextProvider: _FakeBuildContext(),
+        );
+        final apiMessages = <Map<String, dynamic>>[
+          {'role': 'user', 'content': 'before'},
           {
-            'role': index.isEven ? 'user' : 'assistant',
-            'content': 'message-$index',
+            'role': 'assistant',
+            'content': '\n\n',
+            'tool_calls': [
+              {
+                'id': 'call_1',
+                'type': 'function',
+                'function': {'name': 'create_memory', 'arguments': '{}'},
+              },
+            ],
           },
-        {'role': 'user', 'content': 'worldbook-top'},
-        {'role': 'user', 'content': 'worldbook-bottom'},
-      ];
-
-      service.applyContextLimit(
-        apiMessages,
-        const Assistant(
-          id: 'assistant-1',
-          name: 'test',
-          contextMessageSize: 4,
-          limitContextMessages: true,
-        ),
-      );
-      expect(apiMessages.length, 5); // system + 4
-      expect(apiMessages.first['role'], 'system');
-      // Images in dropped history are never OCR'd because OCR runs after this trim.
-      expect(
-        apiMessages.any((m) => (m['content'] ?? '').toString() == 'message-0'),
-        isFalse,
-      );
-    });
-
-    test('上下文裁剪会丢掉历史图片消息并保留内部 revision id', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({}),
-        contextProvider: _FakeBuildContext(),
-      );
-
-      final apiMessages = <Map<String, dynamic>>[
-        for (var index = 0; index < 6; index++)
-          if (index.isEven)
-            {
-              'role': 'user',
-              'content': 'u$index',
-              MessageBuilderService.internalMediaPathsKey: ['/img-$index.png'],
-              MessageBuilderService.internalRevisionIdKey: 'u$index',
-            }
-          else
-            {'role': 'assistant', 'content': 'a$index'},
-      ];
-
-      service.applyContextLimit(
-        apiMessages,
-        const Assistant(
-          id: 'assistant-1',
-          name: 'test',
-          contextMessageSize: 2,
-          limitContextMessages: true,
-        ),
-      );
-
-      expect(apiMessages, hasLength(2));
-      final retainedMediaPaths = apiMessages
-          .expand(
-            (message) =>
-                (message[MessageBuilderService.internalMediaPathsKey]
-                    as List?) ??
-                const [],
-          )
-          .map((path) => path.toString())
-          .toList();
-      expect(retainedMediaPaths, isNot(contains('/img-0.png')));
-      expect(retainedMediaPaths, isNot(contains('/img-2.png')));
-      expect(retainedMediaPaths, contains('/img-4.png'));
-
-      final retainedUser = apiMessages.firstWhere(
-        (message) => message['role'] == 'user',
-      );
-      expect(
-        retainedUser[MessageBuilderService.internalRevisionIdKey],
-        isNotNull,
-      );
-      expect(retainedUser[MessageBuilderService.internalMediaPathsKey], [
-        '/img-4.png',
-      ]);
-      expect(
-        (retainedUser['content'] ?? '').toString(),
-        isNot(contains('[image:')),
-      );
-    });
-
-    test('无限制上下文不会裁掉一千条以上的消息', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({}),
-        contextProvider: _FakeBuildContext(),
-      );
-      final apiMessages = <Map<String, dynamic>>[
-        for (var index = 0; index < 1507; index++)
           {
-            'role': index.isEven ? 'user' : 'assistant',
-            'content': 'message-$index',
+            'role': 'tool',
+            'tool_call_id': 'call_1',
+            'name': 'create_memory',
+            'content': 'ok',
           },
-      ];
+          {'role': 'assistant', 'content': 'done'},
+          {'role': 'user', 'content': 'next'},
+        ];
 
-      service.applyContextLimit(
-        apiMessages,
-        const Assistant(
-          id: 'assistant-1',
-          name: 'test',
-          limitContextMessages: false,
-        ),
-      );
+        service.applyContextLimit(
+          apiMessages,
+          const Assistant(
+            id: 'assistant-1',
+            name: 'test',
+            contextMessageSize: 3,
+            limitContextMessages: true,
+          ),
+        );
 
-      expect(apiMessages, hasLength(1507));
-      expect(apiMessages.first['content'], 'message-0');
-      expect(apiMessages.last['content'], 'message-1506');
-    });
+        expect(
+          apiMessages.where((message) => message['tool_calls'] is List),
+          isEmpty,
+        );
+        expect(
+          apiMessages.where((message) => message['role'] == 'tool'),
+          isEmpty,
+        );
+        expect(apiMessages.map((message) => message['content']).toList(), [
+          'done',
+          'next',
+        ]);
+      },
+    );
 
-    test('上下文裁剪不会保留缺少 tool result 的 assistant tool call', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({}),
-        contextProvider: _FakeBuildContext(),
-      );
-      final apiMessages = <Map<String, dynamic>>[
-        {'role': 'user', 'content': 'before'},
-        {
-          'role': 'assistant',
-          'content': '\n\n',
-          'tool_calls': [
-            {
-              'id': 'call_1',
-              'type': 'function',
-              'function': {'name': 'create_memory', 'arguments': '{}'},
-            },
-          ],
-        },
-        {
-          'role': 'tool',
-          'tool_call_id': 'call_1',
-          'name': 'create_memory',
-          'content': 'ok',
-        },
-        {'role': 'assistant', 'content': 'done'},
-        {'role': 'user', 'content': 'next'},
-      ];
+    test(
+      '\u4E0A\u4E0B\u6587\u88C1\u526A\u4F1A\u4FDD\u7559\u5B8C\u6574\u7684 assistant tool call \u4E0E tool result',
+      () {
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({}),
+          contextProvider: _FakeBuildContext(),
+        );
+        final apiMessages = <Map<String, dynamic>>[
+          {'role': 'user', 'content': 'before'},
+          {
+            'role': 'assistant',
+            'content': '\n\n',
+            'tool_calls': [
+              {
+                'id': 'call_1',
+                'type': 'function',
+                'function': {'name': 'create_memory', 'arguments': '{}'},
+              },
+            ],
+          },
+          {
+            'role': 'tool',
+            'tool_call_id': 'call_1',
+            'name': 'create_memory',
+            'content': 'ok',
+          },
+          {'role': 'assistant', 'content': 'done'},
+          {'role': 'user', 'content': 'next'},
+        ];
 
-      service.applyContextLimit(
-        apiMessages,
-        const Assistant(
-          id: 'assistant-1',
-          name: 'test',
-          contextMessageSize: 3,
-          limitContextMessages: true,
-        ),
-      );
+        service.applyContextLimit(
+          apiMessages,
+          const Assistant(
+            id: 'assistant-1',
+            name: 'test',
+            contextMessageSize: 4,
+            limitContextMessages: true,
+          ),
+        );
 
-      expect(
-        apiMessages.where((message) => message['tool_calls'] is List),
-        isEmpty,
-      );
-      expect(
-        apiMessages.where((message) => message['role'] == 'tool'),
-        isEmpty,
-      );
-      expect(apiMessages.map((message) => message['content']).toList(), [
-        'done',
-        'next',
-      ]);
-    });
-
-    test('上下文裁剪会保留完整的 assistant tool call 与 tool result', () {
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({}),
-        contextProvider: _FakeBuildContext(),
-      );
-      final apiMessages = <Map<String, dynamic>>[
-        {'role': 'user', 'content': 'before'},
-        {
-          'role': 'assistant',
-          'content': '\n\n',
-          'tool_calls': [
-            {
-              'id': 'call_1',
-              'type': 'function',
-              'function': {'name': 'create_memory', 'arguments': '{}'},
-            },
-          ],
-        },
-        {
-          'role': 'tool',
-          'tool_call_id': 'call_1',
-          'name': 'create_memory',
-          'content': 'ok',
-        },
-        {'role': 'assistant', 'content': 'done'},
-        {'role': 'user', 'content': 'next'},
-      ];
-
-      service.applyContextLimit(
-        apiMessages,
-        const Assistant(
-          id: 'assistant-1',
-          name: 'test',
-          contextMessageSize: 4,
-          limitContextMessages: true,
-        ),
-      );
-
-      expect(
-        apiMessages.where((message) => message['tool_calls'] is List),
-        hasLength(1),
-      );
-      expect(
-        apiMessages.where((message) => message['role'] == 'tool'),
-        hasLength(1),
-      );
-      expect(apiMessages.map((message) => message['role']).toList(), [
-        'assistant',
-        'tool',
-        'assistant',
-        'user',
-      ]);
-    });
+        expect(
+          apiMessages.where((message) => message['tool_calls'] is List),
+          hasLength(1),
+        );
+        expect(
+          apiMessages.where((message) => message['role'] == 'tool'),
+          hasLength(1),
+        );
+        expect(apiMessages.map((message) => message['role']).toList(), [
+          'assistant',
+          'tool',
+          'assistant',
+          'user',
+        ]);
+      },
+    );
   });
 
   group('MessageBuilderService.hasPendingAttachmentWork', () {
@@ -1432,205 +1548,230 @@ void main() {
       },
     ];
 
-    test('纯文本消息没有待解析附件', () async {
-      final settings = await settingsWithOcr();
-      final user = ChatMessage(
-        id: 'u1',
-        role: 'user',
-        conversationId: 'c1',
-        parts: const [TextPart('just text')],
-      );
-      expect(
-        serviceWithOcr().hasPendingAttachmentWork(
-          apiMessagesFor(user),
-          settings,
-          sourceMessages: [user],
-        ),
-        isFalse,
-      );
-    });
+    test(
+      '\u7EAF\u6587\u672C\u6D88\u606F\u6CA1\u6709\u5F85\u89E3\u6790\u9644\u4EF6',
+      () async {
+        final settings = await settingsWithOcr();
+        final user = ChatMessage(
+          id: 'u1',
+          role: 'user',
+          conversationId: 'c1',
+          parts: const [TextPart('just text')],
+        );
+        expect(
+          serviceWithOcr().hasPendingAttachmentWork(
+            apiMessagesFor(user),
+            settings,
+            sourceMessages: [user],
+          ),
+          isFalse,
+        );
+      },
+    );
 
-    test('关闭 OCR 时纯图片消息没有待解析附件', () async {
-      final settings = await newSettings();
-      final user = ChatMessage(
-        id: 'u1',
-        role: 'user',
-        conversationId: 'c1',
-        parts: const [
-          TextPart('look'),
-          ImagePart(uri: '/tmp/a.png', mime: 'image/png'),
-        ],
-      );
-      expect(
-        serviceWithOcr().hasPendingAttachmentWork(
-          apiMessagesFor(user),
-          settings,
-          sourceMessages: [user],
-        ),
-        isFalse,
-      );
-    });
+    test(
+      '\u5173\u95ED OCR \u65F6\u7EAF\u56FE\u7247\u6D88\u606F\u6CA1\u6709\u5F85\u89E3\u6790\u9644\u4EF6',
+      () async {
+        final settings = await newSettings();
+        final user = ChatMessage(
+          id: 'u1',
+          role: 'user',
+          conversationId: 'c1',
+          parts: const [
+            TextPart('look'),
+            ImagePart(uri: '/tmp/a.png', mime: 'image/png'),
+          ],
+        );
+        expect(
+          serviceWithOcr().hasPendingAttachmentWork(
+            apiMessagesFor(user),
+            settings,
+            sourceMessages: [user],
+          ),
+          isFalse,
+        );
+      },
+    );
 
-    test('开启 OCR 时图片消息需要解析', () async {
-      final settings = await settingsWithOcr();
-      final user = ChatMessage(
-        id: 'u1',
-        role: 'user',
-        conversationId: 'c1',
-        parts: const [
-          TextPart('look'),
-          ImagePart(uri: '/tmp/a.png', mime: 'image/png'),
-        ],
-      );
-      expect(
-        serviceWithOcr().hasPendingAttachmentWork(
-          apiMessagesFor(user),
-          settings,
-          sourceMessages: [user],
-        ),
-        isTrue,
-      );
-    });
+    test(
+      '\u5F00\u542F OCR \u65F6\u56FE\u7247\u6D88\u606F\u9700\u8981\u89E3\u6790',
+      () async {
+        final settings = await settingsWithOcr();
+        final user = ChatMessage(
+          id: 'u1',
+          role: 'user',
+          conversationId: 'c1',
+          parts: const [
+            TextPart('look'),
+            ImagePart(uri: '/tmp/a.png', mime: 'image/png'),
+          ],
+        );
+        expect(
+          serviceWithOcr().hasPendingAttachmentWork(
+            apiMessagesFor(user),
+            settings,
+            sourceMessages: [user],
+          ),
+          isTrue,
+        );
+      },
+    );
 
-    test('文档附件无论 OCR 开关都需要解析', () async {
-      final settings = await newSettings();
-      final user = ChatMessage(
-        id: 'u1',
-        role: 'user',
-        conversationId: 'c1',
-        parts: const [
-          TextPart('read this'),
-          FilePart(uri: '/tmp/a.pdf', name: 'a.pdf', mime: 'application/pdf'),
-        ],
-      );
-      expect(
-        serviceWithOcr().hasPendingAttachmentWork(
-          apiMessagesFor(user),
-          settings,
-          sourceMessages: [user],
-        ),
-        isTrue,
-      );
-    });
+    test(
+      '\u6587\u6863\u9644\u4EF6\u65E0\u8BBA OCR \u5F00\u5173\u90FD\u9700\u8981\u89E3\u6790',
+      () async {
+        final settings = await newSettings();
+        final user = ChatMessage(
+          id: 'u1',
+          role: 'user',
+          conversationId: 'c1',
+          parts: const [
+            TextPart('read this'),
+            FilePart(uri: '/tmp/a.pdf', name: 'a.pdf', mime: 'application/pdf'),
+          ],
+        );
+        expect(
+          serviceWithOcr().hasPendingAttachmentWork(
+            apiMessagesFor(user),
+            settings,
+            sourceMessages: [user],
+          ),
+          isTrue,
+        );
+      },
+    );
 
-    test('音视频附件不算待解析文档', () async {
-      final settings = await newSettings();
-      final user = ChatMessage(
-        id: 'u1',
-        role: 'user',
-        conversationId: 'c1',
-        parts: const [
-          TextPart('listen'),
-          FilePart(uri: '/tmp/clip.mp3', name: 'clip.mp3', mime: 'audio/mpeg'),
-        ],
-      );
-      expect(
-        serviceWithOcr().hasPendingAttachmentWork(
-          apiMessagesFor(user),
-          settings,
-          sourceMessages: [user],
-        ),
-        isFalse,
-      );
-    });
+    test(
+      '\u97F3\u89C6\u9891\u9644\u4EF6\u4E0D\u7B97\u5F85\u89E3\u6790\u6587\u6863',
+      () async {
+        final settings = await newSettings();
+        final user = ChatMessage(
+          id: 'u1',
+          role: 'user',
+          conversationId: 'c1',
+          parts: const [
+            TextPart('listen'),
+            FilePart(
+              uri: '/tmp/clip.mp3',
+              name: 'clip.mp3',
+              mime: 'audio/mpeg',
+            ),
+          ],
+        );
+        expect(
+          serviceWithOcr().hasPendingAttachmentWork(
+            apiMessagesFor(user),
+            settings,
+            sourceMessages: [user],
+          ),
+          isFalse,
+        );
+      },
+    );
 
-    test('缺少 revision id 的 WorldBook lore 不算待解析附件', () async {
-      final settings = await settingsWithOcr();
-      expect(
-        serviceWithOcr().hasPendingAttachmentWork(const [
-          {'role': 'user', 'content': 'lore [image:/tmp/lore.png]'},
-        ], settings),
-        isFalse,
-      );
-    });
+    test(
+      '\u7F3A\u5C11 revision id \u7684 WorldBook lore \u4E0D\u7B97\u5F85\u89E3\u6790\u9644\u4EF6',
+      () async {
+        final settings = await settingsWithOcr();
+        expect(
+          serviceWithOcr().hasPendingAttachmentWork(const [
+            {'role': 'user', 'content': 'lore [image:/tmp/lore.png]'},
+          ], settings),
+          isFalse,
+        );
+      },
+    );
   });
 
   group('MessageBuilderService.processUserMessagesForApi', () {
-    test('不处理缺少内部 revision ID 的 WorldBook lore user 消息', () async {
-      SharedPreferences.setMockInitialValues({});
-      final settings = SettingsProvider(createBusinessTestPreferences());
-      await settings.loaded;
+    test(
+      '\u4E0D\u5904\u7406\u7F3A\u5C11\u5185\u90E8 revision ID \u7684 WorldBook lore user \u6D88\u606F',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final settings = SettingsProvider(createBusinessTestPreferences());
+        await settings.loaded;
 
-      final ocrCalls = <List<String>>[];
-      final service = MessageBuilderService(
-        chatService: _FakeChatService({}),
-        contextProvider: _FakeBuildContext(),
-        ocrHandler: (imagePaths, {revisionId, session, requestId}) async {
-          ocrCalls.add(List<String>.of(imagePaths));
-          return 'ocr-should-not-run';
-        },
-        ocrPrefetch: ({required revisionIds, required imagePaths}) async {
-          ocrCalls.add(['prefetch', ...imagePaths]);
-          return OcrPrepareSession();
-        },
-      );
-
-      // Intentional negative: literal marker text in WorldBook lore must be
-      // ignored when the message has no internal revision id.
-      const loreContent =
-          'lore with markers\n[image:/tmp/lore.png]\n[file:/tmp/lore.txt|lore.txt|text/plain]';
-      final realUser = ChatMessage(
-        id: 'u-real',
-        role: 'user',
-        conversationId: 'c1',
-        parts: const [
-          TextPart('real user'),
-          ImagePart(uri: '/tmp/real.png', mime: 'image/png'),
-        ],
-      );
-      final apiMessages = <Map<String, dynamic>>[
-        {
-          'role': 'user',
-          'content': loreContent, // WorldBook injection: no revision id
-        },
-        {
-          'role': 'user',
-          'content': realUser.content,
-          MessageBuilderService.internalRevisionIdKey: realUser.id,
-        },
-      ];
-
-      await settings.setProviderConfig(
-        'ocr-provider',
-        ProviderConfig(
-          id: 'ocr-provider',
-          enabled: true,
-          name: 'OCR',
-          apiKey: 'key',
-          baseUrl: 'https://example.test',
-          models: const ['ocr-model'],
-          modelOverrides: const {
-            'ocr-model': {
-              'input': ['text', 'image'],
-            },
+        final ocrCalls = <List<String>>[];
+        final service = MessageBuilderService(
+          chatService: _FakeChatService({}),
+          contextProvider: _FakeBuildContext(),
+          ocrHandler: (imagePaths, {revisionId, session, requestId}) async {
+            ocrCalls.add(List<String>.of(imagePaths));
+            return 'ocr-should-not-run';
           },
-        ),
-      );
-      await settings.setOcrModel('ocr-provider', 'ocr-model');
-      await settings.setOcrEnabled(true);
+          ocrPrefetch: ({required revisionIds, required imagePaths}) async {
+            ocrCalls.add(['prefetch', ...imagePaths]);
+            return OcrPrepareSession();
+          },
+        );
 
-      await service.processUserMessagesForApi(
-        apiMessages,
-        settings,
-        const Assistant(id: 'a1', name: 'test'),
-        sourceMessages: [realUser],
-      );
+        // Intentional negative: literal marker text in WorldBook lore must be
+        // ignored when the message has no internal revision id.
+        const loreContent =
+            'lore with markers\n[image:/tmp/lore.png]\n[file:/tmp/lore.txt|lore.txt|text/plain]';
+        final realUser = ChatMessage(
+          id: 'u-real',
+          role: 'user',
+          conversationId: 'c1',
+          parts: const [
+            TextPart('real user'),
+            ImagePart(uri: '/tmp/real.png', mime: 'image/png'),
+          ],
+        );
+        final apiMessages = <Map<String, dynamic>>[
+          {
+            'role': 'user',
+            'content': loreContent, // WorldBook injection: no revision id
+          },
+          {
+            'role': 'user',
+            'content': realUser.content,
+            MessageBuilderService.internalRevisionIdKey: realUser.id,
+          },
+        ];
 
-      expect(apiMessages.first['content'], loreContent);
-      expect(
-        apiMessages.first.containsKey(
-          MessageBuilderService.internalMediaPathsKey,
-        ),
-        isFalse,
-      );
-      expect(
-        ocrCalls.expand((paths) => paths),
-        isNot(contains('/tmp/lore.png')),
-      );
-      expect(ocrCalls.expand((paths) => paths), contains('/tmp/real.png'));
-      expect(apiMessages.last['content'], isNot(contains('[image:')));
-      expect(apiMessages.first['content'], contains('[image:/tmp/lore.png]'));
-    });
+        await settings.setProviderConfig(
+          'ocr-provider',
+          ProviderConfig(
+            id: 'ocr-provider',
+            enabled: true,
+            name: 'OCR',
+            apiKey: 'key',
+            baseUrl: 'https://example.test',
+            models: const ['ocr-model'],
+            modelOverrides: const {
+              'ocr-model': {
+                'input': ['text', 'image'],
+              },
+            },
+          ),
+        );
+        await settings.setOcrModel('ocr-provider', 'ocr-model');
+        await settings.setOcrEnabled(true);
+
+        await service.processUserMessagesForApi(
+          apiMessages,
+          settings,
+          const Assistant(id: 'a1', name: 'test'),
+          sourceMessages: [realUser],
+        );
+
+        expect(apiMessages.first['content'], loreContent);
+        expect(
+          apiMessages.first.containsKey(
+            MessageBuilderService.internalMediaPathsKey,
+          ),
+          isFalse,
+        );
+        expect(
+          ocrCalls.expand((paths) => paths),
+          isNot(contains('/tmp/lore.png')),
+        );
+        expect(ocrCalls.expand((paths) => paths), contains('/tmp/real.png'));
+        expect(apiMessages.last['content'], isNot(contains('[image:')));
+        expect(apiMessages.first['content'], contains('[image:/tmp/lore.png]'));
+      },
+    );
 
     test('writes structured media refs and keeps OCR filtering', () async {
       SharedPreferences.setMockInitialValues({});

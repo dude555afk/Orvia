@@ -44,12 +44,44 @@ class BrandAssets {
         MapEntry(RegExp(r'tinyfish'), 'tinyfish-color.svg'),
         MapEntry(RegExp(r'fish.?audio|fishaudio'), 'fish-audio.svg'),
         MapEntry(RegExp(r'openrouter'), 'openrouter.svg'),
-        MapEntry(RegExp(r'metaso|秘塔'), 'metaso-color.svg'),
+        MapEntry(
+          RegExp(
+            r'metaso|'
+            '\u79D8'
+            '\u5854',
+          ),
+          'metaso-color.svg',
+        ),
         MapEntry(RegExp(r'meta'), 'meta-color.svg'),
         MapEntry(RegExp(r'tencent'), 'hunyuan-color.svg'),
-        MapEntry(RegExp(r'aliyun|阿里云|百炼'), 'alibabacloud-color.svg'),
-        MapEntry(RegExp(r'bytedance|火山'), 'bytedance-color.svg'),
-        MapEntry(RegExp(r'silicon|硅基'), 'siliconflow-color.svg'),
+        MapEntry(
+          RegExp(
+            r'aliyun|'
+            '\u963F'
+            '\u91CC'
+            '\u4E91'
+            r'|'
+            '\u767E'
+            '\u70BC',
+          ),
+          'alibabacloud-color.svg',
+        ),
+        MapEntry(
+          RegExp(
+            r'bytedance|'
+            '\u706B'
+            '\u5C71',
+          ),
+          'bytedance-color.svg',
+        ),
+        MapEntry(
+          RegExp(
+            r'silicon|'
+            '\u7845'
+            '\u57FA',
+          ),
+          'siliconflow-color.svg',
+        ),
         MapEntry(RegExp(r'aihubmix'), 'aihubmix-color.svg'),
         MapEntry(RegExp(r'ollama'), 'ollama.svg'),
         MapEntry(RegExp(r'github'), 'github.svg'),
@@ -60,8 +92,22 @@ class BrandAssets {
         MapEntry(RegExp(r'kelivo'), 'kelivo.png'),
         MapEntry(RegExp(r'tensdaq'), 'tensdaq-color.svg'),
         MapEntry(RegExp(r'marucode|muteki'), 'marucode.png'),
-        MapEntry(RegExp(r'iflow|心流'), 'iflow-color.svg'),
-        MapEntry(RegExp(r'bing|必应'), 'bing-color.svg'),
+        MapEntry(
+          RegExp(
+            r'iflow|'
+            '\u5FC3'
+            '\u6D41',
+          ),
+          'iflow-color.svg',
+        ),
+        MapEntry(
+          RegExp(
+            r'bing|'
+            '\u5FC5'
+            '\u5E94',
+          ),
+          'bing-color.svg',
+        ),
         MapEntry(RegExp(r'tavily'), 'tavily-color.svg'),
         MapEntry(RegExp(r'anysearch'), 'anysearch.svg'),
         MapEntry(RegExp(r'kagi'), 'kagi-color.svg'),
@@ -74,7 +120,14 @@ class BrandAssets {
         MapEntry(RegExp(r'searxng'), 'searxng-color.svg'),
         MapEntry(RegExp(r'serper'), 'serper.svg'),
         MapEntry(RegExp(r'querit'), 'querit-color.svg'),
-        MapEntry(RegExp(r'bocha|博查'), 'bocha-color.svg'),
+        MapEntry(
+          RegExp(
+            r'bocha|'
+            '\u535A'
+            '\u67E5',
+          ),
+          'bocha-color.svg',
+        ),
         MapEntry(RegExp(r'duckduckgo'), 'duckduckgo-color.svg'),
       ];
 

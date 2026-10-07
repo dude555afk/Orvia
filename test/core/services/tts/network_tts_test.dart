@@ -10,12 +10,17 @@ void main() {
   group('TtsServiceOptions', () {
     test('Edge Neural config round-trips without credentials', () {
       final edge = TtsServiceOptions.fromJson({
-        'kind': 'edge_neural', 'enabled': true, 'voice': 'en-GB-SoniaNeural',
+        'kind': 'edge_neural',
+        'enabled': true,
+        'voice': 'en-GB-SoniaNeural',
       });
       expect(edge, isA<EdgeNeuralTtsOptions>());
       expect((edge as EdgeNeuralTtsOptions).voice, 'en-GB-SoniaNeural');
       expect(edge.toJson().containsKey('apiKey'), isFalse);
-      expect(TtsServiceOptions.fromJson(edge.toJson()).kind, NetworkTtsKind.edgeNeural);
+      expect(
+        TtsServiceOptions.fromJson(edge.toJson()).kind,
+        NetworkTtsKind.edgeNeural,
+      );
     });
 
     test('deserializes RikkaHub-aligned provider defaults', () {
@@ -242,11 +247,16 @@ void main() {
 
   group('NetworkTtsService', () {
     test('keyless Edge synthesis uses chosen voice and MP3 payload', () async {
-      final edge = EdgeNeuralTtsOptions(enabled: true, name: 'Edge', voice: 'en-US-AriaNeural');
+      final edge = EdgeNeuralTtsOptions(
+        enabled: true,
+        name: 'Edge',
+        voice: 'en-US-AriaNeural',
+      );
       final audio = Uint8List.fromList(<int>[0x49, 0x44, 0x33, 0x03]);
       String? receivedVoice;
       final result = await NetworkTtsService.synthesize(
-        options: edge, text: 'Hello there',
+        options: edge,
+        text: 'Hello there',
         edgeTtsSynthesizer: (text, voice) async {
           expect(text, 'Hello there');
           receivedVoice = voice;
@@ -256,10 +266,16 @@ void main() {
       expect(receivedVoice, 'en-US-AriaNeural');
       expect(result.mime, 'audio/mpeg');
       expect(result.bytes, audio);
-      await expectLater(NetworkTtsService.synthesize(
-        options: edge, text: 'Cancelled', cancelled: () => true,
-        edgeTtsSynthesizer: (_, _) async => throw StateError('Should not call'),
-      ), throwsA(isA<Exception>()));
+      await expectLater(
+        NetworkTtsService.synthesize(
+          options: edge,
+          text: 'Cancelled',
+          cancelled: () => true,
+          edgeTtsSynthesizer: (_, _) async =>
+              throw StateError('Should not call'),
+        ),
+        throwsA(isA<Exception>()),
+      );
     });
 
     test('Azure sends escaped SSML and returns MP3 audio', () async {
@@ -284,7 +300,7 @@ void main() {
           language: 'zh-CN',
           voice: 'zh-CN-XiaoxiaoNeural',
         ),
-        text: '你好 & <Kelivo>',
+        text: '\u4F60\u597D & <Kelivo>',
       );
 
       expect(captured.uri.path, '/cognitiveservices/v1');
@@ -297,7 +313,7 @@ void main() {
         requestBody,
         '<speak version="1.0" xml:lang="zh-CN">'
         '<voice name="zh-CN-XiaoxiaoNeural">'
-        '你好 &amp; &lt;Kelivo&gt;</voice></speak>',
+        '\u4F60\u597D &amp; &lt;Kelivo&gt;</voice></speak>',
       );
       expect(result.mime, 'audio/mpeg');
       expect(result.bytes, <int>[1, 2, 3]);
@@ -334,7 +350,7 @@ void main() {
           language: 'zh-CN',
           voice: 'zh-CN-XiaoxiaoNeural',
         ),
-        text: '你好',
+        text: '\u4F60\u597D',
       );
 
       expect(requestCount, 3);
@@ -367,7 +383,7 @@ void main() {
           language: 'zh-CN',
           voice: 'zh-CN-XiaoxiaoNeural',
         ),
-        text: '你好',
+        text: '\u4F60\u597D',
         cancelled: () {
           if (!isCancelled) {
             Timer(const Duration(milliseconds: 50), () => isCancelled = true);
@@ -411,7 +427,7 @@ void main() {
               language: 'zh-CN',
               voice: 'zh-CN-XiaoxiaoNeural',
             ),
-            text: '你好',
+            text: '\u4F60\u597D',
             cancelled: () => isCancelled,
           );
 
@@ -469,7 +485,7 @@ void main() {
           voice: 'Cherry',
           languageType: 'Chinese',
         ),
-        text: '你好',
+        text: '\u4F60\u597D',
       );
 
       expect(
@@ -483,7 +499,7 @@ void main() {
       expect(captured.headers.value('X-DashScope-SSE'), 'enable');
       expect(requestBody['model'], 'qwen3-tts-flash');
       expect(requestBody['input'], {
-        'text': '你好',
+        'text': '\u4F60\u597D',
         'voice': 'Cherry',
         'language_type': 'Chinese',
       });

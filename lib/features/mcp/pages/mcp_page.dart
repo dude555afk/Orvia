@@ -4,6 +4,7 @@ import '../../../core/providers/settings_provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../icons/lucide_adapter.dart';
 import '../../../core/providers/mcp_provider.dart';
+import '../../../core/services/mcp/orvia_mcp_presets.dart';
 import '../widgets/mcp_server_edit_sheet.dart';
 import '../widgets/mcp_json_edit_sheet.dart';
 import '../widgets/mcp_json_import.dart';
@@ -106,6 +107,16 @@ class McpPage extends StatelessWidget {
               onTap: () async {
                 await showMcpJsonEditSheet(context);
               },
+            ),
+          ),
+          const SizedBox(width: 12),
+          Tooltip(
+            message: 'Browse starter MCP servers',
+            child: _TactileIconButton(
+              icon: Lucide.BookOpen,
+              color: cs.onSurface,
+              size: 22,
+              onTap: () => _showOrviaMcpPresets(context),
             ),
           ),
           const SizedBox(width: 12),
@@ -631,4 +642,68 @@ class _AnimatedPressColor extends StatelessWidget {
       builder: (context, color, _) => builder(color ?? base),
     );
   }
+}
+
+/// Starter servers remain disabled until the user reviews their configuration.
+/// In particular, selecting a catalogue item never starts an OAuth flow or
+/// silently transmits conversation content to an external service.
+Future<void> _showOrviaMcpPresets(BuildContext context) async {
+  final mcp = context.read<McpProvider>();
+  await showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (sheetContext) => SafeArea(
+      child: FractionallySizedBox(
+        heightFactor: 0.72,
+        child: Column(
+          children: [
+            const ListTile(
+              title: Text('Explore MCP servers'),
+              subtitle: Text(
+                'Optional presets from Kai. Endpoints are not verified live. Review and enable each connection yourself.',
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: orviaMcpPresets.length,
+                itemBuilder: (context, index) {
+                  final preset = orviaMcpPresets[index];
+                  final alreadyAdded = mcp.servers.any(
+                    (server) =>
+                        server.url.trim().replaceAll(RegExp(r'/+'), '') ==
+                        preset.url.trim().replaceAll(RegExp(r'/+'), ''),
+                  );
+                  return ListTile(
+                    title: Text(preset.name),
+                    subtitle: Text(
+                      preset.requiresAuth
+                          ? '${preset.description} · Authentication required'
+                          : preset.description,
+                    ),
+                    trailing: TextButton(
+                      onPressed: alreadyAdded
+                          ? null
+                          : () async {
+                              await mcp.addServer(
+                                name: preset.name,
+                                enabled: false,
+                                transport: McpTransportType.http,
+                                url: preset.url,
+                              );
+                              if (sheetContext.mounted) {
+                                Navigator.of(sheetContext).pop();
+                              }
+                            },
+                      child: Text(alreadyAdded ? 'Added' : 'Add'),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

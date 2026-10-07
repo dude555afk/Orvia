@@ -409,13 +409,13 @@ void main() {
     expect(markdown, isNot(contains('\r')));
     expect(markdown, contains('![alt](${Uri.file(file.path)})'));
     expect(find.byType(Image), findsOneWidget);
-    source.value += '\n\n<details><summary>更多</summary>隐藏</details>';
+    source.value += '\n\n<details><summary>More</summary>Hidden</details>';
     await tester.pumpAndSettle();
-    expect(find.text('更多'), findsOneWidget);
+    expect(find.text('More'), findsOneWidget);
     source.value = 'Replacement **bold**';
     await tester.pumpAndSettle();
     expect(find.byType(Image), findsNothing);
-    expect(find.text('更多'), findsNothing);
+    expect(find.text('More'), findsNothing);
     expect(
       _paragraphContaining('Replacement').text.toPlainText(),
       'Replacement bold',
@@ -628,7 +628,7 @@ Inline ***strong emphasis*** text.
 
       await tester.pumpWidget(
         _markdownHarness(
-          '包含 3,000 万毫秒/月 [citation:1:96d0ed, 4:5675a3]',
+          '\u5305\u542B 3,000 \u4E07\u6BEB\u79D2/\u6708 [citation:1:96d0ed, 4:5675a3]',
           width: 360,
           onCitationTap: tapped.add,
         ),
@@ -653,7 +653,7 @@ Inline ***strong emphasis*** text.
 
       await tester.pumpWidget(
         _markdownHarness(
-          '参考这个结论 [citation:2]',
+          '\u53C2\u8003\u8FD9\u4E2A\u7ED3\u8BBA [citation:2]',
           width: 360,
           onCitationTap: tapped.add,
         ),
@@ -701,7 +701,7 @@ Inline ***strong emphasis*** text.
 
       await tester.pumpWidget(
         _markdownHarness(
-          '巴黎是法国的首都。[cite:96d0ed] 人口约 210 万。[cite:5675a3][cite:96d0ed]',
+          '\u5DF4\u9ECE\u662F\u6CD5\u56FD\u7684\u9996\u90FD。[cite:96d0ed] \u4EBA\u53E3\u7EA6 210 \u4E07。[cite:5675a3][cite:96d0ed]',
           width: 360,
           onCitationTap: tapped.add,
           citationIndexResolver: (id) => {'96d0ed': '1', '5675a3': '4'}[id],
@@ -731,7 +731,7 @@ Inline ***strong emphasis*** text.
     'MarkdownWithCodeHighlight renders unresolved cite markers as placeholder',
     (tester) async {
       await tester.pumpWidget(
-        _markdownHarness('结论如下。[cite:deadbe]', width: 360),
+        _markdownHarness('\u7ED3\u8BBA\u5982\u4E0B。[cite:deadbe]', width: 360),
       );
       await tester.pump();
 
@@ -929,9 +929,9 @@ Inline ***strong emphasis*** text.
     _overrideMarkdownTablePlatform(TargetPlatform.android);
     await tester.pumpWidget(
       _markdownHarness('''
-| 项目 | 状态 |
+| Item | Status |
 | :---: | :---: |
-| 单字 |   中   |
+| Word |   Medium   |
 ''', width: 360),
     );
     await tester.pump();
@@ -943,7 +943,7 @@ Inline ***strong emphasis*** text.
     final centeredCellText = find.descendant(
       of: body,
       matching: find.byWidgetPredicate(
-        (widget) => widget is RichText && widget.text.toPlainText() == '中',
+        (widget) => widget is RichText && widget.text.toPlainText() == 'Medium',
         description: 'centered table cell text',
       ),
     );
@@ -1543,10 +1543,10 @@ ${rows.join('\n')}
       await tester.pumpWidget(
         _markdownHarness(
           '''
-| 水果 | 颜色 | 价格 |
+| \u6C34\u679C | \u989C\u8272 | \u4EF7\u683C |
 | - | - | - |
-| 苹果 | 红色 | ¥9.9 |
-| 葡萄 🍇 | 紫色 | ¥12.8
+| \u82F9\u679C | \u7EA2\u8272 | ¥9.9 |
+| \u8461\u8404 🍇 | \u7D2B\u8272 | ¥12.8
 ''',
           width: 360,
           streaming: true,
@@ -1567,9 +1567,12 @@ ${rows.join('\n')}
           .map((widget) => widget.text.toPlainText())
           .join('\n');
 
-      expect(tableText, contains('葡萄 🍇'));
+      expect(tableText, contains('\u8461\u8404 🍇'));
       expect(tableText, contains('¥12.8'));
-      expect(allText, isNot(contains('| 葡萄 🍇 | 紫色 | ¥12.8')));
+      expect(
+        allText,
+        isNot(contains('| \u8461\u8404 🍇 | \u7D2B\u8272 | ¥12.8')),
+      );
     },
   );
 
@@ -1579,9 +1582,9 @@ ${rows.join('\n')}
       await tester.pumpWidget(
         _markdownHarness(
           '''
-| 水果 | 颜色 | 价格 |
+| \u6C34\u679C | \u989C\u8272 | \u4EF7\u683C |
 | - | - | - |
-| 葡萄 🍇''',
+| \u8461\u8404 🍇''',
           width: 360,
           streaming: true,
         ),
@@ -1601,8 +1604,8 @@ ${rows.join('\n')}
           .map((widget) => widget.text.toPlainText())
           .join('\n');
 
-      expect(tableText, contains('葡萄 🍇'));
-      expect(allText, isNot(contains('| 葡萄 🍇')));
+      expect(tableText, contains('\u8461\u8404 🍇'));
+      expect(allText, isNot(contains('| \u8461\u8404 🍇')));
     },
   );
 
@@ -1610,22 +1613,24 @@ ${rows.join('\n')}
     'MarkdownWithCodeHighlight keeps a streaming table stable while a row grows',
     (tester) async {
       const prefix = '''
-| 类型 | 示例 | 说明 |
+| \u7C7B\u578B | \u793A\u4F8B | \u8BF4\u660E |
 | :--- | :--- | :--- |
-| 链接 | [点击](https://example.com) | 表格内链接 |
-| 代码 | `code` | 表格内行内代码 |
-| 加粗 | **重要** | 表格内加粗文字 |
-| 混合 | `代码` 和 **加粗** | 表格内混合样式 |
+| \u94FE\u63A5 | [\u70B9\u51FB](https://example.com) | \u8868\u683C\u5185\u94FE\u63A5 |
+| \u4EE3\u7801 | `code` | \u8868\u683C\u5185\u884C\u5185\u4EE3\u7801 |
+| \u52A0\u7C97 | **\u91CD\u8981** | \u8868\u683C\u5185\u52A0\u7C97\u6587\u5B57 |
+| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **\u52A0\u7C97** | \u8868\u683C\u5185\u6DF7\u5408\u6837\u5F0F |
 
-| 测试类别 | 项目数 | 状态 |
+| \u6D4B\u8BD5\u7C7B\u522B | \u9879\u76EE\u6570 | \u72B6\u6001 |
 | :------- | :----: | :--: |
-| 标题层级 |   6    |  ⬜  |''';
-      final text = ValueNotifier<String>('$prefix\n| 文本样式 |');
+| \u6807\u9898\u5C42\u7EA7 |   6    |  ⬜  |''';
+      final text = ValueNotifier<String>(
+        '$prefix\n| \u6587\u672C\u6837\u5F0F |',
+      );
       addTearDown(text.dispose);
 
       await tester.pumpWidget(_streamingMarkdownHarness(text, width: 360));
       await tester.pump();
-      text.value = '$prefix\n| 文本样式 |   7';
+      text.value = '$prefix\n| \u6587\u672C\u6837\u5F0F |   7';
       await tester.pump();
 
       final bodies = find.byKey(const ValueKey('markdown-table-body'));
@@ -1642,9 +1647,9 @@ ${rows.join('\n')}
           .map((widget) => widget.text.toPlainText())
           .join('\n');
 
-      expect(tableText, contains('文本样式'));
+      expect(tableText, contains('\u6587\u672C\u6837\u5F0F'));
       expect(tableText, contains('7'));
-      expect(allText, isNot(contains('| 文本样式 |   7')));
+      expect(allText, isNot(contains('| \u6587\u672C\u6837\u5F0F |   7')));
     },
   );
 
@@ -1654,9 +1659,9 @@ ${rows.join('\n')}
       await tester.pumpWidget(
         _markdownHarness(
           '''
-| 测试类别 | 项目数 | 状态 |
+| \u6D4B\u8BD5\u7C7B\u522B | \u9879\u76EE\u6570 | \u72B6\u6001 |
 | :------- | :----: | :--: |
-| 标题层级 |   6    |  ⬜  |
+| \u6807\u9898\u5C42\u7EA7 |   6    |  ⬜  |
 |''',
           width: 360,
           streaming: true,
@@ -1688,11 +1693,11 @@ ${rows.join('\n')}
       await tester.pumpWidget(
         _markdownHarness(
           '''
-| 类型 | 示例 | 说明 |
+| \u7C7B\u578B | \u793A\u4F8B | \u8BF4\u660E |
 | :--- | :--- | :--- |
-| 链接 | [点击](https://example.com) | 表格内链接 |
+| \u94FE\u63A5 | [\u70B9\u51FB](https://example.com) | \u8868\u683C\u5185\u94FE\u63A5 |
 
-| 测试类别 | 项目数 | 状态 |''',
+| \u6D4B\u8BD5\u7C7B\u522B | \u9879\u76EE\u6570 | \u72B6\u6001 |''',
           width: 360,
           streaming: true,
         ),
@@ -1706,7 +1711,14 @@ ${rows.join('\n')}
           .map((widget) => widget.text.toPlainText())
           .join('\n');
 
-      expect(allText, isNot(contains('| 测试类别 | 项目数 | 状态 |')));
+      expect(
+        allText,
+        isNot(
+          contains(
+            '| \u6D4B\u8BD5\u7C7B\u522B | \u9879\u76EE\u6570 | \u72B6\u6001 |',
+          ),
+        ),
+      );
     },
   );
 
@@ -1716,11 +1728,11 @@ ${rows.join('\n')}
       await tester.pumpWidget(
         _markdownHarness(
           '''
-| 类型 | 示例 | 说明 |
+| \u7C7B\u578B | \u793A\u4F8B | \u8BF4\u660E |
 | :--- | :--- | :--- |
-| 链接 | [点击](https://example.com) | 表格内链接 |
+| \u94FE\u63A5 | [\u70B9\u51FB](https://example.com) | \u8868\u683C\u5185\u94FE\u63A5 |
 
-| 测试类别 | 项目数 | 状态 |
+| \u6D4B\u8BD5\u7C7B\u522B | \u9879\u76EE\u6570 | \u72B6\u6001 |
 | :------- | :----''',
           width: 360,
           streaming: true,
@@ -1735,7 +1747,14 @@ ${rows.join('\n')}
           .map((widget) => widget.text.toPlainText())
           .join('\n');
 
-      expect(allText, isNot(contains('| 测试类别 | 项目数 | 状态 |')));
+      expect(
+        allText,
+        isNot(
+          contains(
+            '| \u6D4B\u8BD5\u7C7B\u522B | \u9879\u76EE\u6570 | \u72B6\u6001 |',
+          ),
+        ),
+      );
       expect(allText, isNot(contains('| :------- | :----')));
     },
   );
@@ -1744,29 +1763,29 @@ ${rows.join('\n')}
     'MarkdownWithCodeHighlight keeps streaming table starts out of plain markdown text',
     (tester) async {
       const firstTable = '''
-| 类型 | 示例 | 说明 |
+| \u7C7B\u578B | \u793A\u4F8B | \u8BF4\u660E |
 | :--- | :--- | :--- |
-| 链接 | [点击](https://example.com) | 表格内链接 |
-| 代码 | `code` | 表格内行内代码 |
-| 加粗 | **重要** | 表格内加粗文字 |
-| 混合 | `代码` 和 **加粗** | 表格内混合样式 |''';
+| \u94FE\u63A5 | [\u70B9\u51FB](https://example.com) | \u8868\u683C\u5185\u94FE\u63A5 |
+| \u4EE3\u7801 | `code` | \u8868\u683C\u5185\u884C\u5185\u4EE3\u7801 |
+| \u52A0\u7C97 | **\u91CD\u8981** | \u8868\u683C\u5185\u52A0\u7C97\u6587\u5B57 |
+| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **\u52A0\u7C97** | \u8868\u683C\u5185\u6DF7\u5408\u6837\u5F0F |''';
       final text = ValueNotifier<String>('|');
       addTearDown(text.dispose);
 
       await tester.pumpWidget(_streamingMarkdownHarness(text, width: 360));
       for (final frame in <String>[
-        '| 类型',
-        '| 类型 |',
-        '| 类型 | 示例',
-        '| 类型 | 示例 |',
+        '| \u7C7B\u578B',
+        '| \u7C7B\u578B |',
+        '| \u7C7B\u578B | \u793A\u4F8B',
+        '| \u7C7B\u578B | \u793A\u4F8B |',
         firstTable,
         '$firstTable\n\n|',
-        '$firstTable\n\n| 测试类别',
-        '$firstTable\n\n| 测试类别 |',
-        '$firstTable\n\n| 测试类别 | 项目数',
-        '$firstTable\n\n| 测试类别 | 项目数 |',
-        '$firstTable\n\n| 测试类别 | 项目数 | 状态',
-        '$firstTable\n\n| 测试类别 | 项目数 | 状态 |',
+        '$firstTable\n\n| \u6D4B\u8BD5\u7C7B\u522B',
+        '$firstTable\n\n| \u6D4B\u8BD5\u7C7B\u522B |',
+        '$firstTable\n\n| \u6D4B\u8BD5\u7C7B\u522B | \u9879\u76EE\u6570',
+        '$firstTable\n\n| \u6D4B\u8BD5\u7C7B\u522B | \u9879\u76EE\u6570 |',
+        '$firstTable\n\n| \u6D4B\u8BD5\u7C7B\u522B | \u9879\u76EE\u6570 | \u72B6\u6001',
+        '$firstTable\n\n| \u6D4B\u8BD5\u7C7B\u522B | \u9879\u76EE\u6570 | \u72B6\u6001 |',
       ]) {
         text.value = frame;
         await tester.pump();
@@ -1789,26 +1808,26 @@ ${rows.join('\n')}
     'MarkdownWithCodeHighlight keeps rich table rows stable while inline markdown grows',
     (tester) async {
       const prefix = '''
-### 4. 表格中的特殊内容
+### 4. \u8868\u683C\u4E2D\u7684\u7279\u6B8A\u5185\u5BB9
 
-| 类型 | 示例 | 说明 |
+| \u7C7B\u578B | \u793A\u4F8B | \u8BF4\u660E |
 | :--- | :--- | :--- |
-| 链接 | [点击](https://example.com) | 表格内链接 |
-| 代码 | `code` | 表格内行内代码 |
-| 加粗 | **重要** | 表格内加粗文字 |''';
-      final text = ValueNotifier<String>('$prefix\n| 混合 |');
+| \u94FE\u63A5 | [\u70B9\u51FB](https://example.com) | \u8868\u683C\u5185\u94FE\u63A5 |
+| \u4EE3\u7801 | `code` | \u8868\u683C\u5185\u884C\u5185\u4EE3\u7801 |
+| \u52A0\u7C97 | **\u91CD\u8981** | \u8868\u683C\u5185\u52A0\u7C97\u6587\u5B57 |''';
+      final text = ValueNotifier<String>('$prefix\n| \u6DF7\u5408 |');
       addTearDown(text.dispose);
 
       await tester.pumpWidget(_streamingMarkdownHarness(text, width: 360));
       for (final frame in <String>[
-        '$prefix\n| 混合 | `',
-        '$prefix\n| 混合 | `代码',
-        '$prefix\n| 混合 | `代码`',
-        '$prefix\n| 混合 | `代码` 和 **',
-        '$prefix\n| 混合 | `代码` 和 **加粗',
-        '$prefix\n| 混合 | `代码` 和 **加粗**',
-        '$prefix\n| 混合 | `代码` 和 **加粗** |',
-        '$prefix\n| 混合 | `代码` 和 **加粗** | 表格内混合样式',
+        '$prefix\n| \u6DF7\u5408 | `',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801`',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **\u52A0\u7C97',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **\u52A0\u7C97**',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **\u52A0\u7C97** |',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **\u52A0\u7C97** | \u8868\u683C\u5185\u6DF7\u5408\u6837\u5F0F',
       ]) {
         text.value = frame;
         await tester.pump();
@@ -1822,7 +1841,7 @@ ${rows.join('\n')}
 
         expect(
           allText,
-          isNot(contains('| 混合')),
+          isNot(contains('| \u6DF7\u5408')),
           reason: 'rich table row should not leak markdown pipes: $frame',
         );
       }
@@ -1834,7 +1853,7 @@ ${rows.join('\n')}
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          '> 引用内容\n> 第二行',
+          '> \u5F15\u7528\u5185\u5BB9\n> \u7B2C\u4E8C\u884C',
           width: 320,
           theme: buildLightThemeForScheme(ThemePalettes.defaultPalette.light),
         ),
@@ -1873,7 +1892,7 @@ ${rows.join('\n')}
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          '> 引用内容\n> 第二行',
+          '> \u5F15\u7528\u5185\u5BB9\n> \u7B2C\u4E8C\u884C',
           width: 320,
           theme: buildLightThemeForScheme(ThemePalettes.defaultPalette.light),
           darkTheme: buildDarkThemeForScheme(ThemePalettes.defaultPalette.dark),
@@ -1904,9 +1923,9 @@ ${rows.join('\n')}
     'MarkdownWithCodeHighlight keeps late document tables stable after code blocks',
     (tester) async {
       const prefix = r'''
-# Markdown 渲染能力测试文档
+# Markdown \u6E32\u67D3\u80FD\u529B\u6D4B\u8BD5\u6587\u6863
 
-## 七、代码与语法高亮
+## \u4E03、\u4EE3\u7801\u4E0E\u8BED\u6CD5\u9AD8\u4EAE
 
 ```python
 def fibonacci(n):
@@ -1921,7 +1940,7 @@ const greet = (name) => {
 
 ```html
 <div class="container">
-  <p>这是一个段落。</p>
+  <p>\u8FD9\u662F\u4E00\u4E2A\u6BB5\u843D。</p>
 </div>
 ```
 
@@ -1931,33 +1950,33 @@ const greet = (name) => {
 }
 ```
 
-## 十、复杂混合布局
+## \u5341、\u590D\u6742\u6DF7\u5408\u5E03\u5C40
 
-### 3. 引用中的代码
+### 3. \u5F15\u7528\u4E2D\u7684\u4EE3\u7801
 
-> 在引用中插入代码：
+> \u5728\u5F15\u7528\u4E2D\u63D2\u5165\u4EE3\u7801：
 >
 > ```bash
 > echo "Hello from inside a blockquote!"
 > ```
 
-### 4. 表格中的特殊内容
+### 4. \u8868\u683C\u4E2D\u7684\u7279\u6B8A\u5185\u5BB9
 
-| 类型 | 示例 | 说明 |
+| \u7C7B\u578B | \u793A\u4F8B | \u8BF4\u660E |
 | :--- | :--- | :--- |
-| 链接 | [点击](https://example.com) | 表格内链接 |
-| 代码 | `code` | 表格内行内代码 |
-| 加粗 | **重要** | 表格内加粗文字 |''';
-      final text = ValueNotifier<String>('$prefix\n| 混合 |');
+| \u94FE\u63A5 | [\u70B9\u51FB](https://example.com) | \u8868\u683C\u5185\u94FE\u63A5 |
+| \u4EE3\u7801 | `code` | \u8868\u683C\u5185\u884C\u5185\u4EE3\u7801 |
+| \u52A0\u7C97 | **\u91CD\u8981** | \u8868\u683C\u5185\u52A0\u7C97\u6587\u5B57 |''';
+      final text = ValueNotifier<String>('$prefix\n| \u6DF7\u5408 |');
       addTearDown(text.dispose);
 
       await tester.pumpWidget(_streamingMarkdownHarness(text, width: 360));
       for (final frame in <String>[
-        '$prefix\n| 混合 | `代码` 和 **加粗** |',
-        '$prefix\n| 混合 | `代码` 和 **加粗** | 表格内混合样式',
-        '$prefix\n| 混合 | `代码` 和 **加粗** | 表格内混合样式 |',
-        '$prefix\n| 混合 | `代码` 和 **加粗** | 表格内混合样式 |\n\n## 总结\n\n| 测试类别',
-        '$prefix\n| 混合 | `代码` 和 **加粗** | 表格内混合样式 |\n\n## 总结\n\n| 测试类别 | 项目数 | 状态 |\n| :------- | :----: | :--: |\n| 特殊符号 |   4',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **\u52A0\u7C97** |',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **\u52A0\u7C97** | \u8868\u683C\u5185\u6DF7\u5408\u6837\u5F0F',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **\u52A0\u7C97** | \u8868\u683C\u5185\u6DF7\u5408\u6837\u5F0F |',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **\u52A0\u7C97** | \u8868\u683C\u5185\u6DF7\u5408\u6837\u5F0F |\n\n## \u603B\u7ED3\n\n| \u6D4B\u8BD5\u7C7B\u522B',
+        '$prefix\n| \u6DF7\u5408 | `\u4EE3\u7801` \u548C **\u52A0\u7C97** | \u8868\u683C\u5185\u6DF7\u5408\u6837\u5F0F |\n\n## \u603B\u7ED3\n\n| \u6D4B\u8BD5\u7C7B\u522B | \u9879\u76EE\u6570 | \u72B6\u6001 |\n| :------- | :----: | :--: |\n| \u7279\u6B8A\u7B26\u53F7 |   4',
       ]) {
         text.value = frame;
         await tester.pump();
@@ -1986,9 +2005,17 @@ const greet = (name) => {
             .map((widget) => widget.textSpan?.toPlainText() ?? widget.data)
             .join('\n');
 
-        expect(allText, isNot(contains('| 混合')), reason: frame);
-        expect(allText, isNot(contains('| 测试类别')), reason: frame);
-        expect(allText, isNot(contains('| 特殊符号')), reason: frame);
+        expect(allText, isNot(contains('| \u6DF7\u5408')), reason: frame);
+        expect(
+          allText,
+          isNot(contains('| \u6D4B\u8BD5\u7C7B\u522B')),
+          reason: frame,
+        );
+        expect(
+          allText,
+          isNot(contains('| \u7279\u6B8A\u7B26\u53F7')),
+          reason: frame,
+        );
         expect(
           find.descendant(
             of: blockquote,
@@ -2001,9 +2028,17 @@ const greet = (name) => {
           blockquoteCodeText,
           contains('echo "Hello from inside a blockquote!"'),
         );
-        expect(blockquoteCodeText, isNot(contains('表格中的特殊内容')), reason: frame);
-        expect(codeText, isNot(contains('表格中的特殊内容')), reason: frame);
-        expect(codeText, isNot(contains('## 总结')), reason: frame);
+        expect(
+          blockquoteCodeText,
+          isNot(contains('\u8868\u683C\u4E2D\u7684\u7279\u6B8A\u5185\u5BB9')),
+          reason: frame,
+        );
+        expect(
+          codeText,
+          isNot(contains('\u8868\u683C\u4E2D\u7684\u7279\u6B8A\u5185\u5BB9')),
+          reason: frame,
+        );
+        expect(codeText, isNot(contains('## \u603B\u7ED3')), reason: frame);
       }
     },
   );
@@ -2552,12 +2587,12 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(r'''
-| 项目 | 左对齐 | 居中 | 右对齐 |
+| \u9879\u76EE | \u5DE6\u5BF9\u9F50 | \u5C45\u4E2D | \u53F3\u5BF9\u9F50 |
 | :--- | :--- | :---: | ---: |
-| 普通文本 | alpha | beta | 123 |
-| 粗斜代码 | **bold** | *italic* | `code` |
-| 转义竖线 | a \| b | c \| d | 456 |
-| 行内数学 | $a+b$ | $\|x\|=1$ | $P(A\mid B)$ |
+| \u666E\u901A\u6587\u672C | alpha | beta | 123 |
+| \u7C97\u659C\u4EE3\u7801 | **bold** | *italic* | `code` |
+| \u8F6C\u4E49\u7AD6\u7EBF | a \| b | c \| d | 456 |
+| \u884C\u5185\u6570\u5B66 | $a+b$ | $\|x\|=1$ | $P(A\mid B)$ |
 '''),
       );
       await tester.pump();
@@ -2601,9 +2636,9 @@ A-->B
       _overrideMarkdownTablePlatform(TargetPlatform.android);
       await tester.pumpWidget(
         _markdownHarness(r'''
-| 对比点 | 行内 `$...$` | 行间 `$$...$$` |
+| \u5BF9\u6BD4\u70B9 | \u884C\u5185 `$...$` | \u884C\u95F4 `$$...$$` |
 |--------|-------------|---------------|
-| 是否换行 | 不换行 | 换行 |
+| \u662F\u5426\u6362\u884C | \u4E0D\u6362\u884C | \u6362\u884C |
 ''', width: 360),
       );
       await tester.pump();
@@ -2651,9 +2686,10 @@ A-->B
     (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       try {
+        final cjkGlyphText = String.fromCharCode(0x975e);
         await tester.pumpWidget(
           _markdownHarness(
-            r'出现 \(0 = \text{非零常数的矛盾}\)',
+            'Text \\(0 = \\text{$cjkGlyphText}\\)',
             theme: buildLightThemeForScheme(ThemePalettes.defaultPalette.light),
           ),
         );
@@ -2661,7 +2697,7 @@ A-->B
 
         final cjkGlyph = tester
             .widgetList<RichText>(find.byType(RichText))
-            .firstWhere((widget) => widget.text.toPlainText() == '非');
+            .firstWhere((widget) => widget.text.toPlainText() == cjkGlyphText);
 
         expect(cjkGlyph.text.style?.fontFamily, contains('KaTeX_Main'));
         expect(
@@ -2711,7 +2747,7 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          r'相对论动量公式：$p = \frac{mv}{\sqrt{1 - \frac{v^2}{c^2}}}$',
+          r'Relativistic momentum: $p = \frac{mv}{\sqrt{1 - \frac{v^2}{c^2}}}$',
         ),
       );
       await tester.pump();
@@ -2732,7 +2768,7 @@ A-->B
       expect(mathSpans.single.alignment, PlaceholderAlignment.baseline);
       expect(mathSpans.single.baseline, TextBaseline.alphabetic);
 
-      final paragraph = _paragraphContaining('相对论动量公式');
+      final paragraph = _paragraphContaining('Relativistic momentum');
       final mathBox = tester.renderObject<RenderBox>(_findMathWidget());
       expect(mathBox.size.height, greaterThan(30));
       expect(paragraph.size.height, greaterThanOrEqualTo(mathBox.size.height));
@@ -2762,7 +2798,7 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          r'已知 $q$ 是 $\mathbb{R}^n$ 上的多项式。对所有满足 $\|x\|=1$ 的 $x$，有 $p(x)=q(x)$。',
+          r'\u5DF2\u77E5 $q$ \u662F $\mathbb{R}^n$ \u4E0A\u7684\u591A\u9879\u5F0F。\u5BF9\u6240\u6709\u6EE1\u8DB3 $\|x\|=1$ \u7684 $x$，\u6709 $p(x)=q(x)$。',
         ),
       );
       await tester.pump();
@@ -2778,10 +2814,10 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(r'''
-- 向量点积：$\mathbf{a} \cdot \mathbf{b} = |\mathbf{a}||\mathbf{b}|\cos\theta$
-- 矢量叉乘：$\mathbf{a} \times \mathbf{b} = |\mathbf{a}||\mathbf{b}|\sin\theta \, \hat{n}$
-- Bayes 公式：$P(A|B) = \frac{P(B|A)P(A)}{P(B)}$
-- 向量模长：$|\mathbf{v}| = \sqrt{v_x^2 + v_y^2 + v_z^2}$
+- \u5411\u91CF\u70B9\u79EF：$\mathbf{a} \cdot \mathbf{b} = |\mathbf{a}||\mathbf{b}|\cos\theta$
+- \u77E2\u91CF\u53C9\u4E58：$\mathbf{a} \times \mathbf{b} = |\mathbf{a}||\mathbf{b}|\sin\theta \, \hat{n}$
+- Bayes \u516C\u5F0F：$P(A|B) = \frac{P(B|A)P(A)}{P(B)}$
+- \u5411\u91CF\u6A21\u957F：$|\mathbf{v}| = \sqrt{v_x^2 + v_y^2 + v_z^2}$
 '''),
       );
       await tester.pump();
@@ -2797,13 +2833,13 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(r'''
-价格 $10 不渲染。
+Price $10 should not render.
 
-范围$\pm 2$ 有效。
+Range: $\pm 2$ is valid.
 
-标点：$x+y$。
+Punctuation: $x+y$.
 
-空格 $a+b$ 有效。
+Space $a+b$ is valid.
 '''),
       );
       await tester.pump();
@@ -2820,7 +2856,9 @@ A-->B
     'MarkdownWithCodeHighlight renders compact dollar math next to Chinese prose',
     (tester) async {
       await tester.pumpWidget(
-        _markdownHarness(r'（$PaCO_2$ 降至 30）范围$\pm 2$，目标$SpO_2$。'),
+        _markdownHarness(
+          r'($PaCO_2$ drops to 30), range $\pm 2$, target $SpO_2$.',
+        ),
       );
       await tester.pump();
 
@@ -2836,7 +2874,7 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          r'蕴含的能量高达 $9 \times 10^{16} \, \text{J}$，相当于约 2100 万吨 TNT 炸药的爆炸当量。太阳每秒将约 $4.3 \times 10^9 \, \text{kg}$ 的质量转化为能量',
+          r'Energy reaches $9 \times 10^{16} \, \text{J}$, equivalent to about 21 million tons of TNT. The sun converts about $4.3 \times 10^9 \, \text{kg}$ of mass into energy each second.',
         ),
       );
       await tester.pump();
@@ -2844,9 +2882,14 @@ A-->B
       expect(_findMathWidget(), findsNWidgets(2));
       expect(find.textContaining(r'$9 \times'), findsNothing);
       expect(find.textContaining(r'$4.3 \times'), findsNothing);
-      expect(find.textContaining('相当于约 2100 万吨 TNT'), findsOneWidget);
       expect(
-        find.textContaining(r'，相当于约 2100 万吨 TNT 炸药的爆炸当量。太阳每秒将约 $4.3'),
+        find.textContaining('equivalent to about 21 million tons of TNT'),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining(
+          r', equivalent to about 21 million tons of TNT. The sun converts about $4.3',
+        ),
         findsNothing,
       );
     },
@@ -2856,20 +2899,27 @@ A-->B
     tester,
   ) async {
     await tester.pumpWidget(
-      _markdownHarness(r'集合\(A = {x \in \mathbb{R} : x^2 < 4}\)等价于开区间。'),
+      _markdownHarness(
+        r'Set \(A = {x \in \mathbb{R} : x^2 < 4}\) is equivalent to an open interval.',
+      ),
     );
     await tester.pump();
 
     expect(_findMathWidget(), findsOneWidget);
     expect(find.textContaining(r'\(A ='), findsNothing);
-    expect(find.textContaining('等价于开区间'), findsOneWidget);
+    expect(
+      find.textContaining('is equivalent to an open interval'),
+      findsOneWidget,
+    );
   });
 
   testWidgets(
     r'MarkdownWithCodeHighlight renders dollar math with escaped set braces',
     (tester) async {
       await tester.pumpWidget(
-        _markdownHarness(r'集合$A = \{x \in \mathbb{R} : x^2 < 4\}$等价于开区间。'),
+        _markdownHarness(
+          r'Set $A = \{x \in \mathbb{R} : x^2 < 4\}$ is equivalent to an open interval.',
+        ),
       );
       await tester.pump();
 
@@ -2882,7 +2932,10 @@ A-->B
       expect(encoded, contains(r'\mathbb{R}'));
       expect(find.textContaining(r'\(A ='), findsNothing);
       expect(find.textContaining(r'$A ='), findsNothing);
-      expect(find.textContaining('等价于开区间'), findsOneWidget);
+      expect(
+        find.textContaining('is equivalent to an open interval'),
+        findsOneWidget,
+      );
     },
   );
 
@@ -2929,10 +2982,10 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(r'''
-在Markdown中#表示标题，但在公式中\(#\)是符号。
-集合\({1, 2, 3}\)有三个元素。注意在LaTeX中花括号需要转义\({}\)。
-序列\({a_n}_{n=1}^{\infty}\)收敛。
-集合\(A = {x \in \mathbb{R} : x^2 < 4}\)等价于开区间。
+\u5728Markdown\u4E2D#\u8868\u793A\u6807\u9898，\u4F46\u5728\u516C\u5F0F\u4E2D\(#\)\u662F\u7B26\u53F7。
+\u96C6\u5408\({1, 2, 3}\)\u6709\u4E09\u4E2A\u5143\u7D20。\u6CE8\u610F\u5728LaTeX\u4E2D\u82B1\u62EC\u53F7\u9700\u8981\u8F6C\u4E49\({}\)。
+\u5E8F\u5217\({a_n}_{n=1}^{\infty}\)\u6536\u655B。
+\u96C6\u5408\(A = {x \in \mathbb{R} : x^2 < 4}\)\u7B49\u4EF7\u4E8E\u5F00\u533A\u95F4。
 '''),
       );
       await tester.pump();
@@ -2967,7 +3020,7 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(r'''
-颜色\(\color{#FF5733}{A}\)，文字色\(\textcolor{#228B22}{B}\)，背景\(\colorbox{#197}{C}\)，符号\(#\)。
+\u989C\u8272\(\color{#FF5733}{A}\)，\u6587\u5B57\u8272\(\textcolor{#228B22}{B}\)，\u80CC\u666F\(\colorbox{#197}{C}\)，\u7B26\u53F7\(#\)。
 '''),
       );
       await tester.pump();
@@ -2994,8 +3047,8 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(r'''
-标签\(\textbf{\small\colorbox{white}{\textcolor{#AEC6CF}{\ovalbox{\textcolor{#AEC6CF}{\textbf{示例文字}}}}}}\)。
-函数\(\operatorname{Function}\left(x\right)\)&#x20;
+\u6807\u7B7E\(\textbf{\small\colorbox{white}{\textcolor{#AEC6CF}{\ovalbox{\textcolor{#AEC6CF}{\textbf{\u793A\u4F8B\u6587\u5B57}}}}}}\)。
+\u51FD\u6570\(\operatorname{Function}\left(x\right)\)&#x20;
 '''),
       );
       await tester.pump();
@@ -3016,17 +3069,20 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          r'$\&$在LaTeX中需要转义，而$$符号通常用于块级公式。后文$a$$b$$c$。$x$$=$$1$。结束',
+          r'$\&$ needs escaping in LaTeX, while $$ is usually used for block math. Later $a$$b$$c$. $x$$=$$1$. End',
         ),
       );
       await tester.pump();
 
       expect(_findMathWidget(), findsNWidgets(7));
-      expect(find.textContaining('在LaTeX中需要转义'), findsOneWidget);
-      expect(find.textContaining(r'$$符号通常用于块级公式。后文'), findsOneWidget);
+      expect(find.textContaining('needs escaping in LaTeX'), findsOneWidget);
+      expect(
+        find.textContaining(r'$$ is usually used for block math. Later'),
+        findsOneWidget,
+      );
       expect(find.textContaining(r'b$$c'), findsNothing);
       expect(find.textContaining(r'x$$=$$1'), findsNothing);
-      expect(find.textContaining('结束'), findsOneWidget);
+      expect(find.textContaining('End'), findsOneWidget);
     },
   );
 
@@ -3035,11 +3091,11 @@ A-->B
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(r'''
-集合\(A = {x \in \mathbb{R} : x^2 < 4}\)等价于开区间$(-2, 2)$。
+Set \(A = {x \in \mathbb{R} : x^2 < 4}\) is equivalent to the open interval $(-2, 2)$.
 
-$\&$在LaTeX中需要转义，而$$符号通常用于块级公式。
+$\&$ needs escaping in LaTeX, while $$ is usually used for block math.
 
-> 费马大定理指出：当整数$n > 2$时，方程$x^n + y^n = z^n$没有正整数解。
+> Fermat's Last Theorem states: when integer $n > 2$, the equation $x^n + y^n = z^n$ has no positive integer solutions.
 
 $a$$b$$c$。$x$$=$$1$。
 
@@ -3050,13 +3106,19 @@ $f((x))$，$g([x])$，$h(\{x\})$，$\langle a, b \rangle$。
 
       expect(_findMathWidget(), findsAtLeastNWidgets(14));
       expect(find.textContaining(r'\(A ='), findsNothing);
-      expect(find.textContaining(r'$$符号通常用于块级公式'), findsOneWidget);
+      expect(
+        find.textContaining(r'$$ is usually used for block math'),
+        findsOneWidget,
+      );
       expect(find.textContaining(r'b$$c'), findsNothing);
       expect(find.textContaining(r'x$$=$$1'), findsNothing);
       expect(find.textContaining(r'$n > 2$'), findsNothing);
       expect(find.textContaining(r'$f((x))$'), findsNothing);
-      expect(find.textContaining('费马大定理指出'), findsOneWidget);
-      expect(find.textContaining('在LaTeX中需要转义'), findsOneWidget);
+      expect(
+        find.textContaining("Fermat's Last Theorem states"),
+        findsOneWidget,
+      );
+      expect(find.textContaining('needs escaping in LaTeX'), findsOneWidget);
     },
   );
 
@@ -3065,21 +3127,21 @@ $f((x))$，$g([x])$，$h(\{x\})$，$\langle a, b \rangle$。
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(r'''
-价格是 $50 到 $100。
-开头空格：$ PaCO_2$。
-结尾空格：$PaCO_2 $。
-跨行：$PaCO_2
+\u4EF7\u683C\u662F $50 \u5230 $100。
+\u5F00\u5934\u7A7A\u683C：$ PaCO_2$。
+\u7ED3\u5C3E\u7A7A\u683C：$PaCO_2 $。
+\u8DE8\u884C：$PaCO_2
 $。
-有效：$PaCO_2$。
+\u6709\u6548：$PaCO_2$。
 '''),
       );
       await tester.pump();
 
       expect(_findMathWidget(), findsOneWidget);
-      expect(find.textContaining(r'$50 到 $100'), findsOneWidget);
+      expect(find.textContaining(r'$50 \u5230 $100'), findsOneWidget);
       expect(find.textContaining(r'$ PaCO_2$'), findsOneWidget);
       expect(find.textContaining(r'$PaCO_2 $'), findsOneWidget);
-      expect(find.textContaining(r'有效：$PaCO_2$'), findsNothing);
+      expect(find.textContaining(r'\u6709\u6548：$PaCO_2$'), findsNothing);
     },
   );
 
@@ -3087,12 +3149,14 @@ $。
     'MarkdownWithCodeHighlight does not span malformed dollar math on one line',
     (tester) async {
       await tester.pumpWidget(
-        _markdownHarness(r'价格 $10 到 $100；开头空格 $ PaCO_2$；结尾空格 $PaCO_2 $。'),
+        _markdownHarness(
+          r'\u4EF7\u683C $10 \u5230 $100；\u5F00\u5934\u7A7A\u683C $ PaCO_2$；\u7ED3\u5C3E\u7A7A\u683C $PaCO_2 $。',
+        ),
       );
       await tester.pump();
 
       expect(_findMathWidget(), findsNothing);
-      expect(find.textContaining(r'$10 到 $100'), findsOneWidget);
+      expect(find.textContaining(r'$10 \u5230 $100'), findsOneWidget);
       expect(find.textContaining(r'$ PaCO_2$'), findsOneWidget);
       expect(find.textContaining(r'$PaCO_2 $'), findsOneWidget);
     },
@@ -3103,11 +3167,11 @@ $。
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(r'''
-## 九、数学公式测试（需渲染器支持）
+## \u4E5D、\u6570\u5B66\u516C\u5F0F\u6D4B\u8BD5（\u9700\u6E32\u67D3\u5668\u652F\u6301）
 
-行内公式：$E = mc^2$
+\u884C\u5185\u516C\u5F0F：$E = mc^2$
 
-块级公式：
+\u5757\u7EA7\u516C\u5F0F：
 
 $$
 \int_{a}^{b} f(x) \, dx = F(b) - F(a)
@@ -3126,7 +3190,7 @@ $$
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness(
-          r'热力学第一定律本质上就是能量守恒定律：$\Delta U = Q - W$。其中 $Q$ 是系统吸收的热量，$W$ 是系统对外做的功，$\Delta U$ 是内能的变化。对于理想气体，其内能只与温度有关，即 $\Delta U = nC_v\Delta T$，其中 $n$ 为物质的量，$C_v$ 为定容摩尔热容。',
+          r'\u70ED\u529B\u5B66\u7B2C\u4E00\u5B9A\u5F8B\u672C\u8D28\u4E0A\u5C31\u662F\u80FD\u91CF\u5B88\u6052\u5B9A\u5F8B：$\Delta U = Q - W$。\u5176\u4E2D $Q$ \u662F\u7CFB\u7EDF\u5438\u6536\u7684\u70ED\u91CF，$W$ \u662F\u7CFB\u7EDF\u5BF9\u5916\u505A\u7684\u529F，$\Delta U$ \u662F\u5185\u80FD\u7684\u53D8\u5316。\u5BF9\u4E8E\u7406\u60F3\u6C14\u4F53，\u5176\u5185\u80FD\u53EA\u4E0E\u6E29\u5EA6\u6709\u5173，\u5373 $\Delta U = nC_v\Delta T$，\u5176\u4E2D $n$ \u4E3A\u7269\u8D28\u7684\u91CF，$C_v$ \u4E3A\u5B9A\u5BB9\u6469\u5C14\u70ED\u5BB9。',
         ),
       );
       await tester.pump();
@@ -3141,7 +3205,10 @@ $$
     'MarkdownWithCodeHighlight keeps unfinished streaming dollar math in math layout',
     (tester) async {
       await tester.pumpWidget(
-        _markdownHarness(r'公式正在输出：$E = mc', streaming: true),
+        _markdownHarness(
+          r'\u516C\u5F0F\u6B63\u5728\u8F93\u51FA：$E = mc',
+          streaming: true,
+        ),
       );
       await tester.pump();
 
@@ -3157,9 +3224,9 @@ $$
 
       await tester.pumpWidget(
         _markdownHarness(r'''
-**举例对比：**
+**\u4E3E\u4F8B\u5BF9\u6BD4：**
 
-- 行内：$\sum_{i=1}^{n} i$
+- \u884C\u5185：$\sum_{i=1}^{n} i$
 ''', streaming: true),
       );
       await tester.pump();
@@ -3269,62 +3336,70 @@ final price = "$12";
     },
   );
 
-  testWidgets('SelectableHighlightView 为已注册语言生成高亮 span', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: SelectableHighlightView(
-            'final value = 1;',
-            language: 'dart',
-            theme: {},
+  testWidgets(
+    'SelectableHighlightView \u4E3A\u5DF2\u6CE8\u518C\u8BED\u8A00\u751F\u6210\u9AD8\u4EAE span',
+    (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SelectableHighlightView(
+              'final value = 1;',
+              language: 'dart',
+              theme: {},
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    final richText = tester.widget<SelectableText>(find.byType(SelectableText));
-    final root = richText.textSpan!;
-    final children = root.children ?? const <InlineSpan>[];
+      final richText = tester.widget<SelectableText>(
+        find.byType(SelectableText),
+      );
+      final root = richText.textSpan!;
+      final children = root.children ?? const <InlineSpan>[];
 
-    expect(children, isNotEmpty);
-    expect(children.length, greaterThan(1));
-  });
+      expect(children, isNotEmpty);
+      expect(children.length, greaterThan(1));
+    },
+  );
 
-  testWidgets('SelectableHighlightView 同内容父级重建时复用高亮 span', (tester) async {
-    late StateSetter rebuild;
+  testWidgets(
+    'SelectableHighlightView \u540C\u5185\u5BB9\u7236\u7EA7\u91CD\u5EFA\u65F6\u590D\u7528\u9AD8\u4EAE span',
+    (tester) async {
+      late StateSetter rebuild;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: StatefulBuilder(
-            builder: (context, setState) {
-              rebuild = setState;
-              return const SelectableHighlightView(
-                'final value = 1;',
-                language: 'dart',
-                theme: {},
-              );
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (context, setState) {
+                rebuild = setState;
+                return const SelectableHighlightView(
+                  'final value = 1;',
+                  language: 'dart',
+                  theme: {},
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    final before = tester
-        .widget<SelectableText>(find.byType(SelectableText))
-        .textSpan!
-        .children;
+      final before = tester
+          .widget<SelectableText>(find.byType(SelectableText))
+          .textSpan!
+          .children;
 
-    rebuild(() {});
-    await tester.pump();
+      rebuild(() {});
+      await tester.pump();
 
-    final after = tester
-        .widget<SelectableText>(find.byType(SelectableText))
-        .textSpan!
-        .children;
+      final after = tester
+          .widget<SelectableText>(find.byType(SelectableText))
+          .textSpan!
+          .children;
 
-    expect(identical(before, after), isTrue);
-  });
+      expect(identical(before, after), isTrue);
+    },
+  );
 
   testWidgets(
     'SelectableHighlightView adds iOS native translation for non-empty selection',
@@ -3624,8 +3699,8 @@ void main() {}
 <html>
 <body>
 <details>
-  <summary>点击展开/折叠内容</summary>
-  <p>这里是可以折叠的内容。</p>
+  <summary>\u70B9\u51FB\u5C55\u5F00/\u6298\u53E0\u5185\u5BB9</summary>
+  <p>\u8FD9\u91CC\u662F\u53EF\u4EE5\u6298\u53E0\u7684\u5185\u5BB9。</p>
 </details>
 </body>
 </html>
@@ -3645,11 +3720,16 @@ void main() {}
       expect(
         find.descendant(
           of: find.byType(SelectableHighlightView),
-          matching: find.textContaining('<summary>点击展开/折叠内容</summary>'),
+          matching: find.textContaining(
+            '<summary>\u70B9\u51FB\u5C55\u5F00/\u6298\u53E0\u5185\u5BB9</summary>',
+          ),
         ),
         findsOneWidget,
       );
-      expect(find.text('点击展开/折叠内容'), findsNothing);
+      expect(
+        find.text('\u70B9\u51FB\u5C55\u5F00/\u6298\u53E0\u5185\u5BB9'),
+        findsNothing,
+      );
       expect(find.byKey(const ValueKey('details-collapsed')), findsNothing);
       expect(find.byKey(const ValueKey('details-expanded')), findsNothing);
     },
@@ -3954,9 +4034,9 @@ press5
       await tester.pumpWidget(
         _markdownHarness('''
 <theater>
-<details><summary>更多信息</summary>隐藏内容</details>
+<details><summary>\u66F4\u591A\u4FE1\u606F</summary>\u9690\u85CF\u5185\u5BB9</details>
 </theater>
-返回 List<String> 给 <username>
+\u8FD4\u56DE List<String> \u7ED9 <username>
 '''),
       );
       await tester.pump();
@@ -3966,21 +4046,33 @@ press5
         findsNothing,
       );
       expect(
-        find.textContaining('返回 List<String> 给 <username>', findRichText: true),
+        find.textContaining(
+          '\u8FD4\u56DE List<String> \u7ED9 <username>',
+          findRichText: true,
+        ),
         findsOneWidget,
       );
-      expect(find.text('更多信息'), findsOneWidget);
-      expect(find.text('隐藏内容', findRichText: true), findsNothing);
+      expect(find.text('\u66F4\u591A\u4FE1\u606F'), findsOneWidget);
+      expect(
+        find.text('\u9690\u85CF\u5185\u5BB9', findRichText: true),
+        findsNothing,
+      );
 
-      await tester.tap(find.text('更多信息'));
+      await tester.tap(find.text('\u66F4\u591A\u4FE1\u606F'));
       await tester.pumpAndSettle();
 
-      expect(find.text('隐藏内容', findRichText: true), findsOneWidget);
+      expect(
+        find.text('\u9690\u85CF\u5185\u5BB9', findRichText: true),
+        findsOneWidget,
+      );
 
-      await tester.tap(find.text('更多信息'));
+      await tester.tap(find.text('\u66F4\u591A\u4FE1\u606F'));
       await tester.pumpAndSettle();
 
-      expect(find.text('隐藏内容', findRichText: true), findsNothing);
+      expect(
+        find.text('\u9690\u85CF\u5185\u5BB9', findRichText: true),
+        findsNothing,
+      );
     },
   );
 
@@ -4359,23 +4451,23 @@ press5
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness('''
-开头文本
+\u5F00\u5934\u6587\u672C
 
 <details>
-<summary>第一层折叠</summary>
+<summary>\u7B2C\u4E00\u5C42\u6298\u53E0</summary>
 
-普通内容...
+\u666E\u901A\u5185\u5BB9...
 
 <details>
-<summary>第二层折叠</summary>
+<summary>\u7B2C\u4E8C\u5C42\u6298\u53E0</summary>
 
-深藏的内容在这里！
+\u6DF1\u85CF\u7684\u5185\u5BB9\u5728\u8FD9\u91CC！
 
 </details>
 
 </details>
 
-结尾文本
+\u7ED3\u5C3E\u6587\u672C
 '''),
       );
       await tester.pump();
@@ -4383,30 +4475,48 @@ press5
       var richTexts = tester.widgetList<RichText>(find.byType(RichText));
       var plainText = richTexts.map((w) => w.text.toPlainText()).join('\n');
 
-      expect(plainText, contains('开头文本'));
-      expect(find.text('第一层折叠'), findsOneWidget);
-      expect(find.text('第二层折叠'), findsNothing);
-      expect(find.text('普通内容...', findRichText: true), findsNothing);
-      expect(find.text('深藏的内容在这里！', findRichText: true), findsNothing);
+      expect(plainText, contains('\u5F00\u5934\u6587\u672C'));
+      expect(find.text('\u7B2C\u4E00\u5C42\u6298\u53E0'), findsOneWidget);
+      expect(find.text('\u7B2C\u4E8C\u5C42\u6298\u53E0'), findsNothing);
+      expect(
+        find.text('\u666E\u901A\u5185\u5BB9...', findRichText: true),
+        findsNothing,
+      );
+      expect(
+        find.text(
+          '\u6DF1\u85CF\u7684\u5185\u5BB9\u5728\u8FD9\u91CC！',
+          findRichText: true,
+        ),
+        findsNothing,
+      );
 
-      await tester.tap(find.text('第一层折叠'));
+      await tester.tap(find.text('\u7B2C\u4E00\u5C42\u6298\u53E0'));
       await tester.pumpAndSettle();
 
       richTexts = tester.widgetList<RichText>(find.byType(RichText));
       plainText = richTexts.map((w) => w.text.toPlainText()).join('\n');
 
-      expect(plainText, contains('普通内容...'));
-      expect(find.text('第二层折叠'), findsOneWidget);
-      expect(find.text('深藏的内容在这里！', findRichText: true), findsNothing);
+      expect(plainText, contains('\u666E\u901A\u5185\u5BB9...'));
+      expect(find.text('\u7B2C\u4E8C\u5C42\u6298\u53E0'), findsOneWidget);
+      expect(
+        find.text(
+          '\u6DF1\u85CF\u7684\u5185\u5BB9\u5728\u8FD9\u91CC！',
+          findRichText: true,
+        ),
+        findsNothing,
+      );
 
-      await tester.tap(find.text('第二层折叠'));
+      await tester.tap(find.text('\u7B2C\u4E8C\u5C42\u6298\u53E0'));
       await tester.pumpAndSettle();
 
       richTexts = tester.widgetList<RichText>(find.byType(RichText));
       plainText = richTexts.map((w) => w.text.toPlainText()).join('\n');
 
-      expect(plainText, contains('深藏的内容在这里！'));
-      expect(plainText, contains('结尾文本'));
+      expect(
+        plainText,
+        contains('\u6DF1\u85CF\u7684\u5185\u5BB9\u5728\u8FD9\u91CC！'),
+      );
+      expect(plainText, contains('\u7ED3\u5C3E\u6587\u672C'));
       expect(plainText, isNot(contains('</details>')));
     },
   );
@@ -4416,7 +4526,7 @@ press5
   ) async {
     await tester.pumpWidget(
       _markdownHarness(
-        '<p>第一段<br>第二行</p><p><a href="https://example.com">链接</a></p>',
+        '<p>First paragraph<br>Second line</p><p><a href="https://example.com">Linked</a></p>',
       ),
     );
     await tester.pump();
@@ -4424,11 +4534,11 @@ press5
     final richTexts = tester.widgetList<RichText>(find.byType(RichText));
     final plainText = richTexts.map((w) => w.text.toPlainText()).join('\n');
 
-    expect(plainText, contains('第一段\n第二行'));
+    expect(plainText, contains('First paragraph\nSecond line'));
     expect(plainText, isNot(contains('<p>')));
     expect(plainText, isNot(contains('<br>')));
     expect(plainText, isNot(contains('<a href=')));
-    expect(find.text('链接'), findsOneWidget);
+    expect(find.text('Linked'), findsOneWidget);
   });
 
   testWidgets('MarkdownWithCodeHighlight normalizes strong weight on Android', (
@@ -4436,11 +4546,15 @@ press5
   ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     try {
-      await tester.pumpWidget(_markdownHarness('这是 **粗体** 文本'));
+      await tester.pumpWidget(
+        _markdownHarness('\u8FD9\u662F **\u7C97\u4F53** \u6587\u672C'),
+      );
       await tester.pump();
 
       final spans = _resolvedTextSpansFromRichText(tester);
-      final strongSpan = spans.singleWhere((span) => span.text == '粗体');
+      final strongSpan = spans.singleWhere(
+        (span) => span.text == '\u7C97\u4F53',
+      );
 
       expect(strongSpan.style.fontWeight, FontWeight.w500);
     } finally {
@@ -4453,9 +4567,9 @@ press5
   ) async {
     await tester.pumpWidget(
       _markdownHarness('''
-<p>这是一个 HTML 段落。</p>
+<p>\u8FD9\u662F\u4E00\u4E2A HTML \u6BB5\u843D。</p>
 
-<p>同一个 HTML 段落里的第一行<br>这里应该换到第二行。</p>
+<p>\u540C\u4E00\u4E2A HTML \u6BB5\u843D\u91CC\u7684\u7B2C\u4E00\u884C<br>\u8FD9\u91CC\u5E94\u8BE5\u6362\u5230\u7B2C\u4E8C\u884C。</p>
 '''),
     );
     await tester.pump();
@@ -4463,8 +4577,20 @@ press5
     final richTexts = tester.widgetList<RichText>(find.byType(RichText));
     final plainText = richTexts.map((w) => w.text.toPlainText()).join('\n');
 
-    expect(plainText, contains('这是一个 HTML 段落。\n\n同一个 HTML 段落里的第一行'));
-    expect(plainText, isNot(contains('这是一个 HTML 段落。\n\n\n同一个 HTML 段落里的第一行')));
+    expect(
+      plainText,
+      contains(
+        '\u8FD9\u662F\u4E00\u4E2A HTML \u6BB5\u843D。\n\n\u540C\u4E00\u4E2A HTML \u6BB5\u843D\u91CC\u7684\u7B2C\u4E00\u884C',
+      ),
+    );
+    expect(
+      plainText,
+      isNot(
+        contains(
+          '\u8FD9\u662F\u4E00\u4E2A HTML \u6BB5\u843D。\n\n\n\u540C\u4E00\u4E2A HTML \u6BB5\u843D\u91CC\u7684\u7B2C\u4E00\u884C',
+        ),
+      ),
+    );
   });
 
   testWidgets('MarkdownWithCodeHighlight keeps p to markdown spacing compact', (
@@ -4472,9 +4598,9 @@ press5
   ) async {
     await tester.pumpWidget(
       _markdownHarness('''
-<p>同一个 HTML 段落里的第一行<br>这里应该换到第二行。</p>
+<p>\u540C\u4E00\u4E2A HTML \u6BB5\u843D\u91CC\u7684\u7B2C\u4E00\u884C<br>\u8FD9\u91CC\u5E94\u8BE5\u6362\u5230\u7B2C\u4E8C\u884C。</p>
 
-这里是普通 Markdown 链接：[Kelivo GitHub](https://github.com/kelivo/Kelivo)
+\u8FD9\u91CC\u662F\u666E\u901A Markdown \u94FE\u63A5：[Kelivo GitHub](https://github.com/kelivo/Kelivo)
 '''),
     );
     await tester.pump();
@@ -4482,33 +4608,59 @@ press5
     final richTexts = tester.widgetList<RichText>(find.byType(RichText));
     final plainText = richTexts.map((w) => w.text.toPlainText()).join('\n');
 
-    expect(plainText, contains('这里应该换到第二行。\n\n这里是普通 Markdown 链接'));
-    expect(plainText, isNot(contains('这里应该换到第二行。\n\n\n这里是普通 Markdown 链接')));
+    expect(
+      plainText,
+      contains(
+        '\u8FD9\u91CC\u5E94\u8BE5\u6362\u5230\u7B2C\u4E8C\u884C。\n\n\u8FD9\u91CC\u662F\u666E\u901A Markdown \u94FE\u63A5',
+      ),
+    );
+    expect(
+      plainText,
+      isNot(
+        contains(
+          '\u8FD9\u91CC\u5E94\u8BE5\u6362\u5230\u7B2C\u4E8C\u884C。\n\n\n\u8FD9\u91CC\u662F\u666E\u901A Markdown \u94FE\u63A5',
+        ),
+      ),
+    );
   });
 
   testWidgets('MarkdownWithCodeHighlight animates details collapse', (
     tester,
   ) async {
     await tester.pumpWidget(
-      _markdownHarness('<details><summary>更多信息</summary>隐藏内容</details>'),
+      _markdownHarness(
+        '<details><summary>\u66F4\u591A\u4FE1\u606F</summary>\u9690\u85CF\u5185\u5BB9</details>',
+      ),
     );
     await tester.pump();
 
-    expect(find.text('隐藏内容', findRichText: true), findsNothing);
+    expect(
+      find.text('\u9690\u85CF\u5185\u5BB9', findRichText: true),
+      findsNothing,
+    );
 
-    await tester.tap(find.text('更多信息'));
+    await tester.tap(find.text('\u66F4\u591A\u4FE1\u606F'));
     await tester.pumpAndSettle();
 
-    expect(find.text('隐藏内容', findRichText: true), findsOneWidget);
+    expect(
+      find.text('\u9690\u85CF\u5185\u5BB9', findRichText: true),
+      findsOneWidget,
+    );
 
-    await tester.tap(find.text('更多信息'));
+    await tester.tap(find.text('\u66F4\u591A\u4FE1\u606F'));
     await tester.pump(const Duration(milliseconds: 50));
 
-    expect(find.text('隐藏内容', findRichText: true), findsOneWidget);
+    expect(
+      find.text('\u9690\u85CF\u5185\u5BB9', findRichText: true),
+      findsOneWidget,
+    );
 
     await tester.pumpAndSettle();
 
-    expect(find.text('隐藏内容', findRichText: true), findsNothing);
+    expect(
+      find.text('\u9690\u85CF\u5185\u5BB9', findRichText: true),
+      findsNothing,
+    );
   });
 
   testWidgets('MarkdownWithCodeHighlight stretches short details body', (
@@ -4516,7 +4668,7 @@ press5
   ) async {
     await tester.pumpWidget(
       _markdownHarness(
-        '<details open><summary>短内容</summary>短</details>',
+        '<details open><summary>\u77ED\u5185\u5BB9</summary>\u77ED</details>',
         width: 360,
       ),
     );
@@ -4542,7 +4694,7 @@ press5
     ) async {
       await tester.pumpWidget(
         _markdownHarness(
-          '<details><summary>更多信息</summary>隐藏内容</details>',
+          '<details><summary>\u66F4\u591A\u4FE1\u606F</summary>\u9690\u85CF\u5185\u5BB9</details>',
           darkTheme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.indigo,
@@ -4563,7 +4715,9 @@ press5
       tester,
     ) async {
       await tester.pumpWidget(
-        _markdownHarness('<details><summary>更多信息</summary>隐藏内容</details>'),
+        _markdownHarness(
+          '<details><summary>\u66F4\u591A\u4FE1\u606F</summary>\u9690\u85CF\u5185\u5BB9</details>',
+        ),
       );
       await tester.pump();
 
@@ -4613,15 +4767,15 @@ press5
     (tester) async {
       await tester.pumpWidget(
         _markdownHarness('''
-这里是 HTML 链接：<a href="https://example.com">Example HTML link</a>
+\u8FD9\u91CC\u662F HTML \u94FE\u63A5：<a href="https://example.com">Example HTML link</a>
 
 <details>
-<summary>点击展开：次要信息</summary>
+<summary>\u70B9\u51FB\u5C55\u5F00：\u6B21\u8981\u4FE1\u606F</summary>
 
-这里是折叠内容的第一段。
+\u8FD9\u91CC\u662F\u6298\u53E0\u5185\u5BB9\u7684\u7B2C\u4E00\u6BB5。
 
-- details 内的 Markdown 列表
-- details 内的 **加粗文本**
+- details \u5185\u7684 Markdown \u5217\u8868
+- details \u5185\u7684 **\u52A0\u7C97\u6587\u672C**
 
 ```dart
 void main() {
@@ -4631,28 +4785,50 @@ void main() {
 </details>
 
 <details open>
-<summary>默认展开：open 属性</summary>
+<summary>\u9ED8\u8BA4\u5C55\u5F00：open \u5C5E\u6027</summary>
 
-这一块带有 `open` 属性，初始状态应该直接展开。
+\u8FD9\u4E00\u5757\u5E26\u6709 `open` \u5C5E\u6027，\u521D\u59CB\u72B6\u6001\u5E94\u8BE5\u76F4\u63A5\u5C55\u5F00。
 </details>
 '''),
       );
       await tester.pump();
 
       expect(find.text('Example HTML link'), findsOneWidget);
-      expect(find.text('点击展开：次要信息'), findsOneWidget);
-      expect(find.text('默认展开：open 属性'), findsOneWidget);
-      expect(find.text('这一块带有 ', findRichText: true), findsNothing);
-      expect(find.text('这里是折叠内容的第一段。', findRichText: true), findsNothing);
+      expect(
+        find.text('\u70B9\u51FB\u5C55\u5F00：\u6B21\u8981\u4FE1\u606F'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('\u9ED8\u8BA4\u5C55\u5F00：open \u5C5E\u6027'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('\u8FD9\u4E00\u5757\u5E26\u6709 ', findRichText: true),
+        findsNothing,
+      );
+      expect(
+        find.text(
+          '\u8FD9\u91CC\u662F\u6298\u53E0\u5185\u5BB9\u7684\u7B2C\u4E00\u6BB5。',
+          findRichText: true,
+        ),
+        findsNothing,
+      );
 
-      await tester.tap(find.text('点击展开：次要信息'));
+      await tester.tap(
+        find.text('\u70B9\u51FB\u5C55\u5F00：\u6B21\u8981\u4FE1\u606F'),
+      );
       await tester.pumpAndSettle();
 
       final richTexts = tester.widgetList<RichText>(find.byType(RichText));
       final plainText = richTexts.map((w) => w.text.toPlainText()).join('\n');
 
-      expect(plainText, contains('这里是折叠内容的第一段。'));
-      expect(plainText, contains('details 内的 Markdown 列表'));
+      expect(
+        plainText,
+        contains(
+          '\u8FD9\u91CC\u662F\u6298\u53E0\u5185\u5BB9\u7684\u7B2C\u4E00\u6BB5。',
+        ),
+      );
+      expect(plainText, contains('details \u5185\u7684 Markdown \u5217\u8868'));
       expect(
         find.textContaining("print('code block inside details');"),
         findsOneWidget,
@@ -4859,22 +5035,23 @@ void main() {
     (tester) async {
       final padding = List<String>.generate(
         12,
-        (index) => '前置段落$index：${'这是一段用于进入增量渲染路径的普通正文。' * 3}',
+        (index) =>
+            '\u524D\u7F6E\u6BB5\u843D$index：${'\u8FD9\u662F\u4E00\u6BB5\u7528\u4E8E\u8FDB\u5165\u589E\u91CF\u6E32\u67D3\u8DEF\u5F84\u7684\u666E\u901A\u6B63\u6587。' * 3}',
       ).join('\n\n');
       expect(padding.length, greaterThanOrEqualTo(512));
       const paragraphs = <String>[
-        '*被窝裹住*',
-        '*反而笑得更甜*',
-        '*懒懒地、黏糊糊地*',
-        '对……',
-        '*摊平自己*',
-        '*眯着眼*',
-        '还要继续说。',
-        '*伸了个懒腰*',
-        '*然后理直气壮*',
-        '你养我。',
-        '*气音*',
-        '……我要吃了。',
+        '*\u88AB\u7A9D\u88F9\u4F4F*',
+        '*\u53CD\u800C\u7B11\u5F97\u66F4\u751C*',
+        '*\u61D2\u61D2\u5730、\u9ECF\u7CCA\u7CCA\u5730*',
+        '\u5BF9……',
+        '*\u644A\u5E73\u81EA\u5DF1*',
+        '*\u772F\u7740\u773C*',
+        '\u8FD8\u8981\u7EE7\u7EED\u8BF4。',
+        '*\u4F38\u4E86\u4E2A\u61D2\u8170*',
+        '*\u7136\u540E\u7406\u76F4\u6C14\u58EE*',
+        '\u4F60\u517B\u6211。',
+        '*\u6C14\u97F3*',
+        '……\u6211\u8981\u5403\u4E86。',
       ];
       final text = ValueNotifier<String>(padding);
 

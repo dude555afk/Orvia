@@ -6717,8 +6717,8 @@ class _AskUserSubmitButton extends StatelessWidget {
       padding: EdgeInsets.zero,
       onTap: onTap,
       child: Container(
-        height: 38,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
+        constraints: const BoxConstraints(minHeight: 38),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(14)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -6731,14 +6731,17 @@ class _AskUserSubmitButton extends StatelessWidget {
                   : cs.onSurface.withValues(alpha: 0.38),
             ),
             const SizedBox(width: 7),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: AppFontWeights.heavy,
-                color: enabled
-                    ? cs.onPrimary
-                    : cs.onSurface.withValues(alpha: 0.38),
+            Flexible(
+              child: Text(
+                label,
+                softWrap: true,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: AppFontWeights.heavy,
+                  color: enabled
+                      ? cs.onPrimary
+                      : cs.onSurface.withValues(alpha: 0.38),
+                ),
               ),
             ),
           ],
@@ -7068,7 +7071,7 @@ class _ReasoningSectionState extends State<_ReasoningSection> {
       ),
     );
 
-    // 抽公共样式，继承当前 DefaultTextStyle（从而继承正确的颜色）
+    // \u62BD\u516C\u5171\u6837\u5F0F，\u7EE7\u627F\u5F53\u524D DefaultTextStyle（\u4ECE\u800C\u7EE7\u627F\u6B63\u786E\u7684\u989C\u8272）
     final TextStyle baseStyle = DefaultTextStyle.of(
       context,
     ).style.copyWith(fontSize: 12.5, height: 1.32);
@@ -7089,7 +7092,7 @@ class _ReasoningSectionState extends State<_ReasoningSection> {
     final bool isLoading = loading;
     final display = _sanitize(widget.text);
 
-    // 未加载：不要再指定 color: fg，让它继承和"加载中"相同的颜色
+    // \u672A\u52A0\u8F7D：\u4E0D\u8981\u518D\u6307\u5B9A color: fg，\u8BA9\u5B83\u7EE7\u627F\u548C"\u52A0\u8F7D\u4E2D"\u76F8\u540C\u7684\u989C\u8272
     Widget reasoningContent(String text) {
       if (enableReasoningMarkdown) {
         return RepaintBoundary(

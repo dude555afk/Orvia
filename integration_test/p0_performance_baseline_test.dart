@@ -52,11 +52,13 @@ void main() {
       timings.clear();
       const block =
           '# Stream\n```dart\nvoid main() {}\n```\n'
-          '|列|value|\n|-|-|\n|中文|English|\n'
+          '|\u5217|value|\n|-|-|\n|\u4E2D\u6587|English|\n'
           '```mermaid\ngraph TD; A-->B;\n```\n';
       final target = StringBuffer(block);
       while (target.length < 1 << 20) {
-        target.writeln('Streaming plain text 中文 English seed=20260711.');
+        target.writeln(
+          'Streaming plain text \u4E2D\u6587 English seed=20260711.',
+        );
       }
       final content = target.toString().substring(0, 1 << 20);
       const chunks = 32;
@@ -133,9 +135,9 @@ Widget _markdownSurface(ValueListenable<String> markdown) {
 }
 
 Widget _rendererStressSurface(Uint8List png) {
-  final table = StringBuffer('|index|中文|value|\n|-:|:-|:-|\n');
+  final table = StringBuffer('|index|\u4E2D\u6587|value|\n|-:|:-|:-|\n');
   for (var index = 0; index < 1000; index++) {
-    table.writeln('|$index|行|value-$index|');
+    table.writeln('|$index|\u884C|value-$index|');
   }
   final code = StringBuffer('```dart\n');
   for (var index = 0; index < 10000; index++) {

@@ -32,14 +32,16 @@ void main() {
         _entry(
           id: 'mem_voice01',
           type: MemoryType.voice,
-          content: '用户偏好直接、详细、可落地的中文说明。',
+          content:
+              '\u7528\u6237\u504F\u597D\u76F4\u63A5、\u8BE6\u7EC6、\u53EF\u843D\u5730\u7684\u4E2D\u6587\u8BF4\u660E。',
           createdAt: DateTime(2026, 8, 4, 10),
           updatedAt: DateTime(2026, 8, 4, 10),
         ),
         _entry(
           id: 'mem_id001',
           type: MemoryType.identity,
-          content: '用户是大学生，长期参与软件开发项目。',
+          content:
+              '\u7528\u6237\u662F\u5927\u5B66\u751F，\u957F\u671F\u53C2\u4E0E\u8F6F\u4EF6\u5F00\u53D1\u9879\u76EE。',
           createdAt: DateTime(2026, 8, 1, 9),
           updatedAt: DateTime(2026, 8, 7, 12),
         ),
@@ -48,21 +50,24 @@ void main() {
           type: MemoryType.workflow,
           scope: MemoryScope.assistant,
           assistantId: 'a1',
-          content: '回答代码问题时优先给可直接运行的 Dart 示例。',
+          content:
+              '\u56DE\u7B54\u4EE3\u7801\u95EE\u9898\u65F6\u4F18\u5148\u7ED9\u53EF\u76F4\u63A5\u8FD0\u884C\u7684 Dart \u793A\u4F8B。',
           createdAt: DateTime(2026, 8, 5, 8),
           updatedAt: DateTime(2026, 8, 5, 8),
         ),
         _entry(
           id: 'mem_wf001',
           type: MemoryType.workflow,
-          content: '用户开发 Flutter 应用时重视跨平台与长列表性能。',
+          content:
+              '\u7528\u6237\u5F00\u53D1 Flutter \u5E94\u7528\u65F6\u91CD\u89C6\u8DE8\u5E73\u53F0\u4E0E\u957F\u5217\u8868\u6027\u80FD。',
           createdAt: DateTime(2026, 8, 3, 8),
           updatedAt: DateTime(2026, 8, 6, 15),
         ),
         _entry(
           id: 'mem_ins01',
           type: MemoryType.instruction,
-          content: '不要把已经回答过的问题再问一遍。',
+          content:
+              '\u4E0D\u8981\u628A\u5DF2\u7ECF\u56DE\u7B54\u8FC7\u7684\u95EE\u9898\u518D\u95EE\u4E00\u904D。',
           createdAt: DateTime(2026, 8, 1, 8),
           updatedAt: DateTime(2026, 8, 1, 8),
         ),
@@ -80,7 +85,7 @@ void main() {
         ),
         UserProfileField(
           key: 'custom.company',
-          value: 'Kelivo',
+          value: 'Orvia',
           updatedAt: DateTime(2026, 8, 2),
         ),
       ];
@@ -92,12 +97,12 @@ void main() {
 
       final profile = MemoryBlockBuilder.buildProfileBlock(
         fields: fields,
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
       );
       final memory = MemoryBlockBuilder.buildMemoryBlock(
         visible: entries,
         totalByType: totals,
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: 10,
       );
 
@@ -105,23 +110,23 @@ void main() {
 <user_profile>
 <preferred_name>Psyche</preferred_name>
 <preferred_language>zh-Hans</preferred_language>
-<custom name="company">Kelivo</custom>
+<custom name="company">Orvia</custom>
 </user_profile>
 ''');
 
       expect(memory, '''
 <user_memory type="identity">
-- [2026-08-07] 用户是大学生，长期参与软件开发项目。
+- [2026-08-07] \u7528\u6237\u662F\u5927\u5B66\u751F，\u957F\u671F\u53C2\u4E0E\u8F6F\u4EF6\u5F00\u53D1\u9879\u76EE。
 </user_memory>
 <user_memory type="workflow">
-- [2026-08-06] 用户开发 Flutter 应用时重视跨平台与长列表性能。
-- [2026-08-05] (assistant) 回答代码问题时优先给可直接运行的 Dart 示例。
+- [2026-08-06] \u7528\u6237\u5F00\u53D1 Flutter \u5E94\u7528\u65F6\u91CD\u89C6\u8DE8\u5E73\u53F0\u4E0E\u957F\u5217\u8868\u6027\u80FD。
+- [2026-08-05] (assistant) \u56DE\u7B54\u4EE3\u7801\u95EE\u9898\u65F6\u4F18\u5148\u7ED9\u53EF\u76F4\u63A5\u8FD0\u884C\u7684 Dart \u793A\u4F8B。
 </user_memory>
 <user_memory type="voice">
-- [2026-08-04] 用户偏好直接、详细、可落地的中文说明。
+- [2026-08-04] \u7528\u6237\u504F\u597D\u76F4\u63A5、\u8BE6\u7EC6、\u53EF\u843D\u5730\u7684\u4E2D\u6587\u8BF4\u660E。
 </user_memory>
 <user_memory type="instruction">
-- [2026-08-01] 不要把已经回答过的问题再问一遍。
+- [2026-08-01] \u4E0D\u8981\u628A\u5DF2\u7ECF\u56DE\u7B54\u8FC7\u7684\u95EE\u9898\u518D\u95EE\u4E00\u904D。
 </user_memory>
 ''');
     });
@@ -174,7 +179,7 @@ void main() {
       expect(
         MemoryBlockBuilder.buildProfileBlock(
           fields: const [],
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         ),
         '<user_profile/>\n',
       );
@@ -187,7 +192,7 @@ void main() {
               updatedAt: DateTime(2026, 1, 1),
             ),
           ],
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         ),
         '<user_profile/>\n',
       );
@@ -197,7 +202,7 @@ void main() {
       final out = MemoryBlockBuilder.buildMemoryBlock(
         visible: const [],
         totalByType: const {},
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: 10,
       );
       expect(out, '''
@@ -222,7 +227,7 @@ void main() {
       final full = MemoryBlockBuilder.buildMemoryBlock(
         visible: atLimit,
         totalByType: {MemoryType.identity: maxItems},
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: maxItems,
       );
       expect(full.contains('mode="summary"'), isFalse);
@@ -233,7 +238,7 @@ void main() {
       final summary = MemoryBlockBuilder.buildMemoryBlock(
         visible: overLimit,
         totalByType: {MemoryType.identity: maxItems + 1},
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: maxItems,
       );
       expect(
@@ -243,7 +248,7 @@ void main() {
         isTrue,
       );
       expect('\n- ['.allMatches(summary).length, maxItems);
-      expect(summary.contains(MemoryPrompts.moreHintZh), isTrue);
+      expect(summary.contains(MemoryPrompts.moreHintEn), isTrue);
       // Newest among 0..10 is index 10; take 10 newest = 1..10, then
       // re-sort by createdAt ASC → still 1..10 chronologically.
       expect(summary.contains('entry 1'), isTrue);
@@ -300,7 +305,7 @@ void main() {
       final full = MemoryBlockBuilder.buildMemoryBlock(
         visible: fifty,
         totalByType: {MemoryType.identity: 50},
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: 50,
       );
       expect(full.contains('mode="summary"'), isFalse);
@@ -310,7 +315,7 @@ void main() {
       final summary = MemoryBlockBuilder.buildMemoryBlock(
         visible: fiftyOne,
         totalByType: {MemoryType.identity: 51},
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: 50,
       );
       expect(
@@ -369,18 +374,18 @@ void main() {
         };
         final profile = MemoryBlockBuilder.buildProfileBlock(
           fields: const [],
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         );
         final m1 = MemoryBlockBuilder.buildMemoryBlock(
           visible: [e1, e2],
           totalByType: totals,
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           maxItems: 10,
         );
         final m2 = MemoryBlockBuilder.buildMemoryBlock(
           visible: [e2, e1],
           totalByType: totals,
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           maxItems: 10,
         );
         expect(
@@ -400,7 +405,7 @@ void main() {
             e2,
           ],
           totalByType: totals,
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           maxItems: 10,
         );
         expect(
@@ -408,7 +413,7 @@ void main() {
           isNot(MemoryBlockBuilder.hashBlocks(profile, m1)),
         );
 
-        // Language affects moreHint only in summary mode.
+        // Prompt language aliases now share the same English-only output.
         final many = List.generate(
           31,
           (i) => _entry(
@@ -418,21 +423,21 @@ void main() {
             updatedAt: DateTime(2026, 1, 1).add(Duration(hours: i)),
           ),
         );
-        final zh = MemoryBlockBuilder.buildMemoryBlock(
+        final first = MemoryBlockBuilder.buildMemoryBlock(
           visible: many,
           totalByType: {MemoryType.identity: 31},
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           maxItems: 10,
         );
-        final en = MemoryBlockBuilder.buildMemoryBlock(
+        final second = MemoryBlockBuilder.buildMemoryBlock(
           visible: many,
           totalByType: {MemoryType.identity: 31},
           lang: MemoryPromptLang.en,
           maxItems: 10,
         );
         expect(
-          MemoryBlockBuilder.hashBlocks(profile, zh),
-          isNot(MemoryBlockBuilder.hashBlocks(profile, en)),
+          MemoryBlockBuilder.hashBlocks(profile, first),
+          MemoryBlockBuilder.hashBlocks(profile, second),
         );
       },
     );
@@ -451,9 +456,9 @@ void main() {
         MemoryBlockBuilder.buildFullSnapshotPrefix(
           profile,
           memory,
-          MemoryPromptLang.zh,
+          MemoryPromptLang.en,
         ),
-        '${MemoryPrompts.introFullZh}\n$profile$memory\n',
+        '${MemoryPrompts.introFullEn}\n$profile$memory\n',
       );
     });
   });
@@ -463,21 +468,23 @@ void main() {
       final prefix = MemoryBlockBuilder.buildFullSnapshotPrefix(
         MemoryBlockBuilder.buildProfileBlock(
           fields: const [],
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         ),
         MemoryBlockBuilder.buildMemoryBlock(
           visible: const [],
           totalByType: const {},
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           maxItems: 10,
         ),
-        MemoryPromptLang.zh,
+        MemoryPromptLang.en,
       );
-      final split = MemoryBlockBuilder.splitInjectedPrefix('$prefix你好');
+      final split = MemoryBlockBuilder.splitInjectedPrefix(
+        '$prefix\u4F60\u597D',
+      );
       expect(split, isNotNull);
       expect(split!.kind, 'full');
       expect(split.prefix, prefix);
-      expect(split.rest, '你好');
+      expect(split.rest, '\u4F60\u597D');
     });
 
     test('splits a legacy update snapshot from the user turn', () {
@@ -509,21 +516,23 @@ void main() {
 
     test('legacy summary payload without shown still splits', () {
       final prefix =
-          '${MemoryPrompts.introFullZh}\n'
+          '${MemoryPrompts.introFullEn}\n'
           '<user_profile/>\n'
           '<user_memory type="identity" mode="summary" total="31">\n'
           '- [2026-01-01] old entry\n'
-          '${MemoryPrompts.moreHintZh}\n'
+          '${MemoryPrompts.moreHintEn}\n'
           '</user_memory>\n'
           '<user_memory type="workflow"/>\n'
           '<user_memory type="voice"/>\n'
           '<user_memory type="instruction"/>\n'
           '\n';
-      final split = MemoryBlockBuilder.splitInjectedPrefix('$prefix你好');
+      final split = MemoryBlockBuilder.splitInjectedPrefix(
+        '$prefix\u4F60\u597D',
+      );
       expect(split, isNotNull);
       expect(split!.kind, 'full');
       expect(split.prefix, prefix);
-      expect(split.rest, '你好');
+      expect(split.rest, '\u4F60\u597D');
     });
   });
 }

@@ -250,13 +250,13 @@ void main() {
       mounts: const [],
       cwd: '/workspace',
     );
-    // '中文' is e4 b8 ad e6 96 87 — split so no chunk is valid UTF-8 alone.
+    // '\u4E2D\u6587' is e4 b8 ad e6 96 87 — split so no chunk is valid UTF-8 alone.
     runtime.lastPty!.emit([0xe4, 0xb8]);
     runtime.lastPty!.emit([0xad, 0xe6, 0x96]);
     runtime.lastPty!.emit([0x87]);
     await flush();
     final text = session.terminal.buffer.getText();
-    expect(text, contains('中文'));
+    expect(text, contains('\u4E2D\u6587'));
     expect(text, isNot(contains('\uFFFD')));
   });
 

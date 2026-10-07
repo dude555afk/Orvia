@@ -62,7 +62,7 @@ void main() {
             ],
             child: MaterialApp(
               theme: buildLightTheme(null),
-              locale: const Locale('zh'),
+              locale: const Locale('en'),
               supportedLocales: AppLocalizations.supportedLocales,
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               home: Scaffold(
@@ -78,7 +78,7 @@ void main() {
         );
         await tester.tap(find.text('open'));
         await tester.pumpAndSettle();
-        expect(find.text('隐私模式'), findsOneWidget);
+        expect(find.text('Privacy mode'), findsOneWidget);
         await tester.tap(
           find.byKey(const ValueKey('environment-variable-add')),
         );
@@ -99,7 +99,7 @@ void main() {
         await tester.enterText(nameField, 'API_KEY');
         await tester.enterText(valueField, 'private-token-123');
         await tester.runAsync(() async {
-          await tester.tap(find.text('保存'));
+          await tester.tap(find.text('Save'));
           await env.preferences.flushPendingWrites();
           await Future<void>.delayed(const Duration(milliseconds: 100));
         });
@@ -108,7 +108,7 @@ void main() {
         expect(find.text('private-token-123'), findsNothing);
         final row = find.byKey(const ValueKey('environment-variable-API_KEY'));
         await tester.tap(
-          find.descendant(of: row, matching: find.byTooltip('显示')),
+          find.descendant(of: row, matching: find.byTooltip('Show')),
         );
         await tester.pumpAndSettle();
         expect(find.text('private-token-123'), findsOneWidget);
@@ -125,7 +125,7 @@ void main() {
         expect(tester.widget<TextField>(valueField).obscureText, isFalse);
         await tester.enterText(nameField, 'NEW_KEY');
         await tester.runAsync(() async {
-          await tester.tap(find.text('保存'));
+          await tester.tap(find.text('Save'));
           await Future<void>.delayed(const Duration(milliseconds: 100));
         });
         await tester.pumpAndSettle();

@@ -99,7 +99,7 @@ void main() {
     }
 
     for (final chunks in const [
-      ['Paragraph ', '**bold**', ' 中文', ', words.', ' and more'],
+      ['Paragraph ', '**bold**', ' \u4E2D\u6587', ', words.', ' and more'],
       ['Paragraph *unfinished', ' grows', '*', ' normal'],
       ['Paragraph [link', ' label', '](https://example.com)', ' text'],
       ['Paragraph\n#', ' heading', '\n', 'body'],
@@ -108,7 +108,14 @@ void main() {
       ['Paragraph\n1', '.', ' item', '\n2. another'],
       ['Paragraph\n-', ' item', '\n', 'next'],
       ['Paragraph ```', 'code', '```', ' tail'],
-      ['中文', '追加', '。', '继续', '**加粗**', '后续'],
+      [
+        '\u4E2D\u6587',
+        '\u8FFD\u52A0',
+        '。',
+        '\u7EE7\u7EED',
+        '**\u52A0\u7C97**',
+        '\u540E\u7EED',
+      ],
       ['Paragraph <u>under', 'lined text', '</u>', ' normal'],
       ['Paragraph \\', '#', ' escaped'],
       ['Paragraph **bold**', '*', ' tail', '**', ' more'],

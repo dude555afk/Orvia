@@ -145,7 +145,7 @@ void main() {
       ],
       child: MaterialApp(
         theme: buildLightTheme(null),
-        locale: const Locale('zh'),
+        locale: const Locale('en'),
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         home: home,
@@ -259,7 +259,12 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('download-source-tuna')));
       expect(installer.calls, 0);
       final save = find.byKey(const ValueKey('download-source-save'));
-      await tester.ensureVisible(save);
+      await tester.scrollUntilVisible(
+        save,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pumpAndSettle();
       await tester.tap(save);
       await tester.runAsync(
         () async => Future<void>.delayed(const Duration(milliseconds: 30)),
@@ -295,11 +300,19 @@ void main() {
       });
       await pump(tester, const Scaffold(body: EnvironmentPane()));
       await tester.pumpAndSettle();
-      expect(find.textContaining('请重新安装沙盒后使用'), findsOneWidget);
+      expect(
+        find.textContaining('Reinstall the sandbox to continue'),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(EnvironmentPane.retryKey));
       await tester.pumpAndSettle();
       final save = find.byKey(const ValueKey('download-source-save'));
-      await tester.ensureVisible(save);
+      await tester.scrollUntilVisible(
+        save,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pumpAndSettle();
       await tester.tap(save);
       await tester.runAsync(
         () async => Future<void>.delayed(const Duration(milliseconds: 30)),
@@ -309,9 +322,14 @@ void main() {
         () async => Future<void>.delayed(const Duration(milliseconds: 30)),
       );
       await tester.pumpAndSettle();
-      expect(find.textContaining('更换会替换当前环境内的软件包和文件'), findsOneWidget);
+      expect(
+        find.textContaining(
+          'This replaces installed packages and files inside the current environment',
+        ),
+        findsOneWidget,
+      );
       expect(installer.calls, 0);
-      await tester.tap(find.text('取消').last);
+      await tester.tap(find.text('Cancel').last);
       await tester.pumpAndSettle();
       expect(installer.calls, 0);
       await tester.runAsync(() async {
@@ -353,16 +371,26 @@ void main() {
         'file:///tmp/rootfs.tar.gz',
       );
       final save = find.byKey(const ValueKey('download-source-save'));
-      await tester.ensureVisible(save);
+      await tester.scrollUntilVisible(
+        save,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pumpAndSettle();
       await tester.tap(save);
       await tester.pumpAndSettle();
       expect(env.downloadSource, RootfsDownloadSource.automatic);
-      expect(find.text('请输入有效的 HTTP 或 HTTPS 链接。'), findsOneWidget);
+      expect(find.text('Enter a valid HTTP or HTTPS URL.'), findsOneWidget);
       await tester.enterText(
         find.byType(TextField),
         'https://mirror.test/image.tar.gz?token=x%2Fy',
       );
-      await tester.ensureVisible(save);
+      await tester.scrollUntilVisible(
+        save,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pumpAndSettle();
       await tester.tap(save);
       await tester.runAsync(
         () async => Future<void>.delayed(const Duration(milliseconds: 30)),
@@ -447,8 +475,8 @@ void main() {
           service.status(EnvironmentDependency.python),
           DependencyStatus.installed,
         );
-        expect(find.text('已安装'), findsOneWidget);
-        expect(find.text('安装日志'), findsOneWidget);
+        expect(find.text('Installed'), findsOneWidget);
+        expect(find.text('Installation log'), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
       variant: TargetPlatformVariant.only(platform),

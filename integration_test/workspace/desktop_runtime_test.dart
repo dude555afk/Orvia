@@ -102,13 +102,21 @@ Future<void> _utf8RoundTrip(
   DesktopProcessRuntime runtime,
   Directory cwd,
 ) async {
-  File(p.join(cwd.path, '中文名.txt')).writeAsStringSync('ok\n');
+  File(p.join(cwd.path, '\u4E2D\u6587\u540D.txt')).writeAsStringSync('ok\n');
   final printfEvents = await _collect(
     runtime,
-    _req(runId: 'printf-zh', command: r"printf '中文\n'", cwd: cwd.path),
+    _req(
+      runId: 'printf-zh',
+      command:
+          r"printf '"
+          '\u4E2D'
+          '\u6587'
+          r"\n'",
+      cwd: cwd.path,
+    ),
   );
   final printfText = utf8.decode(_stdout(printfEvents));
-  expect(printfText, contains('中文'));
+  expect(printfText, contains('\u4E2D\u6587'));
   expect(printfText, isNot(contains('\uFFFD')));
   expect(_singleExit(printfEvents).exitCode, 0);
 
@@ -117,7 +125,7 @@ Future<void> _utf8RoundTrip(
     _req(runId: 'ls-zh', command: 'ls', cwd: cwd.path),
   );
   final lsText = utf8.decode(_stdout(lsEvents));
-  expect(lsText, contains('中文名.txt'));
+  expect(lsText, contains('\u4E2D\u6587\u540D.txt'));
   expect(lsText, isNot(contains('\uFFFD')));
 }
 
@@ -308,7 +316,7 @@ Future<void> _toolsEndToEnd({
   final written = _jsonOf(
     await tools.handle(ctx, 'write_file', {
       'path': note,
-      'content': 'hello world\n中文 needle\n',
+      'content': 'hello world\n\u4E2D\u6587 needle\n',
     }, toolCallId: 'write-note'),
   );
   expect(written['ok'], isTrue);
@@ -320,7 +328,7 @@ Future<void> _toolsEndToEnd({
     }, toolCallId: 'read-note'),
   );
   expect(read.content, contains('hello world'));
-  expect(read.content, contains('中文 needle'));
+  expect(read.content, contains('\u4E2D\u6587 needle'));
 
   final exact = await tools.handle(ctx, 'edit_file', {
     'path': note,
@@ -378,11 +386,11 @@ Future<void> _toolsEndToEnd({
 
   final grep = _client(
     await tools.handle(ctx, 'grep', {
-      'pattern': '中文',
+      'pattern': '\u4E2D\u6587',
       'path': hostRoot.path,
     }, toolCallId: 'grep-zh'),
   ).content;
-  expect(grep, contains('中文'));
+  expect(grep, contains('\u4E2D\u6587'));
   expect(grep, contains('note.txt'));
 
   // A workspace under $TMPDIR makes a single `../outside.txt` land in the

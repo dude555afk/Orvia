@@ -434,10 +434,12 @@ printf 'COPY_OK\n'
     });
 
     iosTest('4. UTF-8 printf and filename have no U+FFFD', (tester) async {
-      final result = await runCmd("printf '中文\\n'; touch 中文名.txt; ls");
+      final result = await runCmd(
+        "printf '\u4E2D\u6587\\n'; touch \u4E2D\u6587\u540D.txt; ls",
+      );
       expect(result.exit.exitCode, 0);
-      expect(result.stdout, contains('中文'));
-      expect(result.stdout, contains('中文名.txt'));
+      expect(result.stdout, contains('\u4E2D\u6587'));
+      expect(result.stdout, contains('\u4E2D\u6587\u540D.txt'));
       expect(result.stdout, isNot(contains('\uFFFD')));
       expect(result.stderr, isNot(contains('\uFFFD')));
     });

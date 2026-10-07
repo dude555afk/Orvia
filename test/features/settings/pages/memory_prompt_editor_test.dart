@@ -66,10 +66,10 @@ void main() {
     final settings = await _createSettings();
     await settings.setMemoryPromptLang('zh');
 
-    await tester.pumpWidget(_wrap(settings, locale: const Locale('zh')));
+    await tester.pumpWidget(_wrap(settings, locale: const Locale('en')));
     await tester.pumpAndSettle();
 
-    final l10n = await AppLocalizations.delegate.load(const Locale('zh'));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
     await _openRulesEditor(tester, l10n.memoryPromptEditRulesTitle);
 
     // A single editor, holding the Chinese template — no language tabs.
@@ -87,10 +87,10 @@ void main() {
 
     // Interface is Chinese, but prompts were pinned to English, so the editor
     // must edit the template that actually reaches the model.
-    await tester.pumpWidget(_wrap(settings, locale: const Locale('zh')));
+    await tester.pumpWidget(_wrap(settings, locale: const Locale('en')));
     await tester.pumpAndSettle();
 
-    final l10n = await AppLocalizations.delegate.load(const Locale('zh'));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
     await _openRulesEditor(tester, l10n.memoryPromptEditRulesTitle);
 
     final field = tester.widget<TextField>(find.byType(TextField));
@@ -103,17 +103,17 @@ void main() {
     final settings = await _createSettings();
     await settings.setMemoryPromptLang('zh');
 
-    await tester.pumpWidget(_wrap(settings, locale: const Locale('zh')));
+    await tester.pumpWidget(_wrap(settings, locale: const Locale('en')));
     await tester.pumpAndSettle();
 
-    final l10n = await AppLocalizations.delegate.load(const Locale('zh'));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
     await _openRulesEditor(tester, l10n.memoryPromptEditRulesTitle);
 
-    await tester.enterText(find.byType(TextField), '自定义规则');
+    await tester.enterText(find.byType(TextField), 'Custom rules');
     await tester.tap(find.byTooltip(l10n.memoryPromptEditSave));
     await tester.pumpAndSettle();
 
-    expect(settings.memoryRulesPromptZh, '自定义规则');
+    expect(settings.memoryRulesPromptZh, 'Custom rules');
     expect(settings.memoryRulesPromptEn, MemoryPrompts.rulesEn);
   });
 
@@ -124,20 +124,20 @@ void main() {
     await settings.setLegacyMemoryMode(true);
     await settings.setMemoryPromptLang('zh');
 
-    await tester.pumpWidget(_wrap(settings, locale: const Locale('zh')));
+    await tester.pumpWidget(_wrap(settings, locale: const Locale('en')));
     await tester.pumpAndSettle();
 
-    final l10n = await AppLocalizations.delegate.load(const Locale('zh'));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
     await _openRulesEditor(tester, l10n.memorySettingsLegacyPromptTitle);
 
     final field = tester.widget<TextField>(find.byType(TextField));
     expect(field.controller!.text, MemoryPrompts.legacyRulesZh);
 
-    await tester.enterText(find.byType(TextField), '自定义旧版规则');
+    await tester.enterText(find.byType(TextField), 'Custom legacy rules');
     await tester.tap(find.byTooltip(l10n.memoryPromptEditSave));
     await tester.pumpAndSettle();
 
-    expect(settings.legacyMemoryPromptZh, '自定义旧版规则');
+    expect(settings.legacyMemoryPromptZh, 'Custom legacy rules');
     expect(settings.legacyMemoryPromptEn, MemoryPrompts.legacyRulesEn);
   });
 
@@ -147,10 +147,10 @@ void main() {
     final settings = await _createSettings();
     await settings.setLegacyMemoryMode(true);
 
-    await tester.pumpWidget(_wrap(settings, locale: const Locale('zh')));
+    await tester.pumpWidget(_wrap(settings, locale: const Locale('en')));
     await tester.pumpAndSettle();
 
-    final l10n = await AppLocalizations.delegate.load(const Locale('zh'));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
     expect(find.text(l10n.memorySettingsLegacyPromptTitle), findsOneWidget);
     expect(find.text(l10n.memorySettingsModelSection), findsNothing);
     expect(find.text(l10n.memorySettingsPromptLangSection), findsOneWidget);
@@ -167,10 +167,10 @@ void main() {
     await settings.setLegacyMemoryMode(true);
     await settings.setMemoryPromptLang('en');
 
-    await tester.pumpWidget(_wrap(settings, locale: const Locale('zh')));
+    await tester.pumpWidget(_wrap(settings, locale: const Locale('en')));
     await tester.pumpAndSettle();
 
-    final l10n = await AppLocalizations.delegate.load(const Locale('zh'));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
     await _openRulesEditor(tester, l10n.memorySettingsLegacyPromptTitle);
 
     final field = tester.widget<TextField>(find.byType(TextField));

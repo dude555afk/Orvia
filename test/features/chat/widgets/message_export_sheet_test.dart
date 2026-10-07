@@ -1028,9 +1028,9 @@ void main() {
       role: 'assistant',
       conversationId: 'c1',
       parts: const [
-        TextPart('我查一下'),
+        TextPart('\u6211\u67E5\u4E00\u4E0B'),
         ToolCallPart('{"id":"search","name":"search","content":"hits"}'),
-        TextPart('结果是 X'),
+        TextPart('\u7ED3\u679C\u662F X'),
         ReasoningPart('plan'),
       ],
     );
@@ -1041,7 +1041,9 @@ void main() {
     );
     expect(
       exported,
-      contains('我查一下\n\n[search]\nhits\n\n结果是 X\n\n\n[Thinking]\n\nplan\n\n'),
+      contains(
+        '\u6211\u67E5\u4E00\u4E0B\n\n[search]\nhits\n\n\u7ED3\u679C\u662F X\n\n\n[Thinking]\n\nplan\n\n',
+      ),
     );
   });
 

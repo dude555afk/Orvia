@@ -6,17 +6,17 @@ void main() {
   group('parseToolResultImages', () {
     test('extracts standalone-line markdown images', () {
       const content = '''
-工具执行完成
+\u5DE5\u5177\u6267\u884C\u5B8C\u6210
 ![](https://example.com/output.png)
 ''';
       final (clean, images) = parseToolResultImages(content);
       expect(images, ['https://example.com/output.png']);
-      expect(clean, '工具执行完成');
+      expect(clean, '\u5DE5\u5177\u6267\u884C\u5B8C\u6210');
     });
 
     test('does not extract markdown images inside JSON fields', () {
       const content =
-          '{"text":"README 内容……![benchmark](https://example.com/huge.png)"}';
+          '{"text":"README \u5185\u5BB9……![benchmark](https://example.com/huge.png)"}';
       final (clean, images) = parseToolResultImages(content);
       expect(images, isEmpty);
       expect(clean, content);

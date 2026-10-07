@@ -14,7 +14,7 @@ void main() {
     '  null\nnullnull\n\n\n\tindented  \n':
         '  null\nnullnull\n\n\n\tindented  \n',
     '10%\r\x1b[32m100%\x1b[0m\r\x1b[0m': '100%',
-    '\x1b[?25l\x1b[2K\r完成 😀\x1b[?25h': '完成 😀',
+    '\x1b[?25l\x1b[2K\r\u5B8C\u6210 😀\x1b[?25h': '\u5B8C\u6210 😀',
     '\x1b]0;window title\x07hello\x1b]8;;https://example.com\x1b\\link'
             '\x1b]8;;\x1b\\':
         'hellolink',
@@ -107,9 +107,9 @@ void main() {
 
   test('completed output and unterminated lines remain bounded UTF-8', () {
     final buffer = ShellOutputBuffer(maxBytes: 65);
-    buffer.add(utf8.encode('head\n${'中文😀' * 100}\n'));
+    buffer.add(utf8.encode('head\n${'\u4E2D\u6587😀' * 100}\n'));
     expect(buffer.truncated, isTrue);
-    buffer.add(utf8.encode('${'内容😀' * 100}tail'));
+    buffer.add(utf8.encode('${'\u5185\u5BB9😀' * 100}tail'));
     buffer.close();
     final text = buffer.text;
     expect(utf8.encode(text).length, lessThanOrEqualTo(65));

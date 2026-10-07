@@ -62,192 +62,218 @@ void main() {
       if (await directory.exists()) await directory.delete(recursive: true);
     });
 
-    test('首次按批迁移并在同一事务写 version receipt', () async {
-      final result = await repository.migrateSandboxPaths(
-        targetVersion: 1,
-        targetRoot: '/new',
-        batchSize: 1,
-        rewriteUri: (uri) =>
-            uri.replaceFirst('/old/sandboxoldtoken/', '/new/sandboxnewtoken/'),
-      );
-
-      expect(result.ran, isTrue);
-      expect(result.scannedMessages, 1);
-      expect(result.updatedMessages, 1);
-      expect(result.skippedParts, 0);
-      final migrated = (await repository.getMessagesRange(
-        'conversation',
-        start: 0,
-        limit: 10,
-      )).last;
-      expect(
-        migrated.parts.whereType<ImagePart>().single.uri,
-        '/new/sandboxnewtoken/a.png',
-      );
-    });
-
-    test('同版本后续启动不读取候选消息', () async {
-      await repository.migrateSandboxPaths(
-        targetVersion: 1,
-        targetRoot: '/same',
-        rewriteUri: (uri) => uri,
-      );
-
-      final result = await repository.migrateSandboxPaths(
-        targetVersion: 1,
-        targetRoot: '/same',
-        rewriteUri: (_) => throw StateError('must_not_scan'),
-      );
-
-      expect(result.ran, isFalse);
-      expect(result.scannedMessages, 0);
-      expect(result.skippedParts, 0);
-    });
-
-    test('rewrite 失败回滚内容且不写 receipt，可重试', () async {
-      await expectLater(
-        repository.migrateSandboxPaths(
+    test(
+      '\u9996\u6B21\u6309\u6279\u8FC1\u79FB\u5E76\u5728\u540C\u4E00\u4E8B\u52A1\u5199 version receipt',
+      () async {
+        final result = await repository.migrateSandboxPaths(
           targetVersion: 1,
           targetRoot: '/new',
-          rewriteUri: (_) => throw StateError('rewrite_failed'),
-        ),
-        throwsA(
-          isA<StateError>().having(
-            (error) => error.message,
-            'message',
-            'rewrite_failed',
+          batchSize: 1,
+          rewriteUri: (uri) => uri.replaceFirst(
+            '/old/sandboxoldtoken/',
+            '/new/sandboxnewtoken/',
           ),
-        ),
-      );
-
-      final retry = await repository.migrateSandboxPaths(
-        targetVersion: 1,
-        targetRoot: '/new',
-        rewriteUri: (uri) =>
-            uri.replaceFirst('/old/sandboxoldtoken/', '/new/sandboxnewtoken/'),
-      );
-      expect(retry.ran, isTrue);
-      expect(retry.updatedMessages, 1);
-    });
-
-    test('同版本目标根变化时重新执行一次', () async {
-      await repository.migrateSandboxPaths(
-        targetVersion: 1,
-        targetRoot: '/first',
-        rewriteUri: (uri) => uri,
-      );
-
-      final result = await repository.migrateSandboxPaths(
-        targetVersion: 1,
-        targetRoot: '/second',
-        rewriteUri: (uri) => uri.replaceFirst(
-          '/old/sandboxoldtoken/',
-          '/second/sandboxnewtoken/',
-        ),
-      );
-
-      expect(result.ran, isTrue);
-      expect(result.updatedMessages, 1);
-    });
-
-    test('损坏附件不阻塞迁移并保持原 payload 与 dirty 状态', () async {
-      const malformedPayload =
-          '{"uri":"/old/sandboxoldtoken/a.png","mime":["/private/secret"]}';
-      final database = sqlite.sqlite3.open(dbFile.path);
-      try {
-        database.execute(
-          'UPDATE message_part_rows SET payload = ? '
-          "WHERE revision_id = 'path' AND kind = 'image';",
-          [malformedPayload],
         );
-        database.execute(
-          "DELETE FROM asset_reference_dirty_rows WHERE revision_id = 'path';",
-        );
-      } finally {
-        database.close();
-      }
 
-      final result = await repository.migrateSandboxPaths(
-        targetVersion: 1,
-        targetRoot: '/new',
-        rewriteUri: (uri) =>
-            uri.replaceFirst('/old/sandboxoldtoken/', '/new/sandboxnewtoken/'),
-      );
-
-      expect(result.ran, isTrue);
-      expect(result.scannedMessages, 1);
-      expect(result.updatedMessages, 0);
-      expect(result.skippedParts, 1);
-
-      final verify = sqlite.sqlite3.open(dbFile.path);
-      try {
+        expect(result.ran, isTrue);
+        expect(result.scannedMessages, 1);
+        expect(result.updatedMessages, 1);
+        expect(result.skippedParts, 0);
+        final migrated = (await repository.getMessagesRange(
+          'conversation',
+          start: 0,
+          limit: 10,
+        )).last;
         expect(
-          verify
-              .select(
-                "SELECT payload FROM message_part_rows WHERE revision_id = 'path';",
-              )
-              .single['payload'],
-          malformedPayload,
+          migrated.parts.whereType<ImagePart>().single.uri,
+          '/new/sandboxnewtoken/a.png',
         );
-        expect(
-          verify.select(
-            "SELECT 1 FROM asset_reference_dirty_rows WHERE revision_id = 'path';",
+      },
+    );
+
+    test(
+      '\u540C\u7248\u672C\u540E\u7EED\u542F\u52A8\u4E0D\u8BFB\u53D6\u5019\u9009\u6D88\u606F',
+      () async {
+        await repository.migrateSandboxPaths(
+          targetVersion: 1,
+          targetRoot: '/same',
+          rewriteUri: (uri) => uri,
+        );
+
+        final result = await repository.migrateSandboxPaths(
+          targetVersion: 1,
+          targetRoot: '/same',
+          rewriteUri: (_) => throw StateError('must_not_scan'),
+        );
+
+        expect(result.ran, isFalse);
+        expect(result.scannedMessages, 0);
+        expect(result.skippedParts, 0);
+      },
+    );
+
+    test(
+      'rewrite \u5931\u8D25\u56DE\u6EDA\u5185\u5BB9\u4E14\u4E0D\u5199 receipt，\u53EF\u91CD\u8BD5',
+      () async {
+        await expectLater(
+          repository.migrateSandboxPaths(
+            targetVersion: 1,
+            targetRoot: '/new',
+            rewriteUri: (_) => throw StateError('rewrite_failed'),
           ),
-          hasLength(1),
-        );
-        expect(
-          verify.select(
-            "SELECT 1 FROM chat_storage_meta_rows "
-            "WHERE key = 'sandbox_path_migration_version';",
+          throwsA(
+            isA<StateError>().having(
+              (error) => error.message,
+              'message',
+              'rewrite_failed',
+            ),
           ),
-          hasLength(1),
         );
-      } finally {
-        verify.close();
-      }
-    });
 
-    test('路径重写后 ImagePart URI 更新且 FTS 索引完整', () async {
-      await repository.migrateSandboxPaths(
-        targetVersion: 1,
-        targetRoot: '/new',
-        rewriteUri: (uri) =>
-            uri.replaceFirst('/old/sandboxoldtoken/', '/new/sandboxnewtoken/'),
-      );
-
-      final migrated = (await repository.getMessagesRange(
-        'conversation',
-        start: 0,
-        limit: 10,
-      )).last;
-      expect(
-        migrated.parts.whereType<ImagePart>().single.uri,
-        '/new/sandboxnewtoken/a.png',
-      );
-      // Text remains searchable; attachment URIs live outside text FTS.
-      expect(
-        (await repository.searchConversationMatches(
-          tokens: const ['plain'],
-        )).single.messageId,
-        'plain',
-      );
-
-      // Force FTS setup path, then integrity-check on a raw connection.
-      await repository.searchConversationMatches(
-        tokens: const ['__fts_integrity__'],
-      );
-      await repository.close();
-      repositoryClosed = true;
-      final database = sqlite.sqlite3.open(dbFile.path);
-      try {
-        database.execute(
-          "INSERT INTO message_search_fts(message_search_fts) "
-          "VALUES('integrity-check');",
+        final retry = await repository.migrateSandboxPaths(
+          targetVersion: 1,
+          targetRoot: '/new',
+          rewriteUri: (uri) => uri.replaceFirst(
+            '/old/sandboxoldtoken/',
+            '/new/sandboxnewtoken/',
+          ),
         );
-      } finally {
-        database.close();
-      }
-    });
+        expect(retry.ran, isTrue);
+        expect(retry.updatedMessages, 1);
+      },
+    );
+
+    test(
+      '\u540C\u7248\u672C\u76EE\u6807\u6839\u53D8\u5316\u65F6\u91CD\u65B0\u6267\u884C\u4E00\u6B21',
+      () async {
+        await repository.migrateSandboxPaths(
+          targetVersion: 1,
+          targetRoot: '/first',
+          rewriteUri: (uri) => uri,
+        );
+
+        final result = await repository.migrateSandboxPaths(
+          targetVersion: 1,
+          targetRoot: '/second',
+          rewriteUri: (uri) => uri.replaceFirst(
+            '/old/sandboxoldtoken/',
+            '/second/sandboxnewtoken/',
+          ),
+        );
+
+        expect(result.ran, isTrue);
+        expect(result.updatedMessages, 1);
+      },
+    );
+
+    test(
+      '\u635F\u574F\u9644\u4EF6\u4E0D\u963B\u585E\u8FC1\u79FB\u5E76\u4FDD\u6301\u539F payload \u4E0E dirty \u72B6\u6001',
+      () async {
+        const malformedPayload =
+            '{"uri":"/old/sandboxoldtoken/a.png","mime":["/private/secret"]}';
+        final database = sqlite.sqlite3.open(dbFile.path);
+        try {
+          database.execute(
+            'UPDATE message_part_rows SET payload = ? '
+            "WHERE revision_id = 'path' AND kind = 'image';",
+            [malformedPayload],
+          );
+          database.execute(
+            "DELETE FROM asset_reference_dirty_rows WHERE revision_id = 'path';",
+          );
+        } finally {
+          database.close();
+        }
+
+        final result = await repository.migrateSandboxPaths(
+          targetVersion: 1,
+          targetRoot: '/new',
+          rewriteUri: (uri) => uri.replaceFirst(
+            '/old/sandboxoldtoken/',
+            '/new/sandboxnewtoken/',
+          ),
+        );
+
+        expect(result.ran, isTrue);
+        expect(result.scannedMessages, 1);
+        expect(result.updatedMessages, 0);
+        expect(result.skippedParts, 1);
+
+        final verify = sqlite.sqlite3.open(dbFile.path);
+        try {
+          expect(
+            verify
+                .select(
+                  "SELECT payload FROM message_part_rows WHERE revision_id = 'path';",
+                )
+                .single['payload'],
+            malformedPayload,
+          );
+          expect(
+            verify.select(
+              "SELECT 1 FROM asset_reference_dirty_rows WHERE revision_id = 'path';",
+            ),
+            hasLength(1),
+          );
+          expect(
+            verify.select(
+              "SELECT 1 FROM chat_storage_meta_rows "
+              "WHERE key = 'sandbox_path_migration_version';",
+            ),
+            hasLength(1),
+          );
+        } finally {
+          verify.close();
+        }
+      },
+    );
+
+    test(
+      '\u8DEF\u5F84\u91CD\u5199\u540E ImagePart URI \u66F4\u65B0\u4E14 FTS \u7D22\u5F15\u5B8C\u6574',
+      () async {
+        await repository.migrateSandboxPaths(
+          targetVersion: 1,
+          targetRoot: '/new',
+          rewriteUri: (uri) => uri.replaceFirst(
+            '/old/sandboxoldtoken/',
+            '/new/sandboxnewtoken/',
+          ),
+        );
+
+        final migrated = (await repository.getMessagesRange(
+          'conversation',
+          start: 0,
+          limit: 10,
+        )).last;
+        expect(
+          migrated.parts.whereType<ImagePart>().single.uri,
+          '/new/sandboxnewtoken/a.png',
+        );
+        // Text remains searchable; attachment URIs live outside text FTS.
+        expect(
+          (await repository.searchConversationMatches(
+            tokens: const ['plain'],
+          )).single.messageId,
+          'plain',
+        );
+
+        // Force FTS setup path, then integrity-check on a raw connection.
+        await repository.searchConversationMatches(
+          tokens: const ['__fts_integrity__'],
+        );
+        await repository.close();
+        repositoryClosed = true;
+        final database = sqlite.sqlite3.open(dbFile.path);
+        try {
+          database.execute(
+            "INSERT INTO message_search_fts(message_search_fts) "
+            "VALUES('integrity-check');",
+          );
+        } finally {
+          database.close();
+        }
+      },
+    );
 
     test(
       'stale unavailable cleared when rewritten local file exists',
@@ -492,27 +518,30 @@ void main() {
       },
     );
 
-    test('拒绝高于当前实现的已有 migration version', () async {
-      await repository.migrateSandboxPaths(
-        targetVersion: 2,
-        targetRoot: '/future',
-        rewriteUri: (uri) => uri,
-      );
-
-      await expectLater(
-        repository.migrateSandboxPaths(
-          targetVersion: 1,
-          targetRoot: '/current',
+    test(
+      '\u62D2\u7EDD\u9AD8\u4E8E\u5F53\u524D\u5B9E\u73B0\u7684\u5DF2\u6709 migration version',
+      () async {
+        await repository.migrateSandboxPaths(
+          targetVersion: 2,
+          targetRoot: '/future',
           rewriteUri: (uri) => uri,
-        ),
-        throwsA(
-          isA<StateError>().having(
-            (error) => error.message,
-            'message',
-            'sandbox_path_migration_version',
+        );
+
+        await expectLater(
+          repository.migrateSandboxPaths(
+            targetVersion: 1,
+            targetRoot: '/current',
+            rewriteUri: (uri) => uri,
           ),
-        ),
-      );
-    });
+          throwsA(
+            isA<StateError>().having(
+              (error) => error.message,
+              'message',
+              'sandbox_path_migration_version',
+            ),
+          ),
+        );
+      },
+    );
   });
 }

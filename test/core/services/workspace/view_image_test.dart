@@ -103,12 +103,12 @@ void main() {
     test(
       'reads ${sandboxed ? 'sandbox' : 'native'} image and snapshots its pixels',
       () async {
-        final file = File(p.join(workspace.path, '图 (1).png'));
+        final file = File(p.join(workspace.path, '\u56FE (1).png'));
         final original = img.Image(width: 20, height: 10);
         img.fill(original, color: img.ColorRgb8(255, 0, 0));
         await file.writeAsBytes(img.encodePng(original));
         final result = await view(
-          sandboxed ? '/workspace/图 (1).png' : file.path,
+          sandboxed ? '/workspace/\u56FE (1).png' : file.path,
           ctx: context(sandboxed: sandboxed),
         );
         expect(result.metadata!['workspace']['status'], 'ok');

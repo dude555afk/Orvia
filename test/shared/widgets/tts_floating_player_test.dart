@@ -81,7 +81,7 @@ void main() {
         value: tts,
         child: MaterialApp(
           navigatorKey: rootNavigatorKey,
-          locale: const Locale('zh'),
+          locale: const Locale('en'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) {
@@ -94,12 +94,12 @@ void main() {
     await tester.pump();
 
     expect(tester.takeException(), isNull);
-    expect(find.byTooltip('继续播放'), findsOneWidget);
-    expect(find.byTooltip('关闭播放器'), findsOneWidget);
-    expect(find.byTooltip('展开播放控制'), findsOneWidget);
-    expect(find.byTooltip('后退 15 秒'), findsNothing);
-    expect(find.byTooltip('前进 15 秒'), findsNothing);
-    expect(find.byTooltip('播放倍速'), findsNothing);
+    expect(find.byTooltip('Resume'), findsOneWidget);
+    expect(find.byTooltip('Close player'), findsOneWidget);
+    expect(find.byTooltip('Expand playback controls'), findsOneWidget);
+    expect(find.byTooltip('Back 15 seconds'), findsNothing);
+    expect(find.byTooltip('Forward 15 seconds'), findsNothing);
+    expect(find.byTooltip('Playback speed'), findsNothing);
     expect(find.byType(Slider), findsNothing);
     expect(find.byIcon(lucide.LucideIcons.grip), findsNothing);
     expect(
@@ -107,7 +107,7 @@ void main() {
       findsOneWidget,
     );
 
-    expect(find.bySemanticsLabel('语音播放器'), findsOneWidget);
+    expect(find.bySemanticsLabel('TTS player'), findsOneWidget);
     final player = find.byKey(const ValueKey('ttsFloatingPlayerSurface'));
     showAppSnackBar(
       tester.element(player),
@@ -125,21 +125,21 @@ void main() {
     expect(afterDrag.dx, beforeDrag.dx);
     expect(afterDrag.dy, greaterThan(beforeDrag.dy));
 
-    await tester.tap(find.byTooltip('展开播放控制'));
+    await tester.tap(find.byTooltip('Expand playback controls'));
     await tester.pumpAndSettle();
 
-    expect(find.byTooltip('收起播放控制'), findsOneWidget);
-    expect(find.byTooltip('后退 15 秒'), findsOneWidget);
-    expect(find.byTooltip('前进 15 秒'), findsOneWidget);
-    expect(find.byTooltip('播放倍速'), findsOneWidget);
+    expect(find.byTooltip('Collapse playback controls'), findsOneWidget);
+    expect(find.byTooltip('Back 15 seconds'), findsOneWidget);
+    expect(find.byTooltip('Forward 15 seconds'), findsOneWidget);
+    expect(find.byTooltip('Playback speed'), findsOneWidget);
     final expandedWidth = tester.getSize(player).width;
 
-    await tester.tap(find.byTooltip('后退 15 秒'));
-    await tester.tap(find.byTooltip('继续播放'));
-    await tester.tap(find.byTooltip('前进 15 秒'));
-    await tester.tap(find.byTooltip('播放倍速'));
+    await tester.tap(find.byTooltip('Back 15 seconds'));
+    await tester.tap(find.byTooltip('Resume'));
+    await tester.tap(find.byTooltip('Forward 15 seconds'));
+    await tester.tap(find.byTooltip('Playback speed'));
 
-    await tester.tap(find.byTooltip('收起播放控制'));
+    await tester.tap(find.byTooltip('Collapse playback controls'));
     await tester.pump();
     expect(tester.takeException(), isNull);
     await tester.pump(const Duration(milliseconds: 40));
@@ -154,12 +154,12 @@ void main() {
     final collapsedWidth = tester.getSize(player).width;
     expect(collapsedWidth, lessThan(midCollapseWidth));
 
-    expect(find.byTooltip('展开播放控制'), findsOneWidget);
-    expect(find.byTooltip('后退 15 秒'), findsNothing);
-    expect(find.byTooltip('前进 15 秒'), findsNothing);
-    expect(find.byTooltip('播放倍速'), findsNothing);
+    expect(find.byTooltip('Expand playback controls'), findsOneWidget);
+    expect(find.byTooltip('Back 15 seconds'), findsNothing);
+    expect(find.byTooltip('Forward 15 seconds'), findsNothing);
+    expect(find.byTooltip('Playback speed'), findsNothing);
 
-    await tester.tap(find.byTooltip('关闭播放器'));
+    await tester.tap(find.byTooltip('Close player'));
 
     expect(tts.rewindCount, 1);
     expect(tts.playPauseCount, 1);
@@ -192,7 +192,7 @@ void main() {
         value: tts,
         child: MaterialApp(
           navigatorKey: rootNavigatorKey,
-          locale: const Locale('zh'),
+          locale: const Locale('en'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) {
@@ -205,15 +205,15 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.bySemanticsLabel('语音播放器'), findsOneWidget);
-    expect(find.byTooltip('重新播放'), findsOneWidget);
+    expect(find.bySemanticsLabel('TTS player'), findsOneWidget);
+    expect(find.byTooltip('Replay'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('展开播放控制'));
+    await tester.tap(find.byTooltip('Expand playback controls'));
     await tester.pumpAndSettle();
 
-    expect(find.byTooltip('保存音频'), findsOneWidget);
+    expect(find.byTooltip('Save audio'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('重新播放'));
+    await tester.tap(find.byTooltip('Replay'));
 
     expect(tts.playPauseCount, 1);
   });

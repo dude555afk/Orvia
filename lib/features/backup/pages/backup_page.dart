@@ -75,7 +75,7 @@ class _BackupPageState extends State<BackupPage> {
     final locale = Localizations.localeOf(context);
     final isZh = locale.languageCode.startsWith('zh');
     final String body = isZh
-        ? '此功能目前仍处于实验阶段。\n目前仅能导入助手，对话内容，供应商和文件，\n一些供应商需要在baseurl后面添加/v1 or /v1beta。 \n为确保数据安全，建议在导入前先执行备份。\n是否已知晓并继续选择文件？'
+        ? 'This feature is experimental.\nTo keep your data safe, it is recommended to back up before importing.\nProceed to choose a file?'
         : 'This feature is experimental.\nTo keep your data safe, it is recommended to back up before importing.\nProceed to choose a file?';
 
     return showModalBottomSheet<bool>(
@@ -301,7 +301,7 @@ class _BackupPageState extends State<BackupPage> {
             body: ListView(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
               children: [
-                // Section 1: 备份管理
+                // Section 1: \u5907\u4EFD\u7BA1\u7406
                 header(l10n.backupPageBackupManagement, first: true),
                 SectionCard(
                   children: [
@@ -345,10 +345,10 @@ class _BackupPageState extends State<BackupPage> {
                 header(l10n.localSnapshotSectionTitle),
                 const _LocalSnapshotMobileSection(),
 
-                // Section 2: 本地备份
+                // Section 2: \u672C\u5730\u5907\u4EFD
                 ..._buildMobileLocalBackupSection(context, l10n, vm, header),
 
-                // Section 3: WebDAV备份
+                // Section 3: WebDAV\u5907\u4EFD
                 header(l10n.backupPageWebDavBackup),
                 SectionCard(
                   children: [
@@ -404,21 +404,21 @@ class _BackupPageState extends State<BackupPage> {
                                 return;
                               }
                               if (!mounted) return;
-                              // 按时间倒序排列（最新的在前）
+                              // \u6309\u65F6\u95F4\u5012\u5E8F\u6392\u5217（\u6700\u65B0\u7684\u5728\u524D）
                               list.sort((a, b) {
-                                // 优先使用 lastModified
+                                // \u4F18\u5148\u4F7F\u7528 lastModified
                                 if (a.lastModified != null &&
                                     b.lastModified != null) {
                                   return b.lastModified!.compareTo(
                                     a.lastModified!,
                                   );
                                 }
-                                // 如果都没有 lastModified，按文件名倒序（文件名通常包含时间戳）
+                                // \u5982\u679C\u90FD\u6CA1\u6709 lastModified，\u6309\u6587\u4EF6\u540D\u5012\u5E8F（\u6587\u4EF6\u540D\u901A\u5E38\u5305\u542B\u65F6\u95F4\u6233）
                                 if (a.lastModified == null &&
                                     b.lastModified == null) {
                                   return b.displayName.compareTo(a.displayName);
                                 }
-                                // 有 lastModified 的排在前面
+                                // \u6709 lastModified \u7684\u6392\u5728\u524D\u9762
                                 if (a.lastModified == null) return 1;
                                 return -1;
                               });
@@ -800,7 +800,7 @@ class _BackupPageState extends State<BackupPage> {
                   ],
                 ),
 
-                // Section 3: S3 备份
+                // Section 3: S3 \u5907\u4EFD
                 header(l10n.backupPageS3Backup),
                 SectionCard(
                   children: [

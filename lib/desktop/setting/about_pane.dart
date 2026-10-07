@@ -99,8 +99,8 @@ class _DesktopAboutPaneState extends State<DesktopAboutPane> {
     showAppSnackBar(
       context,
       message: added
-          ? l10n.aboutPageKelivoSearchUnlocked
-          : l10n.aboutPageKelivoSearchAlreadyUnlocked,
+          ? l10n.aboutPageOrviaSearchUnlocked
+          : l10n.aboutPageOrviaSearchAlreadyUnlocked,
       type: NotificationType.success,
     );
   }

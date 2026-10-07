@@ -241,7 +241,7 @@ class _DesktopTranslatePageState extends State<DesktopTranslatePage> {
         child: Padding(
           padding: const EdgeInsets.only(left: 16, top: 8),
           child: Text(
-            l10n.desktopNavTranslateTooltip, // 显示“翻译”
+            l10n.desktopNavTranslateTooltip, // \u663E\u793A“\u7FFB\u8BD1”
             style: TextStyle(
               fontSize: 14,
               fontWeight: AppFontWeights.semibold,

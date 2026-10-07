@@ -288,7 +288,7 @@ class _PromptTabState extends State<_PromptTab> {
     // Sample preview for message template
     final now = DateTime.now();
     // final ts = zh
-    //     ? DateFormat('yyyy年M月d日 a h:mm:ss', 'zh').format(now)
+    //     ? DateFormat('yyyy\u5E74M\u6708d\u65E5 a h:mm:ss', 'zh').format(now)
     //     : DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
     final sampleMsg = l10n.assistantEditSampleMessage;
     final sampleReply = l10n.assistantEditSampleReply;

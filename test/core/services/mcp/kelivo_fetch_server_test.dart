@@ -200,13 +200,13 @@ void main() {
         baseUri.resolve('/echo'),
         arguments: const {
           'method': 'post',
-          'body': {'key': '值'},
+          'body': {'key': '\u503C'},
         },
       );
       final echo = jsonDecode(_resultText(result)) as Map<String, dynamic>;
 
       expect(echo['method'], 'POST');
-      expect(echo['body'], '{"key":"值"}');
+      expect(echo['body'], '{"key":"\u503C"}');
     });
 
     test('keeps a caller-supplied Content-Type', () async {

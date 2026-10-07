@@ -780,10 +780,10 @@ void main() {
   ) async {
     await tester.pumpWidget(tavilySearchUsageCardPreview());
 
-    expect(find.text('账户用量'), findsOneWidget);
-    expect(find.text('查询用量'), findsNothing);
-    expect(find.text('剩余 750 额度'), findsOneWidget);
-    expect(find.text('已使用 250 / 1,000 额度'), findsOneWidget);
+    expect(find.text('Account usage'), findsOneWidget);
+    expect(find.text('Check usage'), findsNothing);
+    expect(find.text('750 credits remaining'), findsOneWidget);
+    expect(find.text('250 of 1,000 credits used'), findsOneWidget);
 
     final queryAction = find.byKey(
       const ValueKey('search-service-usage-query'),
@@ -793,14 +793,14 @@ void main() {
       find.descendant(of: queryAction, matching: find.byIcon(Lucide.RefreshCw)),
       findsOneWidget,
     );
-    expect(tester.widget<Tooltip>(queryAction).message, '查询用量');
+    expect(tester.widget<Tooltip>(queryAction).message, 'Check usage');
 
     final progress = tester.widget<LinearProgressIndicator>(
       find.byKey(const ValueKey('tavily-usage-progress')),
     );
     expect(progress.value, 0.25);
 
-    final titleCenter = tester.getCenter(find.text('账户用量'));
+    final titleCenter = tester.getCenter(find.text('Account usage'));
     final queryCenter = tester.getCenter(queryAction);
     expect((titleCenter.dy - queryCenter.dy).abs(), lessThan(4));
     expect(queryCenter.dx, greaterThan(titleCenter.dx));
@@ -811,7 +811,7 @@ void main() {
   ) async {
     await tester.pumpWidget(linkUpSearchUsageCardPreview());
 
-    expect(find.text('余额 123.46'), findsOneWidget);
+    expect(find.text('Balance: 123.46'), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsNothing);
   });
 

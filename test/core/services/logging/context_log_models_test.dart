@@ -84,11 +84,11 @@ void main() {
     );
     final message = <String, dynamic>{
       'role': 'user',
-      'content': '$prefix用户本轮输入',
+      'content': '$prefix\u7528\u6237\u672C\u8F6E\u8F93\u5165',
       kelivoContextSegmentsKey: [
         ContextSegmentTags.item(
           source: ContextSource.memorySnapshot,
-          length: prefix.length + '用户本轮输入'.length,
+          length: prefix.length + '\u7528\u6237\u672C\u8F6E\u8F93\u5165'.length,
         ),
       ],
     };
@@ -98,6 +98,6 @@ void main() {
     expect(segments.first.source, ContextSource.memorySnapshot);
     expect(segments.first.text, prefix);
     expect(segments.last.source, ContextSource.chatHistory);
-    expect(segments.last.text, '用户本轮输入');
+    expect(segments.last.text, '\u7528\u6237\u672C\u8F6E\u8F93\u5165');
   });
 }

@@ -128,8 +128,8 @@ void main() {
           tester,
           state.controller.openIncomingShareDraft(
             const ChatInputData(
-              text: '分享内容',
-              imagePaths: ['/upload/图片.png'],
+              text: '\u5206\u4EAB\u5185\u5BB9',
+              imagePaths: ['/upload/\u56FE\u7247.png'],
               documents: [document],
             ),
           ),
@@ -140,8 +140,8 @@ void main() {
           service.drafts.single.id,
         );
         expect(state.controller.messages, isEmpty);
-        expect(state.text.text, '分享内容');
-        expect(state.media.images, ['/upload/图片.png']);
+        expect(state.text.text, '\u5206\u4EAB\u5185\u5BB9');
+        expect(state.media.images, ['/upload/\u56FE\u7247.png']);
         expect(state.media.files, [document]);
         expect(state.media.deletesOwnedSources, isTrue);
         expect(tester.takeException(), isNull);

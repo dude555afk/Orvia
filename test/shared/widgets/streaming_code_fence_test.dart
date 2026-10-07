@@ -6,7 +6,7 @@ void main() {
     for (final marker in ['```', '````', '~~~']) {
       final parser = StreamingCodeFenceParser();
       var source = '$marker dart\n';
-      final code = 'const value = "中文";\n// `inline` remains code\n';
+      final code = 'const value = "\u4E2D\u6587";\n// `inline` remains code\n';
       for (final unit in code.split('')) {
         source += unit;
         final fence = parser.update(source, sourceStart: 0, appendOnly: true)!;

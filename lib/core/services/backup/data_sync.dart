@@ -1935,7 +1935,7 @@ class DataSync {
     bool allowUnverifiedForwardCompatible = false,
     ForwardCompatibilityPrompt? onForwardCompatibility,
   }) async {
-    if (!await file.exists()) throw Exception('备份文件不存在');
+    if (!await file.exists()) throw Exception('Backup file does not exist');
     // Usually already answered by the caller, which had the file all along;
     // the prompt is here for S3, which downloads through this entry point.
     final allowUnverified = await _askForwardCompatibility(

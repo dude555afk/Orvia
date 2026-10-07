@@ -245,11 +245,11 @@ class DebugConversationFactory {
     switch (turn % 6) {
       case 0:
         return [
-          '第 $turn 轮：帮我整理今天的待办，优先处理工作和生活事项。',
+          "Round $turn: help me organize today's tasks, prioritizing work and personal items.",
           '',
-          '- [ ] 回复产品评审意见',
-          '- [ ] 晚上 8 点前确认旅行预算',
-          '- [ ] 把会议纪要压缩成 3 个结论',
+          '- [ ] Reply to product review feedback',
+          '- [ ] Confirm the travel budget before 8 PM',
+          '- [ ] Reduce the meeting notes to 3 conclusions',
         ].join('\n');
       case 1:
         return [
@@ -264,7 +264,7 @@ class DebugConversationFactory {
         ].join('\n');
       case 2:
         return [
-          '请解释这段代码为什么偶尔会重复提交：',
+          'Explain why this code occasionally submits twice:',
           '',
           '```dart',
           'if (isSending) return;',
@@ -285,13 +285,13 @@ class DebugConversationFactory {
         ].join('\n');
       case 4:
         return [
-          '今天的健身记录：',
+          "Today's workout log:",
           '',
-          '- 跑步 32 分钟',
-          '- 深蹲 4 组',
-          '- 睡眠只有 6 小时',
+          '- Run for 32 minutes',
+          '- 4 sets of squats',
+          '- Only 6 hours of sleep',
           '',
-          '请给一个**不过度激进**的明日计划。',
+          'Give me a **not overly aggressive** plan for tomorrow.',
         ].join('\n');
       default:
         return [
@@ -310,14 +310,14 @@ class DebugConversationFactory {
     switch (turn % 6) {
       case 0:
         return [
-          '可以，建议按影响面排序：',
+          'Sure. Rank them by impact:',
           '',
-          '1. 先处理会阻塞他人的产品评审意见。',
-          '2. 旅行预算只需要定上限，避免展开成完整攻略。',
-          '3. 会议纪要保留结论、负责人和截止时间。',
+          '1. Handle product review feedback that blocks other people first.',
+          '2. Set only a ceiling for the travel budget instead of turning it into a full itinerary.',
+          '3. Keep conclusions, owners, and deadlines in the meeting notes.',
           '',
-          '- [x] 给出优先级',
-          '- [ ] 等你补充具体时间',
+          '- [x] Set priorities',
+          '- [ ] Wait for specific times',
         ].join('\n');
       case 1:
         return [
@@ -332,7 +332,7 @@ class DebugConversationFactory {
         ].join('\n');
       case 2:
         return [
-          '问题通常出在异常路径：如果 `submitMessage` 抛错，`isSending` 不会恢复。',
+          'The issue usually occurs on the exception path: if `submitMessage` throws, `isSending` is not reset.',
           '',
           '```dart',
           'if (isSending) return;',
@@ -346,23 +346,23 @@ class DebugConversationFactory {
         ].join('\n');
       case 3:
         return [
-          '建议这样决策：',
+          'I would decide like this:',
           '',
-          '- **键盘**：如果每天打字超过 4 小时，优先买。',
-          '- **屏幕灯**：确认供电和桌面空间后再买。',
-          '- **硬盘盒**：只有频繁大文件拷贝才值得升级。',
+          '- **Keyboard**: prioritize it if you type more than 4 hours a day.',
+          '- **Monitor light**: buy it after confirming power and desk space.',
+          '- **Drive enclosure**: upgrade only if you frequently copy large files.',
           '',
-          '> 结论：先买键盘，其他两个延后。',
+          '> Conclusion: buy the keyboard first and postpone the other two.',
         ].join('\n');
       case 4:
         return [
-          '明天计划应该保守一点：',
+          "Tomorrow's plan should be conservative:",
           '',
-          '- 轻松跑 20 分钟或快走 35 分钟',
-          '- 下肢力量减到 2 组',
-          '- 目标睡眠 7.5 小时',
+          '- Easy run for 20 minutes or brisk walk for 35 minutes',
+          '- Reduce lower-body strength work to 2 sets',
+          '- Target 7.5 hours of sleep',
           '',
-          '重点是恢复，不是继续加量。',
+          'Prioritize recovery, not more volume.',
         ].join('\n');
       default:
         return [

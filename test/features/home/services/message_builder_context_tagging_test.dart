@@ -121,8 +121,12 @@ void main() {
 
       final apiMessages = service.buildApiMessages(
         messages: [
-          _message(id: 'u1', role: 'user', content: '杭州天气'),
-          _message(id: 'a1', role: 'assistant', content: '明天多云。'),
+          _message(id: 'u1', role: 'user', content: '\u676D\u5DDE\u5929\u6C14'),
+          _message(
+            id: 'a1',
+            role: 'assistant',
+            content: '\u660E\u5929\u591A\u4E91。',
+          ),
         ],
         versionSelections: const {},
         currentConversation: Conversation(title: 'test'),
@@ -142,7 +146,10 @@ void main() {
         ContextSegmentTags.read(user).single['source'],
         ContextSource.chatHistory.wireName,
       );
-      expect(ContextSegmentTags.read(user).single['length'], '杭州天气'.length);
+      expect(
+        ContextSegmentTags.read(user).single['length'],
+        '\u676D\u5DDE\u5929\u6C14'.length,
+      );
 
       expect(
         ContextSegmentTags.read(toolCall).single['source'],
@@ -165,7 +172,7 @@ void main() {
       );
       expect(
         ContextSegmentTags.read(finalAssistant).single['length'],
-        '明天多云。'.length,
+        '\u660E\u5929\u591A\u4E91。'.length,
       );
     },
   );

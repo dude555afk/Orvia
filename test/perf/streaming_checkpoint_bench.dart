@@ -22,7 +22,7 @@ void main() {
       conversationId: 'conversation',
       isStreaming: true,
       parts: [
-        ReasoningPart(List.filled(65536, '思').join()),
+        ReasoningPart(List.filled(65536, '\u601D').join()),
         const TextPart(''),
       ],
     );
@@ -56,7 +56,7 @@ void main() {
           message.copyWith(
             parts: [
               message.parts.first,
-              TextPart(List.filled(i * 512, '文').join()),
+              TextPart(List.filled(i * 512, '\u6587').join()),
             ],
           ),
           const [],

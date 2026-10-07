@@ -23,7 +23,8 @@ List<ToolUIPart> _tools(int n) => <ToolUIPart>[
       id: 'tool-$i',
       toolName: 'read_file',
       arguments: {'path': 'lib/foo/bar_$i.dart'},
-      content: '工具返回的普通文本结果 $i',
+      content:
+          '\u5DE5\u5177\u8FD4\u56DE\u7684\u666E\u901A\u6587\u672C\u7ED3\u679C $i',
       loading: false,
     ),
 ];
@@ -142,7 +143,9 @@ class _HState extends State<_H> {
       ChatMessage(
         id: 'm-$i',
         role: i.isEven ? 'user' : 'assistant',
-        content: i.isEven ? '用户提问 $i' : '好的，我来看看。',
+        content: i.isEven
+            ? '\u7528\u6237\u63D0\u95EE $i'
+            : '\u597D\u7684，\u6211\u6765\u770B\u770B。',
         conversationId: 'c1',
       ),
   ];

@@ -4,10 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('append scanning is bounded to newly arrived code units', () {
     final scan = MarkdownSourceScan();
-    var source = '中文 **bold** and *italic* ' * 1000;
+    var source = '\u4E2D\u6587 **bold** and *italic* ' * 1000;
     scan.update(source);
     for (var i = 0; i < 100; i++) {
-      source += '追加 ';
+      source += '\u8FFD\u52A0 ';
       scan.update(source);
       expect(scan.appended, isTrue);
     }
@@ -20,7 +20,7 @@ void main() {
 
   test('markers arriving across chunks and replacements reset the hints', () {
     final scan = MarkdownSourceScan();
-    var source = '文字 !';
+    var source = '\u6587\u5B57 !';
     scan.update(source);
     expect(scan.hasBrackets, isFalse);
     source += '[image';
@@ -40,17 +40,18 @@ void main() {
 
   test('every preprocessing trigger is retained', () {
     for (final marker in '`~\$\\<\r#[]-|>'.split('')) {
-      final scan = MarkdownSourceScan()..update('前文 $marker 后文');
+      final scan = MarkdownSourceScan()
+        ..update('\u524D\u6587 $marker \u540E\u6587');
       expect(scan.needsPreprocessing, isTrue, reason: marker);
     }
   });
 
   test('image and citation hints survive every stream partition', () {
     for (final source in [
-      '正文 ![image](/tmp/a b.png)',
-      '正文 [cite:abc]',
-      '正文 [CITATION](abc)',
-      '正文 [Citation:abc]',
+      '\u6B63\u6587 ![image](/tmp/a b.png)',
+      '\u6B63\u6587 [cite:abc]',
+      '\u6B63\u6587 [CITATION](abc)',
+      '\u6B63\u6587 [Citation:abc]',
     ]) {
       for (var split = 0; split <= source.length; split++) {
         final scan = MarkdownSourceScan()
@@ -66,7 +67,7 @@ void main() {
   test('ordinary links skip image and citation work and edits reset hints', () {
     final scan = MarkdownSourceScan()
       ..update('![image](a) [CITE:abc]')
-      ..update('中文 [link](https://example.com)');
+      ..update('\u4E2D\u6587 [link](https://example.com)');
     expect(scan.hasBrackets, isTrue);
     expect(scan.needsPreprocessing, isTrue);
     expect(scan.hasImageMarker, isFalse);

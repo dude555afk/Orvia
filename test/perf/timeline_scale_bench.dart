@@ -26,26 +26,34 @@ String _searchPayload(int items) {
   for (var i = 0; i < items; i++) {
     if (i > 0) buf.write(',');
     buf.write(
-      '{"id":"$i","index":"${i + 1}","title":"结果标题 $i 这是一个比较长的标题用于模拟真实搜索结果",'
-      '"url":"https://example.com/a/very/long/path/$i","text":"这是搜索结果的摘要文本，'
-      '通常会有一两百个字符，用来在卡片里显示预览内容。重复文本重复文本重复文本。$i"}',
+      '{"id":"$i","index":"${i + 1}","title":"\u7ED3\u679C\u6807\u9898 $i \u8FD9\u662F\u4E00\u4E2A\u6BD4\u8F83\u957F\u7684\u6807\u9898\u7528\u4E8E\u6A21\u62DF\u771F\u5B9E\u641C\u7D22\u7ED3\u679C",'
+      '"url":"https://example.com/a/very/long/path/$i","text":"\u8FD9\u662F\u641C\u7D22\u7ED3\u679C\u7684\u6458\u8981\u6587\u672C，'
+      '\u901A\u5E38\u4F1A\u6709\u4E00\u4E24\u767E\u4E2A\u5B57\u7B26，\u7528\u6765\u5728\u5361\u7247\u91CC\u663E\u793A\u9884\u89C8\u5185\u5BB9。\u91CD\u590D\u6587\u672C\u91CD\u590D\u6587\u672C\u91CD\u590D\u6587\u672C。$i"}',
     );
   }
   buf.write(']}');
   return buf.toString();
 }
 
-List<ToolUIPart> _tools(int n, {bool search = true, int searchItems = 8}) =>
-    <ToolUIPart>[
-      for (var i = 0; i < n; i++)
-        ToolUIPart(
-          id: 'tool-$i',
-          toolName: search ? 'search_web' : 'read_file',
-          arguments: {'query': '查询词 $i', 'url': 'https://example.com/$i'},
-          content: search ? _searchPayload(searchItems) : '工具返回的普通文本结果 $i',
-          loading: false,
-        ),
-    ];
+List<ToolUIPart> _tools(
+  int n, {
+  bool search = true,
+  int searchItems = 8,
+}) => <ToolUIPart>[
+  for (var i = 0; i < n; i++)
+    ToolUIPart(
+      id: 'tool-$i',
+      toolName: search ? 'search_web' : 'read_file',
+      arguments: {
+        'query': '\u67E5\u8BE2\u8BCD $i',
+        'url': 'https://example.com/$i',
+      },
+      content: search
+          ? _searchPayload(searchItems)
+          : '\u5DE5\u5177\u8FD4\u56DE\u7684\u666E\u901A\u6587\u672C\u7ED3\u679C $i',
+      loading: false,
+    ),
+];
 
 void main() {
   setUp(() {
@@ -219,7 +227,9 @@ class _BenchHarnessState extends State<_BenchHarness> {
         ChatMessage(
           id: 'history-$index',
           role: index.isEven ? 'user' : 'assistant',
-          content: index.isEven ? '用户提问 $index' : '好的',
+          content: index.isEven
+              ? '\u7528\u6237\u63D0\u95EE $index'
+              : '\u597D\u7684',
           conversationId: 'c1',
         ),
       ChatMessage(
@@ -234,11 +244,15 @@ class _BenchHarnessState extends State<_BenchHarness> {
   }
 
   void pushStreamTick(int i) {
-    streamingNotifier.updateContent(_streamingId, '正在回答' * (i % 5 + 1), 10);
+    streamingNotifier.updateContent(
+      _streamingId,
+      '\u6B63\u5728\u56DE\u7B54' * (i % 5 + 1),
+      10,
+    );
   }
 
   void pushStructuredTick(int i) {
-    final body = '正在回答' * (i % 5 + 1);
+    final body = '\u6B63\u5728\u56DE\u7B54' * (i % 5 + 1);
     streamingNotifier.updateContent(
       _streamingId,
       body,
@@ -262,7 +276,11 @@ class _BenchHarnessState extends State<_BenchHarness> {
       messages = [
         for (final m in messages)
           if (m.id == _streamingId)
-            m.copyWith(content: '完成', isStreaming: false, totalTokens: 100)
+            m.copyWith(
+              content: '\u5B8C\u6210',
+              isStreaming: false,
+              totalTokens: 100,
+            )
           else
             m,
       ];

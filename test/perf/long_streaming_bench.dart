@@ -28,7 +28,7 @@ void main() {
             List.generate(
               paragraphs,
               (i) =>
-                  'Paragraph $i **加粗** reasoning 中文内容。'
+                  'Paragraph $i **\u52A0\u7C97** reasoning \u4E2D\u6587\u5185\u5BB9。'
                   ' Keep rendering Markdown while the response grows.',
             ).join(
               shape == 'paragraphs'
@@ -114,8 +114,8 @@ void main() {
           source.value += shape == 'paragraphs' && i % 5 == 0
               ? '\n\nNext **paragraph** '
               : const bool.fromEnvironment('PERF_RICH_APPEND')
-              ? ' **新增粗体** 和 *斜体*，继续推导。'
-              : '新增输出。';
+              ? ' **\u65B0\u589E\u7C97\u4F53** \u548C *\u659C\u4F53*，\u7EE7\u7EED\u63A8\u5BFC。'
+              : '\u65B0\u589E\u8F93\u51FA。';
           await tester.pump();
           final first = sw.elapsedMicroseconds;
           await tester.pump(const Duration(milliseconds: 60));

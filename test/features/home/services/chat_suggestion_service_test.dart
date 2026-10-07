@@ -12,16 +12,20 @@ void main() {
         ChatSuggestionService.parseSuggestions(
           jsonEncode({
             'suggestions': [
-              '  举个具体例子  ',
-              '举个具体例子',
+              '  \u4E3E\u4E2A\u5177\u4F53\u4F8B\u5B50  ',
+              '\u4E3E\u4E2A\u5177\u4F53\u4F8B\u5B50',
               'Compare A and B',
               'compare a  and b',
-              '如何验证这个结论？',
-              '不展示第四条',
+              '\u5982\u4F55\u9A8C\u8BC1\u8FD9\u4E2A\u7ED3\u8BBA？',
+              '\u4E0D\u5C55\u793A\u7B2C\u56DB\u6761',
             ],
           }),
         ),
-        ['举个具体例子', 'Compare A and B', '如何验证这个结论？'],
+        [
+          '\u4E3E\u4E2A\u5177\u4F53\u4F8B\u5B50',
+          'Compare A and B',
+          '\u5982\u4F55\u9A8C\u8BC1\u8FD9\u4E2A\u7ED3\u8BBA？',
+        ],
       );
     });
 
@@ -29,17 +33,17 @@ void main() {
       expect(
         ChatSuggestionService.parseSuggestions(
           '<think>Consider useful follow-ups.</think>\n'
-          '```json\n{"suggestions":["解释方案 A 的限制"]}\n```',
+          '```json\n{"suggestions":["\u89E3\u91CA\u65B9\u6848 A \u7684\u9650\u5236"]}\n```',
         ),
-        ['解释方案 A 的限制'],
+        ['\u89E3\u91CA\u65B9\u6848 A \u7684\u9650\u5236'],
       );
     });
 
     test('preserves literal thinking tags inside JSON strings', () {
       final suggestions = [
-        '解释 <think> 标签的作用',
-        '解释 <thinking>内容</thinking> 的作用',
-        '解释 <|channel>thought 内容 <channel|> 的作用',
+        '\u89E3\u91CA <think> \u6807\u7B7E\u7684\u4F5C\u7528',
+        '\u89E3\u91CA <thinking>\u5185\u5BB9</thinking> \u7684\u4F5C\u7528',
+        '\u89E3\u91CA <|channel>thought \u5185\u5BB9 <channel|> \u7684\u4F5C\u7528',
       ];
       final json = jsonEncode({'suggestions': suggestions});
       for (final raw in [
@@ -57,8 +61,8 @@ void main() {
       'does not accept JSON inside unfinished reasoning or trailing prose',
       () {
         for (final raw in [
-          '<think>{"suggestions":["内部草稿"]}',
-          '{"suggestions":["解释一下"]}<think>Trailing text</think>',
+          '<think>{"suggestions":["\u5185\u90E8\u8349\u7A3F"]}',
+          '{"suggestions":["\u89E3\u91CA\u4E00\u4E0B"]}<think>Trailing text</think>',
         ]) {
           expect(
             () => ChatSuggestionService.parseSuggestions(raw),
@@ -73,12 +77,12 @@ void main() {
       () {
         for (final raw in [
           'Here are three suggestions:\n1. Example\n2. More',
-          '解释一下',
-          '["解释一下"]',
-          '{"suggestions":"解释一下"}',
-          '{"suggestions":["解释一下"],"explanation":"because"}',
-          '{"suggestions":["解释一下"',
-          'Some explanation\n{"suggestions":["解释一下"]}',
+          '\u89E3\u91CA\u4E00\u4E0B',
+          '["\u89E3\u91CA\u4E00\u4E0B"]',
+          '{"suggestions":"\u89E3\u91CA\u4E00\u4E0B"}',
+          '{"suggestions":["\u89E3\u91CA\u4E00\u4E0B"],"explanation":"because"}',
+          '{"suggestions":["\u89E3\u91CA\u4E00\u4E0B"',
+          'Some explanation\n{"suggestions":["\u89E3\u91CA\u4E00\u4E0B"]}',
         ]) {
           expect(
             () => ChatSuggestionService.parseSuggestions(raw),
@@ -108,34 +112,32 @@ void main() {
                 'a' * 301,
                 'two\nlines',
                 '```code```',
-                '给一个实际的例子',
+                '\u7ED9\u4E00\u4E2A\u5B9E\u9645\u7684\u4F8B\u5B50',
               ],
             }),
           ),
-          ['给一个实际的例子'],
+          ['\u7ED9\u4E00\u4E2A\u5B9E\u9645\u7684\u4F8B\u5B50'],
         );
       },
     );
 
-    test(
-      'keeps complete multi-sentence suggestions and Unicode characters',
-      () {
-        final question = '你提到多模态学习。请给一个具体应用的例子。';
-        expect(
-          ChatSuggestionService.parseSuggestions(
-            jsonEncode({
-              'suggestions': [question, '😀' * 300],
-            }),
-          ),
-          [question, '😀' * 300],
-        );
-      },
-    );
+    test('keeps complete multi-sentence suggestions and Unicode characters', () {
+      final question =
+          '\u4F60\u63D0\u5230\u591A\u6A21\u6001\u5B66\u4E60。\u8BF7\u7ED9\u4E00\u4E2A\u5177\u4F53\u5E94\u7528\u7684\u4F8B\u5B50。';
+      expect(
+        ChatSuggestionService.parseSuggestions(
+          jsonEncode({
+            'suggestions': [question, '😀' * 300],
+          }),
+        ),
+        [question, '😀' * 300],
+      );
+    });
 
     test('zero count returns no suggestions', () {
       expect(
         ChatSuggestionService.parseSuggestions(
-          '{"suggestions":["解释一下"]}',
+          '{"suggestions":["\u89E3\u91CA\u4E00\u4E0B"]}',
           maxCount: 0,
         ),
         isEmpty,
@@ -150,8 +152,8 @@ void main() {
         (index) => _suggestionMessage(
           index,
           index == 7
-              ? '${'背景说明。' * 120}关键结论：选择 SQLite。${'补充说明。' * 120}'
-              : '短消息$index',
+              ? '${'\u80CC\u666F\u8BF4\u660E。' * 120}\u5173\u952E\u7ED3\u8BBA：\u9009\u62E9 SQLite。${'\u8865\u5145\u8BF4\u660E。' * 120}'
+              : '\u77ED\u6D88\u606F$index',
         ),
       );
       final totalChars = messages.fold<int>(
@@ -179,8 +181,8 @@ void main() {
       () {
         final messages = [
           _suggestionMessage(0, 'a' * 5000),
-          _suggestionMessage(1, '短回复'),
-          _suggestionMessage(2, '继续比较 SQLite 与 Hive'),
+          _suggestionMessage(1, '\u77ED\u56DE\u590D'),
+          _suggestionMessage(2, '\u7EE7\u7EED\u6BD4\u8F83 SQLite \u4E0E Hive'),
           _suggestionMessage(3, 'b' * 5000),
         ];
         final transcript =
@@ -215,26 +217,32 @@ void main() {
       'long assistant replies preserve the user request and role boundaries',
       () {
         final content = ChatSuggestionService.buildContent([
-          _suggestionMessage(0, '比较 SQLite 和 Hive'),
-          _suggestionMessage(1, '开头：SQLite\n${'details' * 2000}\n结尾：选哪一个？'),
+          _suggestionMessage(0, '\u6BD4\u8F83 SQLite \u548C Hive'),
+          _suggestionMessage(
+            1,
+            '\u5F00\u5934：SQLite\n${'details' * 2000}\n\u7ED3\u5C3E：\u9009\u54EA\u4E00\u4E2A？',
+          ),
         ]);
         final transcript = jsonDecode(content) as List;
         expect(transcript, hasLength(2));
         expect(transcript.first, {
           'role': 'user',
-          'content': '比较 SQLite 和 Hive',
+          'content': '\u6BD4\u8F83 SQLite \u548C Hive',
         });
         expect(transcript.last['role'], 'assistant');
-        expect(transcript.last['content'], startsWith('开头：SQLite'));
-        expect(transcript.last['content'], endsWith('结尾：选哪一个？'));
+        expect(transcript.last['content'], startsWith('\u5F00\u5934：SQLite'));
+        expect(
+          transcript.last['content'],
+          endsWith('\u7ED3\u5C3E：\u9009\u54EA\u4E00\u4E2A？'),
+        );
         expect(transcript.last['content'], contains('[…truncated…]'));
       },
     );
 
     test('context clear at the tail leaves no old conversation', () {
       final messages = [
-        _suggestionMessage(0, '问题'),
-        _suggestionMessage(1, '回答'),
+        _suggestionMessage(0, '\u95EE\u9898'),
+        _suggestionMessage(1, '\u56DE\u7B54'),
       ];
       expect(
         ChatSuggestionService.buildContent(messages, truncateIndex: 2),
@@ -248,11 +256,11 @@ void main() {
 
     test('does not use an older answer after a new or unfinished turn', () {
       final history = [
-        _suggestionMessage(0, '问题'),
-        _suggestionMessage(1, '回答'),
+        _suggestionMessage(0, '\u95EE\u9898'),
+        _suggestionMessage(1, '\u56DE\u7B54'),
       ];
       for (final last in [
-        _suggestionMessage(2, '新问题'),
+        _suggestionMessage(2, '\u65B0\u95EE\u9898'),
         _suggestionMessage(3, ''),
         _suggestionMessage(3, '<think>reasoning only</think>'),
         ChatMessage(
@@ -314,38 +322,44 @@ void main() {
       );
     });
 
-    test('全量历史使用持久化截断点排除清上下文之前的消息', () {
-      final messages = List.generate(
-        100,
-        (index) => _suggestionMessage(index, 'message $index'),
-      );
+    test(
+      '\u5168\u91CF\u5386\u53F2\u4F7F\u7528\u6301\u4E45\u5316\u622A\u65AD\u70B9\u6392\u9664\u6E05\u4E0A\u4E0B\u6587\u4E4B\u524D\u7684\u6D88\u606F',
+      () {
+        final messages = List.generate(
+          100,
+          (index) => _suggestionMessage(index, 'message $index'),
+        );
 
-      final content = ChatSuggestionService.buildContent(
-        messages,
-        truncateIndex: 90,
-        maxMessages: 100,
-      );
+        final content = ChatSuggestionService.buildContent(
+          messages,
+          truncateIndex: 90,
+          maxMessages: 100,
+        );
 
-      expect(content, isNot(contains('message 89')));
-      expect(content, contains('message 90'));
-      expect(content, contains('message 99'));
-    });
+        expect(content, isNot(contains('message 89')));
+        expect(content, contains('message 90'));
+        expect(content, contains('message 99'));
+      },
+    );
 
-    test('局部窗口索引不能用于全量历史的清上下文边界', () {
-      final messages = List.generate(
-        100,
-        (index) => _suggestionMessage(index, 'message $index'),
-      );
+    test(
+      '\u5C40\u90E8\u7A97\u53E3\u7D22\u5F15\u4E0D\u80FD\u7528\u4E8E\u5168\u91CF\u5386\u53F2\u7684\u6E05\u4E0A\u4E0B\u6587\u8FB9\u754C',
+      () {
+        final messages = List.generate(
+          100,
+          (index) => _suggestionMessage(index, 'message $index'),
+        );
 
-      final content = ChatSuggestionService.buildContent(
-        messages,
-        truncateIndex: 10,
-        maxMessages: 100,
-      );
+        final content = ChatSuggestionService.buildContent(
+          messages,
+          truncateIndex: 10,
+          maxMessages: 100,
+        );
 
-      expect(content, contains('message 89'));
-      expect(content, contains('message 99'));
-    });
+        expect(content, contains('message 89'));
+        expect(content, contains('message 99'));
+      },
+    );
   });
 }
 

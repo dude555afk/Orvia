@@ -53,9 +53,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: CitationSourcesSheet(
-              title: '搜索结果',
+              title: '\u641C\u7D22\u7ED3\u679C',
               count: 2,
-              closeSemanticLabel: '关闭',
+              closeSemanticLabel: '\u5173\u95ED',
               items: const [
                 CitationSourceItem(
                   title: 'First source',
@@ -76,13 +76,15 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('搜索结果'), findsOneWidget);
+      expect(find.text('\u641C\u7D22\u7ED3\u679C'), findsOneWidget);
       expect(find.text('2'), findsWidgets);
       expect(find.text('First source'), findsOneWidget);
       expect(find.text('Second source'), findsOneWidget);
       expect(
         tester.getTopLeft(find.byType(CitationSourceCard).first).dy,
-        greaterThan(tester.getBottomLeft(find.text('搜索结果')).dy),
+        greaterThan(
+          tester.getBottomLeft(find.text('\u641C\u7D22\u7ED3\u679C')).dy,
+        ),
       );
       expect(
         tester.getTopLeft(find.byType(CitationSourceCard).first).dx -
@@ -96,7 +98,7 @@ void main() {
       );
       expect(
         tester.getTopLeft(find.text('First source')).dx,
-        tester.getTopLeft(find.text('搜索结果')).dx,
+        tester.getTopLeft(find.text('\u641C\u7D22\u7ED3\u679C')).dx,
       );
       expect(
         tester
@@ -131,8 +133,8 @@ void main() {
                   onPressed: () {
                     showCitationSourcesBottomSheet(
                       context: context,
-                      title: '搜索结果',
-                      closeSemanticLabel: '关闭',
+                      title: '\u641C\u7D22\u7ED3\u679C',
+                      closeSemanticLabel: '\u5173\u95ED',
                       items: const [
                         CitationSourceItem(
                           title: 'Desktop source',
@@ -156,7 +158,7 @@ void main() {
 
       expect(find.byType(CitationSourcesDialog), findsOneWidget);
       expect(find.byKey(CustomBottomSheet.panelKey), findsNothing);
-      expect(find.text('搜索结果'), findsOneWidget);
+      expect(find.text('\u641C\u7D22\u7ED3\u679C'), findsOneWidget);
       expect(find.byType(CitationSourceCard), findsOneWidget);
       expect(find.text('Desktop source'), findsOneWidget);
 
@@ -186,8 +188,8 @@ void main() {
                   onPressed: () {
                     showCitationSourcesBottomSheet(
                       context: context,
-                      title: '搜索结果',
-                      closeSemanticLabel: '关闭',
+                      title: '\u641C\u7D22\u7ED3\u679C',
+                      closeSemanticLabel: '\u5173\u95ED',
                       items: const [
                         CitationSourceItem(
                           title: 'Mobile source',

@@ -16,13 +16,13 @@ import '../../../core/models/chat_input_data.dart';
 import '../../../core/utils/multimodal_input_utils.dart';
 import '../widgets/chat_input_bar.dart';
 
-/// 文件选取和上传服务
+/// File\u9009\u53D6\u548C\u4E0A\u4F20\u670D\u52A1
 ///
-/// 负责处理：
-/// - 图片选择 (相册/相机)
-/// - 文件选择
-/// - 桌面拖放处理
-/// - 文件复制到应用目录
+/// \u8D1F\u8D23\u5904\u7406：
+/// - Image\u9009\u62E9 (\u76F8\u518C/\u76F8\u673A)
+/// - File\u9009\u62E9
+/// - \u684C\u9762\u62D6\u653E\u5904\u7406
+/// - File\u590D\u5236\u5230\u5E94\u7528\u76EE\u5F55
 class FileUploadService {
   FileUploadService({
     required this.getContext,
@@ -32,7 +32,7 @@ class FileUploadService {
     this.hasWorkspace,
   });
 
-  /// 媒体控制器，用于添加图片和文件到输入栏
+  /// \u5A92\u4F53\u63A7\u5236\u5668，\u7528\u4E8E\u6DFB\u52A0Image\u548CFile\u5230\u8F93\u5165\u680F
   final ChatInputBarController mediaController;
 
   /// Context provider callback to avoid storing stale context
@@ -96,10 +96,10 @@ class FileUploadService {
         isSandboxDataFile(fileName: file.fileName, mime: file.mime);
   }
 
-  /// 复制选中的文件到应用上传目录
+  /// \u590D\u5236\u9009\u4E2D\u7684File\u5230\u5E94\u7528\u4E0A\u4F20\u76EE\u5F55
   ///
-  /// [files] 要复制的文件列表
-  /// 返回复制后的文件路径列表
+  /// [files] \u8981\u590D\u5236\u7684File\u5217\u8868
+  /// \u8FD4\u56DE\u590D\u5236\u540E\u7684File\u8DEF\u5F84\u5217\u8868
   Future<List<String>> copyPickedFiles(List<XFile> files) async {
     final saved = await _copyPickedFilesKeepingSlots(files);
     return saved.whereType<String>().toList(growable: false);
@@ -134,7 +134,7 @@ class FileUploadService {
     mediaController.enqueueImages(paths, getImageCompressConfig());
   }
 
-  /// 从相册选取图片
+  /// \u4ECE\u76F8\u518C\u9009\u53D6Image
   Future<void> onPickPhotos() async {
     try {
       // On desktop, fall back to FilePicker as image_picker is not supported.
@@ -177,9 +177,9 @@ class FileUploadService {
     } catch (_) {}
   }
 
-  /// 从相机拍照
+  /// \u4ECE\u76F8\u673A\u62CD\u7167
   ///
-  /// [context] 用于显示权限提示和错误消息
+  /// [context] \u7528\u4E8E\u663E\u793A\u6743\u9650\u63D0\u793A\u548C\u9519\u8BEF\u6D88\u606F
   Future<void> onPickCamera(BuildContext context) async {
     try {
       // Proactive permission check on mobile
@@ -266,7 +266,7 @@ class FileUploadService {
     return croppedFiles;
   }
 
-  /// 根据文件扩展名推断 MIME 类型
+  /// \u6839\u636EFile\u6269\u5C55\u540D\u63A8\u65AD MIME \u7C7B\u578B
   String inferMimeByExtension(String name) {
     final mediaMime = inferMediaMimeFromSource(name);
     if (mediaMime.isNotEmpty) return mediaMime;
@@ -286,7 +286,7 @@ class FileUploadService {
         : 'application/octet-stream';
   }
 
-  /// 判断文件是否为图片（根据扩展名）
+  /// \u5224\u65ADFile\u662F\u5426\u4E3AImage（\u6839\u636E\u6269\u5C55\u540D）
   bool isImageExtension(String name) {
     final lower = name.toLowerCase();
     return lower.endsWith('.png') ||
@@ -299,7 +299,7 @@ class FileUploadService {
         lower.endsWith('.heif');
   }
 
-  /// 选取文件（图片、视频、文档等）
+  /// \u9009\u53D6File（Image、\u89C6\u9891、\u6587\u6863\u7B49）
   Future<void> onPickFiles() async {
     try {
       final anyFile = hasWorkspace?.call() ?? false;
@@ -342,7 +342,7 @@ class FileUploadService {
     } catch (_) {}
   }
 
-  /// 处理桌面端拖放的文件 (macOS/Windows/Linux)
+  /// \u5904\u7406\u684C\u9762\u7AEF\u62D6\u653E\u7684File (macOS/Windows/Linux)
   Future<void> onFilesDroppedDesktop(List<XFile> files) async {
     if (files.isEmpty) return;
     try {

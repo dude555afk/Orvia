@@ -180,7 +180,7 @@ ColorScheme customThemeColorScheme(CustomTheme theme, {required bool dark}) {
 ThemePalette buildCustomThemePalette(CustomTheme theme) {
   return ThemePalette(
     id: ThemePalettes.customPaletteId,
-    zhName: theme.name.isEmpty ? '自定义' : theme.name,
+    zhName: theme.name.isEmpty ? 'Custom' : theme.name,
     enName: theme.name.isEmpty ? 'Custom' : theme.name,
     light: customThemeColorScheme(theme, dark: false),
     dark: customThemeColorScheme(theme, dark: true),

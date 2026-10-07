@@ -299,8 +299,8 @@ void main() {
 
   for (final (width, locale, dark) in [
     (320.0, 'en', false),
-    (390.0, 'zh', false),
-    (390.0, 'zh', true),
+    (390.0, 'en', false),
+    (390.0, 'en', true),
   ]) {
     testWidgets(
       'iOS list shows a quiet status in the task summary ($width, $locale, dark=$dark)',
@@ -529,7 +529,8 @@ void main() {
           tester,
           'ios-preparation-prompt-${width.toInt()}-$locale-${dark ? 'dark' : 'light'}',
         );
-        const custom = '只输出助手消息。\n时间 {{scheduled_time}} / {{utc_offset}}';
+        const custom =
+            '\u53EA\u8F93\u51FA\u52A9\u624B\u6D88\u606F。\n\u65F6\u95F4 {{scheduled_time}} / {{utc_offset}}';
         await tester.enterText(field, custom);
         await tap(tester, find.byKey(const ValueKey('scheduled-tasks-action')));
         expect(saved!.preparationPrompt, custom);
@@ -992,8 +993,9 @@ void main() {
         addTearDown(tester.view.resetDevicePixelRatio);
         final task = ScheduledTask(
           id: 'task',
-          name: '晨间简报',
-          prompt: '整理项目的最新进展，总结今天需要关注的事项。',
+          name: 'Morning brief',
+          prompt:
+              'Summarize the latest project progress and today\'s priorities.',
           assistantId: 'assistant',
           hour: 8,
           minute: 30,
@@ -1003,7 +1005,7 @@ void main() {
           app(
             editor(task: task),
             dark: dark,
-            locale: 'zh',
+            locale: 'en',
           ),
         );
         await tester.pumpAndSettle();
@@ -1031,7 +1033,7 @@ void main() {
           app(
             ScheduledTasksPage(service: service),
             dark: dark,
-            locale: 'zh',
+            locale: 'en',
           ),
         );
         await tester.pumpAndSettle();

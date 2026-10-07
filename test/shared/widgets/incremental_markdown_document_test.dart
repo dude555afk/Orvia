@@ -148,7 +148,9 @@ void main() {
 
   test('mid-paragraph display math follows successful spans only', () {
     final document = IncrementalMarkdownDocument();
-    final blocks = document.update('说明文字 \$\$\na + b\n\nc + d\n\$\$\n\nafter');
+    final blocks = document.update(
+      '\u8BF4\u660E\u6587\u5B57 \$\$\na + b\n\nc + d\n\$\$\n\nafter',
+    );
 
     expect(blocks.length, greaterThanOrEqualTo(2));
     expect(blocks.last.text, contains('after'));
@@ -156,7 +158,9 @@ void main() {
 
   test('mid-paragraph bracket display math follows successful spans only', () {
     final document = IncrementalMarkdownDocument();
-    final blocks = document.update('说明文字 \\[\na + b\n\nc + d\n\\]\n\nafter');
+    final blocks = document.update(
+      '\u8BF4\u660E\u6587\u5B57 \\[\na + b\n\nc + d\n\\]\n\nafter',
+    );
 
     expect(blocks.length, greaterThanOrEqualTo(2));
     expect(blocks.last.text, 'after');
@@ -642,8 +646,8 @@ void main() {
     final full = List<String>.generate(
       120,
       (index) =>
-          '*动作$index：懒懒地、黏糊糊地伸了个懒腰*\n\n'
-          '正文$index：反而笑得更甜，然后理直气壮地继续说话。',
+          '*\u52A8\u4F5C$index：\u61D2\u61D2\u5730、\u9ECF\u7CCA\u7CCA\u5730\u4F38\u4E86\u4E2A\u61D2\u8170*\n\n'
+          '\u6B63\u6587$index：\u53CD\u800C\u7B11\u5F97\u66F4\u751C，\u7136\u540E\u7406\u76F4\u6C14\u58EE\u5730\u7EE7\u7EED\u8BF4\u8BDD。',
     ).join('\n\n');
     expect(full.length, greaterThan(5000));
 

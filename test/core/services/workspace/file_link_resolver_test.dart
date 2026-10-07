@@ -105,15 +105,17 @@ void main() {
     });
 
     test('accepts raw UTF-8 and encoded Chinese workspace names', () {
-      final raw = KelivoLink.tryParse('kelivo://workspace/员工表.csv');
+      final raw = KelivoLink.tryParse(
+        'kelivo://workspace/\u5458\u5DE5\u8868.csv',
+      );
       expect(raw?.kind, KelivoLinkKind.workspaceFile);
-      expect(raw?.relativePath, '员工表.csv');
+      expect(raw?.relativePath, '\u5458\u5DE5\u8868.csv');
 
       final encoded = KelivoLink.tryParse(
-        'kelivo://workspace/${Uri.encodeComponent('员工表.csv')}',
+        'kelivo://workspace/${Uri.encodeComponent('\u5458\u5DE5\u8868.csv')}',
       );
       expect(encoded?.kind, KelivoLinkKind.workspaceFile);
-      expect(encoded?.relativePath, '员工表.csv');
+      expect(encoded?.relativePath, '\u5458\u5DE5\u8868.csv');
     });
 
     test('decodes encoded directory segments', () {
@@ -125,11 +127,13 @@ void main() {
     });
 
     test('parses kelivo://chat/<id>/Chinese filename as chat output', () {
-      const conversationId = 'conv-中文';
-      final link = KelivoLink.tryParse('kelivo://chat/$conversationId/输出.png');
+      const conversationId = 'conv-\u4E2D\u6587';
+      final link = KelivoLink.tryParse(
+        'kelivo://chat/$conversationId/\u8F93\u51FA.png',
+      );
       expect(link?.kind, KelivoLinkKind.chatOutput);
       expect(link?.conversationId, conversationId);
-      expect(link?.relativePath, '输出.png');
+      expect(link?.relativePath, '\u8F93\u51FA.png');
     });
 
     test('rejects .. segments and encoded traversal', () {
@@ -328,7 +332,7 @@ void main() {
     test(
       'linkFor Chinese filename round-trips to an existing temp file',
       () async {
-        final file = File(p.join(workspaceRoot.path, '员工表.csv'));
+        final file = File(p.join(workspaceRoot.path, '\u5458\u5DE5\u8868.csv'));
         await file.writeAsString('name,role\n');
         final paths = WorkspacePaths.sandboxed(
           workspaceHostRoot: workspaceRoot.path,
@@ -338,18 +342,18 @@ void main() {
         final href = WorkspaceToolsService.linkFor(
           ResolvedPath(
             hostPath: file.path,
-            modelPath: '/workspace/员工表.csv',
+            modelPath: '/workspace/\u5458\u5DE5\u8868.csv',
             zone: WorkspaceZone.workspace,
           ),
           paths: paths,
         );
         expect(href, isNotNull);
-        expect(href, contains(Uri.encodeComponent('员工表.csv')));
-        expect(href, isNot(contains('员工表')));
+        expect(href, contains(Uri.encodeComponent('\u5458\u5DE5\u8868.csv')));
+        expect(href, isNot(contains('\u5458\u5DE5\u8868')));
 
         final parsed = KelivoLink.tryParse(href!);
         expect(parsed?.kind, KelivoLinkKind.workspaceFile);
-        expect(parsed?.relativePath, '员工表.csv');
+        expect(parsed?.relativePath, '\u5458\u5DE5\u8868.csv');
         final resolved = await resolver.resolveToHostFile(
           parsed!,
           conversationId: 'conv-1',
@@ -362,12 +366,18 @@ void main() {
     test('resolves encoded chat output with Chinese name', () async {
       const conversationId = 'conv-42';
       final output = File(
-        p.join(appData.path, 'sessions', conversationId, 'outputs', '输出.png'),
+        p.join(
+          appData.path,
+          'sessions',
+          conversationId,
+          'outputs',
+          '\u8F93\u51FA.png',
+        ),
       );
       await output.parent.create(recursive: true);
       await output.writeAsString('png');
       final parsed = KelivoLink.tryParse(
-        'kelivo://chat/$conversationId/${Uri.encodeComponent('输出.png')}',
+        'kelivo://chat/$conversationId/${Uri.encodeComponent('\u8F93\u51FA.png')}',
       );
       expect(parsed, isNotNull);
       final resolved = await resolver.resolveToHostFile(
@@ -445,7 +455,8 @@ void main() {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
         final harness = SandboxChannelHarness();
         final root = Directory(p.join(tempDir.path, 'external'))..createSync();
-        final file = File(p.join(root.path, '报告.txt'))..writeAsStringSync('ok');
+        final file = File(p.join(root.path, '\u62A5\u544A.txt'))
+          ..writeAsStringSync('ok');
         var revoked = false;
         harness.handler = (call) {
           if (call.method == 'resolveDirectory') {
@@ -481,7 +492,10 @@ void main() {
             externalMounts: mounts.activeMounts,
           );
           final link = WorkspaceToolsService.linkFor(
-            await paths.resolveReal('/mounts/Data/报告.txt', cwd: '/workspace'),
+            await paths.resolveReal(
+              '/mounts/Data/\u62A5\u544A.txt',
+              cwd: '/workspace',
+            ),
             paths: paths,
           )!;
           final parsed = KelivoLink.tryParse(link)!;

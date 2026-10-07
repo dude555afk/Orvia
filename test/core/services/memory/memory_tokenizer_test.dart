@@ -16,12 +16,14 @@ void main() {
       expect(tokens, contains('tips'));
     });
 
-    test('builds CJK 2-grams and filters the 用户 stopword bigram', () {
-      final tokens = MemoryTokenizer.tokenize('用户开发Flutter应用');
-      expect(tokens, isNot(contains('用户')));
-      expect(tokens, contains('开发'));
+    test('builds CJK 2-grams and filters the \u7528\u6237 stopword bigram', () {
+      final tokens = MemoryTokenizer.tokenize(
+        '\u7528\u6237\u5F00\u53D1Flutter\u5E94\u7528',
+      );
+      expect(tokens, isNot(contains('\u7528\u6237')));
+      expect(tokens, contains('\u5F00\u53D1'));
       expect(tokens, contains('flutter'));
-      expect(tokens, contains('应用'));
+      expect(tokens, contains('\u5E94\u7528'));
     });
 
     test('caps at 8 tokens', () {

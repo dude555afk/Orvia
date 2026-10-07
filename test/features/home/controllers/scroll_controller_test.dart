@@ -790,255 +790,274 @@ void main() {
       scrollController.dispose();
     });
 
-    testWidgets('顶部覆盖层下的连续消息跳转保持精确落点', (tester) async {
-      final messages = <_NavMessage>[
-        for (var i = 0; i < 40; i++)
-          _NavMessage(id: 'message-$i', role: i.isEven ? 'user' : 'assistant'),
-      ];
-      final scrollController = ChatAutoFollowScrollController();
-      final chatScrollController = ChatScrollController(
-        scrollController: scrollController,
-        onStateChanged: () {},
-        getAutoScrollEnabled: () => false,
-        getAutoScrollIdleSeconds: () => 8,
-        getTopRevealInset: () => 100,
-      );
-      await tester.pumpWidget(
-        _IndexedScrollHarness(
+    testWidgets(
+      '\u9876\u90E8\u8986\u76D6\u5C42\u4E0B\u7684\u8FDE\u7EED\u6D88\u606F\u8DF3\u8F6C\u4FDD\u6301\u7CBE\u786E\u843D\u70B9',
+      (tester) async {
+        final messages = <_NavMessage>[
+          for (var i = 0; i < 40; i++)
+            _NavMessage(
+              id: 'message-$i',
+              role: i.isEven ? 'user' : 'assistant',
+            ),
+        ];
+        final scrollController = ChatAutoFollowScrollController();
+        final chatScrollController = ChatScrollController(
           scrollController: scrollController,
-          listController: chatScrollController.messageListController,
-          messages: messages,
-          topPadding: 108,
-        ),
-      );
-
-      final initial = chatScrollController.scrollToMessageId(
-        targetId: 'message-20',
-        targetIndex: 20,
-      );
-      await tester.pumpAndSettle();
-      await initial;
-      expect(
-        tester.getTopLeft(find.byKey(const ValueKey('message-20'))).dy,
-        moreOrLessEquals(100, epsilon: 1),
-      );
-
-      final previous = chatScrollController.jumpToPreviousQuestion(
-        messages: messages,
-        indexOfId: (id) => messages.indexWhere((message) => message.id == id),
-      );
-      final previousFrameTops = <double>[];
-      for (var frame = 0; frame < 15; frame++) {
-        await tester.pump(const Duration(milliseconds: 16));
-        previousFrameTops.add(
-          tester.getTopLeft(find.byKey(const ValueKey('message-19'))).dy,
+          onStateChanged: () {},
+          getAutoScrollEnabled: () => false,
+          getAutoScrollIdleSeconds: () => 8,
+          getTopRevealInset: () => 100,
         );
-      }
-      await tester.pumpAndSettle();
-      expect(await previous, isTrue);
-      for (var index = 1; index < previousFrameTops.length; index++) {
+        await tester.pumpWidget(
+          _IndexedScrollHarness(
+            scrollController: scrollController,
+            listController: chatScrollController.messageListController,
+            messages: messages,
+            topPadding: 108,
+          ),
+        );
+
+        final initial = chatScrollController.scrollToMessageId(
+          targetId: 'message-20',
+          targetIndex: 20,
+        );
+        await tester.pumpAndSettle();
+        await initial;
         expect(
-          previousFrameTops[index],
-          greaterThanOrEqualTo(previousFrameTops[index - 1] - 0.5),
-        );
-      }
-      expect(
-        tester.getTopLeft(find.byKey(const ValueKey('message-19'))).dy,
-        moreOrLessEquals(100, epsilon: 1),
-      );
-      await tester.pump(const Duration(milliseconds: 32));
-      expect(
-        tester.getTopLeft(find.byKey(const ValueKey('message-19'))).dy,
-        moreOrLessEquals(100, epsilon: 1),
-      );
-
-      final next = chatScrollController.jumpToNextQuestion(
-        messages: messages,
-        indexOfId: (id) => messages.indexWhere((message) => message.id == id),
-      );
-      final nextFrameTops = <double>[];
-      for (var frame = 0; frame < 15; frame++) {
-        await tester.pump(const Duration(milliseconds: 16));
-        nextFrameTops.add(
           tester.getTopLeft(find.byKey(const ValueKey('message-20'))).dy,
+          moreOrLessEquals(100, epsilon: 1),
         );
-      }
-      await tester.pumpAndSettle();
-      expect(await next, isTrue);
-      for (var index = 1; index < nextFrameTops.length; index++) {
-        expect(
-          nextFrameTops[index],
-          lessThanOrEqualTo(nextFrameTops[index - 1] + 0.5),
-        );
-      }
-      expect(
-        tester.getTopLeft(find.byKey(const ValueKey('message-20'))).dy,
-        moreOrLessEquals(100, epsilon: 1),
-      );
-      await tester.pump(const Duration(milliseconds: 32));
-      expect(
-        tester.getTopLeft(find.byKey(const ValueKey('message-20'))).dy,
-        moreOrLessEquals(100, epsilon: 1),
-      );
 
-      chatScrollController.dispose();
-      scrollController.dispose();
-    });
-
-    testWidgets('相邻跳转平滑穿过大消息的真实高度修正', (tester) async {
-      final messages = <_NavMessage>[
-        for (var i = 0; i < 2000; i++)
-          _NavMessage(id: 'large-message-$i', role: 'assistant'),
-      ];
-      final scrollController = ChatAutoFollowScrollController();
-      final chatScrollController = ChatScrollController(
-        scrollController: scrollController,
-        onStateChanged: () {},
-        getAutoScrollEnabled: () => false,
-        getAutoScrollIdleSeconds: () => 8,
-        getTopRevealInset: () => 100,
-      );
-      await tester.pumpWidget(
-        _VariableExtentIndexedScrollHarness(
-          scrollController: scrollController,
-          listController: chatScrollController.messageListController,
+        final previous = chatScrollController.jumpToPreviousQuestion(
           messages: messages,
-          builtIndices: <int>{},
-          topPadding: 108,
-        ),
-      );
-
-      final initial = chatScrollController.scrollToMessageId(
-        targetId: 'large-message-1002',
-        targetIndex: 1002,
-      );
-      await tester.pumpAndSettle();
-      await initial;
-
-      final navigation = chatScrollController.jumpToPreviousQuestion(
-        messages: messages,
-        indexOfId: (id) => messages.indexWhere((message) => message.id == id),
-      );
-      final frameTops = <double>[];
-      for (var frame = 0; frame < 20; frame++) {
-        await tester.pump(const Duration(milliseconds: 16));
-        final target = find.byKey(const ValueKey('large-message-1001'));
-        if (target.evaluate().isNotEmpty) {
-          frameTops.add(tester.getTopLeft(target).dy);
+          indexOfId: (id) => messages.indexWhere((message) => message.id == id),
+        );
+        final previousFrameTops = <double>[];
+        for (var frame = 0; frame < 15; frame++) {
+          await tester.pump(const Duration(milliseconds: 16));
+          previousFrameTops.add(
+            tester.getTopLeft(find.byKey(const ValueKey('message-19'))).dy,
+          );
         }
-      }
-      await tester.pumpAndSettle();
-      expect(await navigation, isTrue);
-
-      final frameDeltas = <double>[];
-      for (var index = 1; index < frameTops.length; index++) {
-        frameDeltas.add(frameTops[index] - frameTops[index - 1]);
+        await tester.pumpAndSettle();
+        expect(await previous, isTrue);
+        for (var index = 1; index < previousFrameTops.length; index++) {
+          expect(
+            previousFrameTops[index],
+            greaterThanOrEqualTo(previousFrameTops[index - 1] - 0.5),
+          );
+        }
         expect(
-          frameTops[index],
-          greaterThanOrEqualTo(frameTops[index - 1] - 0.5),
+          tester.getTopLeft(find.byKey(const ValueKey('message-19'))).dy,
+          moreOrLessEquals(100, epsilon: 1),
         );
-      }
-      for (var index = 1; index < frameDeltas.length; index++) {
+        await tester.pump(const Duration(milliseconds: 32));
         expect(
-          frameDeltas[index],
-          lessThanOrEqualTo(frameDeltas[index - 1] + 1),
+          tester.getTopLeft(find.byKey(const ValueKey('message-19'))).dy,
+          moreOrLessEquals(100, epsilon: 1),
         );
-      }
-      expect(
-        tester.getTopLeft(find.byKey(const ValueKey('large-message-1001'))).dy,
-        moreOrLessEquals(100, epsilon: 1),
-      );
-      await tester.pump(const Duration(milliseconds: 32));
-      expect(
-        tester.getTopLeft(find.byKey(const ValueKey('large-message-1001'))).dy,
-        moreOrLessEquals(100, epsilon: 1),
-      );
 
-      chatScrollController.dispose();
-      scrollController.dispose();
-    });
-
-    testWidgets('上一条消息以索引列表的当前可见项为锚点', (tester) async {
-      final messages = <_NavMessage>[
-        for (var i = 0; i < 40; i++)
-          _NavMessage(
-            id: 'message-$i',
-            role: i % 5 == 0 ? 'user' : 'assistant',
-          ),
-      ];
-      final scrollController = ChatAutoFollowScrollController();
-      final chatScrollController = ChatScrollController(
-        scrollController: scrollController,
-        onStateChanged: () {},
-        getAutoScrollEnabled: () => false,
-        getAutoScrollIdleSeconds: () => 8,
-      );
-
-      await tester.pumpWidget(
-        _IndexedScrollHarness(
-          scrollController: scrollController,
-          listController: chatScrollController.messageListController,
+        final next = chatScrollController.jumpToNextQuestion(
           messages: messages,
-        ),
-      );
-      scrollController.jumpTo(900);
-      await tester.pump();
+          indexOfId: (id) => messages.indexWhere((message) => message.id == id),
+        );
+        final nextFrameTops = <double>[];
+        for (var frame = 0; frame < 15; frame++) {
+          await tester.pump(const Duration(milliseconds: 16));
+          nextFrameTops.add(
+            tester.getTopLeft(find.byKey(const ValueKey('message-20'))).dy,
+          );
+        }
+        await tester.pumpAndSettle();
+        expect(await next, isTrue);
+        for (var index = 1; index < nextFrameTops.length; index++) {
+          expect(
+            nextFrameTops[index],
+            lessThanOrEqualTo(nextFrameTops[index - 1] + 0.5),
+          );
+        }
+        expect(
+          tester.getTopLeft(find.byKey(const ValueKey('message-20'))).dy,
+          moreOrLessEquals(100, epsilon: 1),
+        );
+        await tester.pump(const Duration(milliseconds: 32));
+        expect(
+          tester.getTopLeft(find.byKey(const ValueKey('message-20'))).dy,
+          moreOrLessEquals(100, epsilon: 1),
+        );
 
-      final navigation = chatScrollController.jumpToPreviousQuestion(
-        messages: messages,
-        indexOfId: (id) => messages.indexWhere((message) => message.id == id),
-      );
-      await tester.pump();
-      expect(scrollController.position.isScrollingNotifier.value, isTrue);
-      await tester.pumpAndSettle();
-      final moved = await navigation;
+        chatScrollController.dispose();
+        scrollController.dispose();
+      },
+    );
 
-      expect(moved, isTrue);
-      expect(chatScrollController.lastJumpUserMessageId, 'message-10');
-
-      chatScrollController.dispose();
-      scrollController.dispose();
-    });
-
-    testWidgets('下一条消息以索引列表的当前可见项为锚点', (tester) async {
-      final messages = <_NavMessage>[
-        for (var i = 0; i < 40; i++)
-          _NavMessage(
-            id: 'message-$i',
-            role: i % 5 == 0 ? 'user' : 'assistant',
-          ),
-      ];
-      final scrollController = ChatAutoFollowScrollController();
-      final chatScrollController = ChatScrollController(
-        scrollController: scrollController,
-        onStateChanged: () {},
-        getAutoScrollEnabled: () => false,
-        getAutoScrollIdleSeconds: () => 8,
-      );
-
-      await tester.pumpWidget(
-        _IndexedScrollHarness(
+    testWidgets(
+      '\u76F8\u90BB\u8DF3\u8F6C\u5E73\u6ED1\u7A7F\u8FC7\u5927\u6D88\u606F\u7684\u771F\u5B9E\u9AD8\u5EA6\u4FEE\u6B63',
+      (tester) async {
+        final messages = <_NavMessage>[
+          for (var i = 0; i < 2000; i++)
+            _NavMessage(id: 'large-message-$i', role: 'assistant'),
+        ];
+        final scrollController = ChatAutoFollowScrollController();
+        final chatScrollController = ChatScrollController(
           scrollController: scrollController,
-          listController: chatScrollController.messageListController,
+          onStateChanged: () {},
+          getAutoScrollEnabled: () => false,
+          getAutoScrollIdleSeconds: () => 8,
+          getTopRevealInset: () => 100,
+        );
+        await tester.pumpWidget(
+          _VariableExtentIndexedScrollHarness(
+            scrollController: scrollController,
+            listController: chatScrollController.messageListController,
+            messages: messages,
+            builtIndices: <int>{},
+            topPadding: 108,
+          ),
+        );
+
+        final initial = chatScrollController.scrollToMessageId(
+          targetId: 'large-message-1002',
+          targetIndex: 1002,
+        );
+        await tester.pumpAndSettle();
+        await initial;
+
+        final navigation = chatScrollController.jumpToPreviousQuestion(
           messages: messages,
-        ),
-      );
-      scrollController.jumpTo(900);
-      await tester.pump();
+          indexOfId: (id) => messages.indexWhere((message) => message.id == id),
+        );
+        final frameTops = <double>[];
+        for (var frame = 0; frame < 20; frame++) {
+          await tester.pump(const Duration(milliseconds: 16));
+          final target = find.byKey(const ValueKey('large-message-1001'));
+          if (target.evaluate().isNotEmpty) {
+            frameTops.add(tester.getTopLeft(target).dy);
+          }
+        }
+        await tester.pumpAndSettle();
+        expect(await navigation, isTrue);
 
-      final navigation = chatScrollController.jumpToNextQuestion(
-        messages: messages,
-        indexOfId: (id) => messages.indexWhere((message) => message.id == id),
-      );
-      await tester.pumpAndSettle();
-      final moved = await navigation;
+        final frameDeltas = <double>[];
+        for (var index = 1; index < frameTops.length; index++) {
+          frameDeltas.add(frameTops[index] - frameTops[index - 1]);
+          expect(
+            frameTops[index],
+            greaterThanOrEqualTo(frameTops[index - 1] - 0.5),
+          );
+        }
+        for (var index = 1; index < frameDeltas.length; index++) {
+          expect(
+            frameDeltas[index],
+            lessThanOrEqualTo(frameDeltas[index - 1] + 1),
+          );
+        }
+        expect(
+          tester
+              .getTopLeft(find.byKey(const ValueKey('large-message-1001')))
+              .dy,
+          moreOrLessEquals(100, epsilon: 1),
+        );
+        await tester.pump(const Duration(milliseconds: 32));
+        expect(
+          tester
+              .getTopLeft(find.byKey(const ValueKey('large-message-1001')))
+              .dy,
+          moreOrLessEquals(100, epsilon: 1),
+        );
 
-      expect(moved, isTrue);
-      expect(chatScrollController.lastJumpUserMessageId, 'message-12');
+        chatScrollController.dispose();
+        scrollController.dispose();
+      },
+    );
 
-      chatScrollController.dispose();
-      scrollController.dispose();
-    });
+    testWidgets(
+      '\u4E0A\u4E00\u6761\u6D88\u606F\u4EE5\u7D22\u5F15\u5217\u8868\u7684\u5F53\u524D\u53EF\u89C1\u9879\u4E3A\u951A\u70B9',
+      (tester) async {
+        final messages = <_NavMessage>[
+          for (var i = 0; i < 40; i++)
+            _NavMessage(
+              id: 'message-$i',
+              role: i % 5 == 0 ? 'user' : 'assistant',
+            ),
+        ];
+        final scrollController = ChatAutoFollowScrollController();
+        final chatScrollController = ChatScrollController(
+          scrollController: scrollController,
+          onStateChanged: () {},
+          getAutoScrollEnabled: () => false,
+          getAutoScrollIdleSeconds: () => 8,
+        );
+
+        await tester.pumpWidget(
+          _IndexedScrollHarness(
+            scrollController: scrollController,
+            listController: chatScrollController.messageListController,
+            messages: messages,
+          ),
+        );
+        scrollController.jumpTo(900);
+        await tester.pump();
+
+        final navigation = chatScrollController.jumpToPreviousQuestion(
+          messages: messages,
+          indexOfId: (id) => messages.indexWhere((message) => message.id == id),
+        );
+        await tester.pump();
+        expect(scrollController.position.isScrollingNotifier.value, isTrue);
+        await tester.pumpAndSettle();
+        final moved = await navigation;
+
+        expect(moved, isTrue);
+        expect(chatScrollController.lastJumpUserMessageId, 'message-10');
+
+        chatScrollController.dispose();
+        scrollController.dispose();
+      },
+    );
+
+    testWidgets(
+      '\u4E0B\u4E00\u6761\u6D88\u606F\u4EE5\u7D22\u5F15\u5217\u8868\u7684\u5F53\u524D\u53EF\u89C1\u9879\u4E3A\u951A\u70B9',
+      (tester) async {
+        final messages = <_NavMessage>[
+          for (var i = 0; i < 40; i++)
+            _NavMessage(
+              id: 'message-$i',
+              role: i % 5 == 0 ? 'user' : 'assistant',
+            ),
+        ];
+        final scrollController = ChatAutoFollowScrollController();
+        final chatScrollController = ChatScrollController(
+          scrollController: scrollController,
+          onStateChanged: () {},
+          getAutoScrollEnabled: () => false,
+          getAutoScrollIdleSeconds: () => 8,
+        );
+
+        await tester.pumpWidget(
+          _IndexedScrollHarness(
+            scrollController: scrollController,
+            listController: chatScrollController.messageListController,
+            messages: messages,
+          ),
+        );
+        scrollController.jumpTo(900);
+        await tester.pump();
+
+        final navigation = chatScrollController.jumpToNextQuestion(
+          messages: messages,
+          indexOfId: (id) => messages.indexWhere((message) => message.id == id),
+        );
+        await tester.pumpAndSettle();
+        final moved = await navigation;
+
+        expect(moved, isTrue);
+        expect(chatScrollController.lastJumpUserMessageId, 'message-12');
+
+        chatScrollController.dispose();
+        scrollController.dispose();
+      },
+    );
 
     testWidgets('rapid previous taps advance the indexed navigation cursor', (
       tester,

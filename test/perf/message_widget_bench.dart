@@ -19,8 +19,8 @@ String _payload(int items) {
   for (var i = 0; i < items; i++) {
     if (i > 0) b.write(',');
     b.write(
-      '{"id":"$i","index":"${i + 1}","title":"结果 $i","url":"https://e.com/$i",'
-      '"text":"这是搜索结果摘要，长度大约一两百字符，用于模拟真实负载。$i"}',
+      '{"id":"$i","index":"${i + 1}","title":"\u7ED3\u679C $i","url":"https://e.com/$i",'
+      '"text":"\u8FD9\u662F\u641C\u7D22\u7ED3\u679C\u6458\u8981，\u957F\u5EA6\u5927\u7EA6\u4E00\u4E24\u767E\u5B57\u7B26，\u7528\u4E8E\u6A21\u62DF\u771F\u5B9E\u8D1F\u8F7D。$i"}',
     );
   }
   b.write(']}');
@@ -49,7 +49,7 @@ void main() {
             id: 't$i',
             toolName: cfg.$3 ? 'search_web' : 'read_file',
             arguments: {'path': 'lib/x_$i.dart', 'query': 'q$i'},
-            content: cfg.$3 ? _payload(cfg.$4) : '结果 $i',
+            content: cfg.$3 ? _payload(cfg.$4) : '\u7ED3\u679C $i',
             loading: false,
           ),
       ];
@@ -133,7 +133,7 @@ class _HState extends State<_H> {
               message: ChatMessage(
                 id: 'm1',
                 role: 'assistant',
-                content: '正在处理$n',
+                content: '\u6B63\u5728\u5904\u7406$n',
                 conversationId: 'c1',
                 isStreaming: true,
               ),

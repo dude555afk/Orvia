@@ -88,7 +88,7 @@ Future<Map<String, dynamic>> _captureGenerateTextBody({
       jsonEncode({
         'choices': [
           {
-            'message': {'content': '标题'},
+            'message': {'content': '\u6807\u9898'},
           },
         ],
       }),
@@ -120,7 +120,7 @@ Future<Map<String, dynamic>> _captureGenerateTextBody({
           },
         );
 
-  expect(title, '标题');
+  expect(title, '\u6807\u9898');
   return requestBody;
 }
 
@@ -146,7 +146,9 @@ void main() {
             'text/plain',
           );
           request.response.add(
-            utf8.encode('{"choices":[{"message":{"content":"问候交流"}}]}'),
+            utf8.encode(
+              '{"choices":[{"message":{"content":"\u95EE\u5019\u4EA4\u6D41"}}]}',
+            ),
           );
           await request.response.close();
         });
@@ -158,7 +160,7 @@ void main() {
           prompt: 'summarize',
         );
 
-        expect(title, '问候交流');
+        expect(title, '\u95EE\u5019\u4EA4\u6D41');
         expect(requestBody['stream'], isFalse);
         expect(requestBody.containsKey('temperature'), isFalse);
       },
@@ -183,7 +185,7 @@ void main() {
               'id': 'resp-title',
               'object': 'response',
               'status': 'completed',
-              'output_text': '标题',
+              'output_text': '\u6807\u9898',
               'output': const [],
             }),
           );
@@ -208,7 +210,7 @@ void main() {
         prompt: 'summarize',
       );
 
-      expect(title, '标题');
+      expect(title, '\u6807\u9898');
       expect(requestBody['stream'], isFalse);
     });
 
@@ -231,7 +233,7 @@ void main() {
               {
                 'content': {
                   'parts': [
-                    {'text': '标题'},
+                    {'text': '\u6807\u9898'},
                   ],
                 },
               },
@@ -248,7 +250,7 @@ void main() {
         prompt: 'summarize',
       );
 
-      expect(title, '标题');
+      expect(title, '\u6807\u9898');
       expect(requestBody.containsKey('temperature'), isFalse);
       final generationConfig = requestBody['generationConfig'];
       if (generationConfig != null) {
@@ -277,7 +279,7 @@ void main() {
             jsonEncode({
               'choices': [
                 {
-                  'message': {'content': '标题'},
+                  'message': {'content': '\u6807\u9898'},
                 },
               ],
             }),
@@ -293,7 +295,7 @@ void main() {
           reasoning: legacyBudget(0),
         );
 
-        expect(title, '标题');
+        expect(title, '\u6807\u9898');
         expect(requestBody['model'], 'kimi-k2.7-code');
         expect(requestBody['thinking'], {'type': 'enabled'});
         expect(requestBody.containsKey('reasoning_effort'), isFalse);

@@ -29,12 +29,12 @@ void main() {
 
     expect(find.text('Restart Required'), findsOneWidget);
     expect(
-      find.text('Import successful. Restart Kelivo to apply it safely.'),
+      find.text('Import successful. Restart Orvia to apply it safely.'),
       findsOneWidget,
     );
     expect(find.textContaining('identical skipped'), findsNothing);
     expect(find.textContaining('conflicts remapped'), findsNothing);
-    expect(find.textContaining('Restart Kelivo'), findsOneWidget);
+    expect(find.textContaining('Restart Orvia'), findsOneWidget);
 
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();

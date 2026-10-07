@@ -17,7 +17,10 @@ void main() {
       final ctx = _context(root);
       final a = File('${root.path}/a')..writeAsStringSync('AAAA');
       final b = File('${root.path}/b')..writeAsStringSync('BBBB');
-      final messages = [_message(a, '报告.txt'), _message(b, '报告.txt')];
+      final messages = [
+        _message(a, '\u62A5\u544A.txt'),
+        _message(b, '\u62A5\u544A.txt'),
+      ];
       final first = await syncAttachments(ctx, messages);
       expect(first.map((f) => f.name).toSet(), hasLength(2));
       expect(
@@ -153,7 +156,7 @@ void main() {
             parts: [
               FilePart(
                 uri: source.path,
-                name: '应用.apk',
+                name: '\u5E94\u7528.apk',
                 mime: 'application/vnd.android.package-archive',
               ),
             ],
@@ -161,9 +164,11 @@ void main() {
         ];
         final files = await syncAttachments(context, messages);
         expect(files, hasLength(1));
-        expect(files.single.modelPath, contains('应用.apk'));
+        expect(files.single.modelPath, contains('\u5E94\u7528.apk'));
         expect(
-          File('${session.path}/attachments/应用.apk').readAsBytesSync(),
+          File(
+            '${session.path}/attachments/\u5E94\u7528.apk',
+          ).readAsBytesSync(),
           source.readAsBytesSync(),
         );
         expect(source.existsSync(), isTrue);

@@ -50,7 +50,7 @@ void main() {
   test(
     'small files retain rich rendering and normalized source lines',
     () async {
-      for (final source in ['', '中文😀', 'one\r\ntwo\rthree\n']) {
+      for (final source in ['', '\u4E2D\u6587😀', 'one\r\ntwo\rthree\n']) {
         final document = await openBytes(utf8.encode(source));
         expect(document.usesPlainText, isFalse);
         expect(document.source, source);
@@ -62,7 +62,7 @@ void main() {
 
   test('size, line count and a long line select paged text', () async {
     for (final source in [
-      '${'神' * 100}\n' * 500,
+      '${'\u795E' * 100}\n' * 500,
       '\n' * PreviewTextDocument.richMaxLines,
       'x' * (PreviewTextDocument.chunkBytes + 1),
     ]) {
@@ -71,7 +71,7 @@ void main() {
   });
 
   test('random-access boundaries preserve UTF-8, BOMs and CRLF', () async {
-    for (final suffix in ['é', '神', '😀', '\r\n', '\ufeff']) {
+    for (final suffix in ['é', '\u795E', '😀', '\r\n', '\ufeff']) {
       for (var prefixLength = 2045; prefixLength <= 2049; prefixLength++) {
         await verifyPages(
           utf8.encode('${'x' * prefixLength}$suffix${'y' * 2200}\nEND\r\n'),
@@ -79,7 +79,7 @@ void main() {
       }
     }
     await verifyPages(
-      utf8.encode('\ufeff${'first\r\n中文😀\rthird\n\n' * 10000}'),
+      utf8.encode('\ufeff${'first\r\n\u4E2D\u6587😀\rthird\n\n' * 10000}'),
     );
   });
 

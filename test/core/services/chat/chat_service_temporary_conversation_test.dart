@@ -977,11 +977,11 @@ void main() {
           title: 'Persisted',
         );
         const parts = [
-          TextPart('我查一下'),
+          TextPart('\u6211\u67E5\u4E00\u4E0B'),
           ToolCallPart('{"id":"search","name":"search"}'),
-          TextPart('结果是 X'),
+          TextPart('\u7ED3\u679C\u662F X'),
         ];
-        const editedContent = '我查一下结果是 X';
+        const editedContent = '\u6211\u67E5\u4E00\u4E0B\u7ED3\u679C\u662F X';
 
         final tempOriginal = await service.addMessage(
           conversationId: temporary.id,
@@ -1013,10 +1013,19 @@ void main() {
           'tool_call',
           'text',
         ]);
-        expect((tempEdited.parts[0] as TextPart).text, '我查一下');
-        expect((persistedEdited.parts[0] as TextPart).text, '我查一下');
-        expect((tempEdited.parts[2] as TextPart).text, '结果是 X');
-        expect((persistedEdited.parts[2] as TextPart).text, '结果是 X');
+        expect(
+          (tempEdited.parts[0] as TextPart).text,
+          '\u6211\u67E5\u4E00\u4E0B',
+        );
+        expect(
+          (persistedEdited.parts[0] as TextPart).text,
+          '\u6211\u67E5\u4E00\u4E0B',
+        );
+        expect((tempEdited.parts[2] as TextPart).text, '\u7ED3\u679C\u662F X');
+        expect(
+          (persistedEdited.parts[2] as TextPart).text,
+          '\u7ED3\u679C\u662F X',
+        );
       },
     );
 

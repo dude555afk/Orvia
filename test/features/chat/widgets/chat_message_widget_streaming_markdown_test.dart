@@ -62,7 +62,7 @@ void main() {
             ),
             reasoningText: List.generate(
               80,
-              (i) => 'Paragraph $i **bold** 中文。',
+              (i) => 'Paragraph $i **bold** \u4E2D\u6587。',
             ).join('\n\n'),
             reasoningLoading: true,
             showModelIcon: false,
@@ -159,9 +159,9 @@ void main() {
               id: 'streaming-table',
               role: 'assistant',
               content: '''
-| 水果 | 颜色 | 价格 |
+| \u6C34\u679C | \u989C\u8272 | \u4EF7\u683C |
 | - | - | - |
-| 葡萄 🍇''',
+| \u8461\u8404 🍇''',
               conversationId: 'conversation-1',
               isStreaming: true,
             ),
@@ -172,8 +172,11 @@ void main() {
       await tester.pump();
 
       expect(find.byType(Table), findsOneWidget);
-      expect(find.textContaining('葡萄 🍇'), findsOneWidget);
-      expect(_allRichTextPlainText(tester), isNot(contains('| 葡萄 🍇')));
+      expect(find.textContaining('\u8461\u8404 🍇'), findsOneWidget);
+      expect(
+        _allRichTextPlainText(tester),
+        isNot(contains('| \u8461\u8404 🍇')),
+      );
     },
   );
 

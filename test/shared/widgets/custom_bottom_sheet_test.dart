@@ -23,11 +23,11 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: CustomBottomSheet(
-              title: '搜索结果',
+              title: '\u641C\u7D22\u7ED3\u679C',
               count: 3,
-              closeSemanticLabel: '关闭',
+              closeSemanticLabel: '\u5173\u95ED',
               onDismiss: () => dismissed = true,
-              child: const Text('第一条来源'),
+              child: const Text('\u7B2C\u4E00\u6761\u6765\u6E90'),
             ),
           ),
         ),
@@ -38,17 +38,23 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(CustomBottomSheet.dragHandleKey), findsOneWidget);
-      expect(find.text('搜索结果'), findsOneWidget);
-      expect(tester.widget<Text>(find.text('搜索结果')).style?.fontSize, 15);
+      expect(find.text('\u641C\u7D22\u7ED3\u679C'), findsOneWidget);
       expect(
-        tester.getTopLeft(find.text('搜索结果')).dy -
+        tester
+            .widget<Text>(find.text('\u641C\u7D22\u7ED3\u679C'))
+            .style
+            ?.fontSize,
+        15,
+      );
+      expect(
+        tester.getTopLeft(find.text('\u641C\u7D22\u7ED3\u679C')).dy -
             tester
                 .getBottomLeft(find.byKey(CustomBottomSheet.dragHandleKey))
                 .dy,
         closeTo(24, 0.1),
       );
       expect(find.text('3'), findsOneWidget);
-      expect(find.text('第一条来源'), findsOneWidget);
+      expect(find.text('\u7B2C\u4E00\u6761\u6765\u6E90'), findsOneWidget);
 
       final panelSize = tester.getSize(panel);
       expect(panelSize.height, 720);
@@ -74,9 +80,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: CustomBottomSheet(
-              title: '搜索结果',
+              title: '\u641C\u7D22\u7ED3\u679C',
               count: 12,
-              closeSemanticLabel: '关闭',
+              closeSemanticLabel: '\u5173\u95ED',
               onDismiss: () {},
               builder: (context, controller) {
                 return ListView.builder(
@@ -120,9 +126,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: CustomBottomSheet(
-              title: '搜索结果',
+              title: '\u641C\u7D22\u7ED3\u679C',
               count: 12,
-              closeSemanticLabel: '关闭',
+              closeSemanticLabel: '\u5173\u95ED',
               onDismiss: () => dismissed = true,
               builder: (context, controller) {
                 listController = controller;
@@ -192,9 +198,9 @@ void main() {
           MaterialApp(
             home: Scaffold(
               body: CustomBottomSheet(
-                title: '搜索结果',
+                title: '\u641C\u7D22\u7ED3\u679C',
                 count: 12,
-                closeSemanticLabel: '关闭',
+                closeSemanticLabel: '\u5173\u95ED',
                 onDismiss: () {},
                 builder: (context, controller) {
                   listController = controller;
@@ -254,9 +260,9 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: CustomBottomSheet(
-            title: '搜索结果',
+            title: '\u641C\u7D22\u7ED3\u679C',
             count: 12,
-            closeSemanticLabel: '关闭',
+            closeSemanticLabel: '\u5173\u95ED',
             onDismiss: () => dismissed = true,
             builder: (context, controller) {
               return ListView.builder(
@@ -294,9 +300,9 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: CustomBottomSheet(
-            title: '搜索结果',
+            title: '\u641C\u7D22\u7ED3\u679C',
             count: 12,
-            closeSemanticLabel: '关闭',
+            closeSemanticLabel: '\u5173\u95ED',
             onDismiss: () => dismissed = true,
             builder: (context, controller) {
               return ListView.builder(
@@ -328,11 +334,11 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: CustomBottomSheet(
-              title: '搜索结果',
+              title: '\u641C\u7D22\u7ED3\u679C',
               count: 3,
-              closeSemanticLabel: '关闭',
+              closeSemanticLabel: '\u5173\u95ED',
               onDismiss: () => dismissed = true,
-              child: const Text('第一条来源'),
+              child: const Text('\u7B2C\u4E00\u6761\u6765\u6E90'),
             ),
           ),
         ),
@@ -382,8 +388,8 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: CustomBottomSheet(
-            title: '搜索结果',
-            closeSemanticLabel: '关闭',
+            title: '\u641C\u7D22\u7ED3\u679C',
+            closeSemanticLabel: '\u5173\u95ED',
             onDismiss: () => dismissed = true,
             builder: (context, controller) {
               return ListView.builder(
@@ -429,25 +435,27 @@ void main() {
             builder: (context) => TextButton(
               onPressed: () => showCustomBottomSheet<void>(
                 context: context,
-                title: '对话文件',
+                title: '\u5BF9\u8BDD\u6587\u4EF6',
                 builder: (sheetContext, controller) => PopScope(
                   // Content that steers the system back gesture itself, the way
                   // the file browser walks up its folder stack.
                   canPop: false,
                   child: ListView(
                     controller: controller,
-                    children: const [SizedBox(height: 200, child: Text('列表'))],
+                    children: const [
+                      SizedBox(height: 200, child: Text('\u5217\u8868')),
+                    ],
                   ),
                 ),
               ),
-              child: const Text('打开'),
+              child: const Text('\u6253\u5F00'),
             ),
           ),
         ),
       ),
     );
 
-    await tester.tap(find.text('打开'));
+    await tester.tap(find.text('\u6253\u5F00'));
     await tester.pumpAndSettle();
     expect(find.byKey(CustomBottomSheet.panelKey), findsOneWidget);
 
@@ -456,7 +464,7 @@ void main() {
     expect(find.byKey(CustomBottomSheet.panelKey), findsNothing);
 
     // The route is gone, so its full-screen barrier no longer eats touches.
-    await tester.tap(find.text('打开'));
+    await tester.tap(find.text('\u6253\u5F00'));
     await tester.pumpAndSettle();
     expect(find.byKey(CustomBottomSheet.panelKey), findsOneWidget);
   });
@@ -470,8 +478,8 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: CustomBottomSheet(
-            title: '差异',
-            closeSemanticLabel: '关闭',
+            title: '\u5DEE\u5F02',
+            closeSemanticLabel: '\u5173\u95ED',
             onDismiss: () {},
             builder: (context, controller) {
               return ListView(

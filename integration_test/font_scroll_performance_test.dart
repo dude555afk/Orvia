@@ -95,10 +95,10 @@ void main() {
         final list = ListController();
         final processing = ValueNotifier<String?>(null);
         const paragraph =
-            '现在看规范性词汇这个场景里面发生的事情。你追问一个问题，'
-            '讨论逐渐深入，模型需要理解上下文并提供清晰而完整的回答。'
-            '长文本包括中文与 English mixed content，数字 1234567890，'
-            '**粗体强调** 和 *斜体*；文字选择、复制、代码高亮和毛玻璃全部保留。';
+            '\u73B0\u5728\u770B\u89C4\u8303\u6027\u8BCD\u6C47\u8FD9\u4E2A\u573A\u666F\u91CC\u9762\u53D1\u751F\u7684\u4E8B\u60C5。\u4F60\u8FFD\u95EE\u4E00\u4E2A\u95EE\u9898，'
+            '\u8BA8\u8BBA\u9010\u6E10\u6DF1\u5165，\u6A21\u578B\u9700\u8981\u7406\u89E3\u4E0A\u4E0B\u6587\u5E76\u63D0\u4F9B\u6E05\u6670\u800C\u5B8C\u6574\u7684\u56DE\u7B54。'
+            '\u957F\u6587\u672C\u5305\u62EC\u4E2D\u6587\u4E0E English mixed content，\u6570\u5B57 1234567890，'
+            '**\u7C97\u4F53\u5F3A\u8C03** \u548C *\u659C\u4F53*；\u6587\u5B57\u9009\u62E9、\u590D\u5236、\u4EE3\u7801\u9AD8\u4EAE\u548C\u6BDB\u73BB\u7483\u5168\u90E8\u4FDD\u7559。';
         final messages = List.generate(
           80,
           (index) => ChatMessage(

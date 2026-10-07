@@ -101,7 +101,7 @@ class ProviderAvatar extends StatelessWidget {
         );
       }
     } else if (type == 'icon' && value != null && value.isNotEmpty) {
-      // 校验资源在白名单中，防止非法值
+      // \u6821\u9A8C\u8D44\u6E90\u5728\u767D\u540D\u5355\u4E2D，\u9632\u6B62\u975E\u6CD5\u503C
       final asset = BrandAssets.selectableAssetOrNull(value);
       if (asset == null) {
         avatar = _brandOrInitial(
@@ -218,8 +218,8 @@ class ProviderAvatar extends StatelessWidget {
     );
   }
 
-  // 优先彩色版本（{name}-color.svg），不存在则回退单色（{name}.svg）。
-  // 用户已显式指定 -color/-text 变体时按原样请求。
+  // \u4F18\u5148\u5F69\u8272\u7248\u672C（{name}-color.svg），\u4E0D\u5B58\u5728\u5219\u56DE\u9000\u5355\u8272（{name}.svg）。
+  // \u7528\u6237\u5DF2\u663E\u5F0F\u6307\u5B9A -color/-text \u53D8\u4F53\u65F6\u6309\u539F\u6837\u8BF7\u6C42。
   Future<String?> _resolveLobehubPath(String iconName) async {
     final n = iconName.trim().toLowerCase();
     if (n.isEmpty) return null;
@@ -232,8 +232,8 @@ class ProviderAvatar extends StatelessWidget {
     return AvatarCache.getPath(BrandAssets.lobehubIconUrl(n));
   }
 
-  // 同步命中已缓存的 LobeHub 图标路径，命中则可直接渲染、避免 FutureBuilder 闪烁。
-  // 镜像 _resolveLobehubPath 的彩色优先/单色回退顺序。
+  // ' '\u540C' '\u6B65' '\u547D' '\u4E2D' '\u5DF2' '\u7F13' '\u5B58' '\u7684' r' LobeHub ' '\u56FE' '\u6807' '\u8DEF' '\u5F84' r'，' '\u547D' '\u4E2D' '\u5219' '\u53EF' '\u76F4' '\u63A5' '\u6E32' '\u67D3' r'、' '\u907F' '\u514D' r' FutureBuilder ' '\u95EA' '\u70C1' r'。
+  // ' '\u955C' '\u50CF' r' _resolveLobehubPath ' '\u7684' '\u5F69' '\u8272' '\u4F18' '\u5148' r'/' '\u5355' '\u8272' '\u56DE' '\u9000' '\u987A' '\u5E8F' r'。
   String? _peekLobehubPath(String iconName) {
     final n = iconName.trim().toLowerCase();
     if (n.isEmpty) return null;
@@ -252,13 +252,13 @@ class ProviderAvatar extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = cs.primary.withValues(alpha: isDark ? 0.18 : 0.1);
-    // 缓存命中时同步渲染，避免每次 rebuild 都经历 FutureBuilder 的 loading 态。
+    // ' '\u7F13' '\u5B58' '\u547D' '\u4E2D' '\u65F6' '\u540C' '\u6B65' '\u6E32' '\u67D3' r'，' '\u907F' '\u514D' '\u6BCF' '\u6B21' r' rebuild ' '\u90FD' '\u7ECF' '\u5386' r' FutureBuilder ' '\u7684' r' loading ' '\u6001' r'。
     final cached = _peekLobehubPath(iconName);
     if (cached != null) {
       return _lobehubTile(context, cached, bg);
     }
     return FutureBuilder<String?>(
-      // 优先彩色版本，回退单色；复用头像缓存（下载并缓存 SVG，失败返回 null）
+      // ' '\u4F18' '\u5148' '\u5F69' '\u8272' '\u7248' '\u672C' r'，' '\u56DE' '\u9000' '\u5355' '\u8272' r'；' '\u590D' '\u7528' '\u5934' '\u50CF' '\u7F13' '\u5B58' r'（' '\u4E0B' '\u8F7D' '\u5E76' '\u7F13' '\u5B58' r' SVG，' '\u5931' '\u8D25' '\u8FD4' '\u56DE' r' null）
       future: _resolveLobehubPath(iconName),
       builder: (ctx, snap) {
         if (snap.connectionState != ConnectionState.done) {
@@ -282,8 +282,8 @@ class ProviderAvatar extends StatelessWidget {
         width: size * 0.7,
         height: size * 0.7,
         fit: BoxFit.contain,
-        // LobeHub 单色图标用 fill="currentColor"，注入前景色以适配明暗；
-        // 带 -color 的彩色图标有固定填充，不受影响
+        // LobeHub ' '\u5355' '\u8272' '\u56FE' '\u6807' '\u7528' r' fill="currentColor"，' '\u6CE8' '\u5165' '\u524D' '\u666F' '\u8272' '\u4EE5' '\u9002' '\u914D' '\u660E' '\u6697' r'；
+        // ' '\u5E26' r' -color ' '\u7684' '\u5F69' '\u8272' '\u56FE' '\u6807' '\u6709' '\u56FA' '\u5B9A' '\u586B' '\u5145' r'，' '\u4E0D' '\u53D7' '\u5F71' '\u54CD' r'
         theme: SvgTheme(currentColor: cs.onSurface),
         placeholderBuilder: (_) => const SizedBox.shrink(),
       ),

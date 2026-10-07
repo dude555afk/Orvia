@@ -117,7 +117,7 @@ void main() {
         'action': 'set_text',
         'snapshot_id': 'snapshot',
         'node_id': 'n2',
-        'text': '你好 👋\nline 2',
+        'text': 'Hello 👋\\nline 2',
       };
       messenger.setMockMethodCallHandler(_channel, (call) async {
         expect(call.method, 'phoneControl');
@@ -367,7 +367,7 @@ void main() {
   ) async {
     await tester.pumpWidget(phoneControlSettingsPreview());
     await tester.pumpAndSettle();
-    await tester.tap(find.text('前往无障碍设置'));
+    await tester.tap(find.text('Open accessibility settings'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });

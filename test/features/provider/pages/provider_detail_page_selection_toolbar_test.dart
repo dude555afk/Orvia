@@ -73,7 +73,7 @@ Future<void> _pumpSelectedToolbar(
   await tester.pumpWidget(
     _buildHarness(
       settings: settings,
-      locale: const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
+      locale: const Locale('en'),
       textScaler: textScaler,
       child: const ProviderDetailPage(
         keyName: 'TestProvider',
@@ -83,7 +83,7 @@ Future<void> _pumpSelectedToolbar(
   );
   await tester.pumpAndSettle();
 
-  await tester.tap(find.text('模型'));
+  await tester.tap(find.text('Models'));
   await tester.pumpAndSettle();
   await tester.tap(find.byIcon(Lucide.CheckSquare).first);
   await tester.pumpAndSettle();
@@ -104,11 +104,11 @@ void main() {
 
       await _pumpSelectedToolbar(tester, width: 400);
 
-      final detectText = find.text('检测');
-      expect(find.text('全不选'), findsOneWidget);
+      final detectText = find.text('Detect');
+      expect(find.text('Clear'), findsNothing);
       expect(detectText, findsOneWidget);
       expect(tester.getSize(detectText).width, greaterThan(20));
-      expect(find.text('删除'), findsNothing);
+      expect(find.text('Delete'), findsNothing);
       expect(find.byIcon(Lucide.HeartPulse), findsOneWidget);
       expect(find.byIcon(Lucide.Trash2), findsWidgets);
       expect(tester.takeException(), isNull);
@@ -141,12 +141,12 @@ void main() {
 
     await _pumpSelectedToolbar(tester, width: 320);
 
-    expect(find.text('使用流式'), findsNothing);
+    expect(find.text('Use Streaming'), findsNothing);
 
     await tester.longPress(find.byIcon(Lucide.SquareEqual));
     await tester.pumpAndSettle();
 
-    expect(find.text('使用流式'), findsOneWidget);
+    expect(find.text('Use Streaming'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

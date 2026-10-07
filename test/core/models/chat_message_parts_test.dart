@@ -180,13 +180,13 @@ void main() {
       'partsWithRedistributedText keeps later TextParts after a tool card',
       () {
         final next = ChatMessage.partsWithRedistributedText(const [
-          TextPart('我查一下'),
+          TextPart('\u6211\u67E5\u4E00\u4E0B'),
           ToolCallPart('{"id":"search","name":"search"}'),
-          TextPart('结果是 X'),
-        ], '我查一下结果是 X');
+          TextPart('\u7ED3\u679C\u662F X'),
+        ], '\u6211\u67E5\u4E00\u4E0B\u7ED3\u679C\u662F X');
         expect(next.map((part) => part.kind), ['text', 'tool_call', 'text']);
-        expect((next[0] as TextPart).text, '我查一下');
-        expect((next[2] as TextPart).text, '结果是 X');
+        expect((next[0] as TextPart).text, '\u6211\u67E5\u4E00\u4E0B');
+        expect((next[2] as TextPart).text, '\u7ED3\u679C\u662F X');
       },
     );
 

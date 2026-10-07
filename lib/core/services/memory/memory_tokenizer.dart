@@ -4,21 +4,21 @@ abstract final class MemoryTokenizer {
 
   /// Chinese stop characters / words that must be filtered from CJK 2-grams.
   static const Set<String> cjkStopwords = {
-    '用户',
-    '的',
-    '了',
-    '是',
-    '在',
-    '和',
-    '与',
-    '会',
-    '要',
-    '对',
-    '这',
-    '那',
-    '他',
-    '她',
-    '它',
+    '\u7528\u6237',
+    '\u7684',
+    '\u4E86',
+    '\u662F',
+    '\u5728',
+    '\u548C',
+    '\u4E0E',
+    '\u4F1A',
+    '\u8981',
+    '\u5BF9',
+    '\u8FD9',
+    '\u90A3',
+    '\u4ED6',
+    '\u5979',
+    '\u5B83',
   };
 
   /// English stopwords (lowercase). Includes `user` / `users` (appendix item 8).

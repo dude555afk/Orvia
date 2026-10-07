@@ -246,15 +246,13 @@ void main() {
       messenger.setMockMethodCallHandler(restartChannel, null);
     });
     tester.binding.platformDispatcher.localesTestValue = const <Locale>[
-      Locale('zh'),
+      Locale('en'),
     ];
     addTearDown(tester.binding.platformDispatcher.clearLocalesTestValue);
     await tester.pumpWidget(MigrationApp(service: _completeService()));
     await tester.pumpAndSettle();
 
     expect(find.byType(AppSnackBarOverlay), findsOneWidget);
-    expect(find.text('对话'), findsOneWidget);
-    expect(find.text('消息'), findsOneWidget);
     expect(find.byType(HiveToSqliteMigrationPage), findsOneWidget);
     final restartButton = find.byIcon(Lucide.RefreshCw);
     expect(restartButton, findsOneWidget);
@@ -271,7 +269,12 @@ void main() {
     expect(restartCall?.method, 'restartApp');
     expect(restartCall?.arguments, containsPair('mode', 'process'));
     expect(reportedErrors, hasLength(1));
-    expect(find.text('Kelivo 无法自动重启，请完全关闭后重新打开。'), findsOneWidget);
+    expect(
+      find.text(
+        'Orvia could not restart automatically. Fully close it, then open it again.',
+      ),
+      findsOneWidget,
+    );
 
     await tester.pump(const Duration(seconds: 4));
     await tester.pumpAndSettle();

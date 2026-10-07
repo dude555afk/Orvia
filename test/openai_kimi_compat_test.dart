@@ -226,20 +226,22 @@ void main() {
           modelId: modelId,
           providerId: 'Kimi Code',
           messages: const [
-            {'role': 'user', 'content': '第一轮问题'},
+            {'role': 'user', 'content': '\u7B2C\u4E00\u8F6E\u95EE\u9898'},
             {
               'role': 'assistant',
-              'content': '第一轮回答',
-              'reasoning_content': '第一轮完整思考\n保留原文',
+              'content': '\u7B2C\u4E00\u8F6E\u56DE\u7B54',
+              'reasoning_content':
+                  '\u7B2C\u4E00\u8F6E\u5B8C\u6574\u601D\u8003\n\u4FDD\u7559\u539F\u6587',
             },
-            {'role': 'user', 'content': '第二轮问题'},
+            {'role': 'user', 'content': '\u7B2C\u4E8C\u8F6E\u95EE\u9898'},
           ],
         );
         expect(body['model'], modelId);
         expect((body['messages'] as List)[1], {
           'role': 'assistant',
-          'content': '第一轮回答',
-          'reasoning_content': '第一轮完整思考\n保留原文',
+          'content': '\u7B2C\u4E00\u8F6E\u56DE\u7B54',
+          'reasoning_content':
+              '\u7B2C\u4E00\u8F6E\u5B8C\u6574\u601D\u8003\n\u4FDD\u7559\u539F\u6587',
         });
       });
     }
@@ -249,19 +251,21 @@ void main() {
         modelId: 'k3',
         providerId: 'CustomRelay',
         messages: const [
-          {'role': 'user', 'content': '第一轮问题'},
+          {'role': 'user', 'content': '\u7B2C\u4E00\u8F6E\u95EE\u9898'},
           {
             'role': 'assistant',
-            'content': '第一轮回答',
-            'reasoning_content': '第一轮完整思考\n保留原文',
+            'content': '\u7B2C\u4E00\u8F6E\u56DE\u7B54',
+            'reasoning_content':
+                '\u7B2C\u4E00\u8F6E\u5B8C\u6574\u601D\u8003\n\u4FDD\u7559\u539F\u6587',
           },
-          {'role': 'user', 'content': '第二轮问题'},
+          {'role': 'user', 'content': '\u7B2C\u4E8C\u8F6E\u95EE\u9898'},
         ],
       );
       expect((body['messages'] as List)[1], {
         'role': 'assistant',
-        'content': '第一轮回答',
-        'reasoning_content': '第一轮完整思考\n保留原文',
+        'content': '\u7B2C\u4E00\u8F6E\u56DE\u7B54',
+        'reasoning_content':
+            '\u7B2C\u4E00\u8F6E\u5B8C\u6574\u601D\u8003\n\u4FDD\u7559\u539F\u6587',
       });
     });
 
@@ -582,8 +586,8 @@ void main() {
                       'index': 0,
                       (stream ? 'delta' : 'message'): {
                         'role': 'assistant',
-                        'reasoning_content': '先判断日期',
-                        'content': '先查一下',
+                        'reasoning_content': '\u5148\u5224\u65AD\u65E5\u671F',
+                        'content': '\u5148\u67E5\u4E00\u4E0B',
                         'tool_calls': [
                           {
                             'index': 0,
@@ -611,7 +615,7 @@ void main() {
                       'index': 0,
                       (stream ? 'delta' : 'message'): {
                         'role': 'assistant',
-                        'content': '今天是 2026-03-27',
+                        'content': '\u4ECA\u5929\u662F 2026-03-27',
                       },
                       'finish_reason': 'stop',
                     },
@@ -631,7 +635,7 @@ void main() {
               stream: stream,
               reasoning: legacyBudget(128000),
               messages: const [
-                {'role': 'user', 'content': '今天几号？'},
+                {'role': 'user', 'content': '\u4ECA\u5929\u51E0\u53F7？'},
               ],
               tools: const [
                 {
@@ -682,8 +686,11 @@ void main() {
             expect(toolInvocations, [
               {'name': 'date', 'args': <String, dynamic>{}},
             ]);
-            expect(assistantToolMessage['content'], '先查一下');
-            expect(assistantToolMessage['reasoning_content'], '先判断日期');
+            expect(assistantToolMessage['content'], '\u5148\u67E5\u4E00\u4E0B');
+            expect(
+              assistantToolMessage['reasoning_content'],
+              '\u5148\u5224\u65AD\u65E5\u671F',
+            );
             expect(assistantToolMessage['tool_calls'], [
               {
                 'id': 'call_1',
@@ -694,7 +701,10 @@ void main() {
             expect(toolMessage['tool_call_id'], 'call_1');
             expect(toolMessage['name'], 'date');
             expect(toolMessage['content'], '2026-03-27');
-            expect(chunks.joinedContent, contains('今天是 2026-03-27'));
+            expect(
+              chunks.joinedContent,
+              contains('\u4ECA\u5929\u662F 2026-03-27'),
+            );
           },
         );
       }
@@ -771,7 +781,7 @@ void main() {
         config: _moonshotConfig(baseUrl),
         modelId: 'kimi-k2-thinking',
         messages: const [
-          {'role': 'user', 'content': '今天几号？'},
+          {'role': 'user', 'content': '\u4ECA\u5929\u51E0\u53F7？'},
         ],
         tools: const [
           {
@@ -832,7 +842,7 @@ void main() {
                     'index': 0,
                     'delta': {
                       'role': 'assistant',
-                      'content': '我来帮您查看当前时间。',
+                      'content': '\u6211\u6765\u5E2E\u60A8\u67E5\u770B\u5F53\u524D\u65F6\u95F4。',
                       'tool_calls': [
                         {
                           'index': 0,
@@ -860,7 +870,7 @@ void main() {
                 'choices': [
                   {
                     'index': 0,
-                    'delta': {'role': 'assistant', 'content': '现在是 15:43'},
+                    'delta': {'role': 'assistant', 'content': '\u73B0\u5728\u662F 15:43'},
                     'finish_reason': 'stop',
                   },
                 ],
@@ -878,7 +888,7 @@ void main() {
           modelId: 'kimi-k2.6',
           reasoning: legacyBudget(16000),
           messages: const [
-            {'role': 'user', 'content': '现在几点了'},
+            {'role': 'user', 'content': '\u73B0\u5728\u51E0\u70B9\u4E86'},
           ],
           tools: const [
             {
@@ -910,7 +920,10 @@ void main() {
         expect(chunks.isGenerationDone, isTrue);
         expect(secondBody.containsKey('reasoning_effort'), isFalse);
         expect(secondBody['thinking'], {'type': 'enabled'});
-        expect(assistantToolMessage['content'], '我来帮您查看当前时间。');
+        expect(
+          assistantToolMessage['content'],
+          '\u6211\u6765\u5E2E\u60A8\u67E5\u770B\u5F53\u524D\u65F6\u95F4。',
+        );
         expect(assistantToolMessage['reasoning_content'], '');
         expect(assistantToolMessage['tool_calls'], [
           {

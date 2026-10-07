@@ -4,7 +4,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../l10n/app_localizations_en.dart';
-import '../../../l10n/app_localizations_zh.dart';
 
 enum SettingsSearchDestination {
   display,
@@ -206,8 +205,6 @@ class SettingsSearchIndex {
       _ => false,
     };
     final en = AppLocalizationsEn();
-    final zh = AppLocalizationsZh();
-    final hant = AppLocalizationsZhHant();
     final items = <SettingsSearchItem>[];
     void add(
       String id,
@@ -233,7 +230,7 @@ class SettingsSearchIndex {
           path: path,
           destination: destination,
           targetLabel: targetLabel ?? (page ? null : title(l)),
-          alternateTitles: [title(en), title(zh), title(hant)],
+          alternateTitles: [title(en)],
           keywords: keywords,
         ),
       );
@@ -244,14 +241,14 @@ class SettingsSearchIndex {
       SettingsSearchDestination.display,
       (l) => l.settingsPageDisplay,
       page: true,
-      keywords: 'display appearance 显示 顯示 外观 外觀',
+      keywords: 'display appearance ',
     );
     add(
       'colorMode',
       SettingsSearchDestination.colorMode,
       (l) => l.settingsPageColorMode,
       page: true,
-      keywords: 'dark light system night 黑暗 深色 暗黑 浅色 夜间 夜間',
+      keywords: 'dark light system night ',
       targetLabel: desktop ? l.settingsPageColorMode : null,
     );
     add(
@@ -259,7 +256,7 @@ class SettingsSearchIndex {
       SettingsSearchDestination.theme,
       (l) => l.displaySettingsPageThemeSettingsTitle,
       page: true,
-      keywords: 'theme color palette accent 主题 主題 颜色 顏色 配色 自定义 自訂',
+      keywords: 'theme color palette accent ',
       targetLabel: desktop ? l.displaySettingsPageThemeColorTitle : null,
     );
     add(
@@ -267,7 +264,7 @@ class SettingsSearchIndex {
       SettingsSearchDestination.themeAdvanced,
       (l) => l.themeAdvancedSettingsPageTitle,
       page: true,
-      keywords: 'layered surface 分层 分層 高级 高級',
+      keywords: 'layered surface ',
       targetLabel: desktop
           ? l.themeAdvancedSettingsPageUseLayeredSurfacesTitle
           : null,
@@ -277,7 +274,7 @@ class SettingsSearchIndex {
       SettingsSearchDestination.chatDisplay,
       (l) => l.displaySettingsPageChatItemDisplayTitle,
       page: true,
-      keywords: 'avatar timestamp token 聊天 头像 頭像 时间戳 時間戳',
+      keywords: 'avatar timestamp token ',
       targetLabel: desktop ? l.displaySettingsPageChatItemDisplayTitle : null,
     );
     add(
@@ -285,7 +282,7 @@ class SettingsSearchIndex {
       SettingsSearchDestination.rendering,
       (l) => l.displaySettingsPageRenderingSettingsTitle,
       page: true,
-      keywords: 'markdown latex math formula 渲染 数学 數學 公式 代码 代碼',
+      keywords: 'markdown latex math formula ',
       targetLabel: desktop ? l.displaySettingsPageRenderingSettingsTitle : null,
     );
     add(
@@ -293,7 +290,7 @@ class SettingsSearchIndex {
       SettingsSearchDestination.behavior,
       (l) => l.displaySettingsPageBehaviorStartupTitle,
       page: true,
-      keywords: 'startup behavior 启动 啟動 行为 行為 折叠 摺疊',
+      keywords: 'startup behavior ',
       targetLabel: desktop ? l.displaySettingsPageBehaviorStartupTitle : null,
     );
     add(
@@ -301,7 +298,7 @@ class SettingsSearchIndex {
       SettingsSearchDestination.image,
       (l) => l.imageSettingsPageTitle,
       page: true,
-      keywords: 'image compress quality 图片 圖片 压缩 壓縮 画质 畫質',
+      keywords: 'image compress quality ',
       targetLabel: desktop ? l.imageSettingsPageTitle : null,
     );
     add(
@@ -309,14 +306,14 @@ class SettingsSearchIndex {
       SettingsSearchDestination.messageStyle,
       (l) => l.messageStyleSettingsPageTitle,
       page: true,
-      keywords: 'bubble frosted blur glass 气泡 氣泡 毛玻璃 圆角 圓角 消息样式',
+      keywords: 'bubble frosted blur glass ',
     );
     add(
       'autoRetry',
       SettingsSearchDestination.autoRetry,
       (l) => l.settingsPageAutoRetry,
       page: true,
-      keywords: 'retry timeout error 自动重试 自動重試 失败 失敗 网络 网络错误',
+      keywords: 'retry timeout error ',
     );
     if (!desktop) {
       add(
@@ -324,7 +321,7 @@ class SettingsSearchIndex {
         SettingsSearchDestination.haptics,
         (l) => l.displaySettingsPageHapticsSettingsTitle,
         page: true,
-        keywords: 'haptic vibration 震动 振动 震動 触感 觸感',
+        keywords: 'haptic vibration ',
       );
     }
     if (!desktop) {
@@ -333,8 +330,7 @@ class SettingsSearchIndex {
         SettingsSearchDestination.background,
         (l) => l.backgroundSettingsTitle,
         page: true,
-        keywords:
-            'background keep alive notification live activity 后台 後台 保活 灵动岛 靈動島',
+        keywords: 'background keep alive notification live activity ',
       );
     }
     add(
@@ -342,8 +338,7 @@ class SettingsSearchIndex {
       SettingsSearchDestination.assistant,
       (l) => l.settingsPageAssistant,
       page: true,
-      keywords:
-          'assistant system prompt temperature top p 人设 人設 系统提示词 系統提示詞 助手',
+      keywords: 'assistant system prompt temperature top p ',
     );
     add(
       'providers',
@@ -351,7 +346,7 @@ class SettingsSearchIndex {
       (l) => l.settingsPageProviders,
       page: true,
       keywords:
-          'provider api key url base endpoint oauth openai claude gemini deepseek 服务商 服務商 供应商 供應商 接口 密钥 密鑰 模型',
+          'provider api key url base endpoint oauth openai claude gemini deepseek ',
     );
     add(
       'defaultModel',
@@ -359,73 +354,70 @@ class SettingsSearchIndex {
       (l) => l.settingsPageDefaultModel,
       page: true,
       keywords:
-          'default model title summary translate ocr compression suggestion 默认 預設 模型 标题 標題 总结 總結 翻译 翻譯 识图 識圖 压缩 壓縮 建议 建議',
+          'default model title summary translate ocr compression suggestion ',
     );
     add(
       'search',
       SettingsSearchDestination.search,
       (l) => l.settingsPageSearch,
       page: true,
-      keywords:
-          'web internet tavily exa brave bing google search 联网 聯網 搜索 搜尋 引擎',
+      keywords: 'web internet tavily exa brave bing google search ',
     );
     add(
       'tts',
       SettingsSearchDestination.tts,
       (l) => l.settingsPageTts,
       page: true,
-      keywords:
-          'tts asr stt speech voice audio recognition whisper 语音 語音 朗读 朗讀 识别 識別 声音 聲音 转文字',
+      keywords: 'tts asr stt speech voice audio recognition whisper ',
     );
     add(
       'mcp',
       SettingsSearchDestination.mcp,
       (l) => l.settingsPageMcp,
       page: true,
-      keywords: 'mcp server tools sse stdio streamable 工具 服务器 伺服器',
+      keywords: 'mcp server tools sse stdio streamable ',
     );
     add(
       'workspace',
       SettingsSearchDestination.workspace,
       (l) => l.settingsPageWorkspace,
       page: true,
-      keywords:
-          'workspace sandbox file terminal shell python 工作区 工作區 文件 沙箱 终端 終端',
+      keywords: 'workspace sandbox file terminal shell python ',
     );
     add(
       'skills',
       SettingsSearchDestination.skills,
       (l) => l.settingsPageSkills,
       page: true,
-      keywords: 'skills 技能',
+      keywords: 'skills ',
     );
     add(
       'quickPhrases',
       SettingsSearchDestination.quickPhrases,
       (l) => l.settingsPageQuickPhrase,
       page: true,
-      keywords: 'quick phrase 快捷短语 快捷短語 常用语 常用語',
+      keywords: 'quick phrase ',
     );
     add(
       'instructionInjection',
       SettingsSearchDestination.instructionInjection,
       (l) => l.settingsPageInstructionInjection,
       page: true,
-      keywords: 'prompt injection 提示词 提示詞 指令 注入',
+      keywords: 'prompt injection ',
     );
     add(
       'worldBook',
       SettingsSearchDestination.worldBook,
       (l) => l.settingsPageWorldBook,
       page: true,
-      keywords: 'world book lorebook 世界书 世界書 知识 知識 角色',
+      keywords: 'world book lorebook ',
     );
     add(
       'memory',
       SettingsSearchDestination.memory,
       (l) => l.settingsPageMemory,
       page: true,
-      keywords: 'memory remember 记忆 記憶 长期 長期',
+      keywords: 'memory remember ',
     );
     if (!kIsWeb && platform == TargetPlatform.android) {
       add(
@@ -433,7 +425,7 @@ class SettingsSearchIndex {
         SettingsSearchDestination.phoneControl,
         (l) => l.phoneControlTitle,
         page: true,
-        keywords: 'phone control accessibility 手机控制 手機控制 无障碍 無障礙',
+        keywords: 'phone control accessibility ',
       );
     }
     add(
@@ -441,15 +433,14 @@ class SettingsSearchIndex {
       SettingsSearchDestination.networkProxy,
       (l) => l.settingsPageNetworkProxy,
       page: true,
-      keywords: 'network proxy socks http 网络 網路 代理 端口 埠',
+      keywords: 'network proxy socks http ',
     );
     add(
       'backup',
       SettingsSearchDestination.backup,
       (l) => l.settingsPageBackup,
       page: true,
-      keywords:
-          'backup restore export import webdav s3 cloud sync 备份 備份 恢复 還原 导入 匯入 导出 匯出 同步 快照',
+      keywords: 'backup restore export import webdav s3 cloud sync ',
     );
     if (!desktop) {
       add(
@@ -457,7 +448,7 @@ class SettingsSearchIndex {
         SettingsSearchDestination.storage,
         (l) => l.settingsPageChatStorage,
         page: true,
-        keywords: 'storage cache cleanup database 存储 儲存 缓存 快取 空间 空間 清理 数据库 資料庫',
+        keywords: 'storage cache cleanup database ',
       );
     }
     if (desktop ||
@@ -468,7 +459,7 @@ class SettingsSearchIndex {
         SettingsSearchDestination.scheduledTasks,
         (l) => l.scheduledTasksTitle,
         page: true,
-        keywords: 'scheduled timer alarm cron 定时 定時 计划 排程 任务 任務',
+        keywords: 'scheduled timer alarm cron ',
       );
     }
     if (desktop) {
@@ -477,7 +468,7 @@ class SettingsSearchIndex {
         SettingsSearchDestination.hotkeys,
         (l) => l.settingsPageHotkeys,
         page: true,
-        keywords: 'hotkey shortcut 快捷键 快捷鍵 热键 熱鍵',
+        keywords: 'hotkey shortcut ',
       );
     }
     add(
@@ -485,14 +476,14 @@ class SettingsSearchIndex {
       SettingsSearchDestination.stats,
       (l) => l.settingsPageStatistics,
       page: true,
-      keywords: 'statistics token usage 统计 統計 用量 消耗',
+      keywords: 'statistics token usage ',
     );
     add(
       'toolSchemas',
       SettingsSearchDestination.toolSchemas,
       (l) => l.toolSchemaSettingsPageTitle,
       page: true,
-      keywords: 'tool schema json 工具 参数 參數 定义 定義',
+      keywords: 'tool schema json ',
     );
     if (!desktop && logsEnabled) {
       add(
@@ -500,7 +491,7 @@ class SettingsSearchIndex {
         SettingsSearchDestination.logs,
         (l) => l.settingsPageLogs,
         page: true,
-        keywords: 'log debug request flutter context 日志 日誌 调试 偵錯 请求 請求',
+        keywords: 'log debug request flutter context ',
       );
     }
     add(
@@ -508,7 +499,7 @@ class SettingsSearchIndex {
       SettingsSearchDestination.about,
       (l) => l.settingsPageAbout,
       page: true,
-      keywords: 'about version update 关于 關於 版本 更新',
+      keywords: 'about version update ',
     );
     if (!desktop) {
       add(
@@ -516,7 +507,7 @@ class SettingsSearchIndex {
         SettingsSearchDestination.sponsor,
         (l) => l.settingsPageSponsor,
         page: true,
-        keywords: 'sponsor donate 赞助 贊助 支持',
+        keywords: 'sponsor donate ',
       );
     }
 
@@ -525,39 +516,39 @@ class SettingsSearchIndex {
       'displaySettingsPageLanguageTitle',
       SettingsSearchDestination.display,
       (l) => l.displaySettingsPageLanguageTitle,
-      keywords: 'language locale chinese english 语言 語言 中文 英文 简体 简中 繁体 繁中',
+      keywords: 'language locale chinese english ',
     );
     add(
       'displaySettingsPageAppFontTitle',
       SettingsSearchDestination.display,
       (l) => l.displaySettingsPageAppFontTitle,
-      keywords: 'font typeface 字体 字型 系统字体',
+      keywords: 'font typeface ',
       targetLabel: desktop ? l.desktopFontAppLabel : null,
     );
     add(
       'displaySettingsPageCodeFontTitle',
       SettingsSearchDestination.display,
       (l) => l.displaySettingsPageCodeFontTitle,
-      keywords: 'monospace font 等宽 等寬 代码字体',
+      keywords: 'monospace font ',
       targetLabel: desktop ? l.desktopFontCodeLabel : null,
     );
     add(
       'displaySettingsPageChatFontSizeTitle',
       SettingsSearchDestination.display,
       (l) => l.displaySettingsPageChatFontSizeTitle,
-      keywords: 'font size text scale 字号 字號 文字大小 字体大小',
+      keywords: 'font size text scale ',
     );
     add(
       'displaySettingsPageAutoScrollIdleTitle',
       SettingsSearchDestination.display,
       (l) => l.displaySettingsPageAutoScrollIdleTitle,
-      keywords: 'auto scroll 自动滚动 自動捲動 延迟 延遲',
+      keywords: 'auto scroll ',
     );
     add(
       'displaySettingsPageChatBackgroundMaskTitle',
       SettingsSearchDestination.display,
       (l) => l.displaySettingsPageChatBackgroundMaskTitle,
-      keywords: 'background wallpaper opacity 背景 壁纸 壁紙 蒙版 透明度',
+      keywords: 'background wallpaper opacity ',
     );
     add(
       'displaySettingsPageChatInputBackgroundOpacityTitle',
@@ -613,13 +604,13 @@ class SettingsSearchIndex {
       'displaySettingsPageShowTokenStatsTitle',
       SettingsSearchDestination.chatDisplay,
       (l) => l.displaySettingsPageShowTokenStatsTitle,
-      keywords: 'token usage 令牌 消耗 用量',
+      keywords: 'token usage ',
     );
     add(
       'displaySettingsPageShowTotalTokensTitle',
       SettingsSearchDestination.chatDisplay,
       (l) => l.displaySettingsPageShowTotalTokensTitle,
-      keywords: 'token usage total API finish 累计 整轮 消耗 用量',
+      keywords: 'token usage total API finish ',
     );
     add(
       'displaySettingsPageShowThinkingCardsTitle',
@@ -645,7 +636,7 @@ class SettingsSearchIndex {
       'displaySettingsPageEnableDollarLatexTitle',
       SettingsSearchDestination.rendering,
       (l) => l.displaySettingsPageEnableDollarLatexTitle,
-      keywords: 'latex dollar 美元符号 公式',
+      keywords: 'latex dollar ',
     );
     add(
       'displaySettingsPageEnableMathTitle',
@@ -671,7 +662,7 @@ class SettingsSearchIndex {
       'displaySettingsPageAutoCollapseCodeBlockTitle',
       SettingsSearchDestination.rendering,
       (l) => l.displaySettingsPageAutoCollapseCodeBlockTitle,
-      keywords: 'code block threshold lines 代码块 折叠 行数',
+      keywords: 'code block threshold lines ',
     );
     if (!desktop) {
       add(
@@ -699,7 +690,7 @@ class SettingsSearchIndex {
       'displaySettingsPageHideToolResultImagesTitle',
       SettingsSearchDestination.behavior,
       (l) => l.displaySettingsPageHideToolResultImagesTitle,
-      keywords: 'tool image 工具 图片 隐藏',
+      keywords: 'tool image ',
     );
     add(
       'displaySettingsPageInsertSuggestionOnlyTitle',
@@ -710,7 +701,7 @@ class SettingsSearchIndex {
       'displaySettingsPageCollapseLongUserMessagesTitle',
       SettingsSearchDestination.behavior,
       (l) => l.displaySettingsPageCollapseLongUserMessagesTitle,
-      keywords: 'collapse long message threshold 长消息 长文本 折叠',
+      keywords: 'collapse long message threshold ',
     );
     add(
       'displaySettingsPageRegenerateDeleteTrailingMessagesTitle',
@@ -802,7 +793,7 @@ class SettingsSearchIndex {
       'displaySettingsPageLongPasteAsFileTitle',
       SettingsSearchDestination.behavior,
       (l) => l.displaySettingsPageLongPasteAsFileTitle,
-      keywords: 'paste clipboard threshold 粘贴 貼上 长文本 长文',
+      keywords: 'paste clipboard threshold ',
     );
     if (!desktop) {
       add(

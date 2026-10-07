@@ -90,8 +90,8 @@ class _AboutPageState extends State<AboutPage> {
     showAppSnackBar(
       context,
       message: added
-          ? l10n.aboutPageKelivoSearchUnlocked
-          : l10n.aboutPageKelivoSearchAlreadyUnlocked,
+          ? l10n.aboutPageOrviaSearchUnlocked
+          : l10n.aboutPageOrviaSearchAlreadyUnlocked,
       type: NotificationType.success,
     );
   }

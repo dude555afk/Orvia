@@ -22,117 +22,133 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  testWidgets('冷加载空窗口显示气泡骨架占位', (tester) async {
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
+  testWidgets(
+    '\u51B7\u52A0\u8F7D\u7A7A\u7A97\u53E3\u663E\u793A\u6C14\u6CE1\u9AA8\u67B6\u5360\u4F4D',
+    (tester) async {
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
 
-    try {
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: MessageListView(
-              scrollController: scrollController,
-              listController: listController,
-              messages: const [],
-              byGroup: const {},
-              versionSelections: const {},
-              reasoning: const {},
-              reasoningSegments: const {},
-              contentSplits: const {},
-              toolParts: const {},
-              translations: const {},
-              selecting: false,
-              selectedItems: const {},
-              dividerPadding: EdgeInsets.zero,
-              processingFilesMessageId: processingFilesMessageId,
-              isLoadingWindow: true,
+      try {
+        await tester.pumpWidget(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: MessageListView(
+                scrollController: scrollController,
+                listController: listController,
+                messages: const [],
+                byGroup: const {},
+                versionSelections: const {},
+                reasoning: const {},
+                reasoningSegments: const {},
+                contentSplits: const {},
+                toolParts: const {},
+                translations: const {},
+                selecting: false,
+                selectedItems: const {},
+                dividerPadding: EdgeInsets.zero,
+                processingFilesMessageId: processingFilesMessageId,
+                isLoadingWindow: true,
+              ),
             ),
           ),
+        );
+
+        expect(find.byKey(MessageListView.windowSkeletonKey), findsOneWidget);
+        expect(find.byType(SuperListView), findsOneWidget);
+
+        // The skeleton pulses; it must survive further frames.
+        await tester.pump(const Duration(milliseconds: 400));
+        expect(find.byKey(MessageListView.windowSkeletonKey), findsOneWidget);
+      } finally {
+        scrollController.dispose();
+        listController.dispose();
+        processingFilesMessageId.dispose();
+      }
+    },
+  );
+
+  testWidgets(
+    '\u7A7A\u7A97\u53E3\u975E\u52A0\u8F7D\u6001\u4FDD\u6301\u7A7A\u767D（\u65E0\u5360\u4F4D）',
+    (tester) async {
+      final scrollController = ScrollController();
+      final listController = ListController();
+      final processingFilesMessageId = ValueNotifier<String?>(null);
+
+      try {
+        await tester.pumpWidget(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: MessageListView(
+                scrollController: scrollController,
+                listController: listController,
+                messages: const [],
+                byGroup: const {},
+                versionSelections: const {},
+                reasoning: const {},
+                reasoningSegments: const {},
+                contentSplits: const {},
+                toolParts: const {},
+                translations: const {},
+                selecting: false,
+                selectedItems: const {},
+                dividerPadding: EdgeInsets.zero,
+                processingFilesMessageId: processingFilesMessageId,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.byKey(MessageListView.windowSkeletonKey), findsNothing);
+        expect(find.byType(SuperListView), findsOneWidget);
+      } finally {
+        scrollController.dispose();
+        listController.dispose();
+        processingFilesMessageId.dispose();
+      }
+    },
+  );
+
+  testWidgets(
+    '\u7A97\u53E3\u8F7D\u5165\u5B8C\u6210\u540E\u9AA8\u67B6\u5207\u6362\u4E3A\u6D88\u606F\u5185\u5BB9',
+    (tester) async {
+      final key = GlobalKey<_PlaceholderHarnessState>();
+      await tester.pumpWidget(_PlaceholderHarness(key: key));
+      final state = key.currentState!;
+
+      expect(find.byKey(MessageListView.windowSkeletonKey), findsOneWidget);
+
+      state.finishLoad();
+      await tester.pump();
+
+      expect(find.byKey(MessageListView.windowSkeletonKey), findsNothing);
+      expect(find.text('loaded message content'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    '\u5FEB\u8DEF\u5F84\u547D\u4E2D\u5DF2\u6709\u6D88\u606F\u65F6\u4E0D\u663E\u793A\u9AA8\u67B6',
+    (tester) async {
+      final key = GlobalKey<_PlaceholderHarnessState>();
+      await tester.pumpWidget(
+        _PlaceholderHarness(
+          key: key,
+          initialLoading: false,
+          withMessages: true,
         ),
       );
 
-      expect(find.byKey(MessageListView.windowSkeletonKey), findsOneWidget);
-      expect(find.byType(SuperListView), findsOneWidget);
-
-      // The skeleton pulses; it must survive further frames.
-      await tester.pump(const Duration(milliseconds: 400));
-      expect(find.byKey(MessageListView.windowSkeletonKey), findsOneWidget);
-    } finally {
-      scrollController.dispose();
-      listController.dispose();
-      processingFilesMessageId.dispose();
-    }
-  });
-
-  testWidgets('空窗口非加载态保持空白（无占位）', (tester) async {
-    final scrollController = ScrollController();
-    final listController = ListController();
-    final processingFilesMessageId = ValueNotifier<String?>(null);
-
-    try {
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: MessageListView(
-              scrollController: scrollController,
-              listController: listController,
-              messages: const [],
-              byGroup: const {},
-              versionSelections: const {},
-              reasoning: const {},
-              reasoningSegments: const {},
-              contentSplits: const {},
-              toolParts: const {},
-              translations: const {},
-              selecting: false,
-              selectedItems: const {},
-              dividerPadding: EdgeInsets.zero,
-              processingFilesMessageId: processingFilesMessageId,
-            ),
-          ),
-        ),
-      );
-
-      expect(find.byKey(MessageListView.windowSkeletonKey), findsNothing);
-      expect(find.byType(SuperListView), findsOneWidget);
-    } finally {
-      scrollController.dispose();
-      listController.dispose();
-      processingFilesMessageId.dispose();
-    }
-  });
-
-  testWidgets('窗口载入完成后骨架切换为消息内容', (tester) async {
-    final key = GlobalKey<_PlaceholderHarnessState>();
-    await tester.pumpWidget(_PlaceholderHarness(key: key));
-    final state = key.currentState!;
-
-    expect(find.byKey(MessageListView.windowSkeletonKey), findsOneWidget);
-
-    state.finishLoad();
-    await tester.pump();
-
-    expect(find.byKey(MessageListView.windowSkeletonKey), findsNothing);
-    expect(find.text('loaded message content'), findsOneWidget);
-  });
-
-  testWidgets('快路径命中已有消息时不显示骨架', (tester) async {
-    final key = GlobalKey<_PlaceholderHarnessState>();
-    await tester.pumpWidget(
-      _PlaceholderHarness(key: key, initialLoading: false, withMessages: true),
-    );
-
-    for (var i = 0; i < 5; i++) {
-      await tester.pump(const Duration(milliseconds: 60));
-      expect(find.byKey(MessageListView.windowSkeletonKey), findsNothing);
-    }
-    expect(find.text('loaded message content'), findsOneWidget);
-  });
+      for (var i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 60));
+        expect(find.byKey(MessageListView.windowSkeletonKey), findsNothing);
+      }
+      expect(find.text('loaded message content'), findsOneWidget);
+    },
+  );
 }
 
 class _PlaceholderHarness extends StatefulWidget {

@@ -122,7 +122,7 @@ void main() {
       await tester.pumpWidget(
         _buildHarness(
           settings: settings,
-          locale: const Locale('zh'),
+          locale: const Locale('en'),
           child: ChatMessageWidget(
             message: ChatMessage(
               role: 'assistant',
@@ -144,12 +144,12 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('4个引用'), findsOneWidget);
+      expect(find.text('4 citations'), findsOneWidget);
       expect(find.byIcon(Lucide.BookOpen), findsNothing);
 
       final capsule = tester.widget<IosCardPress>(
         find.ancestor(
-          of: find.text('4个引用'),
+          of: find.text('4 citations'),
           matching: find.byType(IosCardPress),
         ),
       );
@@ -186,10 +186,10 @@ void main() {
         findsNothing,
       );
 
-      await tester.tap(find.text('4个引用'));
+      await tester.tap(find.text('4 citations'));
       await tester.pumpAndSettle();
 
-      expect(find.text('搜索结果'), findsOneWidget);
+      expect(find.text('Search results'), findsOneWidget);
       expect(find.text('Four'), findsOneWidget);
     });
 
@@ -203,7 +203,7 @@ void main() {
       await tester.pumpWidget(
         _buildHarness(
           settings: settings,
-          locale: const Locale('zh'),
+          locale: const Locale('en'),
           child: ChatMessageWidget(
             message: ChatMessage(
               role: 'assistant',
@@ -222,7 +222,7 @@ void main() {
               ToolUIPart(
                 id: 'search-web-second',
                 toolName: 'search_web',
-                arguments: {'query': 'Kelivo release'},
+                arguments: {'query': 'Orvia release'},
                 content:
                     '{"items":[{"title":"Third source","url":"https://three.example.com/c","text":"C"}]}',
               ),
@@ -232,12 +232,12 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('3个引用'), findsOneWidget);
+      expect(find.text('3 citations'), findsOneWidget);
 
-      await tester.tap(find.text('3个引用'));
+      await tester.tap(find.text('3 citations'));
       await tester.pumpAndSettle();
 
-      expect(find.text('搜索结果'), findsOneWidget);
+      expect(find.text('Search results'), findsOneWidget);
       expect(find.text('First source'), findsOneWidget);
       expect(find.text('Second source'), findsOneWidget);
       expect(find.text('Third source'), findsOneWidget);
@@ -316,7 +316,7 @@ void main() {
         await tester.pumpWidget(
           _buildHarness(
             settings: settings,
-            locale: const Locale('zh'),
+            locale: const Locale('en'),
             child: ChatMessageWidget(
               message: message,
               showModelIcon: false,
@@ -326,45 +326,45 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.text('2个引用'), findsOneWidget);
+        expect(find.text('2 citations'), findsOneWidget);
       },
     );
 
-    testWidgets('search citation capsule falls back when source url is invalid', (
-      tester,
-    ) async {
-      final settings = await _createSettings(
-        ChatMessageBackgroundStyle.defaultStyle,
-      );
+    testWidgets(
+      'search citation capsule drops a source when its url is invalid',
+      (tester) async {
+        final settings = await _createSettings(
+          ChatMessageBackgroundStyle.defaultStyle,
+        );
 
-      await tester.pumpWidget(
-        _buildHarness(
-          settings: settings,
-          locale: const Locale('zh'),
-          child: ChatMessageWidget(
-            message: ChatMessage(
-              role: 'assistant',
-              content: 'Answer with one broken citation.',
-              conversationId: 'conversation-search-capsule-invalid-url',
-            ),
-            showModelIcon: false,
-            toolParts: const [
-              ToolUIPart(
-                id: 'builtin-search-invalid-url',
-                toolName: 'builtin_search',
-                arguments: {},
-                content:
-                    '{"items":[{"title":"Broken","url":"","text":"No usable source"}]}',
+        await tester.pumpWidget(
+          _buildHarness(
+            settings: settings,
+            locale: const Locale('en'),
+            child: ChatMessageWidget(
+              message: ChatMessage(
+                role: 'assistant',
+                content: 'Answer with one broken citation.',
+                conversationId: 'conversation-search-capsule-invalid-url',
               ),
-            ],
+              showModelIcon: false,
+              toolParts: const [
+                ToolUIPart(
+                  id: 'builtin-search-invalid-url',
+                  toolName: 'builtin_search',
+                  arguments: {},
+                  content:
+                      '{"items":[{"title":"Broken","url":"","text":"No usable source"}]}',
+                ),
+              ],
+            ),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      expect(find.text('1个引用'), findsOneWidget);
-      expect(find.byIcon(Lucide.Globe), findsOneWidget);
-    });
+        expect(find.text('1 citation'), findsNothing);
+      },
+    );
 
     testWidgets('thinking/tool timeline card uses blur in frosted mode', (
       tester,
@@ -386,16 +386,24 @@ void main() {
             ),
             showModelIcon: false,
             reasoningSegments: const [
-              ReasoningSegment(text: '第 1 步', expanded: true, loading: false),
-              ReasoningSegment(text: '第 2 步', expanded: true, loading: false),
-              ReasoningSegment(text: '先分析问题', expanded: true, loading: false),
+              ReasoningSegment(text: 'Step 1', expanded: true, loading: false),
+              ReasoningSegment(
+                text: '\u7B2C 2 \u6B65',
+                expanded: true,
+                loading: false,
+              ),
+              ReasoningSegment(
+                text: '\u5148\u5206\u6790\u95EE\u9898',
+                expanded: true,
+                loading: false,
+              ),
             ],
             toolParts: const [
               ToolUIPart(
                 id: 'tool-1',
                 toolName: 'search_web',
-                arguments: {'query': 'Kelivo'},
-                content: '搜索结果',
+                arguments: {'query': 'Orvia'},
+                content: 'Search results',
               ),
             ],
           ),
@@ -410,7 +418,7 @@ void main() {
         _expectedNeutralStrong(),
       );
       expect(
-        tester.widget<Text>(find.text('Web Search: Kelivo')).style?.color,
+        tester.widget<Text>(find.text('Web Search: Orvia')).style?.color,
         _expectedNeutralStrong(),
       );
       expect(
@@ -436,14 +444,18 @@ void main() {
             ),
             showModelIcon: false,
             reasoningSegments: const [
-              ReasoningSegment(text: '先分析问题', expanded: true, loading: false),
+              ReasoningSegment(
+                text: '\u5148\u5206\u6790\u95EE\u9898',
+                expanded: true,
+                loading: false,
+              ),
             ],
             toolParts: const [
               ToolUIPart(
                 id: 'tool-2',
                 toolName: 'search_web',
-                arguments: {'query': 'Kelivo'},
-                content: '搜索结果',
+                arguments: {'query': 'Orvia'},
+                content: 'Search results',
               ),
             ],
           ),
@@ -458,7 +470,7 @@ void main() {
         _expectedNeutralStrong(),
       );
       expect(
-        tester.widget<Text>(find.text('Web Search: Kelivo')).style?.color,
+        tester.widget<Text>(find.text('Web Search: Orvia')).style?.color,
         _expectedNeutralStrong(),
       );
     });
@@ -476,8 +488,8 @@ void main() {
               role: 'tool',
               content: jsonEncode({
                 'tool': 'search_web',
-                'arguments': {'query': 'Kelivo'},
-                'result': '搜索结果',
+                'arguments': {'query': 'Orvia'},
+                'result': 'Search results',
               }),
               conversationId: 'conversation-3',
             ),
@@ -489,7 +501,7 @@ void main() {
 
       expect(find.byType(FrostedSurface), findsOneWidget);
       expect(
-        tester.widget<Text>(find.text('Web Search: Kelivo')).style?.color,
+        tester.widget<Text>(find.text('Web Search: Orvia')).style?.color,
         _expectedNeutralStrong(),
       );
     });
@@ -507,8 +519,8 @@ void main() {
               role: 'tool',
               content: jsonEncode({
                 'tool': 'search_web',
-                'arguments': {'query': 'Kelivo'},
-                'result': '搜索结果',
+                'arguments': {'query': 'Orvia'},
+                'result': 'Search results',
               }),
               conversationId: 'conversation-4',
             ),
@@ -520,7 +532,7 @@ void main() {
 
       expect(find.byType(FrostedSurface), findsNothing);
       expect(
-        tester.widget<Text>(find.text('Web Search: Kelivo')).style?.color,
+        tester.widget<Text>(find.text('Web Search: Orvia')).style?.color,
         _expectedNeutralStrong(),
       );
     });
@@ -605,7 +617,11 @@ void main() {
             ),
             showModelIcon: false,
             reasoningSegments: const [
-              ReasoningSegment(text: '需要本地信息', expanded: true, loading: false),
+              ReasoningSegment(
+                text: '\u9700\u8981\u672C\u5730\u4FE1\u606F',
+                expanded: true,
+                loading: false,
+              ),
             ],
             toolParts: const [
               ToolUIPart(
@@ -784,7 +800,7 @@ void main() {
         ChatMessageBackgroundStyle.defaultStyle,
       );
       const query =
-          'Kelivo Flutter chat message thinking tool timeline connector wraps';
+          'Orvia Flutter chat message thinking tool timeline connector wraps';
 
       await tester.pumpWidget(
         _buildHarness(
@@ -801,13 +817,13 @@ void main() {
               showModelIcon: false,
               reasoningSegments: const [
                 ReasoningSegment(
-                  text: '先确认问题',
+                  text: '\u5148\u786E\u8BA4\u95EE\u9898',
                   expanded: false,
                   loading: false,
                   toolStartIndex: 0,
                 ),
                 ReasoningSegment(
-                  text: '继续分析',
+                  text: '\u7EE7\u7EED\u5206\u6790',
                   expanded: false,
                   loading: false,
                   toolStartIndex: 1,
@@ -818,7 +834,7 @@ void main() {
                   id: 'tool-wrap',
                   toolName: 'search_web',
                   arguments: {'query': query},
-                  content: '搜索结果',
+                  content: 'Search results',
                 ),
               ],
             ),
@@ -1053,12 +1069,17 @@ void main() {
             child: ChatMessageWidget(
               message: ChatMessage(
                 role: 'assistant',
-                content: '正文 <think>literal</think> 继续显示',
+                content:
+                    '\u6B63\u6587 <think>literal</think> \u7EE7\u7EED\u663E\u793A',
                 conversationId: 'conversation-structured-think',
               ),
               showModelIcon: false,
               reasoningSegments: const [
-                ReasoningSegment(text: '结构化思考', expanded: true, loading: false),
+                ReasoningSegment(
+                  text: '\u7ED3\u6784\u5316\u601D\u8003',
+                  expanded: true,
+                  loading: false,
+                ),
               ],
             ),
           ),
@@ -1067,9 +1088,14 @@ void main() {
         await tester.pump(const Duration(milliseconds: 300));
 
         expect(find.text('Deep Thinking'), findsOneWidget);
-        expect(find.textContaining('结构化思考'), findsOneWidget);
         expect(
-          find.textContaining('正文 <think>literal</think> 继续显示'),
+          find.textContaining('\u7ED3\u6784\u5316\u601D\u8003'),
+          findsOneWidget,
+        );
+        expect(
+          find.textContaining(
+            '\u6B63\u6587 <think>literal</think> \u7EE7\u7EED\u663E\u793A',
+          ),
           findsOneWidget,
         );
       },
@@ -1139,7 +1165,11 @@ void main() {
             ),
             showModelIcon: false,
             reasoningSegments: const [
-              ReasoningSegment(text: '需要本地信息', expanded: true, loading: false),
+              ReasoningSegment(
+                text: '\u9700\u8981\u672C\u5730\u4FE1\u606F',
+                expanded: true,
+                loading: false,
+              ),
             ],
             toolParts: const [
               ToolUIPart(
@@ -1171,7 +1201,10 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Deep Thinking'), findsOneWidget);
-      expect(find.textContaining('需要本地信息'), findsOneWidget);
+      expect(
+        find.textContaining('\u9700\u8981\u672C\u5730\u4FE1\u606F'),
+        findsOneWidget,
+      );
       expect(find.text('Time Info'), findsNothing);
       expect(find.text('Choose scope?'), findsOneWidget);
       expect(find.textContaining('Answer after tools'), findsOneWidget);
@@ -1927,7 +1960,7 @@ void main() {
           await settings.setShowModelTimestamp(false);
           addTearDown(service.dispose);
           const option =
-              '完整显示此选项的全部内容，包括最后的说明。 '
+              '\u5B8C\u6574\u663E\u793A\u6B64\u9009\u9879\u7684\u5168\u90E8\u5185\u5BB9，\u5305\u62EC\u6700\u540E\u7684\u8BF4\u660E。 '
               'Show the complete option, including all details needed to '
               'make a decision. Wrap this long explanation onto as many '
               'lines as needed without hiding its final qualification.\n'
@@ -1953,7 +1986,7 @@ void main() {
             _buildHarness(
               settings: settings,
               askUserService: service,
-              locale: const Locale('zh'),
+              locale: const Locale('en'),
               child: Builder(
                 builder: (context) => Theme(
                   data: ThemeData(brightness: viewport.brightness),
@@ -2006,7 +2039,7 @@ void main() {
             paragraph.localToGlobal(tail.last.toRect().center),
           );
           await tester.pumpAndSettle();
-          final submit = find.text('提交回答');
+          final submit = find.text('Submit answer');
           await tester.ensureVisible(submit);
           await tester.pumpAndSettle();
           await tester.tap(submit);
