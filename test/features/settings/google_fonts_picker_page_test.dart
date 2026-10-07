@@ -259,9 +259,7 @@ void main() {
       await tester.pumpAndSettle();
       String? family() => tester
           .widget<Text>(
-            find.text(
-              'The quick brown fox 0123456789 · \u5B57\u4F53\u9884\u89C8',
-            ),
+            find.text('The quick brown fox 0123456789 · Font preview'),
           )
           .style!
           .fontFamily;
@@ -323,9 +321,7 @@ void main() {
       expect(retry.reads, 1);
       final firstFamily = tester
           .widget<Text>(
-            find.text(
-              'The quick brown fox 0123456789 · \u5B57\u4F53\u9884\u89C8',
-            ),
+            find.text('The quick brown fox 0123456789 · Font preview'),
           )
           .style!
           .fontFamily;
@@ -344,9 +340,7 @@ void main() {
       expect(
         tester
             .widget<Text>(
-              find.text(
-                'The quick brown fox 0123456789 · \u5B57\u4F53\u9884\u89C8',
-              ),
+              find.text('The quick brown fox 0123456789 · Font preview'),
             )
             .style!
             .fontFamily,

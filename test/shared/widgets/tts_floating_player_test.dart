@@ -81,7 +81,7 @@ void main() {
         value: tts,
         child: MaterialApp(
           navigatorKey: rootNavigatorKey,
-          locale: const Locale('zh'),
+          locale: const Locale('en'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) {
@@ -94,15 +94,12 @@ void main() {
     await tester.pump();
 
     expect(tester.takeException(), isNull);
-    expect(find.byTooltip('\u7EE7\u7EED\u64AD\u653E'), findsOneWidget);
-    expect(find.byTooltip('\u5173\u95ED\u64AD\u653E\u5668'), findsOneWidget);
-    expect(
-      find.byTooltip('\u5C55\u5F00\u64AD\u653E\u63A7\u5236'),
-      findsOneWidget,
-    );
-    expect(find.byTooltip('\u540E\u9000 15 \u79D2'), findsNothing);
-    expect(find.byTooltip('\u524D\u8FDB 15 \u79D2'), findsNothing);
-    expect(find.byTooltip('\u64AD\u653E\u500D\u901F'), findsNothing);
+    expect(find.byTooltip('Resume'), findsOneWidget);
+    expect(find.byTooltip('Close player'), findsOneWidget);
+    expect(find.byTooltip('Expand playback controls'), findsOneWidget);
+    expect(find.byTooltip('Back 15 seconds'), findsNothing);
+    expect(find.byTooltip('Forward 15 seconds'), findsNothing);
+    expect(find.byTooltip('Playback speed'), findsNothing);
     expect(find.byType(Slider), findsNothing);
     expect(find.byIcon(lucide.LucideIcons.grip), findsNothing);
     expect(
@@ -110,10 +107,7 @@ void main() {
       findsOneWidget,
     );
 
-    expect(
-      find.bySemanticsLabel('\u8BED\u97F3\u64AD\u653E\u5668'),
-      findsOneWidget,
-    );
+    expect(find.bySemanticsLabel('TTS player'), findsOneWidget);
     final player = find.byKey(const ValueKey('ttsFloatingPlayerSurface'));
     showAppSnackBar(
       tester.element(player),
@@ -131,24 +125,21 @@ void main() {
     expect(afterDrag.dx, beforeDrag.dx);
     expect(afterDrag.dy, greaterThan(beforeDrag.dy));
 
-    await tester.tap(find.byTooltip('\u5C55\u5F00\u64AD\u653E\u63A7\u5236'));
+    await tester.tap(find.byTooltip('Expand playback controls'));
     await tester.pumpAndSettle();
 
-    expect(
-      find.byTooltip('\u6536\u8D77\u64AD\u653E\u63A7\u5236'),
-      findsOneWidget,
-    );
-    expect(find.byTooltip('\u540E\u9000 15 \u79D2'), findsOneWidget);
-    expect(find.byTooltip('\u524D\u8FDB 15 \u79D2'), findsOneWidget);
-    expect(find.byTooltip('\u64AD\u653E\u500D\u901F'), findsOneWidget);
+    expect(find.byTooltip('Collapse playback controls'), findsOneWidget);
+    expect(find.byTooltip('Back 15 seconds'), findsOneWidget);
+    expect(find.byTooltip('Forward 15 seconds'), findsOneWidget);
+    expect(find.byTooltip('Playback speed'), findsOneWidget);
     final expandedWidth = tester.getSize(player).width;
 
-    await tester.tap(find.byTooltip('\u540E\u9000 15 \u79D2'));
-    await tester.tap(find.byTooltip('\u7EE7\u7EED\u64AD\u653E'));
-    await tester.tap(find.byTooltip('\u524D\u8FDB 15 \u79D2'));
-    await tester.tap(find.byTooltip('\u64AD\u653E\u500D\u901F'));
+    await tester.tap(find.byTooltip('Back 15 seconds'));
+    await tester.tap(find.byTooltip('Resume'));
+    await tester.tap(find.byTooltip('Forward 15 seconds'));
+    await tester.tap(find.byTooltip('Playback speed'));
 
-    await tester.tap(find.byTooltip('\u6536\u8D77\u64AD\u653E\u63A7\u5236'));
+    await tester.tap(find.byTooltip('Collapse playback controls'));
     await tester.pump();
     expect(tester.takeException(), isNull);
     await tester.pump(const Duration(milliseconds: 40));
@@ -163,15 +154,12 @@ void main() {
     final collapsedWidth = tester.getSize(player).width;
     expect(collapsedWidth, lessThan(midCollapseWidth));
 
-    expect(
-      find.byTooltip('\u5C55\u5F00\u64AD\u653E\u63A7\u5236'),
-      findsOneWidget,
-    );
-    expect(find.byTooltip('\u540E\u9000 15 \u79D2'), findsNothing);
-    expect(find.byTooltip('\u524D\u8FDB 15 \u79D2'), findsNothing);
-    expect(find.byTooltip('\u64AD\u653E\u500D\u901F'), findsNothing);
+    expect(find.byTooltip('Expand playback controls'), findsOneWidget);
+    expect(find.byTooltip('Back 15 seconds'), findsNothing);
+    expect(find.byTooltip('Forward 15 seconds'), findsNothing);
+    expect(find.byTooltip('Playback speed'), findsNothing);
 
-    await tester.tap(find.byTooltip('\u5173\u95ED\u64AD\u653E\u5668'));
+    await tester.tap(find.byTooltip('Close player'));
 
     expect(tts.rewindCount, 1);
     expect(tts.playPauseCount, 1);
@@ -204,7 +192,7 @@ void main() {
         value: tts,
         child: MaterialApp(
           navigatorKey: rootNavigatorKey,
-          locale: const Locale('zh'),
+          locale: const Locale('en'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) {
@@ -217,18 +205,15 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(
-      find.bySemanticsLabel('\u8BED\u97F3\u64AD\u653E\u5668'),
-      findsOneWidget,
-    );
-    expect(find.byTooltip('\u91CD\u65B0\u64AD\u653E'), findsOneWidget);
+    expect(find.bySemanticsLabel('TTS player'), findsOneWidget);
+    expect(find.byTooltip('Replay'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('\u5C55\u5F00\u64AD\u653E\u63A7\u5236'));
+    await tester.tap(find.byTooltip('Expand playback controls'));
     await tester.pumpAndSettle();
 
-    expect(find.byTooltip('\u4FDD\u5B58\u97F3\u9891'), findsOneWidget);
+    expect(find.byTooltip('Save audio'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('\u91CD\u65B0\u64AD\u653E'));
+    await tester.tap(find.byTooltip('Replay'));
 
     expect(tts.playPauseCount, 1);
   });

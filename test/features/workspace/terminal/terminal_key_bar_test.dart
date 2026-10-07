@@ -13,7 +13,7 @@ void main() {
     WidgetTester tester, {
     required TerminalSession session,
     Size size = const Size(390, 844),
-    Locale locale = const Locale('zh'),
+    Locale locale = const Locale('en'),
   }) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = size;
@@ -57,8 +57,8 @@ void main() {
 
     await pumpBar(tester, session: session);
 
-    expect(find.text('\u590D\u5236'), findsOneWidget);
-    expect(find.text('\u7C98\u8D34'), findsOneWidget);
+    expect(find.text('Copy'), findsOneWidget);
+    expect(find.text('Paste'), findsOneWidget);
 
     final copy = tester.getRect(find.byKey(TerminalKeyBar.copyKey));
     final paste = tester.getRect(find.byKey(TerminalKeyBar.pasteKey));

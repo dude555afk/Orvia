@@ -404,7 +404,7 @@ void main() {
       final zh = descriptionsFor('zh');
       final en = descriptionsFor('en');
 
-      expect(zh, everyElement(contains('\u8BB0\u5FC6')));
+      expect(zh, everyElement(contains('Memory')));
       expect(en, everyElement(contains('memory record')));
       expect(zh, isNot(equals(en)));
     });
@@ -967,46 +967,48 @@ void main() {
   });
 
   group('chat_search', () {
-    test('happy path searches past conversations and excludes current', () async {
-      final chatService = ChatService(existingRepository: chatRepository);
-      addTearDown(chatService.close);
-      await chatService.init();
+    test(
+      'happy path searches past conversations and excludes current',
+      () async {
+        final chatService = ChatService(existingRepository: chatRepository);
+        addTearDown(chatService.close);
+        await chatService.init();
 
-      final past = await chatService.createConversation(title: 'Drift talk');
-      await chatService.addMessage(
-        conversationId: past.id,
-        role: 'user',
-        content:
-            '\u6211\u4EEC\u8981\u4E0D\u8981\u7ED9 Drift \u52A0\u4E00\u4E2A v2 \u7684 migration',
-      );
-      await chatService.updateConversationSummary(
-        past.id,
-        '\u8BA8\u8BBA\u4E86 Drift schema \u7248\u672C\u7BA1\u7406\u4E0E\u8FC1\u79FB\u7B56\u7565。',
-        1,
-      );
+        final past = await chatService.createConversation(title: 'Drift talk');
+        await chatService.addMessage(
+          conversationId: past.id,
+          role: 'user',
+          content: 'Should we add a v2 migration for Drift?',
+        );
+        await chatService.updateConversationSummary(
+          past.id,
+          'Discussed Drift schema versioning and migration strategy.',
+          1,
+        );
 
-      final current = await chatService.createConversation(title: 'Current');
-      await chatService.addMessage(
-        conversationId: current.id,
-        role: 'user',
-        content: 'Drift migration again in current chat',
-      );
+        final current = await chatService.createConversation(title: 'Current');
+        await chatService.addMessage(
+          conversationId: current.id,
+          role: 'user',
+          content: 'Drift migration again in current chat',
+        );
 
-      final raw = await call(
-        MemoryTools.chatSearch,
-        {'query': 'Drift migration'},
-        a: assistant(enableMemory: false, allowPastConversationRecall: true),
-        chatService: chatService,
-        conversationId: current.id,
-      );
-      final payload = decode(raw!);
-      expect(payload['query'], 'Drift migration');
-      final results = payload['results'] as List;
-      expect(results, isNotEmpty);
-      expect(results.every((r) => r['conversationId'] != current.id), isTrue);
-      expect(results.first['summary'], contains('Drift'));
-      expect(results.first['snippet'], isNotEmpty);
-    });
+        final raw = await call(
+          MemoryTools.chatSearch,
+          {'query': 'Drift migration'},
+          a: assistant(enableMemory: false, allowPastConversationRecall: true),
+          chatService: chatService,
+          conversationId: current.id,
+        );
+        final payload = decode(raw!);
+        expect(payload['query'], 'Drift migration');
+        final results = payload['results'] as List;
+        expect(results, isNotEmpty);
+        expect(results.every((r) => r['conversationId'] != current.id), isTrue);
+        expect(results.first['summary'], contains('Drift'));
+        expect(results.first['snippet'], isNotEmpty);
+      },
+    );
 
     test('empty query returns invalid_query', () async {
       final raw = await call(
@@ -1173,7 +1175,7 @@ void main() {
       ).first;
       final zhDesc = (zh['function'] as Map)['description'] as String;
       final enDesc = (en['function'] as Map)['description'] as String;
-      expect(zhDesc, contains('\u957F\u671F\u8BB0\u5FC6'));
+      expect(zhDesc, contains('long-term memory'));
       expect(enDesc, contains('long-term memory'));
       expect(zhDesc, isNot(equals(enDesc)));
     });

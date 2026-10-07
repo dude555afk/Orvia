@@ -334,11 +334,11 @@ void main() {
         final after = (apiAfter.first['content'] ?? '').toString();
 
         expect(after, before);
-        expect(before, contains('## \u957F\u671F\u8BB0\u5FC6'));
+        expect(before, contains('## Long-term memory'));
         expect(before, contains(MemoryPrompts.rulesPastConversationRecallZh));
         expect(before, isNot(contains('<memories>')));
         expect(before, isNot(contains('<recent_chats>')));
-        expect(before, isNot(contains('\u5F53\u524D\u65F6\u95F4\u662F')));
+        expect(before, isNot(contains('The current time is')));
       },
     );
   });
@@ -389,8 +389,8 @@ void main() {
         expect(content, contains('User likes Flutter.'));
         expect(content, contains('## Memory Tool'));
         expect(content, contains('create_memory'));
-        expect(content, contains('\u5F53\u524D\u65F6\u95F4\u662F'));
-        expect(content, isNot(contains('## \u957F\u671F\u8BB0\u5FC6')));
+        expect(content, contains('The current time is'));
+        expect(content, isNot(contains('## Long-term memory')));
         expect(content, isNot(contains(MemoryPrompts.rulesZh)));
         expect(
           content,

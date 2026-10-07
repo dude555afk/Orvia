@@ -234,8 +234,8 @@ void main() {
         msgs,
         MemoryPromptLang.zh,
       );
-      expect(zh, contains('\u7528\u6237：'));
-      expect(zh, contains('\u52A9\u624B：'));
+      expect(zh, contains('User:'));
+      expect(zh, contains('Assistant:'));
       expect(zh, contains('hello  world'));
       expect(zh, isNot(contains('/tmp/a.png')));
       expect(zh, isNot(contains('[image:')));

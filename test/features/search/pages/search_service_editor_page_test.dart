@@ -780,8 +780,8 @@ void main() {
   ) async {
     await tester.pumpWidget(tavilySearchUsageCardPreview());
 
-    expect(find.text('\u8D26\u6237\u7528\u91CF'), findsOneWidget);
-    expect(find.text('\u67E5\u8BE2\u7528\u91CF'), findsNothing);
+    expect(find.text('Account usage'), findsOneWidget);
+    expect(find.text('Check usage'), findsNothing);
     expect(find.text('\u5269\u4F59 750 \u989D\u5EA6'), findsOneWidget);
     expect(
       find.text('\u5DF2\u4F7F\u7528 250 / 1,000 \u989D\u5EA6'),
@@ -796,17 +796,14 @@ void main() {
       find.descendant(of: queryAction, matching: find.byIcon(Lucide.RefreshCw)),
       findsOneWidget,
     );
-    expect(
-      tester.widget<Tooltip>(queryAction).message,
-      '\u67E5\u8BE2\u7528\u91CF',
-    );
+    expect(tester.widget<Tooltip>(queryAction).message, 'Check usage');
 
     final progress = tester.widget<LinearProgressIndicator>(
       find.byKey(const ValueKey('tavily-usage-progress')),
     );
     expect(progress.value, 0.25);
 
-    final titleCenter = tester.getCenter(find.text('\u8D26\u6237\u7528\u91CF'));
+    final titleCenter = tester.getCenter(find.text('Account usage'));
     final queryCenter = tester.getCenter(queryAction);
     expect((titleCenter.dy - queryCenter.dy).abs(), lessThan(4));
     expect(queryCenter.dx, greaterThan(titleCenter.dx));

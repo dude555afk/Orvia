@@ -412,11 +412,11 @@ void main() {
     source.value +=
         '\n\n<details><summary>\u66F4\u591A</summary>\u9690\u85CF</details>';
     await tester.pumpAndSettle();
-    expect(find.text('\u66F4\u591A'), findsOneWidget);
+    expect(find.text('More'), findsOneWidget);
     source.value = 'Replacement **bold**';
     await tester.pumpAndSettle();
     expect(find.byType(Image), findsNothing);
-    expect(find.text('\u66F4\u591A'), findsNothing);
+    expect(find.text('More'), findsNothing);
     expect(
       _paragraphContaining('Replacement').text.toPlainText(),
       'Replacement bold',
@@ -944,7 +944,7 @@ Inline ***strong emphasis*** text.
     final centeredCellText = find.descendant(
       of: body,
       matching: find.byWidgetPredicate(
-        (widget) => widget is RichText && widget.text.toPlainText() == '\u4E2D',
+        (widget) => widget is RichText && widget.text.toPlainText() == 'Medium',
         description: 'centered table cell text',
       ),
     );
@@ -3089,7 +3089,7 @@ A-->B
       );
       expect(find.textContaining(r'b$$c'), findsNothing);
       expect(find.textContaining(r'x$$=$$1'), findsNothing);
-      expect(find.textContaining('\u7ED3\u675F'), findsOneWidget);
+      expect(find.textContaining('Ended'), findsOneWidget);
     },
   );
 
@@ -4550,7 +4550,7 @@ press5
     expect(plainText, isNot(contains('<p>')));
     expect(plainText, isNot(contains('<br>')));
     expect(plainText, isNot(contains('<a href=')));
-    expect(find.text('\u94FE\u63A5'), findsOneWidget);
+    expect(find.text('Linked'), findsOneWidget);
   });
 
   testWidgets('MarkdownWithCodeHighlight normalizes strong weight on Android', (

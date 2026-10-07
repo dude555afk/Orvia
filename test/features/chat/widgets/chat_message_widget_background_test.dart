@@ -122,7 +122,7 @@ void main() {
       await tester.pumpWidget(
         _buildHarness(
           settings: settings,
-          locale: const Locale('zh'),
+          locale: const Locale('en'),
           child: ChatMessageWidget(
             message: ChatMessage(
               role: 'assistant',
@@ -144,12 +144,12 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('4\u4E2A\u5F15\u7528'), findsOneWidget);
+      expect(find.text('4 citations'), findsOneWidget);
       expect(find.byIcon(Lucide.BookOpen), findsNothing);
 
       final capsule = tester.widget<IosCardPress>(
         find.ancestor(
-          of: find.text('4\u4E2A\u5F15\u7528'),
+          of: find.text('4 citations'),
           matching: find.byType(IosCardPress),
         ),
       );
@@ -186,10 +186,10 @@ void main() {
         findsNothing,
       );
 
-      await tester.tap(find.text('4\u4E2A\u5F15\u7528'));
+      await tester.tap(find.text('4 citations'));
       await tester.pumpAndSettle();
 
-      expect(find.text('\u641C\u7D22\u7ED3\u679C'), findsOneWidget);
+      expect(find.text('Search results'), findsOneWidget);
       expect(find.text('Four'), findsOneWidget);
     });
 
@@ -203,7 +203,7 @@ void main() {
       await tester.pumpWidget(
         _buildHarness(
           settings: settings,
-          locale: const Locale('zh'),
+          locale: const Locale('en'),
           child: ChatMessageWidget(
             message: ChatMessage(
               role: 'assistant',
@@ -232,12 +232,12 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('3\u4E2A\u5F15\u7528'), findsOneWidget);
+      expect(find.text('3 citations'), findsOneWidget);
 
-      await tester.tap(find.text('3\u4E2A\u5F15\u7528'));
+      await tester.tap(find.text('3 citations'));
       await tester.pumpAndSettle();
 
-      expect(find.text('\u641C\u7D22\u7ED3\u679C'), findsOneWidget);
+      expect(find.text('Search results'), findsOneWidget);
       expect(find.text('First source'), findsOneWidget);
       expect(find.text('Second source'), findsOneWidget);
       expect(find.text('Third source'), findsOneWidget);
@@ -316,7 +316,7 @@ void main() {
         await tester.pumpWidget(
           _buildHarness(
             settings: settings,
-            locale: const Locale('zh'),
+            locale: const Locale('en'),
             child: ChatMessageWidget(
               message: message,
               showModelIcon: false,
@@ -326,7 +326,7 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.text('2\u4E2A\u5F15\u7528'), findsOneWidget);
+        expect(find.text('2 citations'), findsOneWidget);
       },
     );
 
@@ -340,7 +340,7 @@ void main() {
       await tester.pumpWidget(
         _buildHarness(
           settings: settings,
-          locale: const Locale('zh'),
+          locale: const Locale('en'),
           child: ChatMessageWidget(
             message: ChatMessage(
               role: 'assistant',
@@ -362,7 +362,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('1\u4E2A\u5F15\u7528'), findsOneWidget);
+      expect(find.text('1 citation'), findsOneWidget);
       expect(find.byIcon(Lucide.Globe), findsOneWidget);
     });
 
@@ -386,11 +386,7 @@ void main() {
             ),
             showModelIcon: false,
             reasoningSegments: const [
-              ReasoningSegment(
-                text: '\u7B2C 1 \u6B65',
-                expanded: true,
-                loading: false,
-              ),
+              ReasoningSegment(text: 'Step 1', expanded: true, loading: false),
               ReasoningSegment(
                 text: '\u7B2C 2 \u6B65',
                 expanded: true,
@@ -406,8 +402,8 @@ void main() {
               ToolUIPart(
                 id: 'tool-1',
                 toolName: 'search_web',
-                arguments: {'query': 'Kelivo'},
-                content: '\u641C\u7D22\u7ED3\u679C',
+                arguments: {'query': 'Orvia'},
+                content: 'Search results',
               ),
             ],
           ),
@@ -458,8 +454,8 @@ void main() {
               ToolUIPart(
                 id: 'tool-2',
                 toolName: 'search_web',
-                arguments: {'query': 'Kelivo'},
-                content: '\u641C\u7D22\u7ED3\u679C',
+                arguments: {'query': 'Orvia'},
+                content: 'Search results',
               ),
             ],
           ),
@@ -492,8 +488,8 @@ void main() {
               role: 'tool',
               content: jsonEncode({
                 'tool': 'search_web',
-                'arguments': {'query': 'Kelivo'},
-                'result': '\u641C\u7D22\u7ED3\u679C',
+                'arguments': {'query': 'Orvia'},
+                'result': 'Search results',
               }),
               conversationId: 'conversation-3',
             ),
@@ -523,8 +519,8 @@ void main() {
               role: 'tool',
               content: jsonEncode({
                 'tool': 'search_web',
-                'arguments': {'query': 'Kelivo'},
-                'result': '\u641C\u7D22\u7ED3\u679C',
+                'arguments': {'query': 'Orvia'},
+                'result': 'Search results',
               }),
               conversationId: 'conversation-4',
             ),
@@ -838,7 +834,7 @@ void main() {
                   id: 'tool-wrap',
                   toolName: 'search_web',
                   arguments: {'query': query},
-                  content: '\u641C\u7D22\u7ED3\u679C',
+                  content: 'Search results',
                 ),
               ],
             ),
@@ -1990,7 +1986,7 @@ void main() {
             _buildHarness(
               settings: settings,
               askUserService: service,
-              locale: const Locale('zh'),
+              locale: const Locale('en'),
               child: Builder(
                 builder: (context) => Theme(
                   data: ThemeData(brightness: viewport.brightness),
@@ -2043,7 +2039,7 @@ void main() {
             paragraph.localToGlobal(tail.last.toRect().center),
           );
           await tester.pumpAndSettle();
-          final submit = find.text('\u63D0\u4EA4\u56DE\u7B54');
+          final submit = find.text('Submit answer');
           await tester.ensureVisible(submit);
           await tester.pumpAndSettle();
           await tester.tap(submit);
