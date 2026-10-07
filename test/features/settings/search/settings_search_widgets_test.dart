@@ -370,41 +370,42 @@ void main() {
     expect(tester.takeException(), isNull);
     debugDefaultTargetPlatformOverride = null;
   });
-  testWidgets('color picker stays localized in English through search navigation', (
-    tester,
-  ) async {
-    try {
-      final settings = await pump(tester, const SettingsPage());
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, 110));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(SettingsSearchEntry));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'color mode');
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('colorMode')));
-      await tester.pumpAndSettle();
-      final l10n = AppLocalizations.of(
-        tester.element(find.byType(BottomSheet)),
-      )!;
-      Finder option(String label) => find.descendant(
-        of: find.byType(BottomSheet),
-        matching: find.text(label),
-      );
-      expect(settings.appLocale.languageCode, 'en');
-      expect(option(l10n.settingsPageSystemMode), findsOneWidget);
-      expect(option(l10n.settingsPageLightMode), findsOneWidget);
-      expect(option(l10n.settingsPageDarkMode), findsOneWidget);
-      await tester.tap(option(l10n.settingsPageDarkMode));
-      await tester.pumpAndSettle();
-      expect(settings.themeMode, ThemeMode.dark);
-      await tester.tap(find.text(l10n.settingsSearchCancel));
-      await tester.pumpAndSettle();
-      expect(find.byType(SettingsSearchEntry).hitTestable(), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    } finally {
-      debugDefaultTargetPlatformOverride = null;
-    }
-  });
+  testWidgets(
+    'color picker stays localized in English through search navigation',
+    (tester) async {
+      try {
+        final settings = await pump(tester, const SettingsPage());
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, 110));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byType(SettingsSearchEntry));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'color mode');
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('colorMode')));
+        await tester.pumpAndSettle();
+        final l10n = AppLocalizations.of(
+          tester.element(find.byType(BottomSheet)),
+        )!;
+        Finder option(String label) => find.descendant(
+          of: find.byType(BottomSheet),
+          matching: find.text(label),
+        );
+        expect(settings.appLocale.languageCode, 'en');
+        expect(option(l10n.settingsPageSystemMode), findsOneWidget);
+        expect(option(l10n.settingsPageLightMode), findsOneWidget);
+        expect(option(l10n.settingsPageDarkMode), findsOneWidget);
+        await tester.tap(option(l10n.settingsPageDarkMode));
+        await tester.pumpAndSettle();
+        expect(settings.themeMode, ThemeMode.dark);
+        await tester.tap(find.text(l10n.settingsSearchCancel));
+        await tester.pumpAndSettle();
+        expect(find.byType(SettingsSearchEntry).hitTestable(), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    },
+  );
   testWidgets(
     'accessible navigation shows the search entry without a gesture',
     (tester) async {
