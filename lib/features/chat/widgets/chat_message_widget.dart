@@ -6717,8 +6717,8 @@ class _AskUserSubmitButton extends StatelessWidget {
       padding: EdgeInsets.zero,
       onTap: onTap,
       child: Container(
-        height: 38,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
+        constraints: const BoxConstraints(minHeight: 38),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(14)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -6731,14 +6731,17 @@ class _AskUserSubmitButton extends StatelessWidget {
                   : cs.onSurface.withValues(alpha: 0.38),
             ),
             const SizedBox(width: 7),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: AppFontWeights.heavy,
-                color: enabled
-                    ? cs.onPrimary
-                    : cs.onSurface.withValues(alpha: 0.38),
+            Flexible(
+              child: Text(
+                label,
+                softWrap: true,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: AppFontWeights.heavy,
+                  color: enabled
+                      ? cs.onPrimary
+                      : cs.onSurface.withValues(alpha: 0.38),
+                ),
               ),
             ),
           ],
