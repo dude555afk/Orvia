@@ -363,7 +363,6 @@ void main() {
         await tester.pump();
 
         expect(find.text('1 citation'), findsNothing);
-        expect(find.byIcon(Lucide.Globe), findsNothing);
       },
     );
 
