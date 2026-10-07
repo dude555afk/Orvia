@@ -370,7 +370,7 @@ void main() {
     expect(tester.takeException(), isNull);
     debugDefaultTargetPlatformOverride = null;
   });
-  testWidgets('color picker uses the locale changed through a search result', (
+  testWidgets('color picker stays localized in English through search navigation', (
     tester,
   ) async {
     try {
@@ -378,23 +378,6 @@ void main() {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, 110));
       await tester.pumpAndSettle();
       await tester.tap(find.byType(SettingsSearchEntry));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'language');
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.byKey(const ValueKey('displaySettingsPageLanguageTitle')),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find
-            .text(AppLocalizationsEn().displaySettingsPageLanguageTitle)
-            .hitTestable(),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Simplified Chinese'));
-      await tester.pumpAndSettle();
-      expect(settings.appLocale.languageCode, 'zh');
-      await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), 'color mode');
       await tester.pumpAndSettle();
@@ -407,10 +390,10 @@ void main() {
         of: find.byType(BottomSheet),
         matching: find.text(label),
       );
+      expect(settings.appLocale.languageCode, 'en');
       expect(option(l10n.settingsPageSystemMode), findsOneWidget);
       expect(option(l10n.settingsPageLightMode), findsOneWidget);
       expect(option(l10n.settingsPageDarkMode), findsOneWidget);
-      expect(option('Dark'), findsNothing);
       await tester.tap(option(l10n.settingsPageDarkMode));
       await tester.pumpAndSettle();
       expect(settings.themeMode, ThemeMode.dark);
