@@ -4098,8 +4098,8 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                               upd.installing
                                   ? 'Opening Android installer…'
                                   : upd.downloadProgress == null
-                                      ? 'Downloading update…'
-                                      : 'Downloading update… ${(upd.downloadProgress! * 100).round()}%',
+                                  ? 'Downloading update…'
+                                  : 'Downloading update… ${(upd.downloadProgress! * 100).round()}%',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: cs2.onSurface.withValues(alpha: 0.7),

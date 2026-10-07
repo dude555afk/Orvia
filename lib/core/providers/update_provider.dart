@@ -106,7 +106,9 @@ class UpdateProvider extends ChangeNotifier {
     try {
       await _cleanupStaleUpdateApks();
       final resp = await http.get(
-        Uri.parse('https://api.github.com/repos/dude555afk/Orvia/releases/latest'),
+        Uri.parse(
+          'https://api.github.com/repos/dude555afk/Orvia/releases/latest',
+        ),
         headers: const {
           'Accept': 'application/vnd.github+json',
           'User-Agent': 'Orvia',
@@ -138,7 +140,9 @@ class UpdateProvider extends ChangeNotifier {
       final info = UpdateInfo(
         app: 'Orvia',
         version: version,
-        releasedAt: DateTime.tryParse((release['published_at'] ?? '').toString()),
+        releasedAt: DateTime.tryParse(
+          (release['published_at'] ?? '').toString(),
+        ),
         notes: (release['body'] ?? '').toString(),
         downloads: downloads,
       );
@@ -162,7 +166,9 @@ class UpdateProvider extends ChangeNotifier {
     final info = _available;
     if (info == null) throw StateError('No update is available');
     if (!Platform.isAndroid) {
-      throw UnsupportedError('In-app installation is only available on Android');
+      throw UnsupportedError(
+        'In-app installation is only available on Android',
+      );
     }
 
     _downloading = true;
@@ -174,12 +180,13 @@ class UpdateProvider extends ChangeNotifier {
     http.Client? client;
     try {
       final abi = await _androidUpdater.invokeMethod<String>('getPreferredAbi');
-      final url = switch (abi) {
-        'arm64-v8a' => info.downloads['androidArm64'],
-        'armeabi-v7a' => info.downloads['androidArmv7'],
-        'x86_64' => info.downloads['androidX64'],
-        _ => null,
-      } ??
+      final url =
+          switch (abi) {
+            'arm64-v8a' => info.downloads['androidArm64'],
+            'armeabi-v7a' => info.downloads['androidArmv7'],
+            'x86_64' => info.downloads['androidX64'],
+            _ => null,
+          } ??
           info.downloads['androidArm64'] ??
           info.downloads['android'] ??
           (info.downloads.isNotEmpty ? info.downloads.values.first : null);
@@ -188,7 +195,9 @@ class UpdateProvider extends ChangeNotifier {
       }
 
       await _cleanupStaleUpdateApks();
-      final dir = Directory('${(await getTemporaryDirectory()).path}/orvia_updates');
+      final dir = Directory(
+        '${(await getTemporaryDirectory()).path}/orvia_updates',
+      );
       await dir.create(recursive: true);
       final name = Uri.parse(url).pathSegments.last;
       apk = File('${dir.path}/$name');
@@ -222,7 +231,9 @@ class UpdateProvider extends ChangeNotifier {
       _installing = true;
       notifyListeners();
 
-      await _androidUpdater.invokeMethod<bool>('installApk', {'path': apk.path});
+      await _androidUpdater.invokeMethod<bool>('installApk', {
+        'path': apk.path,
+      });
     } catch (e) {
       _error = e.toString();
       if (apk != null) {
@@ -242,7 +253,9 @@ class UpdateProvider extends ChangeNotifier {
   Future<void> _cleanupStaleUpdateApks() async {
     if (!Platform.isAndroid) return;
     try {
-      final dir = Directory('${(await getTemporaryDirectory()).path}/orvia_updates');
+      final dir = Directory(
+        '${(await getTemporaryDirectory()).path}/orvia_updates',
+      );
       if (!await dir.exists()) return;
       await for (final entry in dir.list()) {
         if (entry is File && entry.path.toLowerCase().endsWith('.apk')) {
