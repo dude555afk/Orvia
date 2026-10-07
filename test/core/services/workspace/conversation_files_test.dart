@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/workspace/conversation_files.dart';
+import 'package:orvia/core/services/workspace/conversation_files.dart';
 
 void main() {
   late Directory tmp;
 
   setUp(() async {
-    tmp = await Directory.systemTemp.createTemp('kelivo_snap_');
+    tmp = await Directory.systemTemp.createTemp('orvia_snap_');
   });
 
   tearDown(() async {

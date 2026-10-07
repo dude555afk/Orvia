@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/database/database_installation_gate.dart';
-import 'package:Kelivo/core/services/backup/local_snapshot_schedule.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/database/database_installation_gate.dart';
+import 'package:orvia/core/services/backup/local_snapshot_schedule.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart' as sqlite;
@@ -14,7 +14,7 @@ void main() {
 
     setUp(() async {
       directory = await Directory.systemTemp.createTemp(
-        'kelivo_database_installation_',
+        'orvia_database_installation_',
       );
     });
 
@@ -227,7 +227,7 @@ void main() {
           appDataDirectory: directory,
         );
         final replacementRoot = await Directory.systemTemp.createTemp(
-          'kelivo_database_replacement_',
+          'orvia_database_replacement_',
         );
         addTearDown(() async {
           if (await replacementRoot.exists()) {
@@ -267,7 +267,7 @@ void main() {
       () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
         final replacementRoot = await Directory.systemTemp.createTemp(
-          'kelivo_database_replacement_corrupt_',
+          'orvia_database_replacement_corrupt_',
         );
         addTearDown(() async {
           if (await replacementRoot.exists()) {
@@ -308,7 +308,7 @@ void main() {
           appDataDirectory: directory,
         );
         final replacementRoot = await Directory.systemTemp.createTemp(
-          'kelivo_database_restore_',
+          'orvia_database_restore_',
         );
         addTearDown(() async {
           if (await replacementRoot.exists()) {

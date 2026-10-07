@@ -1,20 +1,20 @@
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/features/settings/widgets/custom_theme_widgets.dart';
-import 'package:Kelivo/features/workspace/pages/workspaces_page.dart';
-import 'package:Kelivo/features/workspace/workspace_layout.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_settings_rows.dart';
-import 'package:Kelivo/shared/widgets/option_sheet.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/features/settings/widgets/custom_theme_widgets.dart';
+import 'package:orvia/features/workspace/pages/workspaces_page.dart';
+import 'package:orvia/features/workspace/workspace_layout.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_settings_rows.dart';
+import 'package:orvia/shared/widgets/option_sheet.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'desktop_workspace_picker.dart';
 
-const String kCreateWorkspacePickerValue = '__kelivo_create_workspace__';
+const String kCreateWorkspacePickerValue = '__orvia_create_workspace__';
 
 /// Presents workspaces in [showOptionSheet] and returns the chosen
 /// record, or a newly created workspace from the footer row.

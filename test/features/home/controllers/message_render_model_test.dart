@@ -1,5 +1,5 @@
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/features/home/controllers/message_render_model.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/features/home/controllers/message_render_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

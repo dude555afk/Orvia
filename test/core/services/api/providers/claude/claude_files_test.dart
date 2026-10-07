@@ -6,10 +6,10 @@ import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/services/api/providers/claude/claude_files.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/utils/kelivo_file_uri.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/services/api/providers/claude/claude_files.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/utils/orvia_file_uri.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 
 class _FakePathProviderPlatform extends PathProviderPlatform {
   _FakePathProviderPlatform(this.path);
@@ -57,7 +57,7 @@ void main() {
   late PathProviderPlatform previousPathProvider;
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp('kelivo_claude_files');
+    tempDir = await Directory.systemTemp.createTemp('orvia_claude_files');
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     SandboxPathResolver.debugSetDirs(docsDir: tempDir.path);
@@ -132,7 +132,7 @@ void main() {
       expect(file!.name, 'chart.png');
       expect(file.mime, 'image/png');
       // The message stores a managed reference, not an absolute device path.
-      expect(KelivoFileUri.isKelivoFileUri(file.uri), isTrue);
+      expect(OrviaFileUri.isOrviaFileUri(file.uri), isTrue);
       final saved = File('${tempDir.path}/upload/chart.png');
       expect(await saved.readAsBytes(), const <int>[1, 2, 3, 4]);
       expect(requests, <String>[
@@ -452,7 +452,7 @@ void uploadTests() {
   late Directory tempDir;
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp('kelivo_claude_upload');
+    tempDir = await Directory.systemTemp.createTemp('orvia_claude_upload');
   });
 
   tearDown(() async {

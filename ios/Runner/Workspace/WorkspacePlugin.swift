@@ -12,7 +12,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
   static let methodChannelName = "app.workspace"
   static let eventChannelName = "app.workspace/events"
 
-  private let queue = DispatchQueue(label: "psyche.kelivo.workspace", qos: .userInitiated)
+  private let queue = DispatchQueue(label: "com.dude555afk.orvia.workspace", qos: .userInitiated)
   private let eventLock = NSLock()
   private var eventSink: FlutterEventSink?
   private var pendingEvents: [[String: Any]] = []
@@ -38,7 +38,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
     let events = FlutterEventChannel(name: eventChannelName, binaryMessenger: messenger)
     events.setStreamHandler(plugin)
 
-    let kernel = KelivoISHKernel.shared()
+    let kernel = OrviaISHKernel.shared()
     kernel.ptyDataHandler = { [weak plugin] sessionId, data in
       plugin?.emit([
         "type": "pty",
@@ -114,17 +114,17 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
       }
       queue.async {
         if !NSArray(array: mounts).isEqual(to: self.externalMounts) {
-          KelivoISHExecutor.cancelAllInterrupted(true)
-          KelivoISHKernel.shared().ptyCloseAll()
-          let error = KelivoISHKernel.shared().reconcileExternalBinds(mounts)
+          OrviaISHExecutor.cancelAllInterrupted(true)
+          OrviaISHKernel.shared().ptyCloseAll()
+          let error = OrviaISHKernel.shared().reconcileExternalBinds(mounts)
           if error < 0 {
-            let rollback = KelivoISHKernel.shared().reconcileExternalBinds(self.externalMounts)
-            self.externalMountsApplied = rollback >= 0 && KelivoISHKernel.shared().isBooted
+            let rollback = OrviaISHKernel.shared().reconcileExternalBinds(self.externalMounts)
+            self.externalMountsApplied = rollback >= 0 && OrviaISHKernel.shared().isBooted
             self.complete(result, Self.mountError(error))
             return
           }
           self.externalMounts = mounts
-          self.externalMountsApplied = KelivoISHKernel.shared().isBooted
+          self.externalMountsApplied = OrviaISHKernel.shared().isBooted
         }
         self.complete(result, self.applyExternalMounts())
       }
@@ -162,7 +162,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
         return
       }
       DispatchQueue.global(qos: .userInitiated).async {
-        let ok = KelivoISHExecutor.writeStdin(data.data, runId: runId)
+        let ok = OrviaISHExecutor.writeStdin(data.data, runId: runId)
         DispatchQueue.main.async {
           result(ok ? nil : FlutterError(code: "stdin_closed", message: "process stdin unavailable", details: nil))
         }
@@ -190,7 +190,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
 
   private func probe(result: @escaping FlutterResult) {
     let installer = RootfsInstaller.shared
-    let kernel = KelivoISHKernel.shared()
+    let kernel = OrviaISHKernel.shared()
     var reason: String?
     if !installer.isInstalled {
       reason = "rootfs not installed"
@@ -276,7 +276,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
         self.complete(result, error)
         return
       }
-      let started = KelivoISHExecutor.startCommand(
+      let started = OrviaISHExecutor.startCommand(
         command,
         runId: runId,
         binds: self.commandBinds(binds),
@@ -326,7 +326,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
       result(false)
       return
     }
-    result(KelivoISHExecutor.cancelRunId(runId))
+    result(OrviaISHExecutor.cancelRunId(runId))
   }
 
   private func ptyOpen(call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -347,7 +347,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
         self.complete(result, error)
         return
       }
-      let pid = KelivoISHKernel.shared().ptyOpenSession(
+      let pid = OrviaISHKernel.shared().ptyOpenSession(
         sessionId,
         binds: self.commandBinds(binds),
         cwd: cwd,
@@ -368,15 +368,15 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
   private static func ptyOpenError(_ code: Int32) -> FlutterError {
     let reason: String
     switch code {
-    case KelivoISHPtyOpenError.notBooted.rawValue:
+    case OrviaISHPtyOpenError.notBooted.rawValue:
       reason = "kernel not booted"
-    case KelivoISHPtyOpenError.badSessionId.rawValue:
+    case OrviaISHPtyOpenError.badSessionId.rawValue:
       reason = "empty sessionId"
-    case KelivoISHPtyOpenError.sessionExists.rawValue:
+    case OrviaISHPtyOpenError.sessionExists.rawValue:
       reason = "sessionId already open"
-    case KelivoISHPtyOpenError.environmentTooLarge.rawValue:
+    case OrviaISHPtyOpenError.environmentTooLarge.rawValue:
       reason = "environment variables exceed the iOS sandbox limit of 128 KiB (UTF-8); reduce their total size"
-    case KelivoISHPtyOpenError.invalidEnvironment.rawValue:
+    case OrviaISHPtyOpenError.invalidEnvironment.rawValue:
       reason = "invalid environment variable name or value"
     default:
       reason = "guest error"
@@ -403,7 +403,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
       result(nil)
       return
     }
-    KelivoISHKernel.shared().ptyWriteSession(sessionId, data: data)
+    OrviaISHKernel.shared().ptyWriteSession(sessionId, data: data)
     result(nil)
   }
 
@@ -415,14 +415,14 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
     }
     let cols = (args["cols"] as? NSNumber)?.int32Value ?? 80
     let rows = (args["rows"] as? NSNumber)?.int32Value ?? 24
-    KelivoISHKernel.shared().ptyResizeSession(sessionId, cols: cols, rows: rows)
+    OrviaISHKernel.shared().ptyResizeSession(sessionId, cols: cols, rows: rows)
     result(nil)
   }
 
   private func ptyClose(call: FlutterMethodCall, result: @escaping FlutterResult) {
     let args = call.arguments as? [String: Any] ?? [:]
     if let sessionId = args["sessionId"] as? String {
-      KelivoISHKernel.shared().ptyCloseSession(sessionId)
+      OrviaISHKernel.shared().ptyCloseSession(sessionId)
     }
     result(nil)
   }
@@ -447,7 +447,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
       self.backgroundTaskLock.lock()
       if self.backgroundTask == .invalid {
         self.backgroundTask = UIApplication.shared.beginBackgroundTask(
-          withName: "KelivoWorkspace"
+          withName: "OrviaWorkspace"
         ) { [weak self] in
           self?.expireBackgroundTask()
         }
@@ -470,7 +470,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
   }
 
   private func expireBackgroundTask() {
-    KelivoISHExecutor.cancelAllInterrupted(true)
+    OrviaISHExecutor.cancelAllInterrupted(true)
     finishBackgroundTask()
   }
 
@@ -496,7 +496,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
     if !installer.isInstalled {
       return FlutterError(code: "rootfs_missing", message: "rootfs not installed", details: nil)
     }
-    let kernel = KelivoISHKernel.shared()
+    let kernel = OrviaISHKernel.shared()
     if !kernel.isBooted {
       let err = kernel.boot(withRootPath: installer.rootfsDir.path)
       if err < 0 {
@@ -507,7 +507,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
   }
 
   private func applyExternalMounts() -> FlutterError? {
-    let kernel = KelivoISHKernel.shared()
+    let kernel = OrviaISHKernel.shared()
     guard kernel.isBooted, !externalMountsApplied else { return nil }
     let error = kernel.reconcileExternalBinds(externalMounts)
     if error < 0 { return Self.mountError(error) }
@@ -541,7 +541,7 @@ final class WorkspacePlugin: NSObject, FlutterStreamHandler {
   }
 
   private static func mountError(_ code: Int32) -> FlutterError {
-    if code == KelivoISHMountTargetOccupied {
+    if code == OrviaISHMountTargetOccupied {
       return FlutterError(
         code: "external_mount_target_occupied",
         message: "A mount target under /mounts already contains local files. Choose a different mount name or move those files first. No files were removed.",

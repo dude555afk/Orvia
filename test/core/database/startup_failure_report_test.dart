@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/database/startup_failure_report.dart';
-import 'package:Kelivo/core/database/startup_recovery_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/database/startup_failure_report.dart';
+import 'package:orvia/core/database/startup_recovery_service.dart';
 import 'package:drift/isolate.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
@@ -13,7 +13,7 @@ void main() {
   late Directory directory;
 
   setUp(() async {
-    directory = await Directory.systemTemp.createTemp('kelivo_startup_report_');
+    directory = await Directory.systemTemp.createTemp('orvia_startup_report_');
   });
 
   tearDown(() async {
@@ -193,7 +193,7 @@ void main() {
         AppDatabase.currentSchemaVersion,
       );
       final workspace = await Directory.systemTemp.createTemp(
-        'kelivo_startup_archive_',
+        'orvia_startup_archive_',
       );
       addTearDown(() async {
         if (await workspace.exists()) await workspace.delete(recursive: true);

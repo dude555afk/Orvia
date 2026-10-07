@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:Kelivo/core/services/tts/network_tts.dart';
+import 'package:orvia/core/services/tts/network_tts.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -124,7 +124,7 @@ void main() {
         bitrate: 64000,
         channel: 2,
         subtitleEnable: true,
-        pronunciationDictionary: const <String>['Kelivo/ke-li-vo'],
+        pronunciationDictionary: const <String>['Orvia/ke-li-vo'],
       );
       final miniMaxAgain =
           TtsServiceOptions.fromJson(miniMax.toJson()) as MiniMaxTtsOptions;
@@ -137,7 +137,7 @@ void main() {
       expect(miniMaxAgain.bitrate, 64000);
       expect(miniMaxAgain.channel, 2);
       expect(miniMaxAgain.subtitleEnable, isTrue);
-      expect(miniMaxAgain.pronunciationDictionary, <String>['Kelivo/ke-li-vo']);
+      expect(miniMaxAgain.pronunciationDictionary, <String>['Orvia/ke-li-vo']);
 
       final step = StepTtsOptions(
         enabled: true,
@@ -300,7 +300,7 @@ void main() {
           language: 'zh-CN',
           voice: 'zh-CN-XiaoxiaoNeural',
         ),
-        text: '\u4F60\u597D & <Kelivo>',
+        text: '\u4F60\u597D & <Orvia>',
       );
 
       expect(captured.uri.path, '/cognitiveservices/v1');
@@ -313,7 +313,7 @@ void main() {
         requestBody,
         '<speak version="1.0" xml:lang="zh-CN">'
         '<voice name="zh-CN-XiaoxiaoNeural">'
-        '\u4F60\u597D &amp; &lt;Kelivo&gt;</voice></speak>',
+        '\u4F60\u597D &amp; &lt;Orvia&gt;</voice></speak>',
       );
       expect(result.mime, 'audio/mpeg');
       expect(result.bytes, <int>[1, 2, 3]);
@@ -667,7 +667,7 @@ void main() {
             bitrate: 128000,
             channel: 2,
             subtitleEnable: true,
-            pronunciationDictionary: const <String>['Kelivo/ke-li-vo'],
+            pronunciationDictionary: const <String>['Orvia/ke-li-vo'],
           ),
           text: 'hello',
         );
@@ -685,7 +685,7 @@ void main() {
           'channel': 2,
         });
         expect(requestBody['pronunciation_dict'], {
-          'tone': <String>['Kelivo/ke-li-vo'],
+          'tone': <String>['Orvia/ke-li-vo'],
         });
         expect(requestBody['subtitle_enable'], isTrue);
         expect(result.bytes, <int>[1, 2, 3]);

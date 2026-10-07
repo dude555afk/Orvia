@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/services/search/providers/kagi_search_service.dart';
-import 'package:Kelivo/core/services/search/search_service.dart';
+import 'package:orvia/core/services/search/providers/kagi_search_service.dart';
+import 'package:orvia/core/services/search/search_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -37,8 +37,8 @@ void main() {
               'data': {
                 'search': [
                   {
-                    'title': 'Kelivo',
-                    'url': 'https://example.com/kelivo',
+                    'title': 'Orvia',
+                    'url': 'https://example.com/orvia',
                     'snippet': 'A cross-platform LLM client.',
                   },
                   {'title': '', 'url': 'https://example.com/invalid'},
@@ -58,7 +58,7 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo search',
+        query: 'orvia search',
         commonOptions: const SearchCommonOptions(resultSize: 8, timeout: 1000),
         serviceOptions: KagiOptions(id: 'kagi-1', apiKey: 'kagi-key'),
       );
@@ -69,14 +69,14 @@ void main() {
       expect(captured?.headers['Content-Type'], contains('application/json'));
       expect(captured?.headers['Accept'], 'application/json');
       expect(jsonDecode(captured!.body), {
-        'query': 'kelivo search',
+        'query': 'orvia search',
         'workflow': 'search',
         'format': 'json',
         'limit': 8,
       });
       expect(result.items, hasLength(1));
-      expect(result.items.single.title, 'Kelivo');
-      expect(result.items.single.url, 'https://example.com/kelivo');
+      expect(result.items.single.title, 'Orvia');
+      expect(result.items.single.url, 'https://example.com/orvia');
       expect(result.items.single.text, 'A cross-platform LLM client.');
     });
 
@@ -145,7 +145,7 @@ void main() {
 
       for (final size in [-5, 0, 10, 2048]) {
         await service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: SearchCommonOptions(resultSize: size, timeout: 1000),
           serviceOptions: options,
         );
@@ -175,7 +175,7 @@ void main() {
 
       for (var i = 0; i < 2; i++) {
         await service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: const SearchCommonOptions(timeout: 1000),
           serviceOptions: options,
         );
@@ -204,7 +204,7 @@ void main() {
 
       expect(
         () => service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: const SearchCommonOptions(timeout: 1000),
           serviceOptions: KagiOptions(id: 'kagi-1', apiKey: 'kagi-key'),
         ),
@@ -241,7 +241,7 @@ void main() {
 
       expect(
         () => service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: const SearchCommonOptions(timeout: 1000),
           serviceOptions: KagiOptions(id: 'kagi-1', apiKey: 'kagi-key'),
         ),

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/services/search/providers/querit_search_service.dart';
-import 'package:Kelivo/core/services/search/search_service.dart';
-import 'package:Kelivo/utils/brand_assets.dart';
+import 'package:orvia/core/services/search/providers/querit_search_service.dart';
+import 'package:orvia/core/services/search/search_service.dart';
+import 'package:orvia/utils/brand_assets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -49,12 +49,12 @@ void main() {
               'error_code': 200,
               'error_msg': '',
               'search_id': 1,
-              'query_context': {'query': 'kelivo'},
+              'query_context': {'query': 'orvia'},
               'results': {
                 'result': [
                   {
-                    'title': 'Kelivo',
-                    'url': 'https://example.com/kelivo',
+                    'title': 'Orvia',
+                    'url': 'https://example.com/orvia',
                     'snippet': 'A Flutter chat client.',
                     'site_name': 'Example',
                     'site_icon': 'https://example.com/favicon.ico',
@@ -74,7 +74,7 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(resultSize: 1, timeout: 1000),
         serviceOptions: QueritOptions(
           id: 'querit-1',
@@ -91,7 +91,7 @@ void main() {
       expect(captured?.headers['Authorization'], 'Bearer querit-test');
       expect(captured?.headers['Content-Type'], contains('application/json'));
       expect(jsonDecode(captured!.body), {
-        'query': 'kelivo',
+        'query': 'orvia',
         'count': 1,
         'filters': {
           'sites': {
@@ -110,8 +110,8 @@ void main() {
         },
       });
       expect(result.items, hasLength(1));
-      expect(result.items.single.title, 'Kelivo');
-      expect(result.items.single.url, 'https://example.com/kelivo');
+      expect(result.items.single.title, 'Orvia');
+      expect(result.items.single.url, 'https://example.com/orvia');
       expect(
         result.items.single.text,
         'A Flutter chat client.\n\nSupports search.',
@@ -134,12 +134,12 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(resultSize: 5, timeout: 1000),
         serviceOptions: QueritOptions(id: 'querit-1', apiKey: 'querit-test'),
       );
 
-      expect(jsonDecode(captured!.body), {'query': 'kelivo', 'count': 5});
+      expect(jsonDecode(captured!.body), {'query': 'orvia', 'count': 5});
       expect(result.items, isEmpty);
     });
 
@@ -153,7 +153,7 @@ void main() {
                 'result': [
                   {
                     'title': '',
-                    'url': 'https://example.com/kelivo',
+                    'url': 'https://example.com/orvia',
                     'snippet': '',
                     'sentence': ['Sentence one.', 'Sentence two.'],
                   },
@@ -166,12 +166,12 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(timeout: 1000),
         serviceOptions: QueritOptions(id: 'querit-1', apiKey: 'querit-test'),
       );
 
-      expect(result.items.single.title, 'https://example.com/kelivo');
+      expect(result.items.single.title, 'https://example.com/orvia');
       expect(result.items.single.text, 'Sentence one.\n\nSentence two.');
     });
 
@@ -186,7 +186,7 @@ void main() {
 
       expect(
         () => service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: const SearchCommonOptions(timeout: 1000),
           serviceOptions: QueritOptions(id: 'querit-1', apiKey: ''),
         ),
@@ -208,7 +208,7 @@ void main() {
 
       expect(
         () => service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: const SearchCommonOptions(timeout: 1000),
           serviceOptions: QueritOptions(id: 'querit-1', apiKey: 'querit-test'),
         ),
@@ -234,7 +234,7 @@ void main() {
 
       expect(
         () => service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: const SearchCommonOptions(timeout: 1000),
           serviceOptions: QueritOptions(id: 'querit-1', apiKey: 'querit-test'),
         ),

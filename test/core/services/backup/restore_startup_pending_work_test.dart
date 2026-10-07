@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/backup/restore_startup_gate.dart';
-import 'package:Kelivo/core/services/backup/restore_workspace_lock.dart';
+import 'package:orvia/core/services/backup/restore_startup_gate.dart';
+import 'package:orvia/core/services/backup/restore_workspace_lock.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +15,7 @@ void main() {
     late Directory workspace;
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_pending_work_test_');
+      root = await Directory.systemTemp.createTemp('orvia_pending_work_test_');
       appData = Directory(p.join(root.path, 'app_data'));
       await appData.create();
       workspace = Directory(

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/services/logging/context_log_models.dart';
-import 'package:Kelivo/core/services/logging/context_logger.dart';
+import 'package:orvia/core/services/logging/context_log_models.dart';
+import 'package:orvia/core/services/logging/context_logger.dart';
 import 'package:flutter_test/flutter_test.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
@@ -26,7 +26,7 @@ void main() {
   late PathProviderPlatform previousPathProvider;
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp('kelivo_context_logs_');
+    tempDir = await Directory.systemTemp.createTemp('orvia_context_logs_');
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     await ContextLogger.setEnabled(false);
@@ -64,7 +64,7 @@ void main() {
         {
           'role': 'system',
           'content': 'sys\n\nrules',
-          kelivoContextSegmentsKey: [
+          orviaContextSegmentsKey: [
             ContextSegmentTags.item(
               source: ContextSource.systemPrompt,
               length: 3,
@@ -78,7 +78,7 @@ void main() {
         {'role': 'user', 'content': 'hello'},
       ],
       conversationId: 'c1',
-      assistantName: 'Kelivo',
+      assistantName: 'Orvia',
       provider: 'openai',
       model: 'gpt-4.1',
     );

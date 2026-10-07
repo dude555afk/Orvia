@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../l10n/app_localizations.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
 
 String backupReminderFrequencyLabel(AppLocalizations l10n, int days) {
   return switch (days) {

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/services/search/providers/anysearch_search_service.dart';
-import 'package:Kelivo/core/services/search/search_service.dart';
+import 'package:orvia/core/services/search/providers/anysearch_search_service.dart';
+import 'package:orvia/core/services/search/search_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -39,7 +39,7 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(resultSize: 50, timeout: 1000),
         serviceOptions: AnySearchOptions(
           id: 'anysearch',
@@ -52,7 +52,7 @@ void main() {
       expect(captured?.url.toString(), 'https://search.example/v1/search');
       expect(captured?.headers['Authorization'], 'Bearer any-key');
       expect(jsonDecode(captured!.body), {
-        'query': 'kelivo',
+        'query': 'orvia',
         'max_results': 20,
         'format': 'json',
       });

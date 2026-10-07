@@ -6,19 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/models/backup.dart';
-import 'package:Kelivo/core/providers/backup_provider.dart';
-import 'package:Kelivo/core/providers/backup_reminder_provider.dart';
-import 'package:Kelivo/core/providers/local_snapshot_provider.dart';
-import 'package:Kelivo/core/providers/s3_backup_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/backup/backup_cancel_token.dart';
-import 'package:Kelivo/core/services/backup/backup_task_progress.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/features/backup/pages/backup_page.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/models/backup.dart';
+import 'package:orvia/core/providers/backup_provider.dart';
+import 'package:orvia/core/providers/backup_reminder_provider.dart';
+import 'package:orvia/core/providers/local_snapshot_provider.dart';
+import 'package:orvia/core/providers/s3_backup_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/backup/backup_cancel_token.dart';
+import 'package:orvia/core/services/backup/backup_task_progress.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/features/backup/pages/backup_page.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 
 import '../../support/business_test_harness.dart';
 
@@ -80,7 +80,7 @@ void main() {
 
   final sampleItem = BackupFileItem(
     href: Uri.parse('https://example.com/backup.zip'),
-    displayName: 'kelivo_backup.zip',
+    displayName: 'orvia_backup.zip',
     size: 12,
     lastModified: null,
   );
@@ -147,7 +147,7 @@ Future<void> _expectNoSetStateAfterDispose(
         ChangeNotifierProvider<LocalSnapshotProvider>(
           create: (_) => LocalSnapshotProvider(
             appDataDirectory: Directory.systemTemp.createTempSync(
-              'kelivo_backup_page_',
+              'orvia_backup_page_',
             ),
             chatService: chatService,
             businessRepository: business.repository,

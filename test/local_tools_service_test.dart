@@ -4,10 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/health_data_type.dart';
-import 'package:Kelivo/features/home/services/health_data_selection.dart';
-import 'package:Kelivo/features/home/services/local_tools_service.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/health_data_type.dart';
+import 'package:orvia/features/home/services/health_data_selection.dart';
+import 'package:orvia/features/home/services/local_tools_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

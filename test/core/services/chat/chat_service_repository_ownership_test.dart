@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
 
 class _FakePathProviderPlatform extends PathProviderPlatform {
   _FakePathProviderPlatform(this.path);
@@ -34,12 +34,12 @@ void main() {
 
   setUp(() async {
     directory = await Directory.systemTemp.createTemp(
-      'kelivo_chat_service_repository_ownership_',
+      'orvia_chat_service_repository_ownership_',
     );
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(directory.path);
     repository = ChatDatabaseRepository.open(
-      file: File('${directory.path}/kelivo.db'),
+      file: File('${directory.path}/orvia.db'),
     );
     await repository.ensureReady();
   });

@@ -13,7 +13,7 @@ import '../../core/services/haptics.dart';
 import '../../features/settings/pages/debug_page.dart';
 import '../../shared/widgets/snackbar.dart';
 import '../../theme/app_font_weights.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
 
 class DesktopAboutPane extends StatefulWidget {
   const DesktopAboutPane({super.key});
@@ -92,7 +92,7 @@ class _DesktopAboutPaneState extends State<DesktopAboutPane> {
 
     _appNameTapCount = 0;
     Haptics.medium();
-    final added = await context.read<SettingsProvider>().unlockKelivoSearch();
+    final added = await context.read<SettingsProvider>().unlockOrviaSearch();
     if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
     showAppSnackBar(

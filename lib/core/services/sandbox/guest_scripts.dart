@@ -19,7 +19,7 @@ class GuestScripts {
     const legacy =
         'set -e\n'
         'if [ -f /etc/apt/sources.list ]; then\n'
-        '  mv /etc/apt/sources.list /etc/apt/sources.list.kelivo-bak\n'
+        '  mv /etc/apt/sources.list /etc/apt/sources.list.orvia-bak\n'
         'fi\n';
     if (distro == 'debian') {
       final security = Uri.parse(

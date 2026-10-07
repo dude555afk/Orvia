@@ -1,4 +1,4 @@
-#include "KelivoISHStdin.h"
+#include "OrviaISHStdin.h"
 #include <assert.h>
 #include <signal.h>
 #include <string.h>
@@ -6,7 +6,7 @@
 
 int main(void) {
     int ends[2];
-    assert(KelivoISHCreateStdinPipe(ends) == 0);
+    assert(OrviaISHCreateStdinPipe(ends) == 0);
     struct stat info;
     assert(fstat(ends[0], &info) == 0 && S_ISFIFO(info.st_mode));
     assert((fcntl(ends[0], F_GETFL) & O_ACCMODE) == O_RDONLY);

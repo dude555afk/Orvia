@@ -3,21 +3,21 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 
 import 'package:flutter/services.dart';
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/features/workspace/widgets/files/file_browser.dart';
-import 'package:Kelivo/features/workspace/pages/workspace_files_desktop_layout.dart';
-import 'package:Kelivo/features/workspace/widgets/workspace_tools_pane.dart';
-import 'package:Kelivo/shared/widgets/ios_switch.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser.dart';
+import 'package:orvia/features/workspace/pages/workspace_files_desktop_layout.dart';
+import 'package:orvia/features/workspace/widgets/workspace_tools_pane.dart';
+import 'package:orvia/shared/widgets/ios_switch.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/features/workspace/pages/workspaces_page.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/form_sheet.dart';
-import 'package:Kelivo/shared/widgets/ios_settings_rows.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/features/workspace/pages/workspaces_page.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/form_sheet.dart';
+import 'package:orvia/shared/widgets/ios_settings_rows.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -102,7 +102,7 @@ void main() {
 
   setUp(() async {
     FilePicker.platform = _FolderPicker();
-    tempDir = Directory.systemTemp.createTempSync('kelivo_workspaces_pane_');
+    tempDir = Directory.systemTemp.createTempSync('orvia_workspaces_pane_');
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     database = AppDatabase(NativeDatabase.memory());

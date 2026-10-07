@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/models/memory_entry.dart';
-import 'package:Kelivo/core/models/user_profile_field.dart';
-import 'package:Kelivo/core/services/memory/memory_block_builder.dart';
-import 'package:Kelivo/core/services/memory/memory_prompts.dart';
+import 'package:orvia/core/models/memory_entry.dart';
+import 'package:orvia/core/models/user_profile_field.dart';
+import 'package:orvia/core/services/memory/memory_block_builder.dart';
+import 'package:orvia/core/services/memory/memory_prompts.dart';
 
 MemoryEntry _entry({
   required String id,

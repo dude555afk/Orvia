@@ -4,10 +4,10 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:Kelivo/features/workspace/widgets/files/file_browser_ops.dart';
-import 'package:Kelivo/features/workspace/widgets/files/workspace_file_thumbnail.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/utils/safe_resize_image.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser_ops.dart';
+import 'package:orvia/features/workspace/widgets/files/workspace_file_thumbnail.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/utils/safe_resize_image.dart';
 import 'package:archive/archive.dart' show getCrc32;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -138,7 +138,7 @@ void main() {
   late Directory tempDir;
 
   setUp(() {
-    tempDir = Directory.systemTemp.createTempSync('kelivo_file_thumbnail_');
+    tempDir = Directory.systemTemp.createTempSync('orvia_file_thumbnail_');
   });
 
   tearDown(() {

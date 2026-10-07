@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/environment_manager.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/environment_manager.dart';
 
 import '../../../support/business_test_harness.dart';
 import 'sandbox_channel_harness.dart';
@@ -25,7 +25,7 @@ void main() {
     workspace.install();
     env = EnvironmentProvider(preferences: createBusinessTestPreferences());
     await env.loaded;
-    tempDir = Directory.systemTemp.createTempSync('kelivo_ios_rootfs_');
+    tempDir = Directory.systemTemp.createTempSync('orvia_ios_rootfs_');
     repairScripts = [];
     repairExitCode = 0;
     manager = IosRootfsManager(
@@ -86,7 +86,7 @@ void main() {
       await userFile.writeAsString('user data');
       await manager.install();
       expect(workspace.methods, isNot(contains('installRootfs')));
-      expect(repairScripts, ['/bin/sh /usr/local/bin/kelivo-repair-rootfs']);
+      expect(repairScripts, ['/bin/sh /usr/local/bin/orvia-repair-rootfs']);
       expect(await File('${tempDir.path}/.version').readAsString(), '2\n');
       expect(await userFile.readAsString(), 'user data');
       expect(env.state.phase, EnvironmentPhase.ready);

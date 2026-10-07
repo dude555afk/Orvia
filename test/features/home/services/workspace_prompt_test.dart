@@ -6,16 +6,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/models/environment_variable.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tools_service.dart';
-import 'package:Kelivo/features/home/services/message_builder_service.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/models/environment_variable.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/workspace/workspace_tools_service.dart';
+import 'package:orvia/features/home/services/message_builder_service.dart';
 import '../../../support/business_test_harness.dart';
 
 class _FakeBuildContext implements BuildContext {
@@ -30,7 +30,7 @@ void main() {
   late WorkspaceToolContext sandboxed;
 
   setUp(() async {
-    tmp = await Directory.systemTemp.createTemp('kelivo_ws_prompt_');
+    tmp = await Directory.systemTemp.createTemp('orvia_ws_prompt_');
     final workspace = Directory(p.join(tmp.path, 'ws'))..createSync();
     final session = Directory(p.join(tmp.path, 'session'))..createSync();
     final skills = Directory(p.join(tmp.path, 'skills'))..createSync();
@@ -104,9 +104,9 @@ void main() {
       );
       expect(fragment, isNot(contains('<external_mounts>')));
       expect(fragment, contains('cwd: /workspace'));
-      expect(fragment, contains('kelivo://workspace/rel/path'));
-      expect(fragment, contains('kelivo://chat/outputs/x.txt'));
-      expect(fragment, contains('kelivo://workspace/plot.png'));
+      expect(fragment, contains('orvia://workspace/rel/path'));
+      expect(fragment, contains('orvia://chat/outputs/x.txt'));
+      expect(fragment, contains('orvia://workspace/plot.png'));
       expect(fragment, contains('notes.pdf'));
       expect(fragment, contains('12 bytes'));
       expect(fragment, contains('Linux (PRoot)'));

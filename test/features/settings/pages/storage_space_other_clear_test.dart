@@ -10,9 +10,9 @@ import 'package:path_provider_platform_interface/path_provider_platform_interfac
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/features/settings/pages/storage_space_page.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/features/settings/pages/storage_space_page.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 
 class _FakePathProvider extends PathProviderPlatform {
   _FakePathProvider(this.root);
@@ -63,7 +63,7 @@ void main() {
   late PathProviderPlatform previousPathProvider;
 
   setUp(() async {
-    root = await Directory.systemTemp.createTemp('kelivo_storage_other_ui_');
+    root = await Directory.systemTemp.createTemp('orvia_storage_other_ui_');
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProvider(root.path);
     SharedPreferences.setMockInitialValues({});

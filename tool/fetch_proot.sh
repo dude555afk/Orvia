@@ -161,7 +161,7 @@ verify_checksums() {
   done < "$CHECKSUMS_FILE"
 }
 
-TMPDIR_FETCH="$(mktemp -d "${TMPDIR:-/tmp}/kelivo-proot.XXXXXX")"
+TMPDIR_FETCH="$(mktemp -d "${TMPDIR:-/tmp}/orvia-proot.XXXXXX")"
 cleanup() { rm -rf "$TMPDIR_FETCH"; }
 trap cleanup EXIT
 

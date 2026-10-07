@@ -5,7 +5,7 @@
   "messages": [
     {
       "role": "user",
-      "content": "Think in one short sentence about the plan. Then, in this same assistant turn, call get_weather for Kyoto and lookup for kelivo in parallel, and also use web_search for Kyoto. Do not ask questions. Do not wait for results. Emit both client tool calls together."
+      "content": "Think in one short sentence about the plan. Then, in this same assistant turn, call get_weather for Kyoto and lookup for orvia in parallel, and also use web_search for Kyoto. Do not ask questions. Do not wait for results. Emit both client tool calls together."
     }
   ],
   "tools": [

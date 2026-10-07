@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/skill_record.dart';
-import 'package:Kelivo/core/services/skills/skills_service.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tools_service.dart';
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/skill_record.dart';
+import 'package:orvia/core/services/skills/skills_service.dart';
+import 'package:orvia/core/services/workspace/workspace_tools_service.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
@@ -39,7 +39,7 @@ void main() {
   setUp(() async {
     harness = await createBusinessTestHarness();
     store = ExtensionEntityStore(harness.database);
-    root = await Directory.systemTemp.createTemp('kelivo_bundled_skills_');
+    root = await Directory.systemTemp.createTemp('orvia_bundled_skills_');
     addTearDown(() => root.delete(recursive: true));
   });
 

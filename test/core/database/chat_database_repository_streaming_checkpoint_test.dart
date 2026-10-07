@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/database/generation_run.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/services/api/providers/openai/chat_completions_decoder.dart';
-import 'package:Kelivo/core/services/api/stream/sse_decode_loop.dart';
-import 'package:Kelivo/core/services/api/stream/sse_framing.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk_handler.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/features/home/services/message_builder_service.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/database/generation_run.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/services/api/providers/openai/chat_completions_decoder.dart';
+import 'package:orvia/core/services/api/stream/sse_decode_loop.dart';
+import 'package:orvia/core/services/api/stream/sse_framing.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk_handler.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/features/home/services/message_builder_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
@@ -29,7 +29,7 @@ void main() {
 
     setUp(() async {
       directory = await Directory.systemTemp.createTemp(
-        'kelivo_streaming_checkpoint_test_',
+        'orvia_streaming_checkpoint_test_',
       );
       repository = ChatDatabaseRepository.open(
         file: File('${directory.path}/chat.sqlite'),
@@ -155,7 +155,7 @@ void main() {
           {
             'id': 'tool-1',
             'name': 'search',
-            'arguments': {'q': 'kelivo'},
+            'arguments': {'q': 'orvia'},
             'content': 'result',
           },
         ]);
@@ -175,7 +175,7 @@ void main() {
           {
             'id': 'tool-1',
             'name': 'search',
-            'arguments': {'q': 'kelivo'},
+            'arguments': {'q': 'orvia'},
             'content': 'result',
           },
         ]);
@@ -477,7 +477,7 @@ void main() {
           {
             'id': 'tool-1',
             'name': 'search',
-            'arguments': {'q': 'kelivo'},
+            'arguments': {'q': 'orvia'},
             'content': 'result',
           },
         ];

@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/chat_api_service.dart';
-import 'package:Kelivo/core/utils/multimodal_input_utils.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/chat_api_service.dart';
+import 'package:orvia/core/utils/multimodal_input_utils.dart';
 
 ProviderConfig _openAiConfig(String baseUrl, {bool useResponseApi = false}) {
   return ProviderConfig(
@@ -241,7 +241,7 @@ void main() {
   group('ChatApiService structured media paths (no custom markers)', () {
     test('encodes local media paths as data URLs', () async {
       final body = await _sendAndCaptureRequestBody((baseUrl) async {
-        final dir = await Directory.systemTemp.createTemp('kelivo_local_img_');
+        final dir = await Directory.systemTemp.createTemp('orvia_local_img_');
         addTearDown(() async {
           if (await dir.exists()) {
             await dir.delete(recursive: true);
@@ -327,7 +327,7 @@ void main() {
       () async {
         final body = await _sendAndCaptureRequestBody((baseUrl) async {
           final dir = await Directory.systemTemp.createTemp(
-            'kelivo_chat_asst_img_',
+            'orvia_chat_asst_img_',
           );
           addTearDown(() async {
             if (await dir.exists()) {
@@ -405,7 +405,7 @@ void main() {
             messages: [
               {
                 'role': 'assistant',
-                // Pre-built multimodal List with no _kelivo_media_paths sidecar.
+                // Pre-built multimodal List with no _orvia_media_paths sidecar.
                 'content': [
                   {'type': 'text', 'text': 'here is an image'},
                   {
@@ -465,7 +465,7 @@ void main() {
     test(
       'userImagePaths attach images without marker strings in content',
       () async {
-        final dir = await Directory.systemTemp.createTemp('kelivo_user_paths_');
+        final dir = await Directory.systemTemp.createTemp('orvia_user_paths_');
         addTearDown(() async {
           if (await dir.exists()) await dir.delete(recursive: true);
         });
@@ -494,7 +494,7 @@ void main() {
     test(
       'tool follow-up preserves structured media paths on rebuilt user message',
       () async {
-        final dir = await Directory.systemTemp.createTemp('kelivo_tool_media_');
+        final dir = await Directory.systemTemp.createTemp('orvia_tool_media_');
         addTearDown(() async {
           if (await dir.exists()) await dir.delete(recursive: true);
         });
@@ -607,7 +607,7 @@ void main() {
           isTrue,
           reason:
               'second request rebuilt user message must keep image_url from '
-              '_kelivo_media_paths',
+              '_orvia_media_paths',
         );
         expect(
           parts.any(
@@ -626,7 +626,7 @@ void main() {
       'tool follow-up keeps historical assistant media on last user',
       () async {
         final dir = await Directory.systemTemp.createTemp(
-          'kelivo_tool_asst_media_',
+          'orvia_tool_asst_media_',
         );
         addTearDown(() async {
           if (await dir.exists()) await dir.delete(recursive: true);
@@ -745,7 +745,7 @@ void main() {
 
     test('tool follow-up keeps bare userImagePaths on last user', () async {
       final dir = await Directory.systemTemp.createTemp(
-        'kelivo_tool_user_paths_',
+        'orvia_tool_user_paths_',
       );
       addTearDown(() async {
         if (await dir.exists()) await dir.delete(recursive: true);
@@ -858,7 +858,7 @@ void main() {
       'List-shaped user content still receives stashed assistant media',
       () async {
         final dir = await Directory.systemTemp.createTemp(
-          'kelivo_list_user_asst_',
+          'orvia_list_user_asst_',
         );
         addTearDown(() async {
           if (await dir.exists()) await dir.delete(recursive: true);
@@ -994,7 +994,7 @@ void main() {
   group('ChatApiService Responses API structured media paths', () {
     test('local video/mp4 is not encoded as input_image', () async {
       final body = await _sendAndCaptureResponsesBody((baseUrl) async {
-        final dir = await Directory.systemTemp.createTemp('kelivo_resp_vid_');
+        final dir = await Directory.systemTemp.createTemp('orvia_resp_vid_');
         addTearDown(() async {
           if (await dir.exists()) {
             await dir.delete(recursive: true);
@@ -1038,7 +1038,7 @@ void main() {
       late final String videoPath;
       final body = await _sendAndCaptureResponsesBody((baseUrl) async {
         final dir = await Directory.systemTemp.createTemp(
-          'kelivo_resp_pure_vid_',
+          'orvia_resp_pure_vid_',
         );
         addTearDown(() async {
           if (await dir.exists()) {
@@ -1122,7 +1122,7 @@ void main() {
 
     test('encodes multimodalInternalMediaPathsKey as input_image', () async {
       final body = await _sendAndCaptureResponsesBody((baseUrl) async {
-        final dir = await Directory.systemTemp.createTemp('kelivo_resp_img_');
+        final dir = await Directory.systemTemp.createTemp('orvia_resp_img_');
         addTearDown(() async {
           if (await dir.exists()) {
             await dir.delete(recursive: true);
@@ -1186,7 +1186,7 @@ void main() {
       () async {
         final body = await _sendAndCaptureResponsesBody((baseUrl) async {
           final dir = await Directory.systemTemp.createTemp(
-            'kelivo_resp_asst_img_',
+            'orvia_resp_asst_img_',
           );
           addTearDown(() async {
             if (await dir.exists()) {
@@ -1244,7 +1244,7 @@ void main() {
     test('multiple assistant images all attach to following user', () async {
       final body = await _sendAndCaptureResponsesBody((baseUrl) async {
         final dir = await Directory.systemTemp.createTemp(
-          'kelivo_resp_multi_asst_',
+          'orvia_resp_multi_asst_',
         );
         addTearDown(() async {
           if (await dir.exists()) {
@@ -1343,7 +1343,7 @@ void main() {
     test(
       'encodes multimodalInternalMediaPathsKey as Anthropic image blocks',
       () async {
-        final file = await _tempPng('kelivo_claude_media_');
+        final file = await _tempPng('orvia_claude_media_');
         addTearDown(() async {
           final dir = file.parent;
           if (await dir.exists()) await dir.delete(recursive: true);
@@ -1421,7 +1421,7 @@ void main() {
 
     test('skips missing local media paths without crashing', () async {
       final missing =
-          '${Directory.systemTemp.path}/kelivo_missing_claude_${DateTime.now().microsecondsSinceEpoch}.png';
+          '${Directory.systemTemp.path}/orvia_missing_claude_${DateTime.now().microsecondsSinceEpoch}.png';
       final body = await _captureProviderBody(
         (baseUrl) {
           return ChatApiService.sendMessageStream(
@@ -1458,7 +1458,7 @@ void main() {
     });
 
     test('preserves media-paths list order in image blocks', () async {
-      final dir = await Directory.systemTemp.createTemp('kelivo_claude_order_');
+      final dir = await Directory.systemTemp.createTemp('orvia_claude_order_');
       addTearDown(() async {
         if (await dir.exists()) await dir.delete(recursive: true);
       });
@@ -1502,7 +1502,7 @@ void main() {
     test(
       'image/jpg supplemental mime is emitted as media_type image/jpeg',
       () async {
-        final dir = await Directory.systemTemp.createTemp('kelivo_claude_jpg_');
+        final dir = await Directory.systemTemp.createTemp('orvia_claude_jpg_');
         addTearDown(() async {
           if (await dir.exists()) await dir.delete(recursive: true);
         });
@@ -1547,7 +1547,7 @@ void main() {
       'video/mp4 supplemental ref does not become Claude image block',
       () async {
         final dir = await Directory.systemTemp.createTemp(
-          'kelivo_claude_video_',
+          'orvia_claude_video_',
         );
         addTearDown(() async {
           if (await dir.exists()) await dir.delete(recursive: true);
@@ -1652,7 +1652,7 @@ void main() {
 
   group('Gemini structured media paths (ticket 10)', () {
     test('encodes multimodalInternalMediaPathsKey as inline_data', () async {
-      final file = await _tempPng('kelivo_gemini_media_');
+      final file = await _tempPng('orvia_gemini_media_');
       addTearDown(() async {
         final dir = file.parent;
         if (await dir.exists()) await dir.delete(recursive: true);
@@ -1733,7 +1733,7 @@ void main() {
 
     test('skips missing local media paths without crashing', () async {
       final missing =
-          '${Directory.systemTemp.path}/kelivo_missing_gemini_${DateTime.now().microsecondsSinceEpoch}.png';
+          '${Directory.systemTemp.path}/orvia_missing_gemini_${DateTime.now().microsecondsSinceEpoch}.png';
       final body = await _captureProviderBody(
         (baseUrl) {
           return ChatApiService.sendMessageStream(

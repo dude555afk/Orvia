@@ -8,7 +8,7 @@ void main() {
   test(
     'bundled iOS rootfs keeps release files and has a consistent apk world',
     () async {
-      final root = await Directory.systemTemp.createTemp('kelivo_apk_test_');
+      final root = await Directory.systemTemp.createTemp('orvia_apk_test_');
       addTearDown(() => root.delete(recursive: true));
       final extract = await Process.run('unzip', [
         '-q',

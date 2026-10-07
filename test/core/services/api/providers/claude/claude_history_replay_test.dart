@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/api/builtin_tools.dart';
-import 'package:Kelivo/core/utils/multimodal_input_utils.dart';
+import 'package:orvia/core/services/api/builtin_tools.dart';
+import 'package:orvia/core/utils/multimodal_input_utils.dart';
 import '../../../../../support/claude_test_api.dart';
 import '../../../../../support/collect_generation.dart';
 
@@ -105,7 +105,7 @@ event: content_block_start
 data: {"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_1","name":"lookup","input":{}}}
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\\"query\\":\\"Kelivo\\"}"}}
+data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\\"query\\":\\"Orvia\\"}"}}
 
 event: content_block_stop
 data: {"type":"content_block_stop","index":1}
@@ -201,7 +201,7 @@ void main() {
       final (:bodies, :chunks, paths: _) = await captureClaudeExchange(
         modelId: 'claude-sonnet-4-6',
         messages: const [
-          {'role': 'user', 'content': '\u67E5\u4E00\u4E0B Kelivo'},
+          {'role': 'user', 'content': '\u67E5\u4E00\u4E0B Orvia'},
           {
             'role': 'assistant',
             'content': '\n\n',
@@ -211,7 +211,7 @@ void main() {
                 'type': 'function',
                 'function': {
                   'name': 'lookup',
-                  'arguments': '{"query":"Kelivo"}',
+                  'arguments': '{"query":"Orvia"}',
                 },
                 'metadata': {
                   'anthropic': {
@@ -225,7 +225,7 @@ void main() {
                         'type': 'tool_use',
                         'id': 'toolu_1',
                         'name': 'lookup',
-                        'input': {'query': 'Kelivo'},
+                        'input': {'query': 'Orvia'},
                       },
                     ],
                   },
@@ -271,7 +271,7 @@ void main() {
           config: claudeConfig().copyWith(id: 'OpenRouter', name: 'OpenRouter'),
           modelId: 'claude-opus-4-6',
           messages: const [
-            {'role': 'user', 'content': '\u67E5\u4E00\u4E0B Kelivo'},
+            {'role': 'user', 'content': '\u67E5\u4E00\u4E0B Orvia'},
           ],
           tools: const [
             {
@@ -404,7 +404,7 @@ void main() {
                   'type': 'function',
                   'function': {
                     'name': 'lookup',
-                    'arguments': '{"query":"Kelivo"}',
+                    'arguments': '{"query":"Orvia"}',
                   },
                   'metadata': {
                     'anthropic': {
@@ -413,7 +413,7 @@ void main() {
                           'type': 'tool_use',
                           'id': 'toolu_1',
                           'name': 'lookup',
-                          'input': {'query': 'Kelivo'},
+                          'input': {'query': 'Orvia'},
                         },
                       ],
                     },
@@ -433,7 +433,7 @@ void main() {
                           'type': 'tool_use',
                           'id': 'toolu_1',
                           'name': 'lookup',
-                          'input': {'query': 'Kelivo'},
+                          'input': {'query': 'Orvia'},
                         },
                         {
                           'type': 'tool_use',
@@ -451,7 +451,7 @@ void main() {
               'role': 'tool',
               'tool_call_id': 'toolu_1',
               'name': 'lookup',
-              'content': '{"result":"Kelivo ok"}',
+              'content': '{"result":"Orvia ok"}',
             },
             {
               'role': 'tool',
@@ -552,7 +552,7 @@ void main() {
 
     test('live tool continuation keeps initial user image blocks', () async {
       final dir = await Directory.systemTemp.createTemp(
-        'kelivo_claude_tool_img_',
+        'orvia_claude_tool_img_',
       );
       addTearDown(() async {
         if (await dir.exists()) {
@@ -612,7 +612,7 @@ void main() {
 
     test('an image the assistant produced opens the next user turn', () async {
       final dir = await Directory.systemTemp.createTemp(
-        'kelivo_claude_assistant_img_',
+        'orvia_claude_assistant_img_',
       );
       addTearDown(() async {
         if (await dir.exists()) {
@@ -651,7 +651,7 @@ void main() {
 
     test('an image on the last assistant turn has nowhere to go', () async {
       final dir = await Directory.systemTemp.createTemp(
-        'kelivo_claude_assistant_img_',
+        'orvia_claude_assistant_img_',
       );
       addTearDown(() async {
         if (await dir.exists()) {
@@ -681,7 +681,7 @@ void main() {
       'a chart from a persisted code execution turn opens the next user turn',
       () async {
         final dir = await Directory.systemTemp.createTemp(
-          'kelivo_claude_assistant_img_',
+          'orvia_claude_assistant_img_',
         );
         addTearDown(() async {
           if (await dir.exists()) {
@@ -783,7 +783,7 @@ void main() {
 
     test('an assistant image in Markdown moves on without its link', () async {
       final dir = await Directory.systemTemp.createTemp(
-        'kelivo_claude_assistant_md_',
+        'orvia_claude_assistant_md_',
       );
       addTearDown(() async {
         if (await dir.exists()) {

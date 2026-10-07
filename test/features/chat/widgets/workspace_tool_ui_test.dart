@@ -7,24 +7,24 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/tts_provider.dart';
-import 'package:Kelivo/core/providers/user_provider.dart';
-import 'package:Kelivo/core/services/workspace/tool_run_registry.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tool_metadata.dart';
-import 'package:Kelivo/features/chat/widgets/chat_message_widget.dart';
-import 'package:Kelivo/features/home/services/ask_user_interaction_service.dart';
-import 'package:Kelivo/features/chat/widgets/workspace_tool_detail.dart';
-import 'package:Kelivo/features/chat/widgets/produced_files_row.dart';
-import 'package:Kelivo/features/chat/widgets/workspace_tool_ui.dart';
-import 'package:Kelivo/features/home/services/tool_approval_service.dart';
-import 'package:Kelivo/features/workspace/workspace_navigation.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/custom_bottom_sheet.dart';
-import 'package:Kelivo/shared/widgets/ios_form_text_field.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/tts_provider.dart';
+import 'package:orvia/core/providers/user_provider.dart';
+import 'package:orvia/core/services/workspace/tool_run_registry.dart';
+import 'package:orvia/core/services/workspace/workspace_tool_metadata.dart';
+import 'package:orvia/features/chat/widgets/chat_message_widget.dart';
+import 'package:orvia/features/home/services/ask_user_interaction_service.dart';
+import 'package:orvia/features/chat/widgets/workspace_tool_detail.dart';
+import 'package:orvia/features/chat/widgets/produced_files_row.dart';
+import 'package:orvia/features/chat/widgets/workspace_tool_ui.dart';
+import 'package:orvia/features/home/services/tool_approval_service.dart';
+import 'package:orvia/features/workspace/workspace_navigation.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/custom_bottom_sheet.dart';
+import 'package:orvia/shared/widgets/ios_form_text_field.dart';
 
 ToolUIPart _uiPart({
   required String tool,
@@ -197,7 +197,7 @@ void main() {
               files: [
                 WorkspaceToolFile(
                   path: '/workspace/result.txt',
-                  link: 'kelivo://workspace/result.txt',
+                  link: 'orvia://workspace/result.txt',
                   role: WorkspaceFileRole.created,
                 ),
               ],
@@ -478,11 +478,11 @@ void main() {
               files: [
                 WorkspaceToolFile(
                   path: 'src/empty.md',
-                  link: 'kelivo://workspace/src/empty.md',
+                  link: 'orvia://workspace/src/empty.md',
                 ),
                 WorkspaceToolFile(
                   path: 'src/attachments',
-                  link: 'kelivo://workspace/src/attachments',
+                  link: 'orvia://workspace/src/attachments',
                   isDirectory: true,
                 ),
               ],

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:Kelivo/shared/widgets/streaming_rich_text.dart';
+import 'package:orvia/shared/widgets/streaming_rich_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -35,8 +35,8 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     background.dispose();
   });
-  const visualFont = String.fromEnvironment('KELIVO_VISUAL_FONT');
-  const emojiFont = String.fromEnvironment('KELIVO_VISUAL_EMOJI_FONT');
+  const visualFont = String.fromEnvironment('ORVIA_VISUAL_FONT');
+  const emojiFont = String.fromEnvironment('ORVIA_VISUAL_EMOJI_FONT');
   setUpAll(() async {
     if (visualFont.isNotEmpty) {
       final loader = FontLoader('VisualFont');

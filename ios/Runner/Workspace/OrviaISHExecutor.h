@@ -1,5 +1,5 @@
 //
-//  KelivoISHExecutor.h
+//  OrviaISHExecutor.h
 //  Runner
 //
 //  Per-call `/bin/sh -c` inside the embedded iSH guest with streamed
@@ -10,10 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void (^KelivoISHChunkHandler)(NSString *runId, BOOL isStderr, NSData *chunk);
-typedef void (^KelivoISHDoneHandler)(NSDictionary<NSString *, id> *result);
+typedef void (^OrviaISHChunkHandler)(NSString *runId, BOOL isStderr, NSData *chunk);
+typedef void (^OrviaISHDoneHandler)(NSDictionary<NSString *, id> *result);
 
-@interface KelivoISHExecutor : NSObject
+@interface OrviaISHExecutor : NSObject
 
 /// Fork `/bin/sh -c <command>` with separate pipes. `done` is invoked once
 /// with exitCode, timedOut, durationMs, cancelled, interrupted.
@@ -25,8 +25,8 @@ typedef void (^KelivoISHDoneHandler)(NSDictionary<NSString *, id> *result);
            timeoutMs:(NSInteger)timeoutMs
        keepStdinOpen:(BOOL)keepStdinOpen
              started:(void (^)(void))started
-               chunk:(KelivoISHChunkHandler)chunk
-                done:(KelivoISHDoneHandler)done;
+               chunk:(OrviaISHChunkHandler)chunk
+                done:(OrviaISHDoneHandler)done;
 
 + (BOOL)writeStdin:(NSData *)data runId:(NSString *)runId;
 

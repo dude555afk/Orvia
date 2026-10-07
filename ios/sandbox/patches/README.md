@@ -1,7 +1,7 @@
-# iSH patches (Kelivo)
+# iSH patches (Orvia)
 
 Applied by `build_ish.sh` after the checkout is pinned to `ISH_SHA`
-(`3f6384c70eefd1a370f121d3492a5f21f7767df9`, Chevey339/ish-arm64).
+(`3f6384c70eefd1a370f121d3492a5f21f7767df9`, OpenMinis/ish-arm64).
 
 The pin follows [`OpenMinis/OpenMinis` main's `deps/ish` submodule](https://github.com/OpenMinis/OpenMinis/tree/main/deps).
 Future upgrades should use the revision adopted there and keep an explicit SHA
@@ -31,9 +31,9 @@ in `build_ish.sh` so local and CI builds use the same source.
 
 `RootfsPatch.bundle` is copied unchanged from the same pinned iSH source by
 `build_ish.sh` and bundled as an iOS resource. It is separate from these kernel
-patches. On every cold boot, `KelivoISHKernel` applies its manifest through the
+patches. On every cold boot, `OrviaISHKernel` applies its manifest through the
 guest VFS before launching processes, including in existing environments.
-Kelivo's own `overlay/` is applied afterward. No environment reset is required.
+Orvia's own `overlay/` is applied afterward. No environment reset is required.
 
 The bundle provides `/lib/wasm-polyfill.js` and `/lib/fetch-polyfill.js`, which
 iSH's Node exec path preloads. The WebAssembly shim implements undici's llhttp
@@ -47,7 +47,7 @@ simulator (or use `--no-uninstall` to preserve an existing app's data).
 Rootfs generation runs apk through the host iSH CLI on an Apple Silicon Mac.
 apk preserves the official minirootfs world and owns package installation,
 including dependency resolution, file ownership records and install scripts.
-The shared `overlay/usr/local/bin/kelivo-repair-rootfs` transaction also repairs
+The shared `overlay/usr/local/bin/orvia-repair-rootfs` transaction also repairs
 installed environments in place when the user selects Update or Repair.
 The app publishes the new rootfs version only after that transaction succeeds.
 

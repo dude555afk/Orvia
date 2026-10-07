@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/asr/sherpa_model_manager.dart';
+import 'package:orvia/core/services/asr/sherpa_model_manager.dart';
 
 void main() {
   group('SherpaModelCatalog', () {
@@ -93,7 +93,7 @@ void main() {
     late Directory root;
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_asr_models_test_');
+      root = await Directory.systemTemp.createTemp('orvia_asr_models_test_');
     });
 
     tearDown(() async {

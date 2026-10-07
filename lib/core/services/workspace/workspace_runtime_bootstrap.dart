@@ -1,13 +1,13 @@
-import 'package:Kelivo/core/services/sandbox/environment_dependencies.dart';
+import 'package:orvia/core/services/sandbox/environment_dependencies.dart';
 import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/environment_manager.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_service.dart';
-import 'package:Kelivo/core/services/sandbox/mobile_workspace_bootstrap.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/environment_manager.dart';
+import 'package:orvia/core/services/sandbox/mirror_service.dart';
+import 'package:orvia/core/services/sandbox/mobile_workspace_bootstrap.dart';
 
 import 'desktop_process_runtime.dart';
 import 'workspace_runtime.dart';

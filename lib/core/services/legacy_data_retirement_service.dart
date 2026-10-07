@@ -52,7 +52,7 @@ final class LegacyDataRetirementService {
     'tool_events_v1.hive',
   };
   static const _markerFileName = '.hive_retirement.json';
-  static const _markerFormat = 'kelivo.hive-retirement-marker';
+  static const _markerFormat = 'orvia.hive-retirement-marker';
   static const _markerFormatVersion = 1;
 
   final Directory appDataDirectory;

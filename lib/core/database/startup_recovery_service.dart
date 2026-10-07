@@ -32,7 +32,7 @@ final class StartupRecoveryService {
   static const _receiptSuffix = '.json';
   static const _temporaryPrefix = '.database_installation_receipt';
   static const _temporarySuffix = '.tmp';
-  static const _restoreWorkspaceName = '.kelivo_restore';
+  static const _restoreWorkspaceName = '.orvia_restore';
 
   /// Copies the entire app data directory into a timestamped folder under
   /// [destinationParent] so the user can salvage their data before attempting
@@ -59,7 +59,7 @@ final class StartupRecoveryService {
         .toIso8601String()
         .replaceAll(RegExp(r'[:.]'), '-');
     final target = Directory(
-      p.join(destinationParent.path, 'kelivo-data-$stamp'),
+      p.join(destinationParent.path, 'orvia-data-$stamp'),
     );
     if (await target.exists()) {
       throw StateError('startup_recovery_export_collision');
@@ -333,7 +333,7 @@ final class StartupDiagnosticsService {
         .toIso8601String()
         .replaceAll(RegExp(r'[:.]'), '-');
     final archive = File(
-      p.join(workingDirectory.path, 'kelivo-data-$stamp.zip'),
+      p.join(workingDirectory.path, 'orvia-data-$stamp.zip'),
     );
     if (await archive.exists()) {
       throw StateError('startup_recovery_export_collision');

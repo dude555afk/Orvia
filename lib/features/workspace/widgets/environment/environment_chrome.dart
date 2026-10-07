@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/services/haptics.dart';
-import 'package:Kelivo/features/workspace/widgets/environment/environment_labels.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_switch.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/services/haptics.dart';
+import 'package:orvia/features/workspace/widgets/environment/environment_labels.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_switch.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/theme/app_font_weights.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
 
 class EnvironmentRowDivider extends StatelessWidget {
   const EnvironmentRowDivider({super.key, this.indent = 54});

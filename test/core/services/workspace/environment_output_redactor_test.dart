@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:Kelivo/core/models/environment_variable.dart';
-import 'package:Kelivo/core/services/workspace/environment_output_redactor.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tool_metadata.dart';
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/core/models/environment_variable.dart';
+import 'package:orvia/core/services/workspace/environment_output_redactor.dart';
+import 'package:orvia/core/services/workspace/workspace_tool_metadata.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 
 void main() {
   test(

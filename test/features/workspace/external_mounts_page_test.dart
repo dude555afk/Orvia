@@ -5,19 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/workspace_directory_access.dart';
-import 'package:Kelivo/core/providers/external_mounts_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/workspace_directory_access.dart';
+import 'package:orvia/core/providers/external_mounts_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
 import '../../support/business_test_harness.dart';
-import 'package:Kelivo/features/workspace/pages/external_mounts_page.dart';
-import 'package:Kelivo/features/workspace/widgets/files/file_browser.dart';
-import 'package:Kelivo/features/workspace/widgets/files/file_browser_ops.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
+import 'package:orvia/features/workspace/pages/external_mounts_page.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser_ops.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
 import '../../core/services/sandbox/sandbox_channel_harness.dart';
 
 void main() {
@@ -29,7 +29,7 @@ void main() {
 
   setUp(() async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
-    root = await Directory.systemTemp.createTemp('kelivo_mount_ui_');
+    root = await Directory.systemTemp.createTemp('orvia_mount_ui_');
     File('${root.path}/note.txt').writeAsStringSync('hello');
     db = AppDatabase(NativeDatabase.memory());
     harness = SandboxChannelHarness();
@@ -202,7 +202,7 @@ void main() {
       tester,
     ) async {
       final writable = Directory.systemTemp.createTempSync(
-        'kelivo-mount-browser-',
+        'orvia-mount-browser-',
       );
       addTearDown(() => writable.deleteSync(recursive: true));
       Link('${writable.path}/alias').createSync(root.path);

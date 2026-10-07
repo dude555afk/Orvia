@@ -1,19 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/environment_dependencies.dart';
-import 'package:Kelivo/core/services/sandbox/environment_manager.dart';
-import 'package:Kelivo/core/services/sandbox/guest_script_runner.dart';
-import 'package:Kelivo/core/services/sandbox/ios_ish_runtime.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_service.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_speed_test.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/environment_dependencies.dart';
+import 'package:orvia/core/services/sandbox/environment_manager.dart';
+import 'package:orvia/core/services/sandbox/guest_script_runner.dart';
+import 'package:orvia/core/services/sandbox/ios_ish_runtime.dart';
+import 'package:orvia/core/services/sandbox/mirror_service.dart';
+import 'package:orvia/core/services/sandbox/mirror_speed_test.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -104,7 +104,7 @@ apk --no-network --repositories-file /dev/null add --simulate musl
       await run(r'''
 set -eu
 apk --wait 60 add tree
-printf 'keep me' > /root/kelivo-repair-sentinel
+printf 'keep me' > /root/orvia-repair-sentinel
 apk --wait 60 del alpine-release
 test ! -e /etc/os-release
 ''');
@@ -118,7 +118,7 @@ test ! -e /etc/os-release
       await checkRelease();
       await run(r'''
 set -eu
-test "$(cat /root/kelivo-repair-sentinel)" = 'keep me'
+test "$(cat /root/orvia-repair-sentinel)" = 'keep me'
 apk info --installed tree python3 py3-pip py3-virtualenv
 python3 -c 'import platform; assert platform.freedesktop_os_release()["ID"] == "alpine"'
 ''');
@@ -145,7 +145,7 @@ set -eu
 /bin/bash --noprofile --norc -c 'test -n "$BASH_VERSION"'
 /bin/ls --version
 /usr/bin/env --version
-test "$(cat /root/kelivo-repair-sentinel)" = 'keep me'
+test "$(cat /root/orvia-repair-sentinel)" = 'keep me'
 apk info --installed tree python3 py3-pip py3-virtualenv
 ''');
       await checkRelease();

@@ -38,7 +38,7 @@ final class RestoreBusinessLease {
     required this._lock,
   });
 
-  static const leaseDirectoryName = '.kelivo_business_lease';
+  static const leaseDirectoryName = '.orvia_business_lease';
   static const lockFileName = 'lease.lock';
   static const _processOwnerPrefix = 'owner_';
 

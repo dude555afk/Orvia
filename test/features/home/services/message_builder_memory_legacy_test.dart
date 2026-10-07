@@ -1,22 +1,22 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_data.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/memory_entry.dart';
-import 'package:Kelivo/core/providers/memory_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/logging/context_logger.dart';
-import 'package:Kelivo/core/services/memory/memory_block_builder.dart';
-import 'package:Kelivo/core/services/memory/memory_prompts.dart';
-import 'package:Kelivo/features/home/services/message_builder_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_data.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/memory_entry.dart';
+import 'package:orvia/core/providers/memory_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/logging/context_logger.dart';
+import 'package:orvia/core/services/memory/memory_block_builder.dart';
+import 'package:orvia/core/services/memory/memory_prompts.dart';
+import 'package:orvia/features/home/services/message_builder_service.dart';
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/widgets.dart';
@@ -75,7 +75,7 @@ void main() {
   Future<void> openHarness() async {
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
     SharedPreferences.setMockInitialValues({});
-    tempDir = await Directory.systemTemp.createTemp('kelivo_memory_legacy_');
+    tempDir = await Directory.systemTemp.createTemp('orvia_memory_legacy_');
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     database = AppDatabase(

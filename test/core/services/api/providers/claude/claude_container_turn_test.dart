@@ -5,14 +5,14 @@ import 'package:flutter_test/flutter_test.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/services/api/builtin_tools.dart';
-import 'package:Kelivo/core/services/api/chat_api_service.dart';
-import 'package:Kelivo/core/services/api/providers/claude/claude_container.dart';
-import 'package:Kelivo/core/services/api/providers/claude/claude_history.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
-import 'package:Kelivo/core/utils/multimodal_input_utils.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/services/api/builtin_tools.dart';
+import 'package:orvia/core/services/api/chat_api_service.dart';
+import 'package:orvia/core/services/api/providers/claude/claude_container.dart';
+import 'package:orvia/core/services/api/providers/claude/claude_history.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/utils/multimodal_input_utils.dart';
 import '../../../../../support/claude_test_api.dart';
 import '../../../../../support/collect_generation.dart';
 
@@ -256,7 +256,7 @@ void main() {
 
     test('a slow file download does not hold up the text after it', () async {
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_claude_dl_',
+        'orvia_claude_dl_',
       );
       final previousPathProvider = PathProviderPlatform.instance;
       PathProviderPlatform.instance = FakePathProviderPlatform(tempDir.path);
@@ -338,7 +338,7 @@ void main() {
 
     test('a download that breaks off leaves no file behind', () async {
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_claude_dl_',
+        'orvia_claude_dl_',
       );
       final previousPathProvider = PathProviderPlatform.instance;
       PathProviderPlatform.instance = FakePathProviderPlatform(tempDir.path);
@@ -532,7 +532,7 @@ void main() {
           'container_old', // stored long ago, still offered
         ]);
         // The internal key never reaches the wire.
-        expect(jsonEncode(bodies), isNot(contains('_kelivo_')));
+        expect(jsonEncode(bodies), isNot(contains('_orvia_')));
       },
     );
 

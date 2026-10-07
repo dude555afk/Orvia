@@ -1,5 +1,5 @@
-import 'package:Kelivo/core/services/search/search_service.dart';
-import 'package:Kelivo/core/services/search/search_service_usage_service.dart';
+import 'package:orvia/core/services/search/search_service.dart';
+import 'package:orvia/core/services/search/search_service_usage_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -68,7 +68,7 @@ void main() {
         TavilyOptions(
           id: 'tavily',
           apiKey: 'key',
-          url: 'https://proxy.example/api/search?source=kelivo',
+          url: 'https://proxy.example/api/search?source=orvia',
         ),
         client: client,
       );

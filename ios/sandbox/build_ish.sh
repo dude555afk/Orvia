@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # ============================================================================
-# iSH-ARM64 static library build for the Kelivo iOS Workspace sandbox
+# iSH-ARM64 static library build for the Orvia iOS Workspace sandbox
 # ============================================================================
-# Builds libish.a / libish_emu.a / libfakefs.a (arm64) from the Chevey339
+# Builds libish.a / libish_emu.a / libfakefs.a (arm64) from the OpenMinis
 # ish-arm64 fork, which emulates an aarch64 Linux userland inside the app
 # process (asbestos engine = threaded interpreter, no JIT, App Store safe).
 #
@@ -24,7 +24,7 @@ set -euo pipefail
 #   only has guest-arm64 gadgets for an aarch64 host (no gadgets-x86_64), so
 #   x86_64 simulator is excluded in Flutter/Workspace.xcconfig.
 #
-# Kelivo patches (ios/sandbox/patches/*.patch) are applied after fetch_ish
+# Orvia patches (ios/sandbox/patches/*.patch) are applied after fetch_ish
 # pins the clone to ISH_SHA. apply_ish_patches is idempotent: git apply
 # --check then apply, or skip if git apply --reverse --check succeeds
 # (already applied). Re-running on an existing checkout is safe. See
@@ -61,7 +61,7 @@ OUTPUT_RESOURCES="$SCRIPT_DIR/resources"
 
 # Follow the deps/ish gitlink in OpenMinis/OpenMinis main, using our fork.
 # Update this fixed SHA when their main project adopts a new iSH revision.
-ISH_REPO="https://github.com/Chevey339/ish-arm64.git"
+ISH_REPO="https://github.com/OpenMinis/ish-arm64.git"
 ISH_SHA="3f6384c70eefd1a370f121d3492a5f21f7767df9"
 
 ARCHS="arm64"
@@ -481,7 +481,7 @@ main() {
     if [ "${1:-}" = "fingerprint" ]; then build_fingerprint; return; fi
     echo ""
     echo "============================================================"
-    echo "  Kelivo iOS Workspace: iSH-ARM64 static library builder"
+    echo "  Orvia iOS Workspace: iSH-ARM64 static library builder"
     echo "  Guest arch: arm64 (aarch64 Linux userland emulation)"
     echo "============================================================"
     echo ""
@@ -497,7 +497,7 @@ main() {
 
     local fingerprint
     fingerprint="$(build_fingerprint)"
-    if [ ! -f "$OUTPUT_DIR/.kelivo-ish-build" ] || [ "$(cat "$OUTPUT_DIR/.kelivo-ish-build")" != "$fingerprint" ]; then
+    if [ ! -f "$OUTPUT_DIR/.orvia-ish-build" ] || [ "$(cat "$OUTPUT_DIR/.orvia-ish-build")" != "$fingerprint" ]; then
         # Host tools and the guest VDSO must change with the source too.
         # Retain the checkout and bundled rootfs; discard only build outputs.
         clean_build
@@ -519,9 +519,9 @@ main() {
     mkdir -p "$OUTPUT_RESOURCES/RootfsPatch.bundle"
     rsync -a --delete "$patch_bundle/" "$OUTPUT_RESOURCES/RootfsPatch.bundle/"
     for sdk in $sdks; do
-        printf '%s\n' "$fingerprint" > "$(sdk_output_dir "$sdk")/.kelivo-ish-build"
+        printf '%s\n' "$fingerprint" > "$(sdk_output_dir "$sdk")/.orvia-ish-build"
     done
-    printf '%s\n' "$fingerprint" > "$OUTPUT_DIR/.kelivo-ish-build"
+    printf '%s\n' "$fingerprint" > "$OUTPUT_DIR/.orvia-ish-build"
     print_summary
 }
 

@@ -6,7 +6,7 @@ void main() {
   test(
     'iOS mount validation preserves existing guest and source files',
     () async {
-      final temp = await Directory.systemTemp.createTemp('kelivo_ios_mount_');
+      final temp = await Directory.systemTemp.createTemp('orvia_ios_mount_');
       addTearDown(() => temp.delete(recursive: true));
       final binary = '${temp.path}/mount_target_test';
       final compile = await Process.run('xcrun', [
@@ -20,7 +20,7 @@ void main() {
         '-framework',
         'Foundation',
         '-Iios/Runner/Workspace',
-        'ios/Runner/Workspace/KelivoISHMountTarget.m',
+        'ios/Runner/Workspace/OrviaISHMountTarget.m',
         'test/native/ios_mount_target_test.m',
         '-o',
         binary,

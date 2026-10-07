@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/database/database_installation_gate.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/database/database_installation_gate.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart' as sqlite;
@@ -12,7 +12,7 @@ void main() {
     'installation gate creates and validates only the current schema',
     () async {
       final directory = await Directory.systemTemp.createTemp(
-        'kelivo_current_schema_',
+        'orvia_current_schema_',
       );
       addTearDown(() async {
         if (await directory.exists()) await directory.delete(recursive: true);
@@ -37,7 +37,7 @@ void main() {
           isNot(contains(schemaVersion)),
         );
         final directory = await Directory.systemTemp.createTemp(
-          'kelivo_reject_schema_${schemaVersion}_',
+          'orvia_reject_schema_${schemaVersion}_',
         );
         addTearDown(() async {
           if (await directory.exists()) {
@@ -96,7 +96,7 @@ void main() {
     'an installed database is rejected when a business table is missing',
     () async {
       final directory = await Directory.systemTemp.createTemp(
-        'kelivo_missing_business_table_',
+        'orvia_missing_business_table_',
       );
       addTearDown(() async {
         if (await directory.exists()) await directory.delete(recursive: true);

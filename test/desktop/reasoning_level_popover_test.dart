@@ -4,13 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/models/model_spec.dart';
-import 'package:Kelivo/core/models/reasoning_request.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/desktop/reasoning_level_popover.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/effort_slider.dart';
+import 'package:orvia/core/models/model_spec.dart';
+import 'package:orvia/core/models/reasoning_request.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/desktop/reasoning_level_popover.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/effort_slider.dart';
 
 ProviderConfig _effortConfig() {
   return ProviderConfig(
@@ -20,9 +20,9 @@ ProviderConfig _effortConfig() {
     apiKey: 'test-key',
     baseUrl: 'https://example.com/v1',
     providerType: ProviderKind.openai,
-    models: const ['kelivo-test-effort'],
+    models: const ['orvia-test-effort'],
     modelOverrides: const {
-      'kelivo-test-effort': {
+      'orvia-test-effort': {
         'type': 'chat',
         'abilities': ['reasoning'],
         'reasoning': {
@@ -44,9 +44,9 @@ ProviderConfig _budgetConfig() {
     apiKey: 'test-key',
     baseUrl: 'https://example.com/v1',
     providerType: ProviderKind.claude,
-    models: const ['kelivo-test-budget'],
+    models: const ['orvia-test-budget'],
     modelOverrides: const {
-      'kelivo-test-budget': {
+      'orvia-test-budget': {
         'type': 'chat',
         'abilities': ['reasoning'],
         'reasoning': {
@@ -126,7 +126,7 @@ void main() {
       tester,
       settings: settings,
       config: config,
-      modelId: 'kelivo-test-effort',
+      modelId: 'orvia-test-effort',
       anchorKey: anchorKey,
     );
 
@@ -150,7 +150,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      settings.reasoningChoiceFor('Test', 'kelivo-test-effort'),
+      settings.reasoningChoiceFor('Test', 'orvia-test-effort'),
       const ReasoningRequest(ReasoningLevel.high),
     );
   });
@@ -169,7 +169,7 @@ void main() {
       tester,
       settings: settings,
       config: config,
-      modelId: 'kelivo-test-budget',
+      modelId: 'orvia-test-budget',
       anchorKey: anchorKey,
     );
 

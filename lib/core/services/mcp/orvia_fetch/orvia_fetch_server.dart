@@ -8,7 +8,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:html2md/html2md.dart' as html2md;
 import 'package:mcp_client/mcp_client.dart' as mcp;
 
-/// @kelivo/fetch — In-memory MCP server engine and transport (Flutter/Dart)
+/// @orvia/fetch — In-memory MCP server engine and transport (Flutter/Dart)
 ///
 /// Provides one token-conscious `fetch` tool. HTML is simplified to Markdown
 /// by default, while raw content requires an explicit opt-in. Responses are
@@ -19,7 +19,7 @@ import 'package:mcp_client/mcp_client.dart' as mcp;
 /// isolate as the Flutter app and connect to a standard mcp.Client via an
 /// in-memory ClientTransport.
 
-class KelivoFetchRequestPayload {
+class OrviaFetchRequestPayload {
   static const defaultMaxLength = 5000;
   static const maximumMaxLength = 20000;
 
@@ -35,7 +35,7 @@ class KelivoFetchRequestPayload {
   final int startIndex;
   final bool raw;
 
-  KelivoFetchRequestPayload({
+  OrviaFetchRequestPayload({
     required this.url,
     this.method = 'GET',
     this.body,
@@ -45,7 +45,7 @@ class KelivoFetchRequestPayload {
     this.raw = false,
   }) : headers = headers ?? const {};
 
-  static KelivoFetchRequestPayload parse(Object? args) {
+  static OrviaFetchRequestPayload parse(Object? args) {
     if (args is! Map) {
       throw ArgumentError(
         'Invalid arguments: expected an object containing url',
@@ -140,7 +140,7 @@ class KelivoFetchRequestPayload {
       throw ArgumentError('Invalid raw: expected a boolean');
     }
 
-    return KelivoFetchRequestPayload(
+    return OrviaFetchRequestPayload(
       url: uri,
       method: method,
       body: body,
@@ -171,11 +171,11 @@ class KelivoFetchRequestPayload {
   }
 }
 
-class KelivoFetcher {
+class OrviaFetcher {
   static const _defaultUA =
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
-  static Future<http.Response> _fetch(KelivoFetchRequestPayload payload) async {
+  static Future<http.Response> _fetch(OrviaFetchRequestPayload payload) async {
     try {
       final merged = <String, String>{
         'User-Agent': _defaultUA,
@@ -199,7 +199,7 @@ class KelivoFetcher {
   }
 
   static Future<Map<String, dynamic>> fetch(
-    KelivoFetchRequestPayload payload,
+    OrviaFetchRequestPayload payload,
   ) async {
     try {
       final resp = await _fetch(payload);
@@ -232,7 +232,7 @@ class KelivoFetcher {
   /// header. Try strict UTF-8 first so genuinely latin1 bytes fail the decode
   /// and fall back to `http`'s own handling.
   static String _decodeBody(http.Response resp, {required String contentType}) {
-    if (KelivoFetchRequestPayload._charsetOf(contentType) != null) {
+    if (OrviaFetchRequestPayload._charsetOf(contentType) != null) {
       return resp.body;
     }
     try {
@@ -289,7 +289,7 @@ class KelivoFetcher {
         .trim();
   }
 
-  static String _bounded(String text, KelivoFetchRequestPayload payload) {
+  static String _bounded(String text, OrviaFetchRequestPayload payload) {
     if (payload.startIndex >= text.length) {
       return 'No more content available.';
     }
@@ -315,7 +315,7 @@ class KelivoFetcher {
       return '$content\n\n$shown Raise max_length to see more; a '
           '${payload.method} cannot be continued with start_index.]';
     }
-    return '$content\n\n$shown Call kelivo_fetch with start_index=$end to '
+    return '$content\n\n$shown Call orvia_fetch with start_index=$end to '
         'continue.]';
   }
 
@@ -342,8 +342,8 @@ class KelivoFetcher {
   };
 }
 
-/// Minimal JSON-RPC server for MCP that serves @kelivo/fetch tools.
-class KelivoFetchMcpServerEngine {
+/// Minimal JSON-RPC server for MCP that serves @orvia/fetch tools.
+class OrviaFetchMcpServerEngine {
   bool _closed = false;
 
   Future<dynamic> handleMessage(dynamic message) async {
@@ -377,7 +377,7 @@ class KelivoFetchMcpServerEngine {
           return _ok(
             id,
             result: {
-              'serverInfo': {'name': '@kelivo/fetch', 'version': '0.2.0'},
+              'serverInfo': {'name': '@orvia/fetch', 'version': '0.2.0'},
               'protocolVersion': mcp.McpProtocol.defaultVersion,
               // Only tools capability is advertised for this minimal server
               'capabilities': {
@@ -395,15 +395,15 @@ class KelivoFetchMcpServerEngine {
               ? (params['arguments'] as Map).cast<String, dynamic>()
               : <String, dynamic>{};
 
-          KelivoFetchRequestPayload payload;
+          OrviaFetchRequestPayload payload;
           try {
-            payload = KelivoFetchRequestPayload.parse(arguments);
+            payload = OrviaFetchRequestPayload.parse(arguments);
           } catch (e) {
-            return _ok(id, result: KelivoFetcher._err(e.toString()));
+            return _ok(id, result: OrviaFetcher._err(e.toString()));
           }
 
-          if (name == 'kelivo_fetch') {
-            return _ok(id, result: await KelivoFetcher.fetch(payload));
+          if (name == 'orvia_fetch') {
+            return _ok(id, result: await OrviaFetcher.fetch(payload));
           }
           return _error(id, code: -32101, message: 'Tool not found: $name');
 
@@ -474,9 +474,9 @@ class KelivoFetchMcpServerEngine {
         'max_length': {
           'type': 'integer',
           'description': 'Maximum content characters to return',
-          'default': KelivoFetchRequestPayload.defaultMaxLength,
+          'default': OrviaFetchRequestPayload.defaultMaxLength,
           'minimum': 1,
-          'maximum': KelivoFetchRequestPayload.maximumMaxLength,
+          'maximum': OrviaFetchRequestPayload.maximumMaxLength,
         },
         'start_index': {
           'type': 'integer',
@@ -497,11 +497,11 @@ class KelivoFetchMcpServerEngine {
 
     return [
       {
-        'name': 'kelivo_fetch',
+        'name': 'orvia_fetch',
         'description':
             'Fetch the public contents of a web page. Only fetch a URL that '
             'already appears in the conversation: one provided by the user or '
-            'returned by a prior web_search, kelivo_fetch, or other tool. '
+            'returned by a prior web_search, orvia_fetch, or other tool. '
             'Cannot access content that requires authentication, including private '
             'documents or pages behind login walls. HTML is simplified to compact '
             'Markdown with bounded output by default. Continue truncated content with '
@@ -516,13 +516,13 @@ class KelivoFetchMcpServerEngine {
 }
 
 /// In-memory ClientTransport that directly invokes the local server engine.
-class KelivoInMemoryClientTransport implements mcp.ClientTransport {
-  final KelivoFetchMcpServerEngine _server;
+class OrviaInMemoryClientTransport implements mcp.ClientTransport {
+  final OrviaFetchMcpServerEngine _server;
   final _messageController = StreamController<dynamic>.broadcast();
   final _closeCompleter = Completer<void>();
   bool _closed = false;
 
-  KelivoInMemoryClientTransport(this._server);
+  OrviaInMemoryClientTransport(this._server);
 
   @override
   Stream<dynamic> get onMessage => _messageController.stream;

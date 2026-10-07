@@ -32,15 +32,15 @@ import 'mermaid_image_cache.dart';
 import 'diagram_exporter.dart';
 import 'plantuml_block.dart';
 import 'package:path/path.dart' as p;
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
-import 'package:Kelivo/theme/theme_factory.dart' show getPlatformFontFallback;
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/theme/app_font_weights.dart';
+import 'package:orvia/theme/theme_factory.dart' show getPlatformFontFallback;
 import 'package:provider/provider.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import '../../core/providers/settings_provider.dart';
 import '../../core/services/workspace/file_link_resolver.dart';
 import '../../features/workspace/workspace_file_navigation.dart';
-import 'package:Kelivo/desktop/html_preview_dialog.dart';
+import 'package:orvia/desktop/html_preview_dialog.dart';
 import '../cache/byte_lru_cache.dart';
 import 'incremental_markdown_document.dart';
 import 'markdown_block_list.dart';
@@ -442,8 +442,8 @@ class _MarkdownWithCodeHighlightState extends State<MarkdownWithCodeHighlight> {
         components: [DetailsHtmlMd(detailsRegistry), ...components],
         inlineComponents: inlineComponents,
         imageBuilder: (ctx, url, width, height) {
-          if (KelivoLink.tryParse(url) != null) {
-            return _KelivoMarkdownImage(
+          if (OrviaLink.tryParse(url) != null) {
+            return _OrviaMarkdownImage(
               url: url,
               width: width,
               height: height,
@@ -807,8 +807,8 @@ class _MarkdownWithCodeHighlightState extends State<MarkdownWithCodeHighlight> {
   }
 
   Future<void> _handleLinkTap(BuildContext context, String url) async {
-    final kelivo = KelivoLink.tryParse(_stripFormatChars(url));
-    if (kelivo != null) {
+    final orvia = OrviaLink.tryParse(_stripFormatChars(url));
+    if (orvia != null) {
       await openWorkspaceLinkedFile(
         context,
         _stripFormatChars(url),
@@ -848,8 +848,8 @@ class _MarkdownWithCodeHighlightState extends State<MarkdownWithCodeHighlight> {
   }
 }
 
-class _KelivoMarkdownImage extends StatefulWidget {
-  const _KelivoMarkdownImage({
+class _OrviaMarkdownImage extends StatefulWidget {
+  const _OrviaMarkdownImage({
     required this.url,
     this.width,
     this.height,
@@ -862,10 +862,10 @@ class _KelivoMarkdownImage extends StatefulWidget {
   final String? conversationId;
 
   @override
-  State<_KelivoMarkdownImage> createState() => _KelivoMarkdownImageState();
+  State<_OrviaMarkdownImage> createState() => _OrviaMarkdownImageState();
 }
 
-class _KelivoMarkdownImageState extends State<_KelivoMarkdownImage> {
+class _OrviaMarkdownImageState extends State<_OrviaMarkdownImage> {
   Future<File?>? _future;
 
   @override
@@ -875,7 +875,7 @@ class _KelivoMarkdownImageState extends State<_KelivoMarkdownImage> {
   }
 
   @override
-  void didUpdateWidget(covariant _KelivoMarkdownImage oldWidget) {
+  void didUpdateWidget(covariant _OrviaMarkdownImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.url != widget.url ||
         oldWidget.conversationId != widget.conversationId) {
@@ -884,7 +884,7 @@ class _KelivoMarkdownImageState extends State<_KelivoMarkdownImage> {
   }
 
   Future<File?> _resolve() async {
-    final link = KelivoLink.tryParse(widget.url);
+    final link = OrviaLink.tryParse(widget.url);
     if (link == null) return null;
     return resolveWorkspaceLinkedFile(
       context,
@@ -3975,7 +3975,7 @@ class _MarkdownTableBlockState extends State<_MarkdownTableBlock> {
     final result = await ImageGallerySaverPlus.saveImage(
       bytes,
       quality: 100,
-      name: 'kelivo-table-${DateTime.now().millisecondsSinceEpoch}',
+      name: 'orvia-table-${DateTime.now().millisecondsSinceEpoch}',
     );
     if (result is Map) {
       final isSuccess = result['isSuccess'] == true || result['isSuccess'] == 1;
@@ -4030,7 +4030,7 @@ class _MarkdownTableBlockState extends State<_MarkdownTableBlock> {
     final file = File(
       p.join(
         dir.path,
-        'kelivo-table-${DateTime.now().millisecondsSinceEpoch}.png',
+        'orvia-table-${DateTime.now().millisecondsSinceEpoch}.png',
       ),
     );
     await file.writeAsBytes(bytes, flush: true);
@@ -4068,7 +4068,7 @@ class _MarkdownTableBlockState extends State<_MarkdownTableBlock> {
     try {
       final clipboard = SystemClipboard.instance;
       if (clipboard != null) {
-        final item = DataWriterItem(suggestedName: 'kelivo-table.png');
+        final item = DataWriterItem(suggestedName: 'orvia-table.png');
         item.add(Formats.png(bytes));
         await clipboard.write([item]);
         return true;
@@ -4151,9 +4151,9 @@ class _MarkdownTableCell extends StatelessWidget {
   }
 
   String _softBreakTableCellText(String input) {
-    // Keep markdown links intact. Inserting ZWSP into `[label](kelivo://…)`
+    // Keep markdown links intact. Inserting ZWSP into `[label](orvia://…)`
     // (long snake_case names are one token because `_` is not a wrap point)
-    // corrupts the scheme so KelivoLink.tryParse fails and launchUrl opens
+    // corrupts the scheme so OrviaLink.tryParse fails and launchUrl opens
     // the system browser.
     final link = RegExp(r'\[[^\]]*\]\([^)]*\)');
     final buffer = StringBuffer();
@@ -5015,7 +5015,7 @@ class _DiagramBlockState extends State<_DiagramBlock> {
       final result = await ImageGallerySaverPlus.saveImage(
         bytes,
         quality: 100,
-        name: 'kelivo-$prefix-${DateTime.now().millisecondsSinceEpoch}',
+        name: 'orvia-$prefix-${DateTime.now().millisecondsSinceEpoch}',
       );
       if (result is Map) {
         final isSuccess =

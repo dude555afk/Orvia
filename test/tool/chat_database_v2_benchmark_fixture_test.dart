@@ -71,7 +71,7 @@ void main() {
 
     test('smoke SQLite fixture has stable counts and associations', () async {
       final directory = await Directory.systemTemp.createTemp(
-        'kelivo_benchmark_smoke_',
+        'orvia_benchmark_smoke_',
       );
       addTearDown(() => directory.delete(recursive: true));
 
@@ -117,7 +117,7 @@ void main() {
 
     test('D6 emits named malformed recovery artifacts', () async {
       final directory = await Directory.systemTemp.createTemp(
-        'kelivo_benchmark_d6_',
+        'orvia_benchmark_d6_',
       );
       addTearDown(() => directory.delete(recursive: true));
 

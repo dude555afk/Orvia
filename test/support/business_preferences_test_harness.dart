@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
 import 'package:drift/native.dart';
 
 final class BusinessPreferencesTestHarness {
@@ -15,11 +15,11 @@ final class BusinessPreferencesTestHarness {
 
   static Future<BusinessPreferencesTestHarness> create() async {
     final directory = await Directory.systemTemp.createTemp(
-      'kelivo_business_preferences_test_',
+      'orvia_business_preferences_test_',
     );
     return BusinessPreferencesTestHarness._(
       directory,
-      File('${directory.path}/kelivo.db'),
+      File('${directory.path}/orvia.db'),
     );
   }
 

@@ -1,7 +1,7 @@
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/markdown_with_highlight.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/markdown_with_highlight.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +12,7 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 
 import '../../support/business_test_harness.dart';
 
-const _kelivoLink = '[daily_sign.py](kelivo://workspace/shenyu/daily_sign.py)';
+const _orviaLink = '[daily_sign.py](orvia://workspace/shenyu/daily_sign.py)';
 
 class _FakeUrlLauncher extends UrlLauncherPlatform {
   final List<String> launched = <String>[];
@@ -85,7 +85,7 @@ void main() {
     return AppLocalizations.of(tester.element(find.byType(Scaffold)))!;
   }
 
-  Future<void> tapKelivoLinksAndExpectInApp(
+  Future<void> tapOrviaLinksAndExpectInApp(
     WidgetTester tester,
     AppLocalizations l10n,
   ) async {
@@ -102,22 +102,22 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('kelivo link with underscore stays in-app in every context', (
+  testWidgets('orvia link with underscore stays in-app in every context', (
     tester,
   ) async {
     final contexts = <String, String>{
-      'paragraph': _kelivoLink,
-      'list': '- $_kelivoLink',
-      'bold': '**$_kelivoLink**',
-      'two on one line': '$_kelivoLink $_kelivoLink',
-      'table': '| file |\n| --- |\n| $_kelivoLink |',
-      'chinese no space': '\u67E5\u770B$_kelivoLink',
+      'paragraph': _orviaLink,
+      'list': '- $_orviaLink',
+      'bold': '**$_orviaLink**',
+      'two on one line': '$_orviaLink $_orviaLink',
+      'table': '| file |\n| --- |\n| $_orviaLink |',
+      'chinese no space': '\u67E5\u770B$_orviaLink',
     };
 
     for (final entry in contexts.entries) {
       launcher.launched.clear();
       final l10n = await pumpMarkdown(tester, entry.value);
-      await tapKelivoLinksAndExpectInApp(tester, l10n);
+      await tapOrviaLinksAndExpectInApp(tester, l10n);
     }
   });
 }

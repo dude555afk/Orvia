@@ -5,18 +5,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/providers/claude/claude_container.dart';
-import 'package:Kelivo/core/services/api/providers/claude/claude_history.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/api/providers/google/gemini_thought_signature.dart';
-import 'package:Kelivo/core/utils/multimodal_input_utils.dart';
-import 'package:Kelivo/features/home/services/message_builder_service.dart';
-import 'package:Kelivo/features/home/services/ocr_service.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/providers/claude/claude_container.dart';
+import 'package:orvia/core/services/api/providers/claude/claude_history.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/api/providers/google/gemini_thought_signature.dart';
+import 'package:orvia/core/utils/multimodal_input_utils.dart';
+import 'package:orvia/features/home/services/message_builder_service.dart';
+import 'package:orvia/features/home/services/ocr_service.dart';
 
 import '../../../support/business_test_harness.dart';
 
@@ -1037,7 +1037,7 @@ void main() {
               {
                 'id': 'call_1',
                 'name': 'lookup',
-                'arguments': {'query': 'Kelivo'},
+                'arguments': {'query': 'Orvia'},
                 'content': '{"result":"ok"}',
                 'metadata': {
                   'anthropic': {
@@ -1051,7 +1051,7 @@ void main() {
                         'type': 'tool_use',
                         'id': 'call_1',
                         'name': 'lookup',
-                        'input': {'query': 'Kelivo'},
+                        'input': {'query': 'Orvia'},
                       },
                     ],
                   },
@@ -1059,7 +1059,7 @@ void main() {
                     'part': {
                       'functionCall': {
                         'name': 'lookup',
-                        'args': {'query': 'Kelivo'},
+                        'args': {'query': 'Orvia'},
                       },
                       'thoughtSignature': 'sig-gemini',
                     },
@@ -1073,7 +1073,7 @@ void main() {
 
         final apiMessages = service.buildApiMessages(
           messages: [
-            _message(id: 'u1', role: 'user', content: '\u67E5 Kelivo'),
+            _message(id: 'u1', role: 'user', content: '\u67E5 Orvia'),
             _message(
               id: 'a1',
               role: 'assistant',

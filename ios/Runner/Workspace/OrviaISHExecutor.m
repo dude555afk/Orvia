@@ -1,5 +1,5 @@
 //
-//  KelivoISHExecutor.m
+//  OrviaISHExecutor.m
 //  Runner
 //
 //  Adapted from Cuplivo/OpenMinis ISHShellExecutor.m (GPL-3.0, see
@@ -7,11 +7,11 @@
 //  capturing a 64 KiB preview.
 //
 
-#import "KelivoISHExecutor.h"
-#import "KelivoISHKernel.h"
-#import "KelivoISHEnvironment.h"
-#import "KelivoISHCompat.h"
-#import "KelivoISHStdin.h"
+#import "OrviaISHExecutor.h"
+#import "OrviaISHKernel.h"
+#import "OrviaISHEnvironment.h"
+#import "OrviaISHCompat.h"
+#import "OrviaISHStdin.h"
 
 #include "ish/kernel/init.h"
 #include "ish/kernel/calls.h"
@@ -39,7 +39,7 @@ static const uint64_t kOutputIntervalNanos = 16 * NSEC_PER_MSEC;
 
 #pragma mark - Context
 
-@interface KelivoISHRunContext : NSObject {
+@interface OrviaISHRunContext : NSObject {
     int _stdoutReadEnd;
     int _stderrReadEnd;
     int _stdinPipe[2];
@@ -49,8 +49,8 @@ static const uint64_t kOutputIntervalNanos = 16 * NSEC_PER_MSEC;
 @property (nonatomic, copy) NSString *runId;
 @property (nonatomic) int guestPid;
 @property (nonatomic) int guestPgid;
-@property (nonatomic, copy) KelivoISHChunkHandler chunk;
-@property (nonatomic, copy) KelivoISHDoneHandler done;
+@property (nonatomic, copy) OrviaISHChunkHandler chunk;
+@property (nonatomic, copy) OrviaISHDoneHandler done;
 @property (nonatomic, readonly) dispatch_group_t readersGroup;
 @property (nonatomic) NSDate *startedAt;
 @property (atomic) int exitCode;
@@ -72,7 +72,7 @@ static const uint64_t kOutputIntervalNanos = 16 * NSEC_PER_MSEC;
 - (void)closePipeEnds;
 @end
 
-@implementation KelivoISHRunContext
+@implementation OrviaISHRunContext
 
 - (int *)stdinPipe { return _stdinPipe; }
 - (int *)stdoutPipe { return _stdoutPipe; }
@@ -148,24 +148,24 @@ static const uint64_t kOutputIntervalNanos = 16 * NSEC_PER_MSEC;
 
 #pragma mark - Executor
 
-@implementation KelivoISHExecutor
+@implementation OrviaISHExecutor
 
-static NSMutableDictionary<NSNumber *, KelivoISHRunContext *> *_byPid;
-static NSMutableDictionary<NSString *, KelivoISHRunContext *> *_byRunId;
+static NSMutableDictionary<NSNumber *, OrviaISHRunContext *> *_byPid;
+static NSMutableDictionary<NSString *, OrviaISHRunContext *> *_byRunId;
 static NSMutableSet<NSString *> *_cancelled;
 static NSMutableSet<NSString *> *_queued;
 static dispatch_queue_t _readerQueue;
 
 + (void)initialize {
-    if (self == [KelivoISHExecutor class]) {
+    if (self == [OrviaISHExecutor class]) {
         _byPid = [NSMutableDictionary dictionary];
         _byRunId = [NSMutableDictionary dictionary];
         _cancelled = [NSMutableSet set];
         _queued = [NSMutableSet set];
-        _readerQueue = dispatch_queue_create("psyche.kelivo.workspace.ish.reader", DISPATCH_QUEUE_CONCURRENT);
+        _readerQueue = dispatch_queue_create("com.dude555afk.orvia.workspace.ish.reader", DISPATCH_QUEUE_CONCURRENT);
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(processDidExit:)
-                                                     name:KelivoISHProcessExitedNotification
+                                                     name:OrviaISHProcessExitedNotification
                                                    object:nil];
     }
 }
@@ -190,8 +190,8 @@ static dispatch_queue_t _readerQueue;
            timeoutMs:(NSInteger)timeoutMs
        keepStdinOpen:(BOOL)keepStdinOpen
              started:(void (^)(void))started
-               chunk:(KelivoISHChunkHandler)chunk
-                done:(KelivoISHDoneHandler)done {
+               chunk:(OrviaISHChunkHandler)chunk
+                done:(OrviaISHDoneHandler)done {
     if (runId.length == 0 || command.length == 0) return NO;
     @synchronized (_byPid) {
         if (_byRunId[runId] || [_queued containsObject:runId]) return NO;
@@ -199,7 +199,7 @@ static dispatch_queue_t _readerQueue;
     }
 
     NSTimeInterval timeout = keepStdinOpen && timeoutMs == 0 ? 0 : MAX(0.001, MIN((double)timeoutMs / 1000.0, 3600.0));
-    [[KelivoISHKernel shared] performOnSpawnQueue:^{
+    [[OrviaISHKernel shared] performOnSpawnQueue:^{
         BOOL early = NO;
         @synchronized (_byPid) {
             if ([_cancelled containsObject:runId]) {
@@ -233,7 +233,7 @@ static dispatch_queue_t _readerQueue;
 }
 
 + (BOOL)writeStdin:(NSData *)data runId:(NSString *)runId {
-    KelivoISHRunContext *ctx;
+    OrviaISHRunContext *ctx;
     @synchronized (_byPid) { ctx = _byRunId[runId]; }
     if (!ctx) return NO;
     int fd;
@@ -261,7 +261,7 @@ static dispatch_queue_t _readerQueue;
 
 + (BOOL)cancelRunId:(NSString *)runId {
     if (runId.length == 0) return NO;
-    KelivoISHRunContext *ctx = nil;
+    OrviaISHRunContext *ctx = nil;
     @synchronized (_byPid) {
         ctx = _byRunId[runId];
         if (ctx) {
@@ -281,16 +281,16 @@ static dispatch_queue_t _readerQueue;
 }
 
 + (void)cancelAllInterrupted:(BOOL)interrupted {
-    NSArray<KelivoISHRunContext *> *active;
+    NSArray<OrviaISHRunContext *> *active;
     @synchronized (_byPid) {
         active = _byRunId.allValues;
         [_cancelled addObjectsFromArray:_queued.allObjects];
-        for (KelivoISHRunContext *ctx in active) {
+        for (OrviaISHRunContext *ctx in active) {
             ctx.cancelled = YES;
             if (interrupted) ctx.interrupted = YES;
         }
     }
-    for (KelivoISHRunContext *ctx in active) {
+    for (OrviaISHRunContext *ctx in active) {
         [ctx closeStdin];
         if (ctx.guestPid > 1) {
             [self killGuestPid:ctx.guestPid groupId:ctx.guestPgid];
@@ -306,13 +306,13 @@ static dispatch_queue_t _readerQueue;
              timeout:(NSTimeInterval)timeout
        keepStdinOpen:(BOOL)keepStdinOpen
              started:(void (^)(void))started
-               chunk:(KelivoISHChunkHandler)chunk
-                done:(KelivoISHDoneHandler)done {
+               chunk:(OrviaISHChunkHandler)chunk
+                done:(OrviaISHDoneHandler)done {
     void (^fail)(NSString *) = ^(NSString *reason) {
         @synchronized (_byPid) {
             [_queued removeObject:runId];
         }
-        NSLog(@"KelivoISHExecutor: %@", reason);
+        NSLog(@"OrviaISHExecutor: %@", reason);
         done(@{
             @"exitCode": @(-1),
             @"timedOut": @NO,
@@ -323,7 +323,7 @@ static dispatch_queue_t _readerQueue;
         });
     };
 
-    if (![KelivoISHKernel shared].isBooted) {
+    if (![OrviaISHKernel shared].isBooted) {
         fail(@"kernel not booted");
         return;
     }
@@ -339,17 +339,17 @@ static dispatch_queue_t _readerQueue;
         merged[@"TZ"] = [NSString stringWithFormat:@"LCL%+ld", (long)-hrs];
     }
     if (env) [merged addEntriesFromDictionary:env];
-    KelivoISHEnvironmentError environmentError;
+    OrviaISHEnvironmentError environmentError;
     __attribute__((objc_precise_lifetime)) NSData *environmentData =
-        KelivoISHEncodeEnvironment(merged, &environmentError);
+        OrviaISHEncodeEnvironment(merged, &environmentError);
     if (environmentData == nil) {
-        NSString *reason = KelivoISHEnvironmentErrorMessage(environmentError);
+        NSString *reason = OrviaISHEnvironmentErrorMessage(environmentError);
         chunk(runId, YES, [[reason stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]);
         fail(reason);
         return;
     }
 
-    KelivoISHRunContext *ctx = [[KelivoISHRunContext alloc] init];
+    OrviaISHRunContext *ctx = [[OrviaISHRunContext alloc] init];
     ctx.runId = runId;
     ctx.chunk = chunk;
     ctx.done = done;
@@ -361,14 +361,14 @@ static dispatch_queue_t _readerQueue;
     }
 
     if (keepStdinOpen) {
-        if (KelivoISHCreateStdinPipe([ctx stdinPipe]) < 0) {
+        if (OrviaISHCreateStdinPipe([ctx stdinPipe]) < 0) {
             [ctx closePipeEnds];
             fail(@"stdin pipe failed");
             return;
         }
     }
 
-    uint64_t filesystem = [[KelivoISHKernel shared] filesystemContextForBinds:binds];
+    uint64_t filesystem = [[OrviaISHKernel shared] filesystemContextForBinds:binds];
     if (!filesystem) {
         [ctx closePipeEnds];
         fail(@"invalid filesystem bindings");
@@ -520,10 +520,10 @@ static dispatch_queue_t _readerQueue;
 
     if (timeout == 0) return;
     int capturedPid = ctx.guestPid;
-    __weak KelivoISHRunContext *timedContext = ctx;
+    __weak OrviaISHRunContext *timedContext = ctx;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeout * NSEC_PER_SEC)),
                    dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
-        KelivoISHRunContext *still;
+        OrviaISHRunContext *still;
         @synchronized (_byPid) {
             still = timedContext;
             // Always stamp timedOut if the run is still live. processDidExit
@@ -547,7 +547,7 @@ static dispatch_queue_t _readerQueue;
 + (void)processDidExit:(NSNotification *)notification {
     int pid = [notification.userInfo[@"pid"] intValue];
     int exitCode = [notification.userInfo[@"code"] intValue];
-    KelivoISHRunContext *ctx;
+    OrviaISHRunContext *ctx;
     @synchronized (_byPid) {
         ctx = _byPid[@(pid)];
     }
@@ -564,7 +564,7 @@ static dispatch_queue_t _readerQueue;
     });
 }
 
-+ (void)finalizeContext:(KelivoISHRunContext *)ctx {
++ (void)finalizeContext:(OrviaISHRunContext *)ctx {
     @synchronized (ctx) {
         if (ctx.didFinalize) return;
         ctx.didFinalize = YES;
@@ -595,14 +595,14 @@ static dispatch_queue_t _readerQueue;
     }
 }
 
-+ (void)startReaderForPipe:(int)fd context:(KelivoISHRunContext *)ctx isStdErr:(BOOL)isStdErr {
++ (void)startReaderForPipe:(int)fd context:(OrviaISHRunContext *)ctx isStdErr:(BOOL)isStdErr {
     dispatch_async(_readerQueue, ^{
         [self readPipe:fd context:ctx isStdErr:isStdErr];
         dispatch_group_leave(ctx.readersGroup);
     });
 }
 
-+ (void)readPipe:(int)fd context:(KelivoISHRunContext *)ctx isStdErr:(BOOL)isStdErr {
++ (void)readPipe:(int)fd context:(OrviaISHRunContext *)ctx isStdErr:(BOOL)isStdErr {
     char buffer[kOutputChunkBytes];
     NSMutableData *pending = [NSMutableData dataWithCapacity:kOutputChunkBytes];
     uint64_t lastEmission = 0;
@@ -655,7 +655,7 @@ static dispatch_queue_t _readerQueue;
 }
 
 /// True when `t` is `rootPid` or a descendant. Walks `parent` under `pids_lock`.
-static BOOL KelivoTaskIsDescendantOf(struct task *t, pid_t_ rootPid) {
+static BOOL OrviaTaskIsDescendantOf(struct task *t, pid_t_ rootPid) {
     int hops = 0;
     while (t != NULL && hops < MAX_PID) {
         if (t->pid == rootPid) return YES;
@@ -665,7 +665,7 @@ static BOOL KelivoTaskIsDescendantOf(struct task *t, pid_t_ rootPid) {
     return NO;
 }
 
-static void KelivoAddKillTarget(struct task *t, int *pids, struct task **ptrs, int *n, int max) {
+static void OrviaAddKillTarget(struct task *t, int *pids, struct task **ptrs, int *n, int max) {
     if (!t || *n >= max) return;
     for (int i = 0; i < *n; i++) {
         if (ptrs[i] == t) return;
@@ -675,12 +675,12 @@ static void KelivoAddKillTarget(struct task *t, int *pids, struct task **ptrs, i
     (*n)++;
 }
 
-static void KelivoCollectChildren(struct task *task, int *pids, struct task **ptrs, int *n, int max) {
+static void OrviaCollectChildren(struct task *task, int *pids, struct task **ptrs, int *n, int max) {
     if (!task || *n >= max) return;
-    KelivoAddKillTarget(task, pids, ptrs, n, max);
+    OrviaAddKillTarget(task, pids, ptrs, n, max);
     struct task *child;
     list_for_each_entry(&task->children, child, siblings) {
-        KelivoCollectChildren(child, pids, ptrs, n, max);
+        OrviaCollectChildren(child, pids, ptrs, n, max);
     }
 }
 
@@ -711,21 +711,21 @@ static void KelivoCollectChildren(struct task *task, int *pids, struct task **pt
     struct task *rootTask = pid_get_task((dword_t)pid);
     pid_t_ pgid = rootTask ? rootTask->group->pgid : knownPgid;
     if (rootTask) {
-        KelivoCollectChildren(rootTask, targetPids, targetPtrs, &ntargets, kMaxKillTargets);
+        OrviaCollectChildren(rootTask, targetPids, targetPtrs, &ntargets, kMaxKillTargets);
     }
     for (int i = 2; i < MAX_PID && ntargets < kMaxKillTargets; i++) {
         struct task *t = pid_get_task(i);
         if (!t) continue;
         BOOL byPgid = (pgid > 1 && t->group->pgid == pgid);
-        BOOL byAncestry = KelivoTaskIsDescendantOf(t, (pid_t_)pid);
+        BOOL byAncestry = OrviaTaskIsDescendantOf(t, (pid_t_)pid);
         if (!byPgid && !byAncestry) continue;
-        KelivoAddKillTarget(t, targetPids, targetPtrs, &ntargets, kMaxKillTargets);
+        OrviaAddKillTarget(t, targetPids, targetPtrs, &ntargets, kMaxKillTargets);
     }
     for (int i = 0; i < ntargets; i++) {
         send_signal(targetPtrs[i], SIGKILL_, info);
     }
     unlock(&pids_lock);
-    NSLog(@"KelivoISHExecutor: kill root=%d pgid=%d targets=%d", pid, (int)pgid, ntargets);
+    NSLog(@"OrviaISHExecutor: kill root=%d pgid=%d targets=%d", pid, (int)pgid, ntargets);
     if (ntargets == 0) {
         free(targetPids);
         free(targetPtrs);

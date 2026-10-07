@@ -6,7 +6,7 @@ void main() {
   test(
     'iOS stdin preserves early input and survives child exit',
     () async {
-      final temp = await Directory.systemTemp.createTemp('kelivo_ios_stdio_');
+      final temp = await Directory.systemTemp.createTemp('orvia_ios_stdio_');
       addTearDown(() => temp.delete(recursive: true));
       final binary = '${temp.path}/stdio_test';
       final compile = await Process.run('xcrun', [

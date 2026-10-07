@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/features/home/widgets/chat_selection_delete_bar.dart';
-import 'package:Kelivo/features/home/widgets/chat_selection_export_bar.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/features/home/widgets/chat_selection_delete_bar.dart';
+import 'package:orvia/features/home/widgets/chat_selection_export_bar.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

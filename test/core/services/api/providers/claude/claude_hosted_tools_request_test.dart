@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/api/builtin_tools.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/services/api/builtin_tools.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
 import '../../../../../support/claude_test_api.dart';
 import '../../../../../support/collect_generation.dart';
 
@@ -14,13 +14,13 @@ event: content_block_start
 data: {"type":"content_block_start","index":0,"content_block":{"type":"server_tool_use","id":"srv_1","name":"web_search","input":{}}}
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\\"query\\":\\"kelivo\\"}"}}
+data: {"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\\"query\\":\\"orvia\\"}"}}
 
 event: content_block_stop
 data: {"type":"content_block_stop","index":0}
 
 event: content_block_start
-data: {"type":"content_block_start","index":1,"content_block":{"type":"web_search_tool_result","tool_use_id":"srv_1","content":[{"type":"web_search_result","title":"Kelivo","url":"https://example.com"}]}}
+data: {"type":"content_block_start","index":1,"content_block":{"type":"web_search_tool_result","tool_use_id":"srv_1","content":[{"type":"web_search_result","title":"Orvia","url":"https://example.com"}]}}
 
 event: content_block_stop
 data: {"type":"content_block_stop","index":1}
@@ -441,7 +441,7 @@ void main() {
           ),
           modelId: 'deepseek-v4-flash',
           messages: const [
-            {'role': 'user', 'content': '\u641C\u7D22\u4E00\u4E0Bkelivo'},
+            {'role': 'user', 'content': '\u641C\u7D22\u4E00\u4E0Borvia'},
           ],
           stream: true,
           sseRounds: const [deepSeekSearchRound],
@@ -500,7 +500,7 @@ void main() {
           ),
           modelId: 'claude-sonnet-4-6',
           messages: const [
-            {'role': 'user', 'content': '\u641C\u7D22\u4E00\u4E0Bkelivo'},
+            {'role': 'user', 'content': '\u641C\u7D22\u4E00\u4E0Borvia'},
           ],
           stream: true,
           sseRounds: const [downgradedRound, plainRound],

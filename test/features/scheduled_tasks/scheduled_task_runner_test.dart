@@ -1,27 +1,27 @@
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/chat_message.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/chat_input_data.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/scheduled_task.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/mcp_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/core/providers/world_book_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/mcp/mcp_tool_service.dart';
-import 'package:Kelivo/core/services/scheduled_tasks_service.dart';
-import 'package:Kelivo/features/home/controllers/chat_actions.dart';
-import 'package:Kelivo/features/home/controllers/home_view_model.dart';
-import 'package:Kelivo/features/home/services/ask_user_interaction_service.dart';
-import 'package:Kelivo/features/home/services/tool_approval_service.dart';
-import 'package:Kelivo/features/scheduled_tasks/scheduled_task_runner.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/chat_input_data.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/scheduled_task.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/mcp_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/core/providers/world_book_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/mcp/mcp_tool_service.dart';
+import 'package:orvia/core/services/scheduled_tasks_service.dart';
+import 'package:orvia/features/home/controllers/chat_actions.dart';
+import 'package:orvia/features/home/controllers/home_view_model.dart';
+import 'package:orvia/features/home/services/ask_user_interaction_service.dart';
+import 'package:orvia/features/home/services/tool_approval_service.dart';
+import 'package:orvia/features/scheduled_tasks/scheduled_task_runner.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mcp_client/mcp_client.dart' as mcp;
@@ -329,8 +329,8 @@ class _RunnerHarness {
                 : [],
           ).toJson(),
           McpServerConfig(
-            id: 'kelivo_fetch',
-            name: '@kelivo/fetch',
+            id: 'orvia_fetch',
+            name: '@orvia/fetch',
             enabled: false,
             transport: McpTransportType.inmemory,
           ).toJson(),

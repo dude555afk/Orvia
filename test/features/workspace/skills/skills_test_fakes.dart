@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/skill_record.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/skills/skills_service.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/skill_record.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/skills/skills_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 
@@ -210,7 +210,7 @@ Skill createTempSkill({
   Directory? parent,
 }) {
   final dir = parent == null
-      ? Directory.systemTemp.createTempSync('kelivo_skill_$id')
+      ? Directory.systemTemp.createTempSync('orvia_skill_$id')
       : (Directory(p.join(parent.path, id))..createSync(recursive: true));
   final md = File(p.join(dir.path, 'SKILL.md'));
   md.writeAsStringSync('''

@@ -1,4 +1,4 @@
-import 'package:Kelivo/features/workspace/workspace_file_navigation.dart';
+import 'package:orvia/features/workspace/workspace_file_navigation.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -8,22 +8,22 @@ import 'package:provider/provider.dart';
 import 'package:terminal_view/terminal_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:Kelivo/core/services/haptics.dart';
-import 'package:Kelivo/core/services/workspace/file_link_resolver.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/features/settings/widgets/custom_theme_widgets.dart';
-import 'package:Kelivo/features/workspace/terminal/terminal_session_manager.dart';
-import 'package:Kelivo/features/workspace/terminal/widgets/system_terminal_card.dart';
-import 'package:Kelivo/features/workspace/terminal/widgets/terminal_key_bar.dart';
-import 'package:Kelivo/features/workspace/terminal/widgets/terminal_tab_strip.dart';
-import 'package:Kelivo/features/workspace/widgets/files/workspace_prompts.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/action_sheet.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/shared/widgets/ios_tile_button.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/core/services/haptics.dart';
+import 'package:orvia/core/services/workspace/file_link_resolver.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/features/settings/widgets/custom_theme_widgets.dart';
+import 'package:orvia/features/workspace/terminal/terminal_session_manager.dart';
+import 'package:orvia/features/workspace/terminal/widgets/system_terminal_card.dart';
+import 'package:orvia/features/workspace/terminal/widgets/terminal_key_bar.dart';
+import 'package:orvia/features/workspace/terminal/widgets/terminal_tab_strip.dart';
+import 'package:orvia/features/workspace/widgets/files/workspace_prompts.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/action_sheet.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/shared/widgets/ios_tile_button.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 
 /// Full-screen in-app terminal. On desktop without a PTY, shows a system
 /// terminal fallback card instead of the emulator.
@@ -377,13 +377,13 @@ class _TerminalPageState extends State<TerminalPage> {
 
   Future<void> _handleOpenUrl(TerminalSession session, Uri uri) async {
     final l10n = AppLocalizations.of(context)!;
-    if (uri.scheme == 'kelivo') {
+    if (uri.scheme == 'orvia') {
       final conversationId = session.conversationId ?? widget.conversationId;
       if (conversationId == null || conversationId.isEmpty) {
         showAppSnackBar(context, message: l10n.terminalNotAvailable);
         return;
       }
-      final link = KelivoLink.tryParse(uri.toString());
+      final link = OrviaLink.tryParse(uri.toString());
       if (link == null) {
         showAppSnackBar(context, message: l10n.terminalNotAvailable);
         return;

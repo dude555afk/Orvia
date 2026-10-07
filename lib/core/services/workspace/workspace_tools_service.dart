@@ -440,8 +440,8 @@ class WorkspaceToolsService {
     buf
       ..writeln()
       ..writeln(
-        'Cite files as [name](kelivo://workspace/rel/path), outputs as '
-        'kelivo://chat/outputs/x.txt, images as ![alt](kelivo://workspace/plot.png). '
+        'Cite files as [name](orvia://workspace/rel/path), outputs as '
+        'orvia://chat/outputs/x.txt, images as ![alt](orvia://workspace/plot.png). '
         'Percent-encode each path segment (spaces, non-ASCII); raw UTF-8 is also accepted.',
       )
       ..writeln()
@@ -570,7 +570,7 @@ class WorkspaceToolsService {
           resolved.hostPath,
         );
         if (rel == null) return null;
-        return 'kelivo://workspace/${KelivoLink.encodePath(rel)}';
+        return 'orvia://workspace/${OrviaLink.encodePath(rel)}';
       case WorkspaceZone.chat:
         final rel = WorkspacePaths.relativeToHostRoot(
           paths.sessionHostDir,
@@ -581,16 +581,16 @@ class WorkspaceToolsService {
             rel == 'outputs' ||
             rel.startsWith('attachments/') ||
             rel.startsWith('outputs/')) {
-          return 'kelivo://chat/${KelivoLink.encodePath(rel)}';
+          return 'orvia://chat/${OrviaLink.encodePath(rel)}';
         }
-        return 'kelivo://session/${KelivoLink.encodePath(rel)}';
+        return 'orvia://session/${OrviaLink.encodePath(rel)}';
       case WorkspaceZone.skills:
         final rel = WorkspacePaths.relativeToHostRoot(
           paths.skillsHostDir,
           resolved.hostPath,
         );
         if (rel == null) return null;
-        return 'kelivo://skills/${KelivoLink.encodePath(rel)}';
+        return 'orvia://skills/${OrviaLink.encodePath(rel)}';
       case WorkspaceZone.tmp:
         final rel = WorkspacePaths.relativeToHostRoot(
           paths.tmpHostRoot,
@@ -598,7 +598,7 @@ class WorkspaceToolsService {
         );
         return rel == null
             ? null
-            : 'kelivo://tmp/${KelivoLink.encodePath(rel)}';
+            : 'orvia://tmp/${OrviaLink.encodePath(rel)}';
       case WorkspaceZone.external:
         for (final mount in paths.externalMounts) {
           final rel = WorkspacePaths.relativeToHostRoot(
@@ -606,7 +606,7 @@ class WorkspaceToolsService {
             resolved.hostPath,
           );
           if (rel != null && mount.externalId != null) {
-            return 'kelivo://mounts/${Uri.encodeComponent(mount.externalId!)}${rel.isEmpty ? '' : '/${KelivoLink.encodePath(rel)}'}';
+            return 'orvia://mounts/${Uri.encodeComponent(mount.externalId!)}${rel.isEmpty ? '' : '/${OrviaLink.encodePath(rel)}'}';
           }
         }
         return null;

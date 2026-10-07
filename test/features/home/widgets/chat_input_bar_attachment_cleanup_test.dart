@@ -4,14 +4,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/models/chat_input_data.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/desktop/windows_paste_fix.dart';
-import 'package:Kelivo/features/home/widgets/chat_input_bar.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/utils/image_compressor.dart';
+import 'package:orvia/core/models/chat_input_data.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/desktop/windows_paste_fix.dart';
+import 'package:orvia/features/home/widgets/chat_input_bar.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/utils/image_compressor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -74,10 +74,10 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     previousPathProvider = PathProviderPlatform.instance;
     appSupportDir = await Directory.systemTemp.createTemp(
-      'kelivo_input_cleanup_app_',
+      'orvia_input_cleanup_app_',
     );
     userDir = await Directory.systemTemp.createTemp(
-      'kelivo_input_cleanup_user_',
+      'orvia_input_cleanup_user_',
     );
     fakePathProvider = _FakePathProviderPlatform(appSupportDir.path);
     PathProviderPlatform.instance = fakePathProvider;

@@ -1,4 +1,4 @@
-import 'package:Kelivo/core/models/message_part.dart';
+import 'package:orvia/core/models/message_part.dart';
 import 'dart:io';
 
 import 'package:drift/drift.dart' show Value;
@@ -7,7 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
 
 class _FakePathProviderPlatform extends PathProviderPlatform {
   _FakePathProviderPlatform(this.path);
@@ -35,7 +35,7 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp(
-      'kelivo_chat_list_revision_test_',
+      'orvia_chat_list_revision_test_',
     );
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
   });

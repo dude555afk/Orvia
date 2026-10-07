@@ -20,7 +20,7 @@ final class RestoreBundleMover {
     RestoreDurability? durability,
   }) : durability = durability ?? RestorePlatformDurability();
 
-  static const _databaseEntry = 'database/kelivo.db';
+  static const _databaseEntry = 'database/orvia.db';
 
   final Directory appDataDirectory;
   final Directory candidateDirectory;

@@ -6,7 +6,7 @@ void main() {
   test(
     'macOS system notifications distinguish sleep from window inactivity',
     () async {
-      final temp = await Directory.systemTemp.createTemp('kelivo_power_test_');
+      final temp = await Directory.systemTemp.createTemp('orvia_power_test_');
       addTearDown(() => temp.delete(recursive: true));
       final binary = '${temp.path}/power_test';
       final compile = await Process.run('xcrun', [

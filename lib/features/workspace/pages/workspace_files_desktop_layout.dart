@@ -4,20 +4,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/features/workspace/pages/workspace_files_page.dart';
-import 'package:Kelivo/features/workspace/pages/workspaces_page.dart';
-import 'package:Kelivo/features/workspace/widgets/workspace_tools_pane.dart';
-import 'package:Kelivo/features/workspace/widgets/desktop_workspace_button.dart';
-import 'package:Kelivo/features/workspace/widgets/files/file_browser.dart';
-import 'package:Kelivo/features/workspace/widgets/files/file_browser_ops.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/features/workspace/pages/workspace_files_page.dart';
+import 'package:orvia/features/workspace/pages/workspaces_page.dart';
+import 'package:orvia/features/workspace/widgets/workspace_tools_pane.dart';
+import 'package:orvia/features/workspace/widgets/desktop_workspace_button.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser_ops.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 
 class WorkspaceFilesDesktopLayout extends StatelessWidget {
   const WorkspaceFilesDesktopLayout({

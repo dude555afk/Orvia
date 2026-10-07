@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/guest_script_runner.dart';
-import 'package:Kelivo/core/services/sandbox/ios_ish_runtime.dart';
-import 'package:Kelivo/core/services/sandbox/rootfs_disk_usage.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/guest_script_runner.dart';
+import 'package:orvia/core/services/sandbox/ios_ish_runtime.dart';
+import 'package:orvia/core/services/sandbox/rootfs_disk_usage.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
 
 abstract class EnvironmentManager {
   EnvironmentProvider get env;
@@ -186,7 +186,7 @@ class IosRootfsManager implements EnvironmentManager {
       // Boot applies the bundled script through the guest VFS, including to
       // existing environments. apk keeps the user's world and installed tools.
       final exitCode = await _runInGuest(
-        '/bin/sh /usr/local/bin/kelivo-repair-rootfs',
+        '/bin/sh /usr/local/bin/orvia-repair-rootfs',
       );
       if (exitCode != 0 || version == null || version.isEmpty) {
         throw StateError('rootfs repair failed');

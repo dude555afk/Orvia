@@ -7,7 +7,7 @@ import 'package:path/path.dart' as p;
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
 
 import '../../support/business_preferences_test_harness.dart';
 
@@ -57,7 +57,7 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp(
-      'kelivo_assistant_asset_test_',
+      'orvia_assistant_asset_test_',
     );
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);

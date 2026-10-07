@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/message_part.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/message_part.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
@@ -16,7 +16,7 @@ void main() {
     var sourceClosed = false;
 
     setUp(() async {
-      directory = await Directory.systemTemp.createTemp('kelivo_merge_test_');
+      directory = await Directory.systemTemp.createTemp('orvia_merge_test_');
       live = ChatDatabaseRepository.open(
         file: File('${directory.path}/live.sqlite'),
       );
@@ -472,7 +472,7 @@ void main() {
           content: 'same body',
           parts: const [
             ImagePart(
-              uri: 'kelivo-file:///upload/a.png',
+              uri: 'orvia-file:///upload/a.png',
               mime: 'image/png',
               assetId: 'asset-a',
             ),
@@ -485,7 +485,7 @@ void main() {
           content: 'same body',
           parts: const [
             ImagePart(
-              uri: 'kelivo-file:///upload/b.png',
+              uri: 'orvia-file:///upload/b.png',
               mime: 'image/png',
               assetId: 'asset-b',
             ),
@@ -511,7 +511,7 @@ void main() {
           content: 'same body',
           parts: const [
             ImagePart(
-              uri: 'kelivo-file:///upload/a.png',
+              uri: 'orvia-file:///upload/a.png',
               mime: 'image/png',
               assetId: 'asset-a',
               unavailable: false,
@@ -525,7 +525,7 @@ void main() {
           content: 'same body',
           parts: const [
             ImagePart(
-              uri: 'kelivo-file:///upload/a.png',
+              uri: 'orvia-file:///upload/a.png',
               mime: 'image/png',
               assetId: 'asset-a',
               unavailable: true,
@@ -551,8 +551,8 @@ void main() {
           messageId: 'order-msg',
           content: 'same body',
           parts: const [
-            ImagePart(uri: 'kelivo-file:///upload/a.png', mime: 'image/png'),
-            ImagePart(uri: 'kelivo-file:///upload/b.png', mime: 'image/png'),
+            ImagePart(uri: 'orvia-file:///upload/a.png', mime: 'image/png'),
+            ImagePart(uri: 'orvia-file:///upload/b.png', mime: 'image/png'),
           ],
         );
         await putConversationWithAttachments(
@@ -561,8 +561,8 @@ void main() {
           messageId: 'order-msg',
           content: 'same body',
           parts: const [
-            ImagePart(uri: 'kelivo-file:///upload/b.png', mime: 'image/png'),
-            ImagePart(uri: 'kelivo-file:///upload/a.png', mime: 'image/png'),
+            ImagePart(uri: 'orvia-file:///upload/b.png', mime: 'image/png'),
+            ImagePart(uri: 'orvia-file:///upload/a.png', mime: 'image/png'),
           ],
         );
         await source.close();

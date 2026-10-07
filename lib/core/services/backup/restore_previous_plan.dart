@@ -28,7 +28,7 @@ final class RestorePreviousDatabasePlan {
     required this.descriptor,
   });
 
-  static const databasePath = 'database/kelivo.db';
+  static const databasePath = 'database/orvia.db';
 
   final RestorePreviousDatabaseState state;
   final RestoreFileDescriptor? descriptor;
@@ -194,7 +194,7 @@ final class RestorePreviousPlan {
     }
   }
 
-  static const format = 'kelivo.restore-previous-plan';
+  static const format = 'orvia.restore-previous-plan';
   static const formatVersion = 2;
 
   final String runId;

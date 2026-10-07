@@ -4,10 +4,10 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/backup/restore_durability.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_builder.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_plan.dart';
-import 'package:Kelivo/core/services/backup/restore_receipt.dart';
+import 'package:orvia/core/services/backup/restore_durability.dart';
+import 'package:orvia/core/services/backup/restore_previous_builder.dart';
+import 'package:orvia/core/services/backup/restore_previous_plan.dart';
+import 'package:orvia/core/services/backup/restore_receipt.dart';
 
 const _runId = '0123456789abcdef0123456789abcdef';
 const _candidateHash =
@@ -28,7 +28,7 @@ void main() {
 
     setUp(() async {
       root = await Directory.systemTemp.createTemp(
-        'kelivo_previous_builder_test_',
+        'orvia_previous_builder_test_',
       );
     });
 
@@ -37,7 +37,7 @@ void main() {
     });
 
     test('describes selected database and all declared asset roots', () async {
-      final database = File(p.join(root.path, 'kelivo.db'));
+      final database = File(p.join(root.path, 'orvia.db'));
       await database.writeAsBytes([1, 2, 3, 4], flush: true);
       final upload = File(p.join(root.path, 'upload', 'nested', 'note.txt'));
       await upload.parent.create(recursive: true);
@@ -105,8 +105,8 @@ void main() {
     });
 
     test('rejects database sidecars before describing the main file', () async {
-      await File(p.join(root.path, 'kelivo.db')).writeAsBytes([1]);
-      await File(p.join(root.path, 'kelivo.db-shm')).writeAsBytes([2]);
+      await File(p.join(root.path, 'orvia.db')).writeAsBytes([1]);
+      await File(p.join(root.path, 'orvia.db-shm')).writeAsBytes([2]);
 
       await expectLater(
         RestorePreviousBuilder.build(

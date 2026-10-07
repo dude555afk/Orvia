@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/restart_app_action.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/restart_app_action.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
 
 void main() {
   testWidgets('reports restart failure and keeps the retry dialog open', (

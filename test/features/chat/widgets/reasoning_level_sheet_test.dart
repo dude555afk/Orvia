@@ -4,17 +4,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/model_spec.dart';
-import 'package:Kelivo/core/models/reasoning_request.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/reasoning/reasoning_level_options.dart';
-import 'package:Kelivo/core/services/model_spec/model_spec_resolver.dart';
-import 'package:Kelivo/features/chat/widgets/reasoning_level_sheet.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/custom_bottom_sheet.dart';
-import 'package:Kelivo/shared/widgets/effort_slider.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/model_spec.dart';
+import 'package:orvia/core/models/reasoning_request.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/reasoning/reasoning_level_options.dart';
+import 'package:orvia/core/services/model_spec/model_spec_resolver.dart';
+import 'package:orvia/features/chat/widgets/reasoning_level_sheet.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/custom_bottom_sheet.dart';
+import 'package:orvia/shared/widgets/effort_slider.dart';
 
 ProviderConfig _effortConfig() {
   return ProviderConfig(
@@ -24,9 +24,9 @@ ProviderConfig _effortConfig() {
     apiKey: 'test-key',
     baseUrl: 'https://example.com/v1',
     providerType: ProviderKind.openai,
-    models: const ['kelivo-test-effort'],
+    models: const ['orvia-test-effort'],
     modelOverrides: const {
-      'kelivo-test-effort': {
+      'orvia-test-effort': {
         'type': 'chat',
         'abilities': ['reasoning'],
         'reasoning': {
@@ -48,9 +48,9 @@ ProviderConfig _budgetConfig() {
     apiKey: 'test-key',
     baseUrl: 'https://example.com/v1',
     providerType: ProviderKind.claude,
-    models: const ['kelivo-test-budget'],
+    models: const ['orvia-test-budget'],
     modelOverrides: const {
-      'kelivo-test-budget': {
+      'orvia-test-budget': {
         'type': 'chat',
         'abilities': ['reasoning'],
         'reasoning': {
@@ -140,14 +140,14 @@ void main() {
       final settings = await _settingsWith(
         tester,
         config,
-        'kelivo-test-budget',
+        'orvia-test-budget',
       );
       addTearDown(settings.dispose);
       await _pumpSheet(
         tester,
         settings: settings,
         config: config,
-        modelId: 'kelivo-test-budget',
+        modelId: 'orvia-test-budget',
         assistant: const Assistant(
           id: 'a',
           name: 'A',
@@ -161,7 +161,7 @@ void main() {
       expect(slider.stops[slider.selectedIndex].stopKey, 'reasoning-stop-high');
       await _tapStop(tester, 'reasoning-stop-off');
       expect(
-        settings.reasoningChoiceFor('Test', 'kelivo-test-budget'),
+        settings.reasoningChoiceFor('Test', 'orvia-test-budget'),
         ReasoningRequest.off,
       );
       final updated = tester.widget<EffortSliderGroup>(
@@ -179,7 +179,7 @@ void main() {
       final config = _effortConfig();
       final spec = ModelSpecResolver.instance.spec(
         config,
-        'kelivo-test-effort',
+        'orvia-test-effort',
       );
       expect(spec.supportsReasoning, isTrue);
       expect(spec.reasoning.canDisable, isFalse);
@@ -192,13 +192,13 @@ void main() {
       final settings = await _settingsWith(
         tester,
         config,
-        'kelivo-test-effort',
+        'orvia-test-effort',
       );
       await _pumpSheet(
         tester,
         settings: settings,
         config: config,
-        modelId: 'kelivo-test-effort',
+        modelId: 'orvia-test-effort',
       );
       await _openSheet(tester);
 
@@ -241,13 +241,13 @@ void main() {
         final settings = await _settingsWith(
           tester,
           config,
-          'kelivo-test-budget',
+          'orvia-test-budget',
         );
         await _pumpSheet(
           tester,
           settings: settings,
           config: config,
-          modelId: 'kelivo-test-budget',
+          modelId: 'orvia-test-budget',
         );
         await _openSheet(tester);
 
@@ -277,7 +277,7 @@ void main() {
 
         await _tapStop(tester, 'reasoning-stop-low');
         expect(
-          settings.reasoningChoiceFor('Test', 'kelivo-test-budget'),
+          settings.reasoningChoiceFor('Test', 'orvia-test-budget'),
           const ReasoningRequest(ReasoningLevel.low),
         );
         expect(find.text('Low'), findsWidgets);
@@ -295,20 +295,20 @@ void main() {
       final settings = await _settingsWith(
         tester,
         config,
-        'kelivo-test-effort',
+        'orvia-test-effort',
       );
       await _pumpSheet(
         tester,
         settings: settings,
         config: config,
-        modelId: 'kelivo-test-effort',
+        modelId: 'orvia-test-effort',
       );
       await _openSheet(tester);
 
       await _tapStop(tester, 'reasoning-stop-high');
 
       expect(
-        settings.reasoningChoiceFor('Test', 'kelivo-test-effort'),
+        settings.reasoningChoiceFor('Test', 'orvia-test-effort'),
         const ReasoningRequest(ReasoningLevel.high),
       );
     });
@@ -320,25 +320,25 @@ void main() {
       final settings = await _settingsWith(
         tester,
         config,
-        'kelivo-test-effort',
+        'orvia-test-effort',
       );
       await settings.setReasoningChoice(
         'Test',
-        'kelivo-test-effort',
+        'orvia-test-effort',
         const ReasoningRequest(ReasoningLevel.low),
       );
       await _pumpSheet(
         tester,
         settings: settings,
         config: config,
-        modelId: 'kelivo-test-effort',
+        modelId: 'orvia-test-effort',
       );
       await _openSheet(tester);
 
       expect(find.byKey(const ValueKey('reasoning-reset')), findsNothing);
       await _tapStop(tester, 'reasoning-stop-medium');
 
-      expect(settings.reasoningChoiceFor('Test', 'kelivo-test-effort'), isNull);
+      expect(settings.reasoningChoiceFor('Test', 'orvia-test-effort'), isNull);
     });
 
     testWidgets('custom budget path writes requestForCustomBudget', (
@@ -347,18 +347,18 @@ void main() {
       final config = _budgetConfig();
       final spec = ModelSpecResolver.instance.spec(
         config,
-        'kelivo-test-budget',
+        'orvia-test-budget',
       );
       final settings = await _settingsWith(
         tester,
         config,
-        'kelivo-test-budget',
+        'orvia-test-budget',
       );
       await _pumpSheet(
         tester,
         settings: settings,
         config: config,
-        modelId: 'kelivo-test-budget',
+        modelId: 'orvia-test-budget',
       );
       await _openSheet(tester);
 
@@ -369,7 +369,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        settings.reasoningChoiceFor('Test', 'kelivo-test-budget'),
+        settings.reasoningChoiceFor('Test', 'orvia-test-budget'),
         requestForCustomBudget(spec, 2048),
       );
       expect(find.text('2048'), findsWidgets);

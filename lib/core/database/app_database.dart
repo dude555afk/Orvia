@@ -758,7 +758,7 @@ class ExtensionEntityRows extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
-  static const databaseFileName = 'kelivo.db';
+  static const databaseFileName = 'orvia.db';
 
   // Schema 1 is the first published SQLite contract; schema 2 adds the
   // per-conversation model override; schema 3 lays the extension groundwork
@@ -793,7 +793,7 @@ class AppDatabase extends _$AppDatabase {
   // per write transaction on the streaming hot path.
   static const synchronousNormal = 1;
   static const _executionIsolateProbeFunction =
-      'kelivo_sqlite_on_opening_isolate';
+      'orvia_sqlite_on_opening_isolate';
   static const _maxExecutionIsolateProbeSamples = 1000;
 
   factory AppDatabase.open({File? file}) {

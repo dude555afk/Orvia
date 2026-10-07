@@ -5,16 +5,16 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/environment_variable.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/services/workspace/file_link_resolver.dart';
-import 'package:Kelivo/core/services/workspace/tool_run_registry.dart';
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tools_service.dart';
-import 'package:Kelivo/features/home/services/tool_approval_service.dart';
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/environment_variable.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/services/workspace/file_link_resolver.dart';
+import 'package:orvia/core/services/workspace/tool_run_registry.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/workspace/workspace_tools_service.dart';
+import 'package:orvia/features/home/services/tool_approval_service.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 
 import '../../../support/fake_workspace_runtime.dart';
 
@@ -68,7 +68,7 @@ void main() {
   late ToolRunRegistry registry;
 
   setUp(() async {
-    tmp = await Directory.systemTemp.createTemp('kelivo_ws_tools_');
+    tmp = await Directory.systemTemp.createTemp('orvia_ws_tools_');
     workspaceDir = Directory(p.join(tmp.path, 'ws'))..createSync();
     sessionDir = Directory(p.join(tmp.path, 'session'))..createSync();
     Directory(p.join(sessionDir.path, 'attachments')).createSync();
@@ -886,7 +886,7 @@ void main() {
         final approval = _RecordingApproval()..allow = false;
         final outside = p.join(
           Directory.current.path,
-          'kelivo_ws_outside_test.txt',
+          'orvia_ws_outside_test.txt',
         );
         addTearDown(() {
           final file = File(outside);
@@ -948,11 +948,11 @@ void main() {
       expect(
         write.files.single.link,
         Platform.isWindows
-            ? 'kelivo://workspace/report%20%E6%8A%A5%E5%91%8A.txt'
-            : 'kelivo://workspace/report%3A%E6%8A%A5%E5%91%8A.txt',
+            ? 'orvia://workspace/report%20%E6%8A%A5%E5%91%8A.txt'
+            : 'orvia://workspace/report%3A%E6%8A%A5%E5%91%8A.txt',
       );
       expect(
-        KelivoLink.tryParse(write.files.single.link!)?.relativePath,
+        OrviaLink.tryParse(write.files.single.link!)?.relativePath,
         fileName,
       );
       for (final result in [read, glob, grep, edit]) {
@@ -1014,8 +1014,8 @@ void main() {
         expect(
           result.files.single.link,
           path.startsWith('/mounts')
-              ? 'kelivo://mounts/mount-1/a.txt'
-              : 'kelivo://session/note.txt',
+              ? 'orvia://mounts/mount-1/a.txt'
+              : 'orvia://session/note.txt',
         );
       }
       final listing = metaOf(
@@ -1024,8 +1024,8 @@ void main() {
         }, toolCallId: 'list'),
       );
       expect(listing.files.first.isDirectory, isTrue);
-      expect(listing.files.first.link, 'kelivo://mounts/mount-1');
-      expect(listing.files.last.link, 'kelivo://mounts/mount-1/a.txt');
+      expect(listing.files.first.link, 'orvia://mounts/mount-1');
+      expect(listing.files.last.link, 'orvia://mounts/mount-1/a.txt');
       final glob = metaOf(
         await tools.handle(context, 'glob', {
           'path': '/mounts/Data',
@@ -1067,7 +1067,7 @@ void main() {
       );
       expect(
         result.files.firstWhere((f) => p.basename(f.path) == 'note.txt').link,
-        'kelivo://session/note.txt',
+        'orvia://session/note.txt',
       );
       final noChanges = metaOf(
         await tools.handle(ctx(), 'shell', {
@@ -1165,7 +1165,7 @@ void main() {
         ),
       );
       expect(result.status, 'error');
-      expect(result.files.single.link, 'kelivo://workspace/partial.txt');
+      expect(result.files.single.link, 'orvia://workspace/partial.txt');
       expect(result.files.single.isProduced, isTrue);
       File(p.join(workspaceDir.path, 'partial.txt')).deleteSync();
     }
@@ -1189,12 +1189,12 @@ void main() {
         files: const [
           WorkspaceToolFile(
             path: '/workspace/a.txt',
-            link: 'kelivo://workspace/a.txt',
+            link: 'orvia://workspace/a.txt',
             role: WorkspaceFileRole.modified,
           ),
           WorkspaceToolFile(
             path: '/chat/outputs/t.txt',
-            link: 'kelivo://chat/outputs/t.txt',
+            link: 'orvia://chat/outputs/t.txt',
             role: WorkspaceFileRole.log,
           ),
         ],

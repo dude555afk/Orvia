@@ -6,12 +6,12 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/services/backup/restore_bundle_staging.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_plan.dart';
-import 'package:Kelivo/core/services/backup/restore_receipt.dart';
-import 'package:Kelivo/core/services/backup/restore_workspace_lock.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/services/backup/restore_bundle_staging.dart';
+import 'package:orvia/core/services/backup/restore_previous_plan.dart';
+import 'package:orvia/core/services/backup/restore_receipt.dart';
+import 'package:orvia/core/services/backup/restore_workspace_lock.dart';
 
 String _hash(String character) => List.filled(64, character).join();
 const _runId = '0123456789abcdef0123456789abcdef';
@@ -43,7 +43,7 @@ Future<String> _writeCandidateManifest(RestoreReceiptStore store) async {
   await File(
     p.join(store.workspaceRoot.path, RestoreWorkspaceLock.activeRunFileName),
   ).writeAsString(_runId, flush: true);
-  final database = File(p.join(candidate.path, 'database', 'kelivo.db'));
+  final database = File(p.join(candidate.path, 'database', 'orvia.db'));
   await database.parent.create(recursive: true);
   final repository = ChatDatabaseRepository.open(file: database);
   try {
@@ -65,7 +65,7 @@ Future<String> _writeCandidateManifest(RestoreReceiptStore store) async {
   final manifest = File(p.join(candidate.path, 'manifest.json'));
   await manifest.writeAsString(
     jsonEncode({
-      'format': 'kelivo-backup',
+      'format': 'orvia-backup',
       'formatVersion': 2,
       'payloadKind': 'sqlite',
       'createdAtUtc': '2026-07-09T00:00:00.000Z',
@@ -73,13 +73,13 @@ Future<String> _writeCandidateManifest(RestoreReceiptStore store) async {
       'includeChats': true,
       'includeFiles': false,
       'database': {
-        'entry': 'database/kelivo.db',
+        'entry': 'database/orvia.db',
         'schemaVersion': databaseInfo.schemaVersion,
         'conversationCount': databaseInfo.conversationCount,
         'messageCount': databaseInfo.messageCount,
       },
       'entries': {
-        'database/kelivo.db': {
+        'database/orvia.db': {
           'bytes': await database.length(),
           'sha256': (await sha256.bind(database.openRead()).first).toString(),
         },
@@ -196,7 +196,7 @@ void main() {
     }
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_receipt_test_');
+      root = await Directory.systemTemp.createTemp('orvia_receipt_test_');
       store = RestoreReceiptStore(appDataDirectory: root, runId: _runId);
       candidateManifestSha256 = await _writeCandidateManifest(store);
     });
@@ -579,7 +579,7 @@ void main() {
       'rejects an incomplete candidate with a valid manifest hash',
       () async {
         await File(
-          p.join(store.runDirectory.path, 'candidate', 'database', 'kelivo.db'),
+          p.join(store.runDirectory.path, 'candidate', 'database', 'orvia.db'),
         ).delete();
 
         await expectLater(

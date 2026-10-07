@@ -95,7 +95,7 @@ fi
 
 need_ish=0
 fingerprint="$("$SCRIPT_DIR/build_ish.sh" fingerprint)"
-stamp="$SLICE_DIR/.kelivo-ish-build"
+stamp="$SLICE_DIR/.orvia-ish-build"
 if [ ! -f "$stamp" ] || [ "$(cat "$stamp")" != "$fingerprint" ]; then
     echo "ensure_artifacts: iSH source or build inputs changed; rebuilding $SDK"
     need_ish=1
@@ -148,7 +148,7 @@ stamp_outputs() {
     [ -f "$SLICE_DIR/libish.a" ] && stamp+=("$SLICE_DIR/libish.a")
     [ -f "$SLICE_DIR/libish_emu.a" ] && stamp+=("$SLICE_DIR/libish_emu.a")
     [ -f "$SLICE_DIR/libfakefs.a" ] && stamp+=("$SLICE_DIR/libfakefs.a")
-    [ -f "$SLICE_DIR/.kelivo-ish-build" ] && stamp+=("$SLICE_DIR/.kelivo-ish-build")
+    [ -f "$SLICE_DIR/.orvia-ish-build" ] && stamp+=("$SLICE_DIR/.orvia-ish-build")
     [ -s "$RESOURCES_DIR/libvdso.so.elf" ] && stamp+=("$RESOURCES_DIR/libvdso.so.elf")
     [ -x "$BUILD_DIR/fakefsify" ] && stamp+=("$BUILD_DIR/fakefsify")
     [ -x "$BUILD_DIR/ish" ] && stamp+=("$BUILD_DIR/ish")

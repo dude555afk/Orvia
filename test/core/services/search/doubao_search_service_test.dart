@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/services/search/providers/doubao_search_service.dart';
-import 'package:Kelivo/core/services/search/search_service.dart';
+import 'package:orvia/core/services/search/providers/doubao_search_service.dart';
+import 'package:orvia/core/services/search/search_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -19,8 +19,8 @@ void main() {
               'Result': {
                 'WebResults': [
                   {
-                    'Title': 'Kelivo',
-                    'Url': 'https://example.com/kelivo',
+                    'Title': 'Orvia',
+                    'Url': 'https://example.com/orvia',
                     'Summary': 'summary',
                     'Snippet': 'snippet',
                   },
@@ -45,7 +45,7 @@ void main() {
       expect(SearchService.getService(restored), isA<DoubaoSearchService>());
 
       final result = await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(resultSize: 80, timeout: 1000),
         serviceOptions: options,
       );
@@ -53,7 +53,7 @@ void main() {
       final body = jsonDecode(captured!.body) as Map<String, dynamic>;
       expect(captured?.url.toString(), DoubaoSearchService.endpoint);
       expect(captured?.headers['Authorization'], 'Bearer db-key');
-      expect(body['Query'], 'kelivo');
+      expect(body['Query'], 'orvia');
       expect(body['SearchType'], 'web');
       expect(body['Count'], 50);
       expect((body['Filter'] as Map)['NeedUrl'], isTrue);
@@ -78,7 +78,7 @@ void main() {
 
       expect(
         () => service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: const SearchCommonOptions(timeout: 1000),
           serviceOptions: DoubaoOptions(id: 'doubao-1', apiKey: 'db-key'),
         ),

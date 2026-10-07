@@ -5,7 +5,7 @@ import UniformTypeIdentifiers
 /// Owns security scopes for linked workspaces. All filesystem/bookmark work is
 /// serialized off the main thread; only the document picker runs on the UI thread.
 final class WorkspaceDirectoryAccess: NSObject, UIDocumentPickerDelegate {
-  private let queue = DispatchQueue(label: "psyche.kelivo.workspace.directories", qos: .userInitiated)
+  private let queue = DispatchQueue(label: "com.dude555afk.orvia.workspace.directories", qos: .userInitiated)
   private var activeURLs: [String: URL] = [:]
   private var pickerResult: FlutterResult?
   private weak var presenter: UIViewController?
@@ -71,7 +71,7 @@ final class WorkspaceDirectoryAccess: NSObject, UIDocumentPickerDelegate {
       let path = try self.directoryPath(url)
       let refreshedToken = stale ? try self.bookmark(url) : token
       // Start the renewed scope before dropping the old one. Re-resolving also
-      // follows moves performed in Files while Kelivo remains running.
+      // follows moves performed in Files while Orvia remains running.
       self.activeURLs.updateValue(url, forKey: refreshedToken)?.stopAccessingSecurityScopedResource()
       retained = true
       return ["path": path, "token": refreshedToken]
@@ -111,7 +111,7 @@ final class WorkspaceDirectoryAccess: NSObject, UIDocumentPickerDelegate {
   }
 
   private func unavailable() -> NSError {
-    NSError(domain: "KelivoWorkspaceDirectory", code: 1,
+    NSError(domain: "OrviaWorkspaceDirectory", code: 1,
             userInfo: [NSLocalizedDescriptionKey: "Folder access is unavailable; select the folder again"])
   }
 

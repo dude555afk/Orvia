@@ -15,7 +15,7 @@ import '../models/conversation.dart';
 import '../models/message_part.dart';
 import '../utils/multimodal_input_utils.dart';
 import '../../utils/sandbox_path_resolver.dart';
-import '../../utils/kelivo_file_uri.dart';
+import '../../utils/orvia_file_uri.dart';
 import '../models/memory_entry.dart';
 import '../models/user_profile_field.dart';
 import 'app_database.dart';
@@ -5508,16 +5508,16 @@ class ChatDatabaseRepository {
         }
         raw = parsed.toFilePath();
       }
-      final logical = KelivoFileUri.isKelivoFileUri(uri)
+      final logical = OrviaFileUri.isOrviaFileUri(uri)
           ? uri
-          : KelivoFileUri.encodeFromAbsolute(raw, root: appDataPath) ??
-                KelivoFileUri.tryEncodeLegacyAbsolutePath(
+          : OrviaFileUri.encodeFromAbsolute(raw, root: appDataPath) ??
+                OrviaFileUri.tryEncodeLegacyAbsolutePath(
                   raw,
                   allowGenericFallback: false,
                 );
       final path = logical == null
           ? raw
-          : KelivoFileUri.resolveToAbsolute(logical, root: appDataPath);
+          : OrviaFileUri.resolveToAbsolute(logical, root: appDataPath);
       if (path == null || !p.isWithin(appDataPath, path)) return missing;
       final relative = p.split(p.relative(path, from: appDataPath));
       if (relative.length < 2 ||
@@ -8184,7 +8184,7 @@ final class AssetGcCandidate {
 }
 
 String _alternateAssetPathForm(String path) {
-  if (KelivoFileUri.isKelivoFileUri(path)) {
+  if (OrviaFileUri.isOrviaFileUri(path)) {
     final resolved = SandboxPathResolver.fix(path);
     return resolved.isEmpty ? path : resolved;
   }

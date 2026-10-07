@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:mcp_client/mcp_client.dart' as mcp;
 import '../database/business_preferences.dart';
-import '../services/mcp/kelivo_fetch/kelivo_fetch_server.dart';
+import '../services/mcp/orvia_fetch/orvia_fetch_server.dart';
 import '../services/mcp/mcp_oauth_service.dart';
 import '../services/mcp/stdio_command_resolver.dart';
 import '../services/mcp/workspace_stdio_transport.dart';
@@ -481,7 +481,7 @@ class McpProvider extends ChangeNotifier {
         _servers = list;
       } catch (_) {}
     }
-    // Ensure built-in @kelivo/fetch is present by default
+    // Ensure built-in @orvia/fetch is present by default
     final builtin = _builtinFetchServerIfMissing();
     if (builtin != null) {
       final next = <McpServerConfig>[..._servers, builtin];
@@ -505,14 +505,14 @@ class McpProvider extends ChangeNotifier {
     final exists = _servers.any(
       (s) =>
           s.transport == McpTransportType.inmemory ||
-          s.name == '@kelivo/fetch' ||
-          s.id == 'kelivo_fetch',
+          s.name == '@orvia/fetch' ||
+          s.id == 'orvia_fetch',
     );
     if (exists) return null;
     return McpServerConfig(
-      id: 'kelivo_fetch',
+      id: 'orvia_fetch',
       enabled: true,
-      name: '@kelivo/fetch',
+      name: '@orvia/fetch',
       transport: McpTransportType.inmemory,
       tools: const <McpToolConfig>[], // will refresh on connect
     );
@@ -644,7 +644,7 @@ class McpProvider extends ChangeNotifier {
           final cfg = cfgAny.cast<String, dynamic>();
           final typeLower = (cfg['type'] ?? '').toString().toLowerCase();
           if (typeLower == 'inmemory') {
-            // Built-in @kelivo/fetch control via isActive; ignore name mismatches silently
+            // Built-in @orvia/fetch control via isActive; ignore name mismatches silently
             builtinSeen = true;
             builtinEnabled = (cfg['isActive'] as bool?) ?? true;
             return;
@@ -750,9 +750,9 @@ class McpProvider extends ChangeNotifier {
           // Append single built-in server with fixed id/name
           next.add(
             McpServerConfig(
-              id: 'kelivo_fetch',
+              id: 'orvia_fetch',
               enabled: builtinEnabled,
-              name: '@kelivo/fetch',
+              name: '@orvia/fetch',
               transport: McpTransportType.inmemory,
             ),
           );
@@ -1431,7 +1431,7 @@ class McpProvider extends ChangeNotifier {
         return false;
       }
       final clientConfig = mcp.McpClient.simpleConfig(
-        name: 'Kelivo MCP',
+        name: 'Orvia MCP',
         version: '1.0.0',
         enableDebugLogging: false,
         requestTimeout: _requestTimeout,
@@ -1449,7 +1449,7 @@ class McpProvider extends ChangeNotifier {
       if (server.transport == McpTransportType.inmemory) {
         client = mcp.McpClient.createClient(clientConfig);
         await client.connect(
-          KelivoInMemoryClientTransport(KelivoFetchMcpServerEngine()),
+          OrviaInMemoryClientTransport(OrviaFetchMcpServerEngine()),
         );
       } else if (server.transport == McpTransportType.stdio &&
           !_isDesktopPlatform()) {

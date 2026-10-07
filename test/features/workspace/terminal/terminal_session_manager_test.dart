@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/features/workspace/terminal/osc_1337.dart';
-import 'package:Kelivo/features/workspace/terminal/terminal_session_manager.dart';
-import 'package:Kelivo/theme/theme_factory.dart';
+import 'package:orvia/features/workspace/terminal/osc_1337.dart';
+import 'package:orvia/features/workspace/terminal/terminal_session_manager.dart';
+import 'package:orvia/theme/theme_factory.dart';
 
 import 'fake_workspace_runtime.dart';
 
@@ -122,7 +122,7 @@ void main() {
     expect(session.terminal.buffer.getText(), contains('[process exited 7]'));
   });
 
-  test('intercepts OSC 1337 KelivoOpenURL and does not render it', () async {
+  test('intercepts OSC 1337 OrviaOpenURL and does not render it', () async {
     final runtime = FakeWorkspaceRuntime();
     final manager = managerWithLock((_) {});
     addTearDown(() async {
@@ -138,14 +138,14 @@ void main() {
     session.openUrlRequests.listen(urls.add);
 
     runtime.lastPty!.emitString(
-      'hello\x1b]1337;KelivoOpenURL=https://example.com/path\x07world',
+      'hello\x1b]1337;OrviaOpenURL=https://example.com/path\x07world',
     );
     await flush();
 
     final text = session.terminal.buffer.getText();
     expect(text, contains('hello'));
     expect(text, contains('world'));
-    expect(text, isNot(contains('KelivoOpenURL')));
+    expect(text, isNot(contains('OrviaOpenURL')));
     expect(text, isNot(contains('example.com')));
     expect(urls, [Uri.parse('https://example.com/path')]);
   });
@@ -166,15 +166,15 @@ void main() {
     session.openUrlRequests.listen(urls.add);
 
     runtime.lastPty!.emit(
-      utf8.encode('\x1b]1337;KelivoOpenURL=kelivo://workspace/a.txt'),
+      utf8.encode('\x1b]1337;OrviaOpenURL=orvia://workspace/a.txt'),
     );
     runtime.lastPty!.emit(utf8.encode('\x1b\\visible'));
     await flush();
 
     final text = session.terminal.buffer.getText();
     expect(text, contains('visible'));
-    expect(text, isNot(contains('KelivoOpenURL')));
-    expect(urls, [Uri.parse('kelivo://workspace/a.txt')]);
+    expect(text, isNot(contains('OrviaOpenURL')));
+    expect(urls, [Uri.parse('orvia://workspace/a.txt')]);
   });
 
   test('writes initialCommand without a trailing newline', () async {
@@ -229,7 +229,7 @@ void main() {
     final urls = <Uri>[];
     final interceptor = Osc1337Interceptor(onUrl: urls.add);
     final first = interceptor.process(
-      utf8.encode('pre\x1b]1337;KelivoOpenURL=https://x'),
+      utf8.encode('pre\x1b]1337;OrviaOpenURL=https://x'),
     );
     expect(utf8.decode(first), 'pre');
     expect(urls, isEmpty);
@@ -277,7 +277,7 @@ void main() {
   });
 
   test(
-    'Osc1337Interceptor still intercepts KelivoOpenURL after OSC give-up',
+    'Osc1337Interceptor still intercepts OrviaOpenURL after OSC give-up',
     () {
       final urls = <Uri>[];
       final interceptor = Osc1337Interceptor(onUrl: urls.add);
@@ -285,10 +285,10 @@ void main() {
       interceptor.process(utf8.encode('A' * 2500));
       interceptor.process(utf8.encode('A' * 2500));
       final filtered = interceptor.process(
-        utf8.encode('\x1b]1337;KelivoOpenURL=kelivo://workspace/a.txt\x07'),
+        utf8.encode('\x1b]1337;OrviaOpenURL=orvia://workspace/a.txt\x07'),
       );
-      expect(utf8.decode(filtered), isNot(contains('KelivoOpenURL')));
-      expect(urls, [Uri.parse('kelivo://workspace/a.txt')]);
+      expect(utf8.decode(filtered), isNot(contains('OrviaOpenURL')));
+      expect(urls, [Uri.parse('orvia://workspace/a.txt')]);
     },
   );
 
@@ -402,9 +402,9 @@ void main() {
     expect(utf8.decode(first), 'pre');
     expect(urls, isEmpty);
     final second = interceptor.process(
-      utf8.encode(']1337;KelivoOpenURL=kelivo://workspace/a.txt\x07post'),
+      utf8.encode(']1337;OrviaOpenURL=orvia://workspace/a.txt\x07post'),
     );
     expect(utf8.decode(second), 'post');
-    expect(urls, [Uri.parse('kelivo://workspace/a.txt')]);
+    expect(urls, [Uri.parse('orvia://workspace/a.txt')]);
   });
 }

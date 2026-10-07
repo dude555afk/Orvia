@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/backup/restore_durability.dart';
+import 'package:orvia/core/services/backup/restore_durability.dart';
 
 void main() {
   group('RestorePlatformDurability', () {
@@ -12,7 +12,7 @@ void main() {
 
     setUp(() async {
       root = await Directory.systemTemp.createTemp(
-        'kelivo_restore_durability_test_',
+        'orvia_restore_durability_test_',
       );
       durability = RestorePlatformDurability();
     });

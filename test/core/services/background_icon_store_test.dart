@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:Kelivo/core/services/background_icon_store.dart';
+import 'package:orvia/core/services/background_icon_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
@@ -12,7 +12,7 @@ void main() {
 
   setUp(() async {
     temporary = await Directory.systemTemp.createTemp(
-      'kelivo-background-icon-',
+      'orvia-background-icon-',
     );
     store = BackgroundIconStore(supportDirectory: () async => temporary);
   });

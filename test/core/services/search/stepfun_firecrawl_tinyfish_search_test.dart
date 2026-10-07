@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/services/search/providers/firecrawl_search_service.dart';
-import 'package:Kelivo/core/services/search/providers/stepfun_search_service.dart';
-import 'package:Kelivo/core/services/search/providers/tinyfish_search_service.dart';
-import 'package:Kelivo/core/services/search/search_service.dart';
+import 'package:orvia/core/services/search/providers/firecrawl_search_service.dart';
+import 'package:orvia/core/services/search/providers/stepfun_search_service.dart';
+import 'package:orvia/core/services/search/providers/tinyfish_search_service.dart';
+import 'package:orvia/core/services/search/search_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -31,14 +31,14 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(resultSize: 5, timeout: 1000),
         serviceOptions: StepFunOptions(id: 's1', apiKey: 'k'),
       );
 
       expect(captured?.url.toString(), StepFunOptions.defaultUrl);
       expect(captured?.headers['Authorization'], 'Bearer k');
-      expect(jsonDecode(captured!.body)['query'], 'kelivo');
+      expect(jsonDecode(captured!.body)['query'], 'orvia');
       expect(result.items.single.title, 'Step');
       expect(
         SearchService.getService(StepFunOptions(id: 'x', apiKey: '')),

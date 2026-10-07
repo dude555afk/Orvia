@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/features/workspace/pages/workspace_files_page.dart';
-import 'package:Kelivo/features/workspace/widgets/workspace_tools_pane.dart';
-import 'package:Kelivo/features/workspace/terminal/open_terminal.dart';
-import 'package:Kelivo/features/workspace/widgets/files/file_browser.dart';
-import 'package:Kelivo/features/workspace/widgets/files/file_browser_ops.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/features/workspace/pages/workspace_files_page.dart';
+import 'package:orvia/features/workspace/widgets/workspace_tools_pane.dart';
+import 'package:orvia/features/workspace/terminal/open_terminal.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser_ops.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

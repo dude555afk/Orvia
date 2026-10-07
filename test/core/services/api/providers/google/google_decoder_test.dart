@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/services/api/providers/google/google_decoder.dart';
-import 'package:Kelivo/core/services/api/stream/sse_event.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/services/api/providers/google/google_decoder.dart';
+import 'package:orvia/core/services/api/stream/sse_event.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 SseEvent _event(Map<String, dynamic> data) {
@@ -116,7 +116,7 @@ void main() {
               'functionCall': <String, dynamic>{
                 'id': 'call_1',
                 'name': 'lookup',
-                'args': <String, dynamic>{'q': 'kelivo'},
+                'args': <String, dynamic>{'q': 'orvia'},
               },
               'thoughtSignature': 'sig-1',
             },
@@ -130,7 +130,7 @@ void main() {
     expect(result.chunks.whereType<ToolCallEnd>().single.id, 'call_1');
     final call = decoder.functionCallById('call_1')!;
     expect(call.name, 'lookup');
-    expect(call.args, <String, dynamic>{'q': 'kelivo'});
+    expect(call.args, <String, dynamic>{'q': 'orvia'});
     expect(call.thoughtSigKey, 'thoughtSignature');
     expect(call.thoughtSigVal, 'sig-1');
     expect(decoder.isClientFunctionCall('call_1'), isTrue);
@@ -143,7 +143,7 @@ void main() {
     );
     expect(
       result.chunks.whereType<ToolCallDelta>().single.inputDelta,
-      '{"q":"kelivo"}',
+      '{"q":"orvia"}',
     );
   });
 

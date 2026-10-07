@@ -1,6 +1,6 @@
 import '../../../utils/utf16_safe_cut.dart';
 import '../../chat/utils/thinking_tag_parser.dart';
-import 'package:Kelivo/core/providers/external_mounts_provider.dart';
+import 'package:orvia/core/providers/external_mounts_provider.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:drift/drift.dart' show Value;
@@ -488,7 +488,7 @@ class MessageBuilderService {
     return out;
   }
 
-  /// Collect structured `_kelivo_media_paths` entries from image/file parts.
+  /// Collect structured `_orvia_media_paths` entries from image/file parts.
   ///
   /// Skips unavailable parts. Document (non-media) FileParts are omitted — they
   /// travel through document extraction, or as [documentRefsFromParts] for a
@@ -528,7 +528,7 @@ class MessageBuilderService {
     return refs;
   }
 
-  /// Collect `_kelivo_document_paths` entries: the FileParts that
+  /// Collect `_orvia_document_paths` entries: the FileParts that
   /// [mediaRefsFromParts] leaves out.
   static List<Map<String, dynamic>> documentRefsFromParts(ChatMessage message) {
     final refs = <Map<String, dynamic>>[];
@@ -568,7 +568,7 @@ class MessageBuilderService {
   void stripInternalRevisionIds(List<Map<String, dynamic>> apiMessages) {
     for (final message in apiMessages) {
       message.remove(internalRevisionIdKey);
-      message.remove(kelivoContextSegmentsKey);
+      message.remove(orviaContextSegmentsKey);
     }
   }
 

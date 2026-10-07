@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/services/logging/context_log_tail_reader.dart';
+import 'package:orvia/core/services/logging/context_log_tail_reader.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   late Directory tempDir;
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp('kelivo_ctx_tail_');
+    tempDir = await Directory.systemTemp.createTemp('orvia_ctx_tail_');
   });
 
   tearDown(() async {

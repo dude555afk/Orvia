@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 import '../../models/chat_message.dart';
 import '../../models/message_part.dart';
 import '../../../utils/sandbox_path_resolver.dart';
-import '../../../utils/kelivo_file_uri.dart';
+import '../../../utils/orvia_file_uri.dart';
 import 'workspace_tool_context.dart';
 
 class AttachmentInfo {
@@ -90,16 +90,16 @@ Future<void> deleteSessionAttachmentCopies(
         final record = entry.value;
         final savedName = record is Map ? record['name'] : null;
         if (savedName is! String || savedName != _safeName(savedName)) continue;
-        final canonical = KelivoFileUri.isKelivoFileUri(entry.key)
+        final canonical = OrviaFileUri.isOrviaFileUri(entry.key)
             ? entry.key
-            : KelivoFileUri.tryEncodeLegacyAbsolutePath(
+            : OrviaFileUri.tryEncodeLegacyAbsolutePath(
                 entry.key,
                 allowGenericFallback: false,
               );
         final source =
             (canonical == null
                 ? null
-                : KelivoFileUri.resolveToAbsolute(canonical, root: appRoot)) ??
+                : OrviaFileUri.resolveToAbsolute(canonical, root: appRoot)) ??
             SandboxPathResolver.resolveForIo(entry.key);
         if (source == null ||
             !sources.contains(p.normalize(p.absolute(source)))) {

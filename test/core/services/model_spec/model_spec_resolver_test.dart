@@ -5,12 +5,12 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/models/model_spec.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/reasoning/reasoning_dialects.dart';
-import 'package:Kelivo/core/services/model_catalog/catalog_entry.dart';
-import 'package:Kelivo/core/services/model_catalog/model_catalog_service.dart';
-import 'package:Kelivo/core/services/model_spec/model_spec_resolver.dart';
+import 'package:orvia/core/models/model_spec.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/reasoning/reasoning_dialects.dart';
+import 'package:orvia/core/services/model_catalog/catalog_entry.dart';
+import 'package:orvia/core/services/model_catalog/model_catalog_service.dart';
+import 'package:orvia/core/services/model_spec/model_spec_resolver.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

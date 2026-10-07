@@ -11,32 +11,32 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/database/database_installation_gate.dart';
-import 'package:Kelivo/core/database/startup_recovery_service.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/business_restore_service.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/database/schema_migrations.dart';
-import 'package:Kelivo/core/models/backup.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/utils/kelivo_file_uri.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
-import 'package:Kelivo/core/providers/backup_provider.dart';
-import 'package:Kelivo/core/services/backup/backup_cancel_token.dart';
-import 'package:Kelivo/core/services/backup/backup_task_progress.dart';
-import 'package:Kelivo/core/services/backup/data_sync.dart';
-import 'package:Kelivo/core/services/backup/restore_business_lease.dart';
-import 'package:Kelivo/core/services/backup/restore_workspace_lock.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_plan.dart';
-import 'package:Kelivo/core/services/backup/restore_receipt.dart';
-import 'package:Kelivo/core/services/backup/restore_startup_gate.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/instruction_injection_store.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/database/database_installation_gate.dart';
+import 'package:orvia/core/database/startup_recovery_service.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/business_restore_service.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/database/schema_migrations.dart';
+import 'package:orvia/core/models/backup.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/utils/orvia_file_uri.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/providers/backup_provider.dart';
+import 'package:orvia/core/services/backup/backup_cancel_token.dart';
+import 'package:orvia/core/services/backup/backup_task_progress.dart';
+import 'package:orvia/core/services/backup/data_sync.dart';
+import 'package:orvia/core/services/backup/restore_business_lease.dart';
+import 'package:orvia/core/services/backup/restore_workspace_lock.dart';
+import 'package:orvia/core/services/backup/restore_previous_plan.dart';
+import 'package:orvia/core/services/backup/restore_receipt.dart';
+import 'package:orvia/core/services/backup/restore_startup_gate.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/instruction_injection_store.dart';
 
 bool _containsContiguousBytes(List<int> source, List<int> pattern) {
   for (var start = 0; start <= source.length - pattern.length; start++) {
@@ -211,7 +211,7 @@ Future<String> _readSnapshotMessageContent(String snapshotPath) async {
 
 Future<Directory> _singleRestoreRunDirectory(Directory appDataDirectory) async {
   final workspace = Directory(
-    '${appDataDirectory.path}${Platform.pathSeparator}.kelivo_restore',
+    '${appDataDirectory.path}${Platform.pathSeparator}.orvia_restore',
   );
   final runs = await workspace
       .list(followLinks: false)
@@ -350,7 +350,7 @@ Future<File> _createSqliteBackupFixture({
       'bytes': await settingsFile.length(),
       'sha256': await _fileSha256(settingsFile),
     },
-    'database/kelivo.db': {
+    'database/orvia.db': {
       'bytes': await databaseFile.length(),
       'sha256': databaseSha256 ?? await _fileSha256(databaseFile),
     },
@@ -373,7 +373,7 @@ Future<File> _createSqliteBackupFixture({
   final manifestFile = File('${root.path}/${prefix}_manifest.json');
   await manifestFile.writeAsString(
     jsonEncode({
-      'format': 'kelivo-backup',
+      'format': 'orvia-backup',
       'formatVersion': formatVersionOverride ?? 2,
       if (minimumReadableFormatOverride != null)
         'minimumReadableFormatVersion': minimumReadableFormatOverride,
@@ -388,7 +388,7 @@ Future<File> _createSqliteBackupFixture({
       ...extraManifestFields,
       'database': {
         ...extraManifestDatabaseFields,
-        'entry': 'database/kelivo.db',
+        'entry': 'database/orvia.db',
         'schemaVersion': schemaVersionOverride ?? snapshotInfo.schemaVersion,
         if (minimumReadableOverride != null)
           SchemaMigrations.minimumReadableManifestKey: minimumReadableOverride,
@@ -403,7 +403,7 @@ Future<File> _createSqliteBackupFixture({
   encoder.create(zipFile.path);
   encoder.addFileSync(manifestFile, 'manifest.json');
   encoder.addFileSync(settingsFile, 'settings.json');
-  encoder.addFileSync(databaseFile, 'database/kelivo.db');
+  encoder.addFileSync(databaseFile, 'database/orvia.db');
   if (assetFile != null) {
     encoder.addFileSync(assetFile, 'upload/fixture.txt');
   }
@@ -428,11 +428,11 @@ void main() {
     late BusinessRepository businessRepository;
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_data_sync_test_');
+      root = await Directory.systemTemp.createTemp('orvia_data_sync_test_');
       PathProviderPlatform.instance = _FakePathProviderPlatform(root.path);
       PackageInfo.setMockInitialValues(
-        appName: 'Kelivo',
-        packageName: 'Kelivo',
+        appName: 'Orvia',
+        packageName: 'Orvia',
         version: '1.0.0-test',
         buildNumber: '1',
         buildSignature: 'test',
@@ -503,7 +503,7 @@ void main() {
             'managed',
           );
           await snapshotFile.writeAsBytes(
-            archive.findFile('database/kelivo.db')!.readBytes()!,
+            archive.findFile('database/orvia.db')!.readBytes()!,
           );
         } finally {
           archive.clear();
@@ -678,9 +678,9 @@ void main() {
           appDataDirectory: root,
         ))!;
         final run = Directory(
-          '${root.path}/.kelivo_restore/run_${first.runId}',
+          '${root.path}/.orvia_restore/run_${first.runId}',
         );
-        final candidate = File('${run.path}/candidate/database/kelivo.db');
+        final candidate = File('${run.path}/candidate/database/orvia.db');
         await candidate.writeAsString('damaged candidate');
         final evidence = File('${run.path}/previous/preserved.txt');
         await evidence.parent.create(recursive: true);
@@ -706,7 +706,7 @@ void main() {
         expect(await preserved.readAsString(), 'previous data evidence');
         expect(
           await File(
-            '${preserved.parent.parent.path}/candidate/database/kelivo.db',
+            '${preserved.parent.parent.path}/candidate/database/orvia.db',
           ).readAsString(),
           'damaged candidate',
         );
@@ -774,7 +774,7 @@ void main() {
           messageParts: [
             const TextPart('fixture content'),
             const ImagePart(
-              uri: 'kelivo-file:///upload/photo.png',
+              uri: 'orvia-file:///upload/photo.png',
               unavailable: true,
             ),
             FilePart(
@@ -783,7 +783,7 @@ void main() {
               unavailable: true,
             ),
             const FilePart(
-              uri: 'kelivo-file:///upload/missing.txt',
+              uri: 'orvia-file:///upload/missing.txt',
               name: 'missing.txt',
             ),
             const ImagePart(uri: 'https://example.com/photo.png'),
@@ -798,7 +798,7 @@ void main() {
           RestoreReceiptState.committed,
         );
         final repository = ChatDatabaseRepository.open(
-          file: File('${root.path}/kelivo.db'),
+          file: File('${root.path}/orvia.db'),
         );
         try {
           final parts = (await repository.getMessagesRange(
@@ -964,7 +964,7 @@ void main() {
       () async {
         if (Platform.isWindows) return;
         final outside = await Directory.systemTemp.createTemp(
-          'kelivo-outside-attachment-',
+          'orvia-outside-attachment-',
         );
         addTearDown(() => outside.delete(recursive: true));
         await File('${outside.path}/private.txt').writeAsString('outside');
@@ -984,7 +984,7 @@ void main() {
               unavailable: true,
             ),
             const FilePart(
-              uri: 'kelivo-file:///upload/linked.txt',
+              uri: 'orvia-file:///upload/linked.txt',
               name: 'linked.txt',
             ),
             FilePart(uri: '${outside.path}/private.txt', name: 'private.txt'),
@@ -999,7 +999,7 @@ void main() {
           RestoreReceiptState.committed,
         );
         final repository = ChatDatabaseRepository.open(
-          file: File('${root.path}/kelivo.db'),
+          file: File('${root.path}/orvia.db'),
         );
         try {
           final parts = (await repository.getMessagesRange(
@@ -1009,7 +1009,7 @@ void main() {
           )).single.parts;
           expect(
             parts.whereType<ImagePart>().single.uri,
-            'kelivo-file:///upload/photo.png',
+            'orvia-file:///upload/photo.png',
           );
           expect(parts.whereType<ImagePart>().single.unavailable, isFalse);
           expect(
@@ -1057,7 +1057,7 @@ void main() {
             ),
           ),
         );
-        expect(await File('${root.path}/kelivo.db').exists(), isFalse);
+        expect(await File('${root.path}/orvia.db').exists(), isFalse);
         await DataSync.prepareStartupSnapshotRestore(
           appDataDirectory: root,
           snapshot: snapshot,
@@ -1095,7 +1095,7 @@ void main() {
         expect(await _recoverAcrossColdRestart(appDataDirectory: root), isNull);
         await DatabaseInstallationGate.ensureReady(appDataDirectory: root);
         final repository = ChatDatabaseRepository.open(
-          file: File('${root.path}/kelivo.db'),
+          file: File('${root.path}/orvia.db'),
         );
         try {
           expect(
@@ -1115,7 +1115,7 @@ void main() {
             .whereType<Directory>()
             .where((entry) => p.basename(entry.path) == 'run_${pending.runId}')
             .single;
-        expect(archived.path, contains('.kelivo_restore_failed_'));
+        expect(archived.path, contains('.orvia_restore_failed_'));
       },
     );
 
@@ -1192,12 +1192,12 @@ void main() {
         // Abandoned entries (older than the 6h reclaim threshold) carry their
         // age in the name, matching prepareBackupFile's naming.
         final staleWorkDir = Directory(
-          '${tmpDir.path}/kelivo_backup_2000-01-01T00-00-00.000000',
+          '${tmpDir.path}/orvia_backup_2000-01-01T00-00-00.000000',
         );
         await staleWorkDir.create(recursive: true);
         await File('${staleWorkDir.path}/orphan.zip').writeAsString('old');
         final staleZip = File(
-          '${tmpDir.path}/kelivo_backup_2000-01-01T00-00-01.000000.zip',
+          '${tmpDir.path}/orvia_backup_2000-01-01T00-00-01.000000.zip',
         );
         await staleZip.writeAsString('old');
         final staleLegacy = File('${tmpDir.path}/_bk_chats.json');
@@ -1206,7 +1206,7 @@ void main() {
         // A fresh leftover looks like a backup another provider is running
         // right now and must survive the sweep.
         final freshWorkDir = Directory(
-          '${tmpDir.path}/kelivo_backup_'
+          '${tmpDir.path}/orvia_backup_'
           '${DateTime.now().toIso8601String().replaceAll(':', '-')}',
         );
         await freshWorkDir.create(recursive: true);
@@ -1488,7 +1488,7 @@ void main() {
         expect(
           leftovers.where(
             (name) =>
-                name.startsWith('kelivo_backup_') ||
+                name.startsWith('orvia_backup_') ||
                 name.startsWith('_bk_') ||
                 name.endsWith('.zip'),
           ),
@@ -1542,7 +1542,7 @@ void main() {
         expect(
           leftovers.where(
             (name) =>
-                name.startsWith('kelivo_backup_') ||
+                name.startsWith('orvia_backup_') ||
                 name.startsWith('_bk_') ||
                 name.endsWith('.zip'),
           ),
@@ -1780,7 +1780,7 @@ void main() {
             ).listBackupFiles(
               WebDavConfig(
                 url: 'http://${server.address.address}:${server.port}',
-                path: 'kelivo_backups',
+                path: 'orvia_backups',
               ),
               onProgress: (progress) => phases.add(progress.phase),
               cancelToken: token,
@@ -2200,7 +2200,7 @@ void main() {
       try {
         archive = ZipDecoder().decodeStream(input);
         final manifestEntry = archive.findFile('manifest.json');
-        final databaseEntry = archive.findFile('database/kelivo.db');
+        final databaseEntry = archive.findFile('database/orvia.db');
 
         expect(manifestEntry, isNotNull);
         expect(databaseEntry, isNotNull);
@@ -2216,13 +2216,13 @@ void main() {
         final manifest =
             jsonDecode(utf8.decode(manifestEntry!.readBytes()!))
                 as Map<String, dynamic>;
-        expect(manifest['format'], 'kelivo-backup');
+        expect(manifest['format'], 'orvia-backup');
         expect(manifest['formatVersion'], 2);
         expect(manifest['payloadKind'], 'sqlite');
         expect(manifest['includeChats'], isTrue);
         expect(manifest['appVersion'], '1.0.0-test+1');
         expect(
-          ((manifest['entries'] as Map)['database/kelivo.db'] as Map)['sha256'],
+          ((manifest['entries'] as Map)['database/orvia.db'] as Map)['sha256'],
           archivedHash,
         );
       } finally {
@@ -2271,7 +2271,7 @@ void main() {
       final manifestFile = File('${root.path}/sqlite_manifest.json');
       await manifestFile.writeAsString(
         jsonEncode({
-          'format': 'kelivo-backup',
+          'format': 'orvia-backup',
           'formatVersion': 2,
           'payloadKind': 'sqlite',
           'createdAtUtc': '2026-07-09T00:00:00.000Z',
@@ -2280,7 +2280,7 @@ void main() {
           'appVersion': '1.0.0-test+1',
           'secretsIncluded': true,
           'database': {
-            'entry': 'database/kelivo.db',
+            'entry': 'database/orvia.db',
             'schemaVersion': AppDatabase.currentSchemaVersion,
             'conversationCount': 1,
             'messageCount': 1,
@@ -2290,7 +2290,7 @@ void main() {
               'bytes': await settingsFile.length(),
               'sha256': await _fileSha256(settingsFile),
             },
-            'database/kelivo.db': {
+            'database/orvia.db': {
               'bytes': await sourceFile.length(),
               'sha256': await _fileSha256(sourceFile),
             },
@@ -2302,7 +2302,7 @@ void main() {
       encoder.create(zipFile.path);
       encoder.addFileSync(manifestFile, 'manifest.json');
       encoder.addFileSync(settingsFile, 'settings.json');
-      encoder.addFileSync(sourceFile, 'database/kelivo.db');
+      encoder.addFileSync(sourceFile, 'database/orvia.db');
       encoder.closeSync();
 
       final chatService = ChatService();
@@ -2622,7 +2622,7 @@ void main() {
       final manifestFile = File('${root.path}/future_settings_only_man.json');
       await manifestFile.writeAsString(
         jsonEncode({
-          'format': 'kelivo-backup',
+          'format': 'orvia-backup',
           'formatVersion': 3,
           'minimumReadableFormatVersion': 2,
           'payloadKind': 'settings-only',
@@ -2690,7 +2690,7 @@ void main() {
         const WebDavConfig(includeChats: true, includeFiles: false),
       );
 
-      final workspace = Directory('${root.path}/.kelivo_restore');
+      final workspace = Directory('${root.path}/.orvia_restore');
       final runDirectory = await _singleRestoreRunDirectory(root);
       final runId = await File('${workspace.path}/.active_run').readAsString();
       expect(
@@ -2698,7 +2698,7 @@ void main() {
         isTrue,
       );
       final candidateDatabase = File(
-        '${runDirectory.path}/candidate/database/kelivo.db',
+        '${runDirectory.path}/candidate/database/orvia.db',
       );
       final candidateManifest =
           jsonDecode(
@@ -2708,7 +2708,7 @@ void main() {
               )
               as Map<String, dynamic>;
       expect(
-        ((candidateManifest['entries'] as Map)['database/kelivo.db']
+        ((candidateManifest['entries'] as Map)['database/orvia.db']
             as Map)['sha256'],
         await _fileSha256(candidateDatabase),
       );
@@ -2747,7 +2747,7 @@ void main() {
         expect(restored['theme'], 'dark');
         expect(await liveAsset.readAsString(), 'keep-live');
         expect(
-          await Directory('${root.path}/.kelivo_restore').exists(),
+          await Directory('${root.path}/.orvia_restore').exists(),
           isFalse,
         );
       },
@@ -2828,7 +2828,7 @@ void main() {
         ).exportSettings();
         final outside = Directory('${root.path}/outside_staging');
         await outside.create(recursive: true);
-        await Link('${root.path}/.kelivo_restore').create(outside.path);
+        await Link('${root.path}/.orvia_restore').create(outside.path);
         final zipFile = await _createSqliteBackupFixture(
           root: root,
           prefix: 'linked_staging_root',
@@ -3050,14 +3050,14 @@ void main() {
       expect(manifest['database'], isA<Map<String, dynamic>>());
       expect(
         (manifest['entries'] as Map<String, dynamic>).keys,
-        containsAll(['database/kelivo.db', 'upload/fixture.txt']),
+        containsAll(['database/orvia.db', 'upload/fixture.txt']),
       );
       expect(
         (manifest['entries'] as Map<String, dynamic>),
         isNot(contains('settings.json')),
       );
       expect(
-        await File(p.join(candidate.path, 'database', 'kelivo.db')).exists(),
+        await File(p.join(candidate.path, 'database', 'orvia.db')).exists(),
         isTrue,
       );
       expect(
@@ -3259,7 +3259,7 @@ void main() {
         final manifestFile = File('${root.path}/future_manifest.json');
         await manifestFile.writeAsString(
           jsonEncode({
-            'format': 'kelivo-backup',
+            'format': 'orvia-backup',
             'formatVersion': 3,
             'payloadKind': 'settings-only',
             'createdAtUtc': '2026-07-09T00:00:00.000Z',
@@ -3438,7 +3438,7 @@ void main() {
       final manifestFile = File('${root.path}/bounded_manifest.json');
       await manifestFile.writeAsString(
         jsonEncode({
-          'format': 'kelivo-backup',
+          'format': 'orvia-backup',
           'formatVersion': 2,
           'payloadKind': 'settings-only',
           'createdAtUtc': '2026-07-09T00:00:00.000Z',
@@ -3490,7 +3490,7 @@ void main() {
       final encoder = ZipFileEncoder();
       encoder.create(zipFile.path);
       encoder.addFileSync(settingsFile, 'settings.json');
-      encoder.addFileSync(databaseFile, 'database/kelivo.db');
+      encoder.addFileSync(databaseFile, 'database/orvia.db');
       encoder.closeSync();
       await BusinessRestoreService(
         businessRepository,
@@ -3628,7 +3628,7 @@ void main() {
         expect(await existingFile.exists(), isTrue);
         expect(await File('${fontsDir.path}/custom.ttf').exists(), isTrue);
         expect(
-          await Directory('${root.path}/.kelivo_restore').exists(),
+          await Directory('${root.path}/.orvia_restore').exists(),
           isFalse,
         );
 
@@ -3641,7 +3641,7 @@ void main() {
         expect(await existingFile.exists(), isFalse);
         expect(await File('${fontsDir.path}/custom.ttf').exists(), isTrue);
         expect(
-          await Directory('${root.path}/.kelivo_restore').exists(),
+          await Directory('${root.path}/.orvia_restore').exists(),
           isFalse,
         );
       },
@@ -5205,13 +5205,13 @@ void main() {
     );
   });
 
-  group('kelivo-file portable attachments', () {
+  group('orvia-file portable attachments', () {
     test('resolve after root change without rewriting persisted URIs', () async {
       final rootA = await Directory.systemTemp.createTemp(
-        'kelivo_file_root_a_',
+        'orvia_file_root_a_',
       );
       final rootB = await Directory.systemTemp.createTemp(
-        'kelivo_file_root_b_',
+        'orvia_file_root_b_',
       );
       addTearDown(() async {
         SandboxPathResolver.debugSetDirs(docsDir: null, supportDir: null);
@@ -5220,7 +5220,7 @@ void main() {
       });
 
       SandboxPathResolver.debugSetDirs(docsDir: rootA.path);
-      final dbFile = File('${rootA.path}/kelivo.db');
+      final dbFile = File('${rootA.path}/orvia.db');
       final repository = ChatDatabaseRepository.open(file: dbFile);
       await repository.ensureReady();
 
@@ -5229,7 +5229,7 @@ void main() {
       final bytes = const <int>[0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
       File('${uploadA.path}/pic.png').writeAsBytesSync(bytes);
 
-      const uri = 'kelivo-file:///upload/pic.png';
+      const uri = 'orvia-file:///upload/pic.png';
       await repository.putMigrationBatch(
         conversations: [
           Conversation(
@@ -5257,7 +5257,7 @@ void main() {
 
       // Simulate backup restore onto a different container root: copy DB+file,
       // switch docsDir, and do NOT rewrite message URIs.
-      final dbB = File('${rootB.path}/kelivo.db');
+      final dbB = File('${rootB.path}/orvia.db');
       await dbFile.copy(dbB.path);
       final uploadB = Directory('${rootB.path}/upload')
         ..createSync(recursive: true);
@@ -5283,7 +5283,7 @@ void main() {
       final result = await restoredRepo.migrateSandboxPaths(
         targetVersion: 1,
         targetRoot: rootB.path,
-        rewriteUri: (value) => KelivoFileUri.isKelivoFileUri(value)
+        rewriteUri: (value) => OrviaFileUri.isOrviaFileUri(value)
             ? value
             : SandboxPathResolver.fix(value),
       );

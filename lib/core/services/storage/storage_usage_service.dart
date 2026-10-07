@@ -274,7 +274,7 @@ abstract final class StorageUsageService {
 
         final top = parts.first.toLowerCase();
         if (restoreTraces.visible &&
-            top == '.kelivo_restore' &&
+            top == '.orvia_restore' &&
             parts.length >= 4 &&
             parts[1] == 'completed' &&
             RegExp(r'^run_[a-f0-9]{32}$').hasMatch(parts[2])) {
@@ -467,7 +467,7 @@ abstract final class StorageUsageService {
             StorageUsageSubcategory(
               id: 'completed_restore_runs',
               stats: byCat[StorageUsageCategoryKey.restoreTraces]!.toStats(),
-              path: p.join(root.path, '.kelivo_restore', 'completed'),
+              path: p.join(root.path, '.orvia_restore', 'completed'),
             ),
           ],
         ),

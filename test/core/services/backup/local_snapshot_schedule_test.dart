@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/services/backup/local_snapshot_schedule.dart';
+import 'package:orvia/core/services/backup/local_snapshot_schedule.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
@@ -10,8 +10,8 @@ void main() {
     late File database;
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_fingerprint_');
-      database = File(p.join(root.path, 'kelivo.db'));
+      root = await Directory.systemTemp.createTemp('orvia_fingerprint_');
+      database = File(p.join(root.path, 'orvia.db'));
       await database.writeAsString('contents');
     });
 
@@ -201,7 +201,7 @@ void main() {
     test(
       '\u4E0D\u8BA4\u5F97\u7684\u540D\u5B57\u8FD4\u56DE null，\u4E0D\u4F1A\u88AB\u5F53\u6210\u526F\u672C',
       () {
-        expect(LocalSnapshotPaths.createdAtFromFileName('kelivo.db'), isNull);
+        expect(LocalSnapshotPaths.createdAtFromFileName('orvia.db'), isNull);
         expect(
           LocalSnapshotPaths.createdAtFromFileName(
             '${LocalSnapshotPaths.filePrefix}nonsense'

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/services/search/providers/brave_search_service.dart';
-import 'package:Kelivo/core/services/search/search_service.dart';
-import 'package:Kelivo/utils/brand_assets.dart';
+import 'package:orvia/core/services/search/providers/brave_search_service.dart';
+import 'package:orvia/core/services/search/search_service.dart';
+import 'package:orvia/utils/brand_assets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -84,14 +84,14 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo search',
+        query: 'orvia search',
         commonOptions: const SearchCommonOptions(resultSize: 4, timeout: 1000),
         serviceOptions: BraveOptions(id: 'brave-1', apiKey: 'brave-test'),
       );
 
       expect(
         captured?.url.toString(),
-        '${BraveSearchService.webEndpoint}?q=kelivo%20search&count=4',
+        '${BraveSearchService.webEndpoint}?q=orvia%20search&count=4',
       );
       expect(captured?.method, 'GET');
       expect(captured?.headers['X-Subscription-Token'], 'brave-test');
@@ -130,7 +130,7 @@ void main() {
       );
 
       final result = await service.search(
-        query: 'kelivo search',
+        query: 'orvia search',
         commonOptions: const SearchCommonOptions(resultSize: 1, timeout: 1000),
         serviceOptions: BraveOptions(
           id: 'brave-1',
@@ -146,7 +146,7 @@ void main() {
       expect(captured?.headers['Content-Type'], contains('application/json'));
       expect(captured?.headers['Accept'], 'application/json');
       expect(jsonDecode(captured!.body), {
-        'q': 'kelivo search',
+        'q': 'orvia search',
         'count': 1,
         'maximum_number_of_urls': 1,
         'maximum_number_of_tokens': 2048,
@@ -167,7 +167,7 @@ void main() {
         );
 
         final result = await service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: const SearchCommonOptions(timeout: 1000),
           serviceOptions: BraveOptions(
             id: 'brave-1',
@@ -196,12 +196,12 @@ void main() {
       );
 
       await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(timeout: 1000),
         serviceOptions: options,
       );
       await service.search(
-        query: 'kelivo',
+        query: 'orvia',
         commonOptions: const SearchCommonOptions(timeout: 1000),
         serviceOptions: options,
       );
@@ -218,7 +218,7 @@ void main() {
 
       expect(
         () => service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: const SearchCommonOptions(timeout: 1000),
           serviceOptions: BraveOptions(
             id: 'brave-1',
@@ -247,7 +247,7 @@ void main() {
 
       expect(
         () => service.search(
-          query: 'kelivo',
+          query: 'orvia',
           commonOptions: const SearchCommonOptions(timeout: 1000),
           serviceOptions: BraveOptions(id: 'brave-1', apiKey: 'brave-test'),
         ),

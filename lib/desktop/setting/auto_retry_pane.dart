@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:Kelivo/shared/widgets/section_card.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
+import 'package:orvia/theme/app_font_weights.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';

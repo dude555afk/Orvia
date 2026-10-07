@@ -1,6 +1,6 @@
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/linux_window_service.dart';
-import 'package:Kelivo/desktop/desktop_window_controller.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/linux_window_service.dart';
+import 'package:orvia/desktop/desktop_window_controller.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,10 +37,10 @@ void main() {
         addTearDown(() => windowManager.removeListener(controller));
 
         if (hidden == null) {
-          await controller.initializeAndShow(title: 'Kelivo');
+          await controller.initializeAndShow(title: 'Orvia');
         } else {
           await controller.initializeAndShow(
-            title: 'Kelivo',
+            title: 'Orvia',
             linuxHideTitleBar: hidden,
           );
         }

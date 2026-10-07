@@ -1,20 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/reasoning_request.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/memory_provider_v2.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/memory/memory_pipeline.dart';
-import 'package:Kelivo/core/services/memory/memory_repository.dart';
-import 'package:Kelivo/core/services/memory/memory_trace.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/reasoning_request.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/memory_provider_v2.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/memory/memory_pipeline.dart';
+import 'package:orvia/core/services/memory/memory_repository.dart';
+import 'package:orvia/core/services/memory/memory_trace.dart';
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -78,7 +78,7 @@ void main() {
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
-    tempDir = await Directory.systemTemp.createTemp('kelivo_memory_trace_');
+    tempDir = await Directory.systemTemp.createTemp('orvia_memory_trace_');
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
 

@@ -3,18 +3,18 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/mcp/kelivo_fetch/kelivo_fetch_server.dart';
+import 'package:orvia/core/services/mcp/orvia_fetch/orvia_fetch_server.dart';
 
 void main() {
-  group('Kelivo fetch MCP', () {
+  group('Orvia fetch MCP', () {
     late HttpServer httpServer;
-    late KelivoFetchMcpServerEngine engine;
+    late OrviaFetchMcpServerEngine engine;
     late Uri baseUri;
 
     setUp(() async {
       httpServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
       baseUri = Uri.parse('http://127.0.0.1:${httpServer.port}');
-      engine = KelivoFetchMcpServerEngine();
+      engine = OrviaFetchMcpServerEngine();
       httpServer.listen((request) async {
         if (request.uri.path == '/echo') {
           final body = await utf8.decoder.bind(request).join();
@@ -87,7 +87,7 @@ void main() {
           (response['result'] as Map<String, dynamic>)['tools'] as List;
       expect(tools, hasLength(1));
       final tool = (tools.single as Map).cast<String, dynamic>();
-      expect(tool['name'], 'kelivo_fetch');
+      expect(tool['name'], 'orvia_fetch');
       expect(tool['description'], contains('HTML is simplified'));
       expect(
         tool['description'],
@@ -314,7 +314,7 @@ void main() {
 }
 
 Future<Map<String, dynamic>> _callFetch(
-  KelivoFetchMcpServerEngine engine,
+  OrviaFetchMcpServerEngine engine,
   Uri url, {
   Map<String, dynamic> arguments = const {},
 }) async {
@@ -324,7 +324,7 @@ Future<Map<String, dynamic>> _callFetch(
             'id': 1,
             'method': 'tools/call',
             'params': {
-              'name': 'kelivo_fetch',
+              'name': 'orvia_fetch',
               'arguments': {'url': url.toString(), ...arguments},
             },
           })

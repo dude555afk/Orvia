@@ -8,14 +8,14 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_data.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/business_restore_service.dart';
-import 'package:Kelivo/core/models/backup.dart';
-import 'package:Kelivo/core/services/backup/data_sync.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_data.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/business_restore_service.dart';
+import 'package:orvia/core/models/backup.dart';
+import 'package:orvia/core/services/backup/data_sync.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
 
 class _FakePathProvider extends PathProviderPlatform {
   _FakePathProvider(this.root);
@@ -88,11 +88,11 @@ void main() {
     late Directory root;
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_data_sync_db_');
+      root = await Directory.systemTemp.createTemp('orvia_data_sync_db_');
       PathProviderPlatform.instance = _FakePathProvider(root.path);
       PackageInfo.setMockInitialValues(
-        appName: 'Kelivo',
-        packageName: 'Kelivo',
+        appName: 'Orvia',
+        packageName: 'Orvia',
         version: '1.0.0-test',
         buildNumber: '1',
         buildSignature: 'test',
@@ -319,7 +319,7 @@ void main() {
           expect(chatCount.read<int>('total'), 1);
           expect(await asset.readAsString(), 'live-asset');
           expect(
-            await Directory('${root.path}/.kelivo_restore').exists(),
+            await Directory('${root.path}/.orvia_restore').exists(),
             isFalse,
           );
         } finally {
@@ -479,7 +479,7 @@ void main() {
           expect(chatCount.read<int>('total'), 1);
           expect(await asset.readAsString(), 'live-asset');
           expect(
-            await Directory('${root.path}/.kelivo_restore').exists(),
+            await Directory('${root.path}/.orvia_restore').exists(),
             isFalse,
           );
         } finally {

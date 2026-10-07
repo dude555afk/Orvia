@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_service.dart';
+import 'package:orvia/core/services/sandbox/mirror_service.dart';
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
 
 enum EnvironmentDependency { python, node, git, ssh, network, archive }
 
@@ -86,8 +86,8 @@ class EnvironmentDependencies extends ChangeNotifier {
   String get probeScript => [
     for (final dependency in EnvironmentDependency.values)
       'if ( ${dependency.probe(alpine: alpine)} ) >/dev/null 2>&1; then '
-          "echo '__kelivo_dep_${dependency.name}=1'; else "
-          "echo '__kelivo_dep_${dependency.name}=0'; fi",
+          "echo '__orvia_dep_${dependency.name}=1'; else "
+          "echo '__orvia_dep_${dependency.name}=0'; fi",
   ].join('\n');
 
   String installScript(EnvironmentDependency dependency) {
@@ -213,7 +213,7 @@ class EnvironmentDependencies extends ChangeNotifier {
     final lines = const LineSplitter().convert(output).toSet();
     final statuses = <EnvironmentDependency, DependencyStatus>{};
     for (final dependency in EnvironmentDependency.values) {
-      final prefix = '__kelivo_dep_${dependency.name}=';
+      final prefix = '__orvia_dep_${dependency.name}=';
       final installed = lines.contains('${prefix}1');
       final missing = lines.contains('${prefix}0');
       if (installed == missing) {

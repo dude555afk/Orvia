@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:Kelivo/shared/widgets/ios_time_picker.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/shared/widgets/ios_time_picker.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -34,8 +34,8 @@ import '../backup_restore_error_message.dart';
 import '../forward_compat_consent_dialog.dart';
 import '../backup_restart_dialog.dart';
 import '../widgets/backup_reminder_helpers.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
 import '../../../core/database/startup_failure_report.dart' show formatBytes;
 
 // File size formatter (B, KB, MB, GB)
@@ -2494,7 +2494,7 @@ class _WebDavSettingsPageState extends State<_WebDavSettingsPage> {
     _userCtrl = TextEditingController(text: widget.cfg.username);
     _passCtrl = TextEditingController(text: widget.cfg.password);
     _pathCtrl = TextEditingController(
-      text: widget.cfg.path.isEmpty ? 'kelivo_backups' : widget.cfg.path,
+      text: widget.cfg.path.isEmpty ? 'orvia_backups' : widget.cfg.path,
     );
     _userAgentCtrl = TextEditingController(text: widget.cfg.userAgent);
   }
@@ -2579,7 +2579,7 @@ class _WebDavSettingsPageState extends State<_WebDavSettingsPage> {
                             _InputRow(
                               label: l10n.backupPagePath,
                               controller: _pathCtrl,
-                              hint: 'kelivo_backups',
+                              hint: 'orvia_backups',
                             ),
                             const SizedBox(height: 12),
                             _InputRow(
@@ -2617,7 +2617,7 @@ class _WebDavSettingsPageState extends State<_WebDavSettingsPage> {
       username: _userCtrl.text.trim(),
       password: _passCtrl.text,
       path: _pathCtrl.text.trim().isEmpty
-          ? 'kelivo_backups'
+          ? 'orvia_backups'
           : _pathCtrl.text.trim(),
       userAgent: _userAgentCtrl.text.trim(),
     );
@@ -2668,7 +2668,7 @@ class _S3SettingsPageState extends State<_S3SettingsPage> {
     _secretKeyCtrl = TextEditingController(text: widget.cfg.secretAccessKey);
     _sessionTokenCtrl = TextEditingController(text: widget.cfg.sessionToken);
     _prefixCtrl = TextEditingController(
-      text: widget.cfg.prefix.isEmpty ? 'kelivo_backups' : widget.cfg.prefix,
+      text: widget.cfg.prefix.isEmpty ? 'orvia_backups' : widget.cfg.prefix,
     );
     _userAgentCtrl = TextEditingController(text: widget.cfg.userAgent);
     _pathStyle = widget.cfg.pathStyle;
@@ -2778,7 +2778,7 @@ class _S3SettingsPageState extends State<_S3SettingsPage> {
                             _InputRow(
                               label: l10n.backupPageS3Prefix,
                               controller: _prefixCtrl,
-                              hint: 'kelivo_backups',
+                              hint: 'orvia_backups',
                             ),
                             const SizedBox(height: 12),
                             _InputRow(
@@ -2857,7 +2857,7 @@ class _S3SettingsPageState extends State<_S3SettingsPage> {
       secretAccessKey: _secretKeyCtrl.text,
       sessionToken: _sessionTokenCtrl.text,
       prefix: _prefixCtrl.text.trim().isEmpty
-          ? 'kelivo_backups'
+          ? 'orvia_backups'
           : _prefixCtrl.text.trim(),
       pathStyle: _pathStyle,
       userAgent: _userAgentCtrl.text.trim(),

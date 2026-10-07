@@ -1,29 +1,29 @@
-#import "KelivoISHEnvironment.h"
+#import "OrviaISHEnvironment.h"
 
 #include <string.h>
 
-const NSUInteger KelivoISHEnvironmentMaxBytes = 128 * 1024;
+const NSUInteger OrviaISHEnvironmentMaxBytes = 128 * 1024;
 
-NSData *KelivoISHEncodeEnvironment(NSDictionary<NSString *, NSString *> *environment,
-                                 KelivoISHEnvironmentError *error) {
-    *error = KelivoISHEnvironmentErrorNone;
+NSData *OrviaISHEncodeEnvironment(NSDictionary<NSString *, NSString *> *environment,
+                                 OrviaISHEnvironmentError *error) {
+    *error = OrviaISHEnvironmentErrorNone;
     NSMutableData *block = [NSMutableData data];
     const char nul = '\0';
     for (NSString *key in environment) {
         if (key.length == 0 || [key containsString:@"="]) {
-            *error = KelivoISHEnvironmentErrorInvalidEntry;
+            *error = OrviaISHEnvironmentErrorInvalidEntry;
             return nil;
         }
         NSString *entry = [NSString stringWithFormat:@"%@=%@", key, environment[key]];
         NSData *bytes = [entry dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];
         if (bytes == nil || memchr(bytes.bytes, '\0', bytes.length) != NULL) {
-            *error = KelivoISHEnvironmentErrorInvalidEntry;
+            *error = OrviaISHEnvironmentErrorInvalidEntry;
             return nil;
         }
         // Reserve both this entry's terminator and the final empty entry.
-        if (block.length + 2 > KelivoISHEnvironmentMaxBytes ||
-            bytes.length > KelivoISHEnvironmentMaxBytes - block.length - 2) {
-            *error = KelivoISHEnvironmentErrorTooLarge;
+        if (block.length + 2 > OrviaISHEnvironmentMaxBytes ||
+            bytes.length > OrviaISHEnvironmentMaxBytes - block.length - 2) {
+            *error = OrviaISHEnvironmentErrorTooLarge;
             return nil;
         }
         [block appendData:bytes];
@@ -33,8 +33,8 @@ NSData *KelivoISHEncodeEnvironment(NSDictionary<NSString *, NSString *> *environ
     return block;
 }
 
-NSString *KelivoISHEnvironmentErrorMessage(KelivoISHEnvironmentError error) {
-    if (error == KelivoISHEnvironmentErrorTooLarge) {
+NSString *OrviaISHEnvironmentErrorMessage(OrviaISHEnvironmentError error) {
+    if (error == OrviaISHEnvironmentErrorTooLarge) {
         return @"Environment variables exceed the iOS sandbox limit of 128 KiB (UTF-8). Reduce their total size and try again.";
     }
     return @"Invalid environment variable name or value.";

@@ -14,9 +14,9 @@ import '../../../theme/app_font_weights.dart';
 import '../../../theme/theme_factory.dart';
 import '../../../utils/brand_assets.dart';
 import 'search_api_keys_page.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
 
 class SearchServiceEditorResult {
   const SearchServiceEditorResult.saved(this.service) : deleted = false;
@@ -328,7 +328,7 @@ class _SearchServiceEditorPageState extends State<SearchServiceEditorPage> {
       );
     }
 
-    if (service is BingLocalOptions || service is KelivoOptions) {
+    if (service is BingLocalOptions || service is OrviaOptions) {
       return const [];
     }
     if (service is DuckDuckGoOptions) {
@@ -1478,8 +1478,8 @@ class _SearchServiceEditorPageState extends State<SearchServiceEditorPage> {
             _text('contentMode'),
           ),
         );
-      case 'kelivo':
-        return KelivoOptions(id: _serviceId);
+      case 'orvia':
+        return OrviaOptions(id: _serviceId);
       default:
         return BingLocalOptions(id: _serviceId);
     }
@@ -2504,7 +2504,7 @@ String _typeForService(SearchServiceOptions service) {
   if (service is ParallelOptions) return 'parallel';
   if (service is KimiOptions) return 'kimi';
   if (service is YouSearchOptions) return 'you';
-  if (service is KelivoOptions) return 'kelivo';
+  if (service is OrviaOptions) return 'orvia';
   return 'bing_local';
 }
 
@@ -2565,8 +2565,8 @@ SearchServiceOptions _defaultService(String type, String id) {
       return KimiOptions(id: id, apiKey: '');
     case 'you':
       return YouSearchOptions(id: id, apiKey: '');
-    case 'kelivo':
-      return KelivoOptions(id: id);
+    case 'orvia':
+      return OrviaOptions(id: id);
     default:
       return BingLocalOptions(id: id);
   }
@@ -2625,7 +2625,7 @@ String _serviceTypeName(BuildContext context, String type) {
       return l10n.searchServiceNameKimi;
     case 'you':
       return l10n.searchServiceNameYou;
-    case 'kelivo':
+    case 'orvia':
       return l10n.searchServiceNameOrvia;
     default:
       return type;

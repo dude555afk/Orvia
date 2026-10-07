@@ -4,18 +4,18 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/scheduled_task.dart';
-import 'package:Kelivo/core/models/scheduled_task_payload.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/scheduled_task_text_executor.dart';
-import 'package:Kelivo/core/services/prepared_scheduled_tasks.dart';
-import 'package:Kelivo/core/services/scheduled_task_notifications.dart';
-import 'package:Kelivo/core/services/scheduled_task_store.dart';
-import 'package:Kelivo/features/home/controllers/chat_controller.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/scheduled_task.dart';
+import 'package:orvia/core/models/scheduled_task_payload.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/scheduled_task_text_executor.dart';
+import 'package:orvia/core/services/prepared_scheduled_tasks.dart';
+import 'package:orvia/core/services/scheduled_task_notifications.dart';
+import 'package:orvia/core/services/scheduled_task_store.dart';
+import 'package:orvia/features/home/controllers/chat_controller.dart';
 import '../../support/business_test_harness.dart';
 
 class _Paths extends PathProviderPlatform {
@@ -64,7 +64,7 @@ void main() {
           },
         );
         final directory = await Directory.systemTemp.createTemp(
-          'kelivo_scheduled_publication_',
+          'orvia_scheduled_publication_',
         );
         final previousPaths = PathProviderPlatform.instance;
         PathProviderPlatform.instance = _Paths(directory.path);
@@ -177,7 +177,7 @@ void main() {
           },
         );
         final directory = await Directory.systemTemp.createTemp(
-          'kelivo_scheduled_owner_',
+          'orvia_scheduled_owner_',
         );
         final previousPaths = PathProviderPlatform.instance;
         PathProviderPlatform.instance = _Paths(directory.path);

@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as image_lib;
 
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/features/chat/widgets/message_export_sheet.dart';
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/features/chat/widgets/message_export_sheet.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 
 Uint8List _solidPng({
   required int width,
@@ -1066,7 +1066,7 @@ void main() {
       message,
       showThinkingAndToolCards: true,
     );
-    expect(exported, isNot(contains('"kelivo"')));
+    expect(exported, isNot(contains('"orvia"')));
     expect(exported, contains('[shot]'));
     expect(exported, contains('caption'));
     expect(exported, contains('![]('));

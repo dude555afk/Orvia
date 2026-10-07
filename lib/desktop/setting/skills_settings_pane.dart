@@ -1,8 +1,8 @@
-import 'package:Kelivo/features/workspace/widgets/skills/skill_import.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skill_labels.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skills_pane.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/features/workspace/widgets/skills/skill_import.dart';
+import 'package:orvia/features/workspace/widgets/skills/skill_labels.dart';
+import 'package:orvia/features/workspace/widgets/skills/skills_pane.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 import 'package:flutter/material.dart';
 
 /// Desktop settings pane wrapping [SkillsPane] with the shared header chrome.

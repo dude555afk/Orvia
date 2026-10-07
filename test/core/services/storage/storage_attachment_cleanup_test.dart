@@ -7,15 +7,15 @@ import 'package:path/path.dart' as p;
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/services/storage/storage_usage_service.dart';
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
-import 'package:Kelivo/core/services/workspace/workspace_session_sync.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tool_context.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/services/storage/storage_usage_service.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/workspace_session_sync.dart';
+import 'package:orvia/core/services/workspace/workspace_tool_context.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 
 class _Paths extends PathProviderPlatform {
   _Paths(this.root);
@@ -91,7 +91,7 @@ void main() {
       final source = await _write(root, 'upload/\u62A5\u544A.txt', 'AAAA');
       final other = await _write(root, 'upload/other.txt', 'BBBB');
       final messages = [
-        _message('kelivo-file:///upload/%E6%8A%A5%E5%91%8A.txt'),
+        _message('orvia-file:///upload/%E6%8A%A5%E5%91%8A.txt'),
         _message(other.path),
       ];
       final contexts = [_context(root, 'a'), _context(root, 'b')];

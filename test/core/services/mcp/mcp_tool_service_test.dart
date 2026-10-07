@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mcp_client/mcp_client.dart' as mcp;
 
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/mcp_provider.dart';
-import 'package:Kelivo/core/services/mcp/mcp_tool_service.dart';
-import 'package:Kelivo/features/chat/widgets/timeline_visibility.dart';
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/mcp_provider.dart';
+import 'package:orvia/core/services/mcp/mcp_tool_service.dart';
+import 'package:orvia/features/chat/widgets/timeline_visibility.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 
 import '../../../support/business_test_harness.dart';
 
@@ -651,7 +651,7 @@ void main() {
       result.markdown,
       isNot(contains(String.fromCharCode(kMcpStructuredImageOpen))),
     );
-    expect(result.markdown, isNot(contains('"kelivo"')));
+    expect(result.markdown, isNot(contains('"orvia"')));
     expect(result.markdown, contains('![](https://cdn.example.com/shot.png)'));
 
     final stored = result.markdown;

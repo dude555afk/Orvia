@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:Kelivo/core/services/sandbox/environment_dependencies.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/sandbox/environment_dependencies.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
 
 class DependencyTestRuntime extends WorkspaceRuntime {
   final requests = <CommandRequest>[];
@@ -19,12 +19,12 @@ class DependencyTestRuntime extends WorkspaceRuntime {
   @override
   Stream<CommandEvent> run(CommandRequest request) async* {
     requests.add(request);
-    if (request.command.contains('__kelivo_dep_')) {
+    if (request.command.contains('__orvia_dep_')) {
       final body = incompleteProbe
-          ? '__kelivo_dep_python=1\n'
+          ? '__orvia_dep_python=1\n'
           : [
               for (final dependency in EnvironmentDependency.values)
-                '__kelivo_dep_${dependency.name}=${installed.contains(dependency) ? 1 : 0}\n',
+                '__orvia_dep_${dependency.name}=${installed.contains(dependency) ? 1 : 0}\n',
             ].join();
       yield CommandOutput(
         OutputStreamKind.stdout,

@@ -6,13 +6,13 @@ import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/backup/chatbox_backup_archive.dart';
+import 'package:orvia/core/services/backup/chatbox_backup_archive.dart';
 
 void main() {
   late Directory root;
 
   setUp(() async {
-    root = await Directory.systemTemp.createTemp('kelivo_chatbox_zip_');
+    root = await Directory.systemTemp.createTemp('orvia_chatbox_zip_');
   });
 
   tearDown(() async {

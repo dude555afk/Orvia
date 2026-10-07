@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/business_settings_router.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/asr/asr_service_options.dart';
-import 'package:Kelivo/core/services/search/search_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/business_settings_router.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/asr/asr_service_options.dart';
+import 'package:orvia/core/services/search/search_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -95,7 +95,7 @@ void main() {
         'OpenAI',
         'SiliconFlow',
         'OpenRouter',
-        'KelivoIN',
+        'OrviaIN',
         'Tensdaq',
         'DeepSeek',
         'AIhubmix',

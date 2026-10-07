@@ -1,31 +1,31 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:Kelivo/core/services/haptics.dart';
-import 'package:Kelivo/core/providers/external_mounts_provider.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
-import 'package:Kelivo/features/settings/widgets/custom_theme_widgets.dart';
-import 'package:Kelivo/features/chat/widgets/workspace_tool_ui.dart'
+import 'package:orvia/core/services/haptics.dart';
+import 'package:orvia/core/providers/external_mounts_provider.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/features/settings/widgets/custom_theme_widgets.dart';
+import 'package:orvia/features/chat/widgets/workspace_tool_ui.dart'
     show workspaceFileTypeIcon;
-import 'package:Kelivo/features/workspace/widgets/desktop_workspace_button.dart';
-import 'package:Kelivo/features/workspace/widgets/files/file_browser_ops.dart';
-import 'package:Kelivo/features/workspace/widgets/files/workspace_prompts.dart';
-import 'package:Kelivo/features/workspace/widgets/files/workspace_file_thumbnail.dart';
-import 'package:Kelivo/features/workspace/widgets/preview/file_preview.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/features/workspace/workspace_layout.dart';
-import 'package:Kelivo/shared/utils/format_bytes.dart';
-import 'package:Kelivo/shared/utils/save_file_picker.dart';
-import 'package:Kelivo/shared/widgets/action_sheet.dart';
-import 'package:Kelivo/shared/widgets/custom_bottom_sheet.dart';
-import 'package:Kelivo/shared/widgets/ios_settings_rows.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/shared/widgets/ios_tile_button.dart';
-import 'package:Kelivo/shared/widgets/option_sheet.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/features/workspace/widgets/desktop_workspace_button.dart';
+import 'package:orvia/features/workspace/widgets/files/file_browser_ops.dart';
+import 'package:orvia/features/workspace/widgets/files/workspace_prompts.dart';
+import 'package:orvia/features/workspace/widgets/files/workspace_file_thumbnail.dart';
+import 'package:orvia/features/workspace/widgets/preview/file_preview.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/features/workspace/workspace_layout.dart';
+import 'package:orvia/shared/utils/format_bytes.dart';
+import 'package:orvia/shared/utils/save_file_picker.dart';
+import 'package:orvia/shared/widgets/action_sheet.dart';
+import 'package:orvia/shared/widgets/custom_bottom_sheet.dart';
+import 'package:orvia/shared/widgets/ios_settings_rows.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/shared/widgets/ios_tile_button.dart';
+import 'package:orvia/shared/widgets/option_sheet.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -447,7 +447,7 @@ class FileBrowserState extends State<FileBrowser> {
     final temp = File(
       p.join(
         Directory.systemTemp.path,
-        'kelivo-$zipName-${DateTime.now().microsecondsSinceEpoch}.zip',
+        'orvia-$zipName-${DateTime.now().microsecondsSinceEpoch}.zip',
       ),
     );
     await _runMutation(

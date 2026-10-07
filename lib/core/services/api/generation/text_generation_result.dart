@@ -4,7 +4,7 @@ import '../../../models/token_usage.dart';
 /// One-shot (non-stream) generation result.
 ///
 /// [parts] are already complete and renderable — image URIs must be full
-/// `data:` / `http(s):` / `file:` / `kelivo-file:` URLs at the parse source,
+/// `data:` / `http(s):` / `file:` / `orvia-file:` URLs at the parse source,
 /// never raw base64 that a later merge step would prefix.
 final class TextGenerationResult {
   const TextGenerationResult({

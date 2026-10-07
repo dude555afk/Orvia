@@ -307,7 +307,7 @@ class _DesktopProvidersBodyState extends State<_DesktopProvidersBody> {
       (name: l10n.providersPageSiliconFlowName, key: 'SiliconFlow'),
       (name: 'Gemini', key: 'Gemini'),
       (name: 'OpenRouter', key: 'OpenRouter'),
-      (name: 'KelivoIN', key: 'KelivoIN'),
+      (name: 'OrviaIN', key: 'OrviaIN'),
       (name: 'Tensdaq', key: 'Tensdaq'),
       (name: 'DeepSeek', key: 'DeepSeek'),
       (name: 'AIhubmix', key: 'AIhubmix'),
@@ -1458,7 +1458,7 @@ class _DesktopProviderDetailPaneState extends State<DesktopProviderDetailPane> {
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () async {
                                   final uri = Uri.parse(
-                                    'https://api.muteki.site/register?aff=kelivo&promo=kelivo',
+                                    'https://api.muteki.site/register?aff=orvia&promo=orvia',
                                   );
                                   try {
                                     final ok = await launchUrl(
@@ -6266,7 +6266,7 @@ class _DesktopProviderShareDialogState
 
     try {
       final file = File(
-        p.join(Directory.systemTemp.path, 'kelivo-provider-qr.png'),
+        p.join(Directory.systemTemp.path, 'orvia-provider-qr.png'),
       );
       await file.writeAsBytes(bytes, flush: true);
       return await ClipboardImages.setImagePath(file.path);

@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/models/api_keys.dart';
-import 'package:Kelivo/core/providers/model_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/embedding/embedding_api_service.dart';
-import 'package:Kelivo/core/services/api/providers/google_vertex.dart';
+import 'package:orvia/core/models/api_keys.dart';
+import 'package:orvia/core/providers/model_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/embedding/embedding_api_service.dart';
+import 'package:orvia/core/services/api/providers/google_vertex.dart';
 
 class _Server {
   _Server._(this._server);
@@ -93,7 +93,7 @@ void main() {
             {'name': 'X-Custom', 'value': 'yes'},
           ],
           'body': [
-            {'key': 'user', 'value': 'kelivo'},
+            {'key': 'user', 'value': 'orvia'},
           ],
         },
       ),
@@ -117,7 +117,7 @@ void main() {
     expect(first.body['model'], 'text-embedding-3-small');
     expect(first.body['dimensions'], 256);
     expect(first.body.containsKey('encoding_format'), isFalse);
-    expect(first.body['user'], 'kelivo');
+    expect(first.body['user'], 'orvia');
   });
 
   test('Gemini uses batchEmbedContents with the task type', () async {

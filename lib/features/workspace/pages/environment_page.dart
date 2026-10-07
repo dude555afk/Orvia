@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'package:Kelivo/features/settings/widgets/custom_theme_widgets.dart';
-import 'package:Kelivo/features/workspace/pages/environment_page_desktop_layout.dart';
-import 'package:Kelivo/features/workspace/pages/environment_page_mobile_layout.dart';
-import 'package:Kelivo/features/workspace/widgets/environment/environment_pane.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/features/workspace/workspace_layout.dart';
+import 'package:orvia/features/settings/widgets/custom_theme_widgets.dart';
+import 'package:orvia/features/workspace/pages/environment_page_desktop_layout.dart';
+import 'package:orvia/features/workspace/pages/environment_page_mobile_layout.dart';
+import 'package:orvia/features/workspace/widgets/environment/environment_pane.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/features/workspace/workspace_layout.dart';
 
-export 'package:Kelivo/features/workspace/widgets/environment/environment_pane.dart';
-export 'package:Kelivo/features/workspace/widgets/environment/environment_status_chip.dart';
+export 'package:orvia/features/workspace/widgets/environment/environment_pane.dart';
+export 'package:orvia/features/workspace/widgets/environment/environment_status_chip.dart';
 
 /// Environment / sandbox settings. Use [EnvironmentPane] to embed the same
 /// body in a desktop settings column.

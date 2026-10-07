@@ -5,15 +5,15 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/services/backup/backup_cancel_token.dart';
-import 'package:Kelivo/core/services/backup/backup_task_progress.dart';
-import 'package:Kelivo/core/services/backup/restore_bundle_preparation.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_plan.dart';
-import 'package:Kelivo/core/services/backup/restore_receipt.dart';
-import 'package:Kelivo/core/services/backup/restore_startup_gate.dart';
-import 'package:Kelivo/core/services/backup/restore_workspace_lock.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/services/backup/backup_cancel_token.dart';
+import 'package:orvia/core/services/backup/backup_task_progress.dart';
+import 'package:orvia/core/services/backup/restore_bundle_preparation.dart';
+import 'package:orvia/core/services/backup/restore_previous_plan.dart';
+import 'package:orvia/core/services/backup/restore_receipt.dart';
+import 'package:orvia/core/services/backup/restore_startup_gate.dart';
+import 'package:orvia/core/services/backup/restore_workspace_lock.dart';
 
 Future<({Directory directory, String manifestSha256})> _createBundle(
   Directory root, {
@@ -30,7 +30,7 @@ Future<({Directory directory, String manifestSha256})> _createBundle(
       'sha256': (await sha256.bind(settings.openRead()).first).toString(),
     },
   };
-  final database = File(p.join(directory.path, 'database', 'kelivo.db'));
+  final database = File(p.join(directory.path, 'database', 'orvia.db'));
   ChatDatabaseSnapshotInfo? databaseInfo;
   if (includeDatabase) {
     await database.parent.create(recursive: true);
@@ -43,7 +43,7 @@ Future<({Directory directory, String manifestSha256})> _createBundle(
     databaseInfo = await ChatDatabaseRepository.prepareSnapshotForRestore(
       database,
     );
-    entries['database/kelivo.db'] = {
+    entries['database/orvia.db'] = {
       'bytes': await database.length(),
       'sha256': (await sha256.bind(database.openRead()).first).toString(),
     };
@@ -60,7 +60,7 @@ Future<({Directory directory, String manifestSha256})> _createBundle(
   final manifest = File(p.join(directory.path, 'manifest.json'));
   await manifest.writeAsString(
     jsonEncode({
-      'format': 'kelivo-backup',
+      'format': 'orvia-backup',
       'formatVersion': 2,
       'payloadKind': includeDatabase ? 'sqlite' : 'settings-only',
       'createdAtUtc': '2026-07-09T00:00:00.000Z',
@@ -70,7 +70,7 @@ Future<({Directory directory, String manifestSha256})> _createBundle(
       'secretsIncluded': true,
       if (includeDatabase)
         'database': {
-          'entry': 'database/kelivo.db',
+          'entry': 'database/orvia.db',
           'schemaVersion': databaseInfo!.schemaVersion,
           'conversationCount': databaseInfo.conversationCount,
           'messageCount': databaseInfo.messageCount,
@@ -91,7 +91,7 @@ void main() {
 
     setUp(() async {
       root = await Directory.systemTemp.createTemp(
-        'kelivo_restore_preparation_test_',
+        'orvia_restore_preparation_test_',
       );
     });
 
@@ -161,7 +161,7 @@ void main() {
               as Map<String, dynamic>;
       expect(candidateManifest['includeFiles'], isFalse);
       expect((candidateManifest['entries'] as Map<String, dynamic>).keys, [
-        'database/kelivo.db',
+        'database/orvia.db',
       ]);
     });
 

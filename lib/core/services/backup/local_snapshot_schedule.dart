@@ -193,7 +193,7 @@ final class LocalSnapshotPaths {
   /// never fire. On iOS it also means a user can retrieve one by hand.
   static const directoryName = 'snapshots';
 
-  static const filePrefix = 'kelivo-snapshot-';
+  static const filePrefix = 'orvia-snapshot-';
   static const fileSuffix = '.zip';
   static const metadataSuffix = '.json';
 

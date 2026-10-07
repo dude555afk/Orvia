@@ -2,10 +2,10 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:Kelivo/core/models/chat_input_data.dart';
-import 'package:Kelivo/core/services/incoming_share_service.dart';
-import 'package:Kelivo/core/services/chat/document_text_extractor.dart';
-import 'package:Kelivo/utils/upload_dedupe.dart';
+import 'package:orvia/core/models/chat_input_data.dart';
+import 'package:orvia/core/services/incoming_share_service.dart';
+import 'package:orvia/core/services/chat/document_text_extractor.dart';
+import 'package:orvia/utils/upload_dedupe.dart';
 import 'package:archive/archive_io.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +21,7 @@ void main() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 
   setUp(() {
-    root = Directory.systemTemp.createTempSync('kelivo_incoming_');
+    root = Directory.systemTemp.createTempSync('orvia_incoming_');
     service = IncomingShareService(channel);
   });
 

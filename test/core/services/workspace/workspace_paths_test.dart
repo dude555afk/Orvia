@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
 
 void main() {
   late Directory tmp;
@@ -13,7 +13,7 @@ void main() {
   late Directory skills;
 
   setUp(() async {
-    tmp = await Directory.systemTemp.createTemp('kelivo_ws_paths_');
+    tmp = await Directory.systemTemp.createTemp('orvia_ws_paths_');
     workspace = Directory(p.join(tmp.path, 'ws'))..createSync();
     session = Directory(p.join(tmp.path, 'session'))..createSync();
     skills = Directory(p.join(tmp.path, 'skills'))..createSync();

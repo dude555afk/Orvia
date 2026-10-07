@@ -1,14 +1,14 @@
-import 'package:Kelivo/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../support/business_test_harness.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/workspace/workspace_tool_metadata.dart';
-import 'package:Kelivo/core/services/workspace/file_link_resolver.dart';
-import 'package:Kelivo/features/chat/widgets/produced_files_row.dart';
-import 'package:Kelivo/features/chat/widgets/workspace_tool_ui.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/services/workspace/workspace_tool_metadata.dart';
+import 'package:orvia/core/services/workspace/file_link_resolver.dart';
+import 'package:orvia/features/chat/widgets/produced_files_row.dart';
+import 'package:orvia/features/chat/widgets/workspace_tool_ui.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 
 WorkspaceToolPart _write({required List<String> links, List<String>? files}) {
   return WorkspaceToolPart(
@@ -23,7 +23,7 @@ WorkspaceToolPart _write({required List<String> links, List<String>? files}) {
           WorkspaceToolFile(
             path: files != null && i < files.length
                 ? files[i]
-                : KelivoLink.tryParse(links[i])?.relativePath ?? links[i],
+                : OrviaLink.tryParse(links[i])?.relativePath ?? links[i],
             link: links[i],
             role: WorkspaceFileRole.modified,
           ),
@@ -35,13 +35,13 @@ WorkspaceToolPart _write({required List<String> links, List<String>? files}) {
 void main() {
   test('dedupes produced files by first appearance', () {
     final entries = collectProducedFileEntries([
-      _write(links: ['kelivo://workspace/a.txt']),
-      _write(links: ['kelivo://workspace/b.txt']),
-      _write(links: ['kelivo://workspace/a.txt']),
+      _write(links: ['orvia://workspace/a.txt']),
+      _write(links: ['orvia://workspace/b.txt']),
+      _write(links: ['orvia://workspace/a.txt']),
     ]);
     expect(entries.map((e) => e.dedupeKey).toList(), [
-      'kelivo://workspace/a.txt',
-      'kelivo://workspace/b.txt',
+      'orvia://workspace/a.txt',
+      'orvia://workspace/b.txt',
     ]);
   });
 
@@ -64,7 +64,7 @@ void main() {
       );
       const result = WorkspaceToolFile(
         path: '/workspace/result.csv',
-        link: 'kelivo://workspace/result.csv',
+        link: 'orvia://workspace/result.csv',
         role: WorkspaceFileRole.created,
       );
       final entries = collectProducedFileEntries([
@@ -107,8 +107,8 @@ void main() {
 
   test('marks image links', () {
     final entries = collectProducedFileEntries([
-      _write(links: ['kelivo://workspace/plot.PNG']),
-      _write(links: ['kelivo://workspace/note.txt']),
+      _write(links: ['orvia://workspace/plot.PNG']),
+      _write(links: ['orvia://workspace/note.txt']),
     ]);
     expect(entries[0].isImage, isTrue);
     expect(entries[1].isImage, isFalse);
@@ -118,14 +118,14 @@ void main() {
     'decodes link-only labels once and preserves their original targets',
     () {
       const cases = {
-        'kelivo://workspace/%E6%96%B0%E6%96%87%E4%BB%B6.txt':
+        'orvia://workspace/%E6%96%B0%E6%96%87%E4%BB%B6.txt':
             '\u65B0\u6587\u4EF6.txt',
-        'kelivo://chat/outputs/\u62A5\u544A%20\u7D42\u7A3F.txt':
+        'orvia://chat/outputs/\u62A5\u544A%20\u7D42\u7A3F.txt':
             '\u62A5\u544A \u7D42\u7A3F.txt',
-        'kelivo://workspace/\u8CC7\u6599/한글.txt': '\u8CC7\u6599/한글.txt',
-        'kelivo://workspace/literal%2520%25.txt': 'literal%20%.txt',
-        'kelivo://workspace/invalid%ZZ.txt':
-            'kelivo://workspace/invalid%ZZ.txt',
+        'orvia://workspace/\u8CC7\u6599/한글.txt': '\u8CC7\u6599/한글.txt',
+        'orvia://workspace/literal%2520%25.txt': 'literal%20%.txt',
+        'orvia://workspace/invalid%ZZ.txt':
+            'orvia://workspace/invalid%ZZ.txt',
       };
       for (final testCase in cases.entries) {
         final entry = collectProducedFileEntries([
@@ -142,7 +142,7 @@ void main() {
     const path = '/workspace/\u539F\u59CB%20\u6587\u4EF6.txt';
     final entry = collectProducedFileEntries([
       _write(
-        links: ['kelivo://workspace/\u539F\u59CB%2520\u6587\u4EF6.txt'],
+        links: ['orvia://workspace/\u539F\u59CB%2520\u6587\u4EF6.txt'],
         files: [path],
       ),
     ]).single;
@@ -152,7 +152,7 @@ void main() {
   testWidgets('shows a decoded CJK name in the produced file chip', (
     tester,
   ) async {
-    const link = 'kelivo://workspace/%E6%96%B0%E6%96%87%E4%BB%B6.txt';
+    const link = 'orvia://workspace/%E6%96%B0%E6%96%87%E4%BB%B6.txt';
     await tester.pumpWidget(
       ChangeNotifierProvider(
         create: (_) => SettingsProvider(createBusinessTestPreferences()),
@@ -184,7 +184,7 @@ void main() {
   testWidgets('limits visible chips and shows +N', (tester) async {
     final parts = <WorkspaceToolPart>[
       for (var i = 0; i < 15; i++)
-        _write(links: ['kelivo://workspace/file_$i.txt']),
+        _write(links: ['orvia://workspace/file_$i.txt']),
     ];
     expect(collectProducedFileEntries(parts), hasLength(15));
 

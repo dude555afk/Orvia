@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:Kelivo/core/models/workspace_directory_access.dart';
-import 'package:Kelivo/core/providers/external_mounts_provider.dart';
+import 'package:orvia/core/models/workspace_directory_access.dart';
+import 'package:orvia/core/providers/external_mounts_provider.dart';
 import '../sandbox/sandbox_channel_harness.dart';
 import 'dart:io';
 
@@ -11,15 +11,15 @@ import 'package:path/path.dart' as p;
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/core/services/workspace/file_link_resolver.dart';
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tools_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/core/services/workspace/file_link_resolver.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/workspace/workspace_tools_service.dart';
 
 class _FakePathProviderPlatform extends PathProviderPlatform {
   _FakePathProviderPlatform(this.path);
@@ -42,47 +42,47 @@ class _FakePathProviderPlatform extends PathProviderPlatform {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('KelivoLink.tryParse', () {
+  group('OrviaLink.tryParse', () {
     test('parses workspace, chat, skill, and terminal kinds', () {
-      final workspace = KelivoLink.tryParse(
-        'kelivo://workspace/docs/readme.md',
+      final workspace = OrviaLink.tryParse(
+        'orvia://workspace/docs/readme.md',
       );
-      expect(workspace?.kind, KelivoLinkKind.workspaceFile);
+      expect(workspace?.kind, OrviaLinkKind.workspaceFile);
       expect(workspace?.relativePath, 'docs/readme.md');
 
-      final attachment = KelivoLink.tryParse(
-        'kelivo://chat/attachments/photo.png',
+      final attachment = OrviaLink.tryParse(
+        'orvia://chat/attachments/photo.png',
       );
-      expect(attachment?.kind, KelivoLinkKind.chatAttachment);
+      expect(attachment?.kind, OrviaLinkKind.chatAttachment);
       expect(attachment?.relativePath, 'photo.png');
 
-      final output = KelivoLink.tryParse('kelivo://chat/outputs/result.json');
-      expect(output?.kind, KelivoLinkKind.chatOutput);
+      final output = OrviaLink.tryParse('orvia://chat/outputs/result.json');
+      expect(output?.kind, OrviaLinkKind.chatOutput);
       expect(output?.relativePath, 'result.json');
 
-      final skill = KelivoLink.tryParse('kelivo://skills/weather/SKILL.md');
-      expect(skill?.kind, KelivoLinkKind.skillFile);
+      final skill = OrviaLink.tryParse('orvia://skills/weather/SKILL.md');
+      expect(skill?.kind, OrviaLinkKind.skillFile);
       expect(skill?.relativePath, 'weather/SKILL.md');
 
-      final terminal = KelivoLink.tryParse('kelivo://terminal?cmd=ls%20-la');
-      expect(terminal?.kind, KelivoLinkKind.terminal);
+      final terminal = OrviaLink.tryParse('orvia://terminal?cmd=ls%20-la');
+      expect(terminal?.kind, OrviaLinkKind.terminal);
       expect(terminal?.terminalCommand, 'ls -la');
       expect(terminal?.relativePath, '');
     });
 
     test('directory references retain complete guest paths for copying', () {
       const cases = {
-        'kelivo://workspace/reports': '/workspace/reports',
-        'kelivo://chat/attachments/incoming': '/chat/attachments/incoming',
-        'kelivo://chat/outputs/reports': '/chat/outputs/reports',
-        'kelivo://session/notes': '/chat/notes',
-        'kelivo://skills/skill-id': '/skills/skill-id',
-        'kelivo://tmp/build': '/tmp/build',
-        'kelivo://mounts/mount-id/reports': '/mounts/Renamed/reports',
+        'orvia://workspace/reports': '/workspace/reports',
+        'orvia://chat/attachments/incoming': '/chat/attachments/incoming',
+        'orvia://chat/outputs/reports': '/chat/outputs/reports',
+        'orvia://session/notes': '/chat/notes',
+        'orvia://skills/skill-id': '/skills/skill-id',
+        'orvia://tmp/build': '/tmp/build',
+        'orvia://mounts/mount-id/reports': '/mounts/Renamed/reports',
       };
       for (final entry in cases.entries) {
         expect(
-          KelivoLink.tryParse(
+          OrviaLink.tryParse(
             entry.key,
           )!.guestPath(mountRoot: '/mounts/Renamed'),
           entry.value,
@@ -91,84 +91,84 @@ void main() {
     });
 
     test('accepts underscores in workspace paths', () {
-      final link = KelivoLink.tryParse(
-        'kelivo://workspace/shenyu/daily_sign.py',
+      final link = OrviaLink.tryParse(
+        'orvia://workspace/shenyu/daily_sign.py',
       );
-      expect(link?.kind, KelivoLinkKind.workspaceFile);
+      expect(link?.kind, OrviaLinkKind.workspaceFile);
       expect(link?.relativePath, 'shenyu/daily_sign.py');
     });
 
     test('percent-decodes path segments', () {
-      final link = KelivoLink.tryParse('kelivo://workspace/hello%20world.txt');
-      expect(link?.kind, KelivoLinkKind.workspaceFile);
+      final link = OrviaLink.tryParse('orvia://workspace/hello%20world.txt');
+      expect(link?.kind, OrviaLinkKind.workspaceFile);
       expect(link?.relativePath, 'hello world.txt');
     });
 
     test('accepts raw UTF-8 and encoded Chinese workspace names', () {
-      final raw = KelivoLink.tryParse(
-        'kelivo://workspace/\u5458\u5DE5\u8868.csv',
+      final raw = OrviaLink.tryParse(
+        'orvia://workspace/\u5458\u5DE5\u8868.csv',
       );
-      expect(raw?.kind, KelivoLinkKind.workspaceFile);
+      expect(raw?.kind, OrviaLinkKind.workspaceFile);
       expect(raw?.relativePath, '\u5458\u5DE5\u8868.csv');
 
-      final encoded = KelivoLink.tryParse(
-        'kelivo://workspace/${Uri.encodeComponent('\u5458\u5DE5\u8868.csv')}',
+      final encoded = OrviaLink.tryParse(
+        'orvia://workspace/${Uri.encodeComponent('\u5458\u5DE5\u8868.csv')}',
       );
-      expect(encoded?.kind, KelivoLinkKind.workspaceFile);
+      expect(encoded?.kind, OrviaLinkKind.workspaceFile);
       expect(encoded?.relativePath, '\u5458\u5DE5\u8868.csv');
     });
 
     test('decodes encoded directory segments', () {
-      final link = KelivoLink.tryParse(
-        'kelivo://workspace/sub%20dir/a%20b.txt',
+      final link = OrviaLink.tryParse(
+        'orvia://workspace/sub%20dir/a%20b.txt',
       );
-      expect(link?.kind, KelivoLinkKind.workspaceFile);
+      expect(link?.kind, OrviaLinkKind.workspaceFile);
       expect(link?.relativePath, 'sub dir/a b.txt');
     });
 
-    test('parses kelivo://chat/<id>/Chinese filename as chat output', () {
+    test('parses orvia://chat/<id>/Chinese filename as chat output', () {
       const conversationId = 'conv-\u4E2D\u6587';
-      final link = KelivoLink.tryParse(
-        'kelivo://chat/$conversationId/\u8F93\u51FA.png',
+      final link = OrviaLink.tryParse(
+        'orvia://chat/$conversationId/\u8F93\u51FA.png',
       );
-      expect(link?.kind, KelivoLinkKind.chatOutput);
+      expect(link?.kind, OrviaLinkKind.chatOutput);
       expect(link?.conversationId, conversationId);
       expect(link?.relativePath, '\u8F93\u51FA.png');
     });
 
     test('rejects .. segments and encoded traversal', () {
-      expect(KelivoLink.tryParse('kelivo://workspace/../secret'), isNull);
+      expect(OrviaLink.tryParse('orvia://workspace/../secret'), isNull);
       expect(
-        KelivoLink.tryParse('kelivo://workspace/foo/../../etc/passwd'),
+        OrviaLink.tryParse('orvia://workspace/foo/../../etc/passwd'),
         isNull,
       );
-      expect(KelivoLink.tryParse('kelivo://workspace/%2e%2e/secret'), isNull);
-      expect(KelivoLink.tryParse('kelivo://workspace/%2e%2e%2fsecret'), isNull);
-      expect(KelivoLink.tryParse('kelivo://chat/attachments/../x'), isNull);
-      expect(KelivoLink.tryParse('kelivo://skills/foo/../bar'), isNull);
+      expect(OrviaLink.tryParse('orvia://workspace/%2e%2e/secret'), isNull);
+      expect(OrviaLink.tryParse('orvia://workspace/%2e%2e%2fsecret'), isNull);
+      expect(OrviaLink.tryParse('orvia://chat/attachments/../x'), isNull);
+      expect(OrviaLink.tryParse('orvia://skills/foo/../bar'), isNull);
     });
 
     test('rejects absolute-host and drive paths', () {
-      expect(KelivoLink.tryParse('kelivo://workspace//etc/passwd'), isNull);
+      expect(OrviaLink.tryParse('orvia://workspace//etc/passwd'), isNull);
       expect(
-        KelivoLink.tryParse('kelivo://workspace/C:/Windows/win.ini'),
+        OrviaLink.tryParse('orvia://workspace/C:/Windows/win.ini'),
         isNull,
       );
-      expect(KelivoLink.tryParse('kelivo:///workspace/foo'), isNull);
+      expect(OrviaLink.tryParse('orvia:///workspace/foo'), isNull);
     });
 
     test('rejects unknown hosts and incomplete chat/skill paths', () {
-      expect(KelivoLink.tryParse('kelivo://other/foo'), isNull);
+      expect(OrviaLink.tryParse('orvia://other/foo'), isNull);
       expect(
-        KelivoLink.tryParse('kelivo://chat/attachments')?.relativePath,
+        OrviaLink.tryParse('orvia://chat/attachments')?.relativePath,
         isEmpty,
       );
       expect(
-        KelivoLink.tryParse('kelivo://skills/only-id')?.relativePath,
+        OrviaLink.tryParse('orvia://skills/only-id')?.relativePath,
         'only-id',
       );
-      expect(KelivoLink.tryParse('https://example.com'), isNull);
-      expect(KelivoLink.tryParse(''), isNull);
+      expect(OrviaLink.tryParse('https://example.com'), isNull);
+      expect(OrviaLink.tryParse(''), isNull);
     });
   });
 
@@ -183,7 +183,7 @@ void main() {
     late PathProviderPlatform previousPathProvider;
 
     setUp(() async {
-      tempDir = await Directory.systemTemp.createTemp('kelivo_file_link_');
+      tempDir = await Directory.systemTemp.createTemp('orvia_file_link_');
       workspaceRoot = Directory(p.join(tempDir.path, 'ws'));
       appData = Directory(p.join(tempDir.path, 'app'));
       await workspaceRoot.create(recursive: true);
@@ -218,7 +218,7 @@ void main() {
       final file = File(p.join(workspaceRoot.path, 'foo.txt'));
       await file.writeAsString('hello');
 
-      final link = KelivoLink.tryParse('kelivo://workspace/foo.txt');
+      final link = OrviaLink.tryParse('orvia://workspace/foo.txt');
       expect(link, isNotNull);
       final resolved = await resolver.resolveToHostFile(
         link!,
@@ -231,7 +231,7 @@ void main() {
     test('returns null when workspace is unbound', () async {
       final file = File(p.join(workspaceRoot.path, 'foo.txt'));
       await file.writeAsString('hello');
-      final link = KelivoLink.tryParse('kelivo://workspace/foo.txt')!;
+      final link = OrviaLink.tryParse('orvia://workspace/foo.txt')!;
       final resolved = await resolver.resolveToHostFile(
         link,
         conversationId: 'conv-1',
@@ -245,8 +245,8 @@ void main() {
       () async {
         final secret = File(p.join(tempDir.path, 'secret.txt'));
         await secret.writeAsString('nope');
-        final link = KelivoLink(
-          kind: KelivoLinkKind.workspaceFile,
+        final link = OrviaLink(
+          kind: OrviaLinkKind.workspaceFile,
           relativePath: '../secret.txt',
         );
         final resolved = await resolver.resolveToHostFile(
@@ -259,7 +259,7 @@ void main() {
     );
 
     test('returns null for a missing workspace file', () async {
-      final link = KelivoLink.tryParse('kelivo://workspace/missing.txt')!;
+      final link = OrviaLink.tryParse('orvia://workspace/missing.txt')!;
       final resolved = await resolver.resolveToHostFile(
         link,
         conversationId: 'conv-1',
@@ -290,12 +290,12 @@ void main() {
         await output.writeAsString('out');
 
         final attachResolved = await resolver.resolveToHostFile(
-          KelivoLink.tryParse('kelivo://chat/attachments/a.txt')!,
+          OrviaLink.tryParse('orvia://chat/attachments/a.txt')!,
           conversationId: conversationId,
           binding: const WorkspaceBinding(),
         );
         final outputResolved = await resolver.resolveToHostFile(
-          KelivoLink.tryParse('kelivo://chat/outputs/b.txt')!,
+          OrviaLink.tryParse('orvia://chat/outputs/b.txt')!,
           conversationId: conversationId,
           binding: const WorkspaceBinding(),
         );
@@ -312,15 +312,15 @@ void main() {
       await skillFile.writeAsString('# skill');
 
       final resolved = await resolver.resolveToHostFile(
-        KelivoLink.tryParse('kelivo://skills/weather/SKILL.md')!,
+        OrviaLink.tryParse('orvia://skills/weather/SKILL.md')!,
         conversationId: 'conv-1',
         binding: const WorkspaceBinding(),
       );
       expect(resolved?.path, skillFile.path);
 
       final escaped = await resolver.resolveToHostFile(
-        const KelivoLink(
-          kind: KelivoLinkKind.skillFile,
+        const OrviaLink(
+          kind: OrviaLinkKind.skillFile,
           relativePath: 'weather/../secret.md',
         ),
         conversationId: 'conv-1',
@@ -351,8 +351,8 @@ void main() {
         expect(href, contains(Uri.encodeComponent('\u5458\u5DE5\u8868.csv')));
         expect(href, isNot(contains('\u5458\u5DE5\u8868')));
 
-        final parsed = KelivoLink.tryParse(href!);
-        expect(parsed?.kind, KelivoLinkKind.workspaceFile);
+        final parsed = OrviaLink.tryParse(href!);
+        expect(parsed?.kind, OrviaLinkKind.workspaceFile);
         expect(parsed?.relativePath, '\u5458\u5DE5\u8868.csv');
         final resolved = await resolver.resolveToHostFile(
           parsed!,
@@ -376,8 +376,8 @@ void main() {
       );
       await output.parent.create(recursive: true);
       await output.writeAsString('png');
-      final parsed = KelivoLink.tryParse(
-        'kelivo://chat/$conversationId/${Uri.encodeComponent('\u8F93\u51FA.png')}',
+      final parsed = OrviaLink.tryParse(
+        'orvia://chat/$conversationId/${Uri.encodeComponent('\u8F93\u51FA.png')}',
       );
       expect(parsed, isNotNull);
       final resolved = await resolver.resolveToHostFile(
@@ -391,7 +391,7 @@ void main() {
     test(
       'directory roots resolve to folders, and missing files have an explicit reason',
       () async {
-        final rootLink = KelivoLink.tryParse('kelivo://workspace/')!;
+        final rootLink = OrviaLink.tryParse('orvia://workspace/')!;
         final directory = await resolver.resolveToHostEntry(
           rootLink,
           conversationId: 'conv-1',
@@ -409,7 +409,7 @@ void main() {
         );
         await expectLater(
           resolver.resolveToHostEntry(
-            KelivoLink.tryParse('kelivo://workspace/gone.txt')!,
+            OrviaLink.tryParse('orvia://workspace/gone.txt')!,
             conversationId: 'conv-1',
             binding: binding(),
           ),
@@ -438,7 +438,7 @@ void main() {
         ]) {
           expect(
             await resolver.resolveToHostEntry(
-              KelivoLink.tryParse('kelivo://workspace/$path')!,
+              OrviaLink.tryParse('orvia://workspace/$path')!,
               conversationId: 'conv-1',
               binding: binding(),
             ),
@@ -498,7 +498,7 @@ void main() {
             ),
             paths: paths,
           )!;
-          final parsed = KelivoLink.tryParse(link)!;
+          final parsed = OrviaLink.tryParse(link)!;
           expect(parsed.mountId, mounts.entries.single.id);
           final mountResolver = FileLinkResolver(
             workspaces: workspaces,
@@ -513,8 +513,8 @@ void main() {
             ))?.path,
             file.path,
           );
-          final rootLink = KelivoLink.tryParse(
-            'kelivo://mounts/${parsed.mountId}',
+          final rootLink = OrviaLink.tryParse(
+            'orvia://mounts/${parsed.mountId}',
           )!;
           expect(
             await mountResolver.resolveToHostEntry(
@@ -570,7 +570,7 @@ void main() {
 
     test('terminal links do not resolve to a file', () async {
       final resolved = await resolver.resolveToHostFile(
-        KelivoLink.tryParse('kelivo://terminal?cmd=pwd')!,
+        OrviaLink.tryParse('orvia://terminal?cmd=pwd')!,
         conversationId: 'conv-1',
         binding: binding(),
       );

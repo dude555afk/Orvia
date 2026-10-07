@@ -2,15 +2,15 @@ import 'package:path/path.dart' as p;
 
 /// Logical URI for managed app-local files.
 ///
-/// Wire form: `kelivo-file:///<root>/<relative...>`
+/// Wire form: `orvia-file:///<root>/<relative...>`
 /// where `<root>` ∈ { upload, images, avatars, fonts }.
 ///
 /// Pure/lexical — no filesystem I/O (`dart:io` is forbidden). Roots are
 /// injected by the caller.
-final class KelivoFileUri {
-  KelivoFileUri._();
+final class OrviaFileUri {
+  OrviaFileUri._();
 
-  static const String _scheme = 'kelivo-file';
+  static const String _scheme = 'orvia-file';
   static const String _prefix = '$_scheme:';
   static const String _head = '$_scheme:///';
 
@@ -22,12 +22,12 @@ final class KelivoFileUri {
   ];
 
   /// Cheap prefix check. Does **not** validate structure.
-  static bool isKelivoFileUri(String value) => value.startsWith(_prefix);
+  static bool isOrviaFileUri(String value) => value.startsWith(_prefix);
 
   /// Strict decode. Returns `['upload','foo.png']` or `null` if invalid.
   static List<String>? decodeToSegments(String uri) {
-    // Require empty authority: `kelivo-file:///...`.
-    // Rejects `kelivo-file://host/...` and `kelivo-file:/...`.
+    // Require empty authority: `orvia-file:///...`.
+    // Rejects `orvia-file://host/...` and `orvia-file:/...`.
     if (!uri.startsWith(_head)) return null;
     final rest = uri.substring(_head.length);
     if (rest.isEmpty) return null;
@@ -59,7 +59,7 @@ final class KelivoFileUri {
   }
 
   /// Resolve against an absolute app-data [root]. No existence checks.
-  /// Returns `null` when [uri] is not a valid kelivo-file URI.
+  /// Returns `null` when [uri] is not a valid orvia-file URI.
   static String? resolveToAbsolute(String uri, {required String root}) {
     final segments = decodeToSegments(uri);
     if (segments == null) return null;
@@ -102,28 +102,28 @@ final class KelivoFileUri {
   }
 
   /// Known production bundle / package identifiers that own managed roots.
-  /// Substring matches (e.g. `com.other.kelivo.notes`) are intentionally
+  /// Substring matches (e.g. `com.other.orvia.notes`) are intentionally
   /// rejected — only exact whitelist entries count.
   static const Set<String> _knownBundleIds = {
-    'com.psyche.kelivo',
-    'psyche.kelivo',
+    'com.dude555afk.orvia',
+    'com.dude555afk.orvia',
   };
 
   /// Windows AppData folder name (Flutter BINARY_NAME). Compared
   /// case-insensitively as a whole segment — not a substring.
-  static const String _windowsAppFolder = 'kelivo';
+  static const String _windowsAppFolder = 'orvia';
 
   static final RegExp _iosUuid = RegExp(
     r'^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$',
   );
 
   /// Best-effort conversion of a legacy absolute sandbox path into a
-  /// kelivo-file URI. Marker order (strict platform sandboxes only):
+  /// orvia-file URI. Marker order (strict platform sandboxes only):
   /// 1. iOS device `/var/mobile/...` (path-start anchored)
   /// 2. iOS Simulator `/Users/.../CoreSimulator/...` (path-start anchored)
-  /// 3. macOS Kelivo container Documents (exact bundle whitelist)
+  /// 3. macOS Orvia container Documents (exact bundle whitelist)
   /// 4. macOS/Linux Application Support / `.local/share` (exact whitelist)
-  /// 5. Windows `AppData\Local|Roaming\[com.psyche\]kelivo`
+  /// 5. Windows `AppData\Local|Roaming\[com.psyche\]orvia`
   /// 6. Android package-private app_flutter / files (exact package whitelist)
   /// 7. Generic fallback: first `/<managed>/` occurrence
   ///    (disabled when [allowGenericFallback] is false)
@@ -166,7 +166,7 @@ final class KelivoFileUri {
       }
     }
 
-    // macOS Kelivo app container Documents (exact bundle id).
+    // macOS Orvia app container Documents (exact bundle id).
     if (tail == null) {
       final macContainer = RegExp(
         r'^/Users/[^/]+/Library/Containers/([^/]+)/Data/Documents/',
@@ -180,7 +180,7 @@ final class KelivoFileUri {
       }
     }
 
-    // macOS/Linux Application Support / .local/share Kelivo root.
+    // macOS/Linux Application Support / .local/share Orvia root.
     if (tail == null) {
       final support = RegExp(
         r'^/(?:Users/[^/]+/Library/Application Support|'
@@ -192,8 +192,8 @@ final class KelivoFileUri {
       }
     }
 
-    // Windows: C:/Users/<user>/AppData/Local|Roaming/[com.psyche/]<Kelivo>/...
-    // Folder name must equal "kelivo" case-insensitively (not KelivoNotes).
+    // Windows: C:/Users/<user>/AppData/Local|Roaming/[com.psyche/]<Orvia>/...
+    // Folder name must equal "orvia" case-insensitively (not OrviaNotes).
     if (tail == null) {
       final win = RegExp(
         r'^[A-Za-z]:/Users/[^/]+/AppData/(?:Local|Roaming)/'

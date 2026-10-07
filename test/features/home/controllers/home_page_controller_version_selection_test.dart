@@ -9,19 +9,19 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/features/home/controllers/chat_controller.dart';
-import 'package:Kelivo/features/home/controllers/home_page_controller.dart';
-import 'package:Kelivo/features/home/controllers/scroll_controller.dart';
-import 'package:Kelivo/features/home/widgets/chat_input_bar.dart';
-import 'package:Kelivo/features/home/widgets/chat_selection_delete_bar.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/utils/app_directories.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/features/home/controllers/chat_controller.dart';
+import 'package:orvia/features/home/controllers/home_page_controller.dart';
+import 'package:orvia/features/home/controllers/scroll_controller.dart';
+import 'package:orvia/features/home/widgets/chat_input_bar.dart';
+import 'package:orvia/features/home/widgets/chat_selection_delete_bar.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/utils/app_directories.dart';
 
 class _FakePathProviderPlatform extends PathProviderPlatform {
   _FakePathProviderPlatform(this.path);
@@ -707,7 +707,7 @@ void main() {
 
     setUp(() async {
       tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_version_selection_gate_',
+        'orvia_version_selection_gate_',
       );
       PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     });

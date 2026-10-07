@@ -59,10 +59,10 @@ class MountWriteGuardsTest {
         MountWriteGuards.install(rootfs, listOf(BindMount("/host/notes", "/mounts/Notes", true)))
         assertEquals("user command", userCommand.readText())
         assertTrue(File(bin, "touch").canExecute())
-        assertEquals("/mounts/Notes\n", File(rootfs, "run/kelivo/mount-readonly-prefixes").readText())
+        assertEquals("/mounts/Notes\n", File(rootfs, "run/orvia/mount-readonly-prefixes").readText())
         MountWriteGuards.install(rootfs, emptyList())
         assertEquals("user command", userCommand.readText())
         assertFalse(File(bin, "touch").exists())
-        assertFalse(File(rootfs, "run/kelivo/mount-readonly-prefixes").exists())
+        assertFalse(File(rootfs, "run/orvia/mount-readonly-prefixes").exists())
     }
 }

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:Kelivo/core/models/provider_oauth.dart';
-import 'package:Kelivo/core/services/auth/oauth_cancellation.dart';
-import 'package:Kelivo/core/services/auth/provider_oauth_adapter.dart';
+import 'package:orvia/core/models/provider_oauth.dart';
+import 'package:orvia/core/services/auth/oauth_cancellation.dart';
+import 'package:orvia/core/services/auth/provider_oauth_adapter.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;

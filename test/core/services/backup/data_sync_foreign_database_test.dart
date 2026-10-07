@@ -8,11 +8,11 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/business_restore_service.dart';
-import 'package:Kelivo/core/services/backup/data_sync.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/business_restore_service.dart';
+import 'package:orvia/core/services/backup/data_sync.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
 
 class _FakePathProvider extends PathProviderPlatform {
   _FakePathProvider(this.root);
@@ -46,11 +46,11 @@ void main() {
     late Directory root;
 
     setUp(() async {
-      root = await Directory.systemTemp.createTemp('kelivo_foreign_db_');
+      root = await Directory.systemTemp.createTemp('orvia_foreign_db_');
       PathProviderPlatform.instance = _FakePathProvider(root.path);
       PackageInfo.setMockInitialValues(
-        appName: 'Kelivo',
-        packageName: 'Kelivo',
+        appName: 'Orvia',
+        packageName: 'Orvia',
         version: '1.0.0-test',
         buildNumber: '1',
         buildSignature: 'test',
@@ -83,7 +83,7 @@ void main() {
     test(
       '\u628A\u4E00\u4EFD\u72EC\u7ACB\u6570\u636E\u5E93\u6253\u6210\u6807\u51C6\u5907\u4EFD\u5F52\u6863',
       () async {
-        final source = await writeDatabase('kelivo.db.displaced-0001', 'aside');
+        final source = await writeDatabase('orvia.db.displaced-0001', 'aside');
         final live = await writeDatabase('live.sqlite', 'current');
         final liveDatabase = AppDatabase.open(file: live);
         File? archive;
@@ -94,7 +94,7 @@ void main() {
           ).prepareBackupFileFromDatabase(source);
 
           final manifest = _entryFrom(archive, 'manifest.json');
-          expect(manifest['format'], 'kelivo-backup');
+          expect(manifest['format'], 'orvia-backup');
           expect(manifest['payloadKind'], 'sqlite');
           expect(manifest['includeChats'], isTrue);
           // \u9644\u4EF6\u4E0D\u8FDB\u672C\u5730\u526F\u672C：\u5B83\u4EEC\u548C\u6D3B\u5E93\u5728\u540C\u4E00\u5757\u76D8\u4E0A。
@@ -119,7 +119,7 @@ void main() {
     test(
       '\u5F52\u6863\u81EA\u5E26\u6570\u636E\u5E93，\u4E0D\u5F15\u7528\u539F\u6587\u4EF6',
       () async {
-        final source = await writeDatabase('kelivo.db.displaced-0002', 'aside');
+        final source = await writeDatabase('orvia.db.displaced-0002', 'aside');
         final live = await writeDatabase('live.sqlite', 'current');
         final liveDatabase = AppDatabase.open(file: live);
         File? archive;
@@ -134,7 +134,7 @@ void main() {
               .files
               .map((file) => file.name)
               .toSet();
-          expect(entries, contains('database/kelivo.db'));
+          expect(entries, contains('database/orvia.db'));
           expect(entries, contains('settings.json'));
           expect(entries, contains('manifest.json'));
         } finally {
@@ -145,7 +145,7 @@ void main() {
     );
 
     test('\u4E0D\u4FEE\u6539\u6E90\u526F\u672C', () async {
-      final source = await writeDatabase('kelivo.db.displaced-0003', 'aside');
+      final source = await writeDatabase('orvia.db.displaced-0003', 'aside');
       final before = await source.readAsBytes();
       final live = await writeDatabase('live.sqlite', 'current');
       final liveDatabase = AppDatabase.open(file: live);

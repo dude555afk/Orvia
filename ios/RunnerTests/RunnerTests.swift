@@ -74,7 +74,7 @@ class IncomingShareHandlerTests: XCTestCase {
     let messenger = IncomingShareTestMessenger()
     let handler = IosIncomingShareHandler()
     handler.register(messenger: messenger)
-    for url in ["kelivo://oauth-return", "kelivo://conversation/chat", "https://share", "kelivo://share/file"] {
+    for url in ["orvia://oauth-return", "orvia://conversation/chat", "https://share", "orvia://share/file"] {
       XCTAssertFalse(handler.receive(URL(string: url)!))
     }
     XCTAssertTrue(messenger.calls.isEmpty)
@@ -210,8 +210,8 @@ class RunnerTests: XCTestCase {
   @MainActor
   func testActivityConversationLinkIsBufferedForColdStartAndConsumedOnce() async {
     let handler = MobileBackgroundHandler()
-    XCTAssertFalse(handler.receive(URL(string: "kelivo://unrelated/chat")!))
-    XCTAssertTrue(handler.receive(URL(string: "kelivo://conversation/chat-123")!))
+    XCTAssertFalse(handler.receive(URL(string: "orvia://unrelated/chat")!))
+    XCTAssertTrue(handler.receive(URL(string: "orvia://conversation/chat-123")!))
     let pending = await backgroundCall(handler, "takePendingConversation")
     XCTAssertEqual(pending as? String, "chat-123")
     let again = await backgroundCall(handler, "takePendingConversation")
@@ -244,7 +244,7 @@ class RunnerTests: XCTestCase {
     let one = await backgroundCall(handler, "sync", backgroundSnapshot(4, ["second"], live: true)) as! [String: Any]
     XCTAssertEqual(one["liveActivityActive"] as? Bool, true)
     _ = await backgroundCall(handler, "sync", backgroundSnapshot(5, []))
-    XCTAssertFalse(Activity<KelivoGenerationActivityAttributes>.activities.contains { $0.activityState == .active })
+    XCTAssertFalse(Activity<OrviaGenerationActivityAttributes>.activities.contains { $0.activityState == .active })
     handler.prepareForTermination()
   }
 
@@ -254,10 +254,10 @@ class RunnerTests: XCTestCase {
           ActivityAuthorizationInfo().areActivitiesEnabled else {
       throw XCTSkip("ActivityKit is not authorized on this test device")
     }
-    let state = KelivoGenerationActivityAttributes.ContentState(
+    let state = OrviaGenerationActivityAttributes.ContentState(
       displayTitle: "Orphan", detail: "Generating", tokenCount: 0, startedAt: Date(),
       finishedAt: nil, activeTaskCount: 1, conversationId: "orphan", outcome: "", staleMessage: "Stale")
-    let orphan = try Activity.request(attributes: KelivoGenerationActivityAttributes(groupId: UUID().uuidString),
+    let orphan = try Activity.request(attributes: OrviaGenerationActivityAttributes(groupId: UUID().uuidString),
       content: ActivityContent(state: state, staleDate: Date().addingTimeInterval(60)), pushType: nil)
     let handler = MobileBackgroundHandler()
     _ = await backgroundCall(handler, "sync", backgroundSnapshot(1, []))
@@ -273,7 +273,7 @@ class RunnerTests: XCTestCase {
     }
     let handler = MobileBackgroundHandler()
     _ = await backgroundCall(handler, "sync", backgroundSnapshot(1, ["removed"], live: true))
-    let activity = try XCTUnwrap(Activity<KelivoGenerationActivityAttributes>.activities.first {
+    let activity = try XCTUnwrap(Activity<OrviaGenerationActivityAttributes>.activities.first {
       $0.content.state.conversationId == "chat-removed"
     })
     await activity.end(nil, dismissalPolicy: .immediate)

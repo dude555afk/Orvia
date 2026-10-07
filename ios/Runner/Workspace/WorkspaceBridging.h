@@ -1,7 +1,7 @@
 #ifndef WorkspaceBridging_h
 #define WorkspaceBridging_h
 
-#import "KelivoISHKernel.h"
-#import "KelivoISHExecutor.h"
+#import "OrviaISHKernel.h"
+#import "OrviaISHExecutor.h"
 
 #endif /* WorkspaceBridging_h */

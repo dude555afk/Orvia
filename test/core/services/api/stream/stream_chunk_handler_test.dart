@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/models/token_usage.dart';
-import 'package:Kelivo/core/services/api/providers/openai/chat_completions_decoder.dart';
-import 'package:Kelivo/core/services/api/stream/sse_event.dart';
-import 'package:Kelivo/core/services/api/generation/text_generation_result.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk_handler.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/models/token_usage.dart';
+import 'package:orvia/core/services/api/providers/openai/chat_completions_decoder.dart';
+import 'package:orvia/core/services/api/stream/sse_event.dart';
+import 'package:orvia/core/services/api/generation/text_generation_result.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk_handler.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -142,14 +142,14 @@ void main() {
     final handler = StreamChunkHandler();
     handler.handle(
       const GeneratedFile(
-        uri: 'kelivo-file:///upload/chart.png',
+        uri: 'orvia-file:///upload/chart.png',
         name: 'chart.png',
         mime: 'image/png',
       ),
     );
     handler.handle(
       const GeneratedFile(
-        uri: 'kelivo-file:///upload/data.csv',
+        uri: 'orvia-file:///upload/data.csv',
         name: 'data.csv',
         mime: 'text/csv',
       ),
@@ -160,10 +160,10 @@ void main() {
 
     expect(handler.parts, hasLength(2));
     final image = handler.parts[0] as ImagePart;
-    expect(image.uri, 'kelivo-file:///upload/chart.png');
+    expect(image.uri, 'orvia-file:///upload/chart.png');
     expect(image.mime, 'image/png');
     final file = handler.parts[1] as FilePart;
-    expect(file.uri, 'kelivo-file:///upload/data.csv');
+    expect(file.uri, 'orvia-file:///upload/data.csv');
     expect(file.name, 'data.csv');
   });
 
@@ -201,7 +201,7 @@ void main() {
     handler.handle(const ReasoningDelta(id: 'r', text: 'plan'));
     handler.handle(const ToolCallStart(id: 'call_1', toolName: 'lookup'));
     handler.handle(
-      const ToolCallDelta(id: 'call_1', inputDelta: '{"q":"kelivo"}'),
+      const ToolCallDelta(id: 'call_1', inputDelta: '{"q":"orvia"}'),
     );
     handler.handle(const ToolCallEnd('call_1'));
     handler.handle(const TextDelta(id: 't', text: 'done'));
@@ -214,7 +214,7 @@ void main() {
     final tool = jsonDecode((handler.parts[1] as ToolCallPart).payloadJson);
     expect(tool['id'], 'call_1');
     expect(tool['name'], 'lookup');
-    expect(tool['arguments'], <String, dynamic>{'q': 'kelivo'});
+    expect(tool['arguments'], <String, dynamic>{'q': 'orvia'});
     expect(tool['server'], isFalse);
     expect(tool.containsKey('metadata'), isFalse);
     expect((handler.parts[2] as TextPart).text, 'done');
@@ -348,7 +348,7 @@ void main() {
     final handler = StreamChunkHandler();
     handler.handle(const ToolCallStart(id: 'call_1', toolName: 'lookup'));
     handler.handle(
-      const ToolCallDelta(id: 'call_1', inputDelta: '{"q":"kelivo"}'),
+      const ToolCallDelta(id: 'call_1', inputDelta: '{"q":"orvia"}'),
     );
     handler.handle(const ToolCallEnd('call_1'));
     handler.handle(const ToolCallResult(id: 'call_1', output: '{"ok":true}'));
@@ -358,7 +358,7 @@ void main() {
     );
     expect(payload['id'], 'call_1');
     expect(payload['name'], 'lookup');
-    expect(payload['arguments'], <String, dynamic>{'q': 'kelivo'});
+    expect(payload['arguments'], <String, dynamic>{'q': 'orvia'});
     expect(payload['content'], '{"ok":true}');
     expect(payload['server'], isFalse);
   });
@@ -610,7 +610,7 @@ void main() {
         jsonEncode(<String, dynamic>{
           'id': 'call_1',
           'name': 'lookup',
-          'arguments': <String, dynamic>{'q': 'kelivo'},
+          'arguments': <String, dynamic>{'q': 'orvia'},
           'server': false,
         }),
       ),
@@ -629,7 +629,7 @@ void main() {
     expect((handler.parts[1] as ReasoningPart).text, 'plan');
     final tool = jsonDecode((handler.parts[2] as ToolCallPart).payloadJson);
     expect(tool['name'], 'lookup');
-    expect(tool['arguments'], <String, dynamic>{'q': 'kelivo'});
+    expect(tool['arguments'], <String, dynamic>{'q': 'orvia'});
     expect(tool['content'], '{"ok":true}');
     expect((handler.parts[3] as TextPart).text, 'after');
   });
@@ -700,7 +700,7 @@ void main() {
           TextPart('done'),
           ImagePart(uri: 'https://img.example/a.png', mime: 'image/png'),
           ImagePart(uri: 'data:image/png;base64,AQID', mime: 'image/png'),
-          ImagePart(uri: 'kelivo-file:///images/a.png', mime: 'image/png'),
+          ImagePart(uri: 'orvia-file:///images/a.png', mime: 'image/png'),
         ],
         finishReason: 'stop',
       ),
@@ -711,7 +711,7 @@ void main() {
     expect(handler.parts.whereType<ImagePart>().map((part) => part.uri), [
       'https://img.example/a.png',
       'data:image/png;base64,AQID',
-      'kelivo-file:///images/a.png',
+      'orvia-file:///images/a.png',
     ]);
     expect(handler.parts.whereType<TextPart>().single.text, 'done');
   });

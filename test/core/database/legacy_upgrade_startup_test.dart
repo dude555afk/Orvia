@@ -9,11 +9,11 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_gateway.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/database/database_installation_gate.dart';
-import 'package:Kelivo/features/migration/hive_to_sqlite_migration_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_gateway.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/database/database_installation_gate.dart';
+import 'package:orvia/features/migration/hive_to_sqlite_migration_service.dart';
 
 import 'generated_schema/schema.dart';
 
@@ -64,7 +64,7 @@ void main() {
   late PathProviderPlatform previousPathProvider;
 
   setUp(() async {
-    directory = await Directory.systemTemp.createTemp('kelivo_legacy_upgrade_');
+    directory = await Directory.systemTemp.createTemp('orvia_legacy_upgrade_');
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(directory.path);
   });

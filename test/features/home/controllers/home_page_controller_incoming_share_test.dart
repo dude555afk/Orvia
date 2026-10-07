@@ -1,16 +1,16 @@
 import 'dart:async';
 
-import 'package:Kelivo/core/models/chat_input_data.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/features/home/controllers/home_page_controller.dart';
-import 'package:Kelivo/features/home/controllers/scroll_controller.dart';
-import 'package:Kelivo/features/home/widgets/chat_input_bar.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/utils/image_compressor.dart';
+import 'package:orvia/core/models/chat_input_data.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/features/home/controllers/home_page_controller.dart';
+import 'package:orvia/features/home/controllers/scroll_controller.dart';
+import 'package:orvia/features/home/widgets/chat_input_bar.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/utils/image_compressor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

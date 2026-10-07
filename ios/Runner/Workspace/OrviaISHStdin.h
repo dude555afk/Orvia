@@ -7,7 +7,7 @@
 // Match the guest's FIFO/read-only stdin with a real unidirectional pipe.
 // In particular, do not substitute an O_RDWR socketpair: launchers such as uv
 // can behave differently when input is already buffered on that descriptor.
-static inline int KelivoISHCreateStdinPipe(int ends[2]) {
+static inline int OrviaISHCreateStdinPipe(int ends[2]) {
     if (pipe(ends) < 0) return -1;
     // Scope broken-pipe protection to this fd, not the app's signal handlers.
     if (fcntl(ends[1], F_SETNOSIGPIPE, 1) < 0 ||

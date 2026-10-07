@@ -7,25 +7,25 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/reasoning_request.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/memory_provider.dart';
-import 'package:Kelivo/core/providers/memory_provider_v2.dart';
-import 'package:Kelivo/core/providers/quick_phrase_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/tts_provider.dart';
-import 'package:Kelivo/core/providers/user_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/memory/memory_pipeline.dart';
-import 'package:Kelivo/core/services/memory/memory_repository.dart';
-import 'package:Kelivo/core/services/tts/tts_playback_models.dart';
-import 'package:Kelivo/features/assistant/pages/assistant_settings_edit_page.dart';
-import 'package:Kelivo/features/settings/pages/memory_settings_page.dart';
-import 'package:Kelivo/features/settings/widgets/memory_ui.dart';
-import 'package:Kelivo/shared/widgets/tip_icon.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/reasoning_request.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/memory_provider.dart';
+import 'package:orvia/core/providers/memory_provider_v2.dart';
+import 'package:orvia/core/providers/quick_phrase_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/tts_provider.dart';
+import 'package:orvia/core/providers/user_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/memory/memory_pipeline.dart';
+import 'package:orvia/core/services/memory/memory_repository.dart';
+import 'package:orvia/core/services/tts/tts_playback_models.dart';
+import 'package:orvia/features/assistant/pages/assistant_settings_edit_page.dart';
+import 'package:orvia/features/settings/pages/memory_settings_page.dart';
+import 'package:orvia/features/settings/widgets/memory_ui.dart';
+import 'package:orvia/shared/widgets/tip_icon.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 
 import '../../../support/business_test_harness.dart';
 
@@ -63,7 +63,7 @@ Future<
 _createProviders(WidgetTester tester) async {
   // Real filesystem IO must leave the fake-async zone used by testWidgets.
   final tempDir = await tester.runAsync(
-    () => Directory.systemTemp.createTemp('kelivo_mem_tab_'),
+    () => Directory.systemTemp.createTemp('orvia_mem_tab_'),
   );
   final previous = PathProviderPlatform.instance;
   PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir!.path);

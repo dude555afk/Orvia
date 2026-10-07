@@ -1,4 +1,4 @@
-#import "KelivoISHFilesystem.h"
+#import "OrviaISHFilesystem.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,11 +9,11 @@
 typedef struct {
     char guest[16];
     char host[PATH_MAX];
-} KelivoISHPathMapping;
+} OrviaISHPathMapping;
 
-NSData *KelivoISHCreateFilesystem(NSArray<NSDictionary<NSString *, id> *> *binds) {
+NSData *OrviaISHCreateFilesystem(NSArray<NSDictionary<NSString *, id> *> *binds) {
     NSArray<NSString *> *roots = @[@"/workspace", @"/chat", @"/skills", @"/tmp"];
-    KelivoISHPathMapping mappings[4] = {0};
+    OrviaISHPathMapping mappings[4] = {0};
     for (NSDictionary *bind in binds) {
         NSString *guest = bind[@"guest"];
         NSString *host = bind[@"host"];
@@ -33,8 +33,8 @@ static bool inside(const char *path, const char *root) {
 
 static bool translate(const char *path, uint64_t context, char *out, size_t size, bool reverse) {
     if (!context || !size) return false;
-    const KelivoISHPathMapping *mappings = (const void *)(uintptr_t)context;
-    const KelivoISHPathMapping *best = NULL;
+    const OrviaISHPathMapping *mappings = (const void *)(uintptr_t)context;
+    const OrviaISHPathMapping *best = NULL;
     size_t bestLength = 0;
     for (int i = 0; i < 4; i++) {
         const char *root = reverse ? mappings[i].host : mappings[i].guest;
@@ -50,10 +50,10 @@ static bool translate(const char *path, uint64_t context, char *out, size_t size
     return true;
 }
 
-bool KelivoISHTranslatePath(const char *guest, uint64_t context, char *out, size_t size) {
+bool OrviaISHTranslatePath(const char *guest, uint64_t context, char *out, size_t size) {
     return translate(guest, context, out, size, false);
 }
 
-bool KelivoISHReversePath(const char *host, uint64_t context, char *out, size_t size) {
+bool OrviaISHReversePath(const char *host, uint64_t context, char *out, size_t size) {
     return translate(host, context, out, size, true);
 }

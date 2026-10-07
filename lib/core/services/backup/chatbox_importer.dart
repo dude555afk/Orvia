@@ -15,7 +15,7 @@ import '../../models/conversation.dart';
 import '../../models/message_part.dart';
 import '../../utils/multimodal_input_utils.dart';
 import '../../../utils/app_directories.dart';
-import '../../../utils/kelivo_file_uri.dart';
+import '../../../utils/orvia_file_uri.dart';
 import '../../../utils/sandbox_path_resolver.dart';
 import '../../providers/settings_provider.dart'
     show ProviderConfig, ProviderKind;
@@ -76,7 +76,7 @@ class ChatboxImporter {
           await ChatboxBackupArchive.looksLikeZipFile(file);
       String? resourceDestDir;
       if (treatAsZip) {
-        staging = await Directory.systemTemp.createTemp('kelivo_chatbox_res_');
+        staging = await Directory.systemTemp.createTemp('orvia_chatbox_res_');
         DataSync.registerLiveTempPath(staging.path);
         final upload = await AppDirectories.getUploadDirectory();
         resourceDestDir = p.join(upload.path, 'chatbox');
@@ -1006,7 +1006,7 @@ class ChatboxImporter {
         lower.startsWith('https://') ||
         lower.startsWith('data:image') ||
         lower.startsWith('file:') ||
-        KelivoFileUri.isKelivoFileUri(url)) {
+        OrviaFileUri.isOrviaFileUri(url)) {
       return true;
     }
     if (url.startsWith('/')) return true;

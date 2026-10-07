@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/services/workspace/desktop_process_runtime.dart';
-import 'package:Kelivo/core/services/workspace/output_buffer.dart';
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tools_service.dart';
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/services/workspace/desktop_process_runtime.dart';
+import 'package:orvia/core/services/workspace/output_buffer.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/workspace/workspace_tools_service.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as p;
@@ -28,7 +28,7 @@ void main() {
 
   setUp(() async {
     runtime = DesktopProcessRuntime();
-    hostRoot = await Directory.systemTemp.createTemp('kelivo_macos_ws_');
+    hostRoot = await Directory.systemTemp.createTemp('orvia_macos_ws_');
     sessionDir = Directory(p.join(hostRoot.path, '_session'))..createSync();
     skillsDir = Directory(p.join(hostRoot.path, '_skills'))..createSync();
     outputsDir = Directory(p.join(sessionDir.path, 'outputs'))..createSync();
@@ -144,12 +144,12 @@ Future<void> _cwdAndEnv(DesktopProcessRuntime runtime, Directory cwd) async {
     runtime,
     _req(
       runId: 'env',
-      command: r'echo $KELIVO_TEST',
+      command: r'echo $ORVIA_TEST',
       cwd: cwd.path,
-      env: const <String, String>{'KELIVO_TEST': 'kelivo-macos-ok'},
+      env: const <String, String>{'ORVIA_TEST': 'orvia-macos-ok'},
     ),
   );
-  expect(utf8.decode(_stdout(envEvents)), contains('kelivo-macos-ok'));
+  expect(utf8.decode(_stdout(envEvents)), contains('orvia-macos-ok'));
 }
 
 Future<void> _timeoutKillsSleep(
@@ -414,13 +414,13 @@ Future<void> _toolsEndToEnd({
   }
 
   final climb = p.relative(
-    p.join(Directory.current.path, 'kelivo_macos_outside.txt'),
+    p.join(Directory.current.path, 'orvia_macos_outside.txt'),
     from: hostRoot.path,
   );
   expect(climb, contains('..'));
   addTearDown(() {
     final leaked = File(
-      p.join(Directory.current.path, 'kelivo_macos_outside.txt'),
+      p.join(Directory.current.path, 'orvia_macos_outside.txt'),
     );
     if (leaked.existsSync()) leaked.deleteSync();
   });
@@ -436,12 +436,12 @@ Future<void> _toolsEndToEnd({
   );
   expect(
     File(
-      p.join(Directory.current.path, 'kelivo_macos_outside.txt'),
+      p.join(Directory.current.path, 'orvia_macos_outside.txt'),
     ).existsSync(),
     isFalse,
   );
 
-  final absOutside = p.join(Directory.current.path, 'kelivo_macos_abs.txt');
+  final absOutside = p.join(Directory.current.path, 'orvia_macos_abs.txt');
   addTearDown(() {
     final leaked = File(absOutside);
     if (leaked.existsSync()) leaked.deleteSync();

@@ -7,7 +7,7 @@ void main() {
     'iOS command and terminal contexts keep independent paths',
     () async {
       final temp = await Directory.systemTemp.createTemp(
-        'kelivo_ios_filesystem_',
+        'orvia_ios_filesystem_',
       );
       addTearDown(() => temp.delete(recursive: true));
       final binary = '${temp.path}/filesystem_test';
@@ -22,7 +22,7 @@ void main() {
         '-framework',
         'Foundation',
         '-Iios/Runner/Workspace',
-        'ios/Runner/Workspace/KelivoISHFilesystem.m',
+        'ios/Runner/Workspace/OrviaISHFilesystem.m',
         'test/native/ios_filesystem_test.m',
         '-o',
         binary,

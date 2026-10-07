@@ -1114,7 +1114,7 @@ class NetworkTtsService {
               ..headers['Content-Type'] = 'application/ssml+xml'
               ..headers['X-Microsoft-OutputFormat'] =
                   'audio-24khz-96kbitrate-mono-mp3'
-              ..headers['User-Agent'] = 'Kelivo'
+              ..headers['User-Agent'] = 'Orvia'
               ..body = body;
         resp = await c.send(req);
         if (await cancellationRequested()) {

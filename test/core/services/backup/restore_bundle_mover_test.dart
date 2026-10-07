@@ -5,15 +5,15 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/services/backup/restore_bundle_mover.dart';
-import 'package:Kelivo/core/services/backup/restore_bundle_staging.dart';
-import 'package:Kelivo/core/services/backup/restore_durability.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_builder.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_plan.dart';
-import 'package:Kelivo/core/services/backup/restore_previous_store.dart';
-import 'package:Kelivo/core/services/backup/restore_receipt.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/services/backup/restore_bundle_mover.dart';
+import 'package:orvia/core/services/backup/restore_bundle_staging.dart';
+import 'package:orvia/core/services/backup/restore_durability.dart';
+import 'package:orvia/core/services/backup/restore_previous_builder.dart';
+import 'package:orvia/core/services/backup/restore_previous_plan.dart';
+import 'package:orvia/core/services/backup/restore_previous_store.dart';
+import 'package:orvia/core/services/backup/restore_receipt.dart';
 
 const _runId = '0123456789abcdef0123456789abcdef';
 const _candidateHash =
@@ -29,7 +29,7 @@ void main() {
 
     setUp(() async {
       appData = await Directory.systemTemp.createTemp(
-        'kelivo_restore_bundle_mover_test_',
+        'orvia_restore_bundle_mover_test_',
       );
       runDirectory = Directory(p.join(appData.path, 'run_$_runId'));
       candidateDirectory = Directory(p.join(runDirectory.path, 'candidate'));
@@ -69,7 +69,7 @@ void main() {
     test(
       'resumes old database and asset moves after a post-rename failure',
       () async {
-        final database = File(p.join(appData.path, 'kelivo.db'));
+        final database = File(p.join(appData.path, 'orvia.db'));
         await database.writeAsBytes([1, 2, 3], flush: true);
         final upload = File(p.join(appData.path, 'upload', 'item'));
         await upload.parent.create();
@@ -113,7 +113,7 @@ void main() {
     );
 
     test('syncs every old asset before the first bundle rename', () async {
-      final database = File(p.join(appData.path, 'kelivo.db'));
+      final database = File(p.join(appData.path, 'orvia.db'));
       await database.writeAsBytes([1, 2, 3], flush: true);
       final asset = File(p.join(appData.path, 'upload', 'nested', 'item.txt'));
       await asset.parent.create(recursive: true);
@@ -149,7 +149,7 @@ void main() {
       );
       final phaseBarrier = durability.events.indexOf('directory:.:true');
       final databaseRename = durability.events.indexWhere(
-        (event) => event.endsWith('/previous.pending/database/kelivo.db'),
+        (event) => event.endsWith('/previous.pending/database/orvia.db'),
       );
       expect(fileSync, inInclusiveRange(0, firstRename - 1));
       expect(phaseBarrier, inInclusiveRange(0, firstRename - 1));
@@ -196,7 +196,7 @@ void main() {
         );
 
         final installed = await RestorePreviousBuilder.describeFile(
-          File(p.join(appData.path, 'kelivo.db')),
+          File(p.join(appData.path, 'orvia.db')),
         );
         expect(installed.sha256, fixture.newDatabaseSha256);
         expect(
@@ -250,7 +250,7 @@ void main() {
       );
 
       final restored = await RestorePreviousBuilder.describeFile(
-        File(p.join(appData.path, 'kelivo.db')),
+        File(p.join(appData.path, 'orvia.db')),
       );
       expect(restored.sha256, fixture.oldDatabaseSha256);
       expect(
@@ -301,7 +301,7 @@ Future<_CutoverFixture> _prepareCutoverFixture({
   required Directory runDirectory,
   required Directory candidateDirectory,
 }) async {
-  final liveDatabase = File(p.join(appData.path, 'kelivo.db'));
+  final liveDatabase = File(p.join(appData.path, 'orvia.db'));
   await _createDatabase(liveDatabase, conversationId: 'old');
   final oldDatabase = await RestorePreviousBuilder.describeFile(liveDatabase);
   final oldUpload = File(p.join(appData.path, 'upload', 'old'));
@@ -310,7 +310,7 @@ Future<_CutoverFixture> _prepareCutoverFixture({
   await Directory(p.join(appData.path, 'images')).create();
 
   final candidateDatabase = File(
-    p.join(candidateDirectory.path, 'database', 'kelivo.db'),
+    p.join(candidateDirectory.path, 'database', 'orvia.db'),
   );
   await candidateDatabase.parent.create(recursive: true);
   await _createDatabase(candidateDatabase, conversationId: 'new');
@@ -327,7 +327,7 @@ Future<_CutoverFixture> _prepareCutoverFixture({
   final manifest = File(p.join(candidateDirectory.path, 'manifest.json'));
   await manifest.writeAsString(
     jsonEncode({
-      'format': 'kelivo-backup',
+      'format': 'orvia-backup',
       'formatVersion': 2,
       'payloadKind': 'sqlite',
       'createdAtUtc': '2026-07-09T00:00:00.000Z',
@@ -335,13 +335,13 @@ Future<_CutoverFixture> _prepareCutoverFixture({
       'includeChats': true,
       'includeFiles': true,
       'database': {
-        'entry': 'database/kelivo.db',
+        'entry': 'database/orvia.db',
         'schemaVersion': databaseInfo.schemaVersion,
         'conversationCount': databaseInfo.conversationCount,
         'messageCount': databaseInfo.messageCount,
       },
       'entries': {
-        'database/kelivo.db': databaseDescriptor,
+        'database/orvia.db': databaseDescriptor,
         'upload/new': uploadDescriptor,
       },
     }),

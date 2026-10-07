@@ -6,17 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/providers/backup_provider.dart';
-import 'package:Kelivo/core/providers/backup_reminder_provider.dart';
-import 'package:Kelivo/core/providers/local_snapshot_provider.dart';
-import 'package:Kelivo/core/providers/s3_backup_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/desktop/setting/backup_pane.dart';
-import 'package:Kelivo/features/backup/pages/backup_page.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/providers/backup_provider.dart';
+import 'package:orvia/core/providers/backup_reminder_provider.dart';
+import 'package:orvia/core/providers/local_snapshot_provider.dart';
+import 'package:orvia/core/providers/s3_backup_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/desktop/setting/backup_pane.dart';
+import 'package:orvia/features/backup/pages/backup_page.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 
 Future<BackupReminderProvider> _createReminderProvider(
   BusinessPreferences preferences,
@@ -45,7 +45,7 @@ Widget _buildHarness({
       ChangeNotifierProvider<LocalSnapshotProvider>(
         create: (context) => LocalSnapshotProvider(
           appDataDirectory: Directory.systemTemp.createTempSync(
-            'kelivo_backup_page_',
+            'orvia_backup_page_',
           ),
           chatService: context.read<ChatService>(),
           businessRepository: businessRepository,
@@ -80,7 +80,7 @@ Widget _buildDesktopHarness({
       ChangeNotifierProvider<LocalSnapshotProvider>(
         create: (context) => LocalSnapshotProvider(
           appDataDirectory: Directory.systemTemp.createTempSync(
-            'kelivo_backup_page_',
+            'orvia_backup_page_',
           ),
           chatService: context.read<ChatService>(),
           businessRepository: businessRepository,
@@ -190,7 +190,7 @@ void main() {
 
       final fields = find.byType(TextField);
       await tester.enterText(fields.at(0), ' https://dav.example.com/root ');
-      await tester.enterText(fields.at(4), ' KelivoTest/1.0 ');
+      await tester.enterText(fields.at(4), ' OrviaTest/1.0 ');
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 
@@ -199,7 +199,7 @@ void main() {
         findsNothing,
       );
       expect(settings.webDavConfig.url, 'https://dav.example.com/root');
-      expect(settings.webDavConfig.userAgent, 'KelivoTest/1.0');
+      expect(settings.webDavConfig.userAgent, 'OrviaTest/1.0');
     });
 
     testWidgets('shows local backup before WebDAV and S3 backup sections', (
@@ -241,13 +241,13 @@ void main() {
 
       final fields = find.byType(TextField);
       await tester.enterText(fields.at(0), ' https://s3.example.com ');
-      await tester.enterText(fields.at(7), ' KelivoS3/1.0 ');
+      await tester.enterText(fields.at(7), ' OrviaS3/1.0 ');
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 
       expect(find.widgetWithText(AppBar, 'S3 Settings'), findsNothing);
       expect(settings.s3Config.endpoint, 'https://s3.example.com');
-      expect(settings.s3Config.userAgent, 'KelivoS3/1.0');
+      expect(settings.s3Config.userAgent, 'OrviaS3/1.0');
     });
 
     testWidgets('desktop shows local backup before WebDAV and S3 sections', (

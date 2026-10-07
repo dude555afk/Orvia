@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:Kelivo/utils/image_compressor.dart';
+import 'package:orvia/utils/image_compressor.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as p;
@@ -192,7 +192,7 @@ void main() {
 
   test('reuses stored uploads and keeps differing images apart', () async {
     final temp = await Directory.systemTemp.createTemp(
-      'kelivo_image_compressor_test_',
+      'orvia_image_compressor_test_',
     );
     addTearDown(() => temp.delete(recursive: true));
     final sourceDir = Directory(p.join(temp.path, 'source'))
@@ -254,7 +254,7 @@ void main() {
 
   test('concurrent imports never clobber each other', () async {
     final temp = await Directory.systemTemp.createTemp(
-      'kelivo_image_compressor_test_',
+      'orvia_image_compressor_test_',
     );
     addTearDown(() => temp.delete(recursive: true));
     final sourceDir = Directory(p.join(temp.path, 'source'))

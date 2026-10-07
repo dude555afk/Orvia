@@ -3,25 +3,25 @@ import "../../../support/business_test_harness.dart";
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/assistant_regex.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/features/chat/widgets/timeline_projection.dart';
-import 'package:Kelivo/features/chat/widgets/timeline_visibility.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/tts_provider.dart';
-import 'package:Kelivo/core/providers/user_provider.dart';
-import 'package:Kelivo/features/chat/widgets/chat_message_widget.dart';
-import 'package:Kelivo/features/home/controllers/stream_controller.dart'
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/assistant_regex.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/features/chat/widgets/timeline_projection.dart';
+import 'package:orvia/features/chat/widgets/timeline_visibility.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/tts_provider.dart';
+import 'package:orvia/core/providers/user_provider.dart';
+import 'package:orvia/features/chat/widgets/chat_message_widget.dart';
+import 'package:orvia/features/home/controllers/stream_controller.dart'
     as stream_ctrl;
-import 'package:Kelivo/features/home/controllers/streaming_content_notifier.dart';
-import 'package:Kelivo/features/home/services/ask_user_interaction_service.dart';
-import 'package:Kelivo/features/home/services/local_tools_service.dart';
-import 'package:Kelivo/features/home/services/tool_approval_service.dart';
-import 'package:Kelivo/features/home/widgets/message_list_view.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/features/home/controllers/streaming_content_notifier.dart';
+import 'package:orvia/features/home/services/ask_user_interaction_service.dart';
+import 'package:orvia/features/home/services/local_tools_service.dart';
+import 'package:orvia/features/home/services/tool_approval_service.dart';
+import 'package:orvia/features/home/widgets/message_list_view.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -232,7 +232,7 @@ void main() {
           ToolUIPart(
             id: 'search-1',
             toolName: 'search_web',
-            arguments: {'query': 'kelivo'},
+            arguments: {'query': 'orvia'},
             content: List.filled(8, 'summary line that wraps a bit').join('\n'),
           ),
         ],
@@ -247,7 +247,7 @@ void main() {
           ToolUIPart(
             id: 'search-1',
             toolName: 'search_web',
-            arguments: {'query': 'kelivo'},
+            arguments: {'query': 'orvia'},
             content: List.filled(8, 'summary line that wraps a bit').join('\n'),
           ),
         ],

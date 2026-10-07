@@ -273,7 +273,7 @@ final class DatabaseInstallationGate {
     }
     if (files.isNotEmpty) {
       final archive = await appDataDirectory.createTemp(
-        '.kelivo_installation_receipts_',
+        '.orvia_installation_receipts_',
       );
       await durability.restrictDirectory(archive);
       await durability.syncDirectory(appDataDirectory, fullBarrier: true);

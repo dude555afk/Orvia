@@ -317,7 +317,7 @@ class HiveToSqliteMigrationService {
         .toIso8601String()
         .replaceAll(':', '-')
         .replaceAll('.', '-');
-    return 'kelivo_migration_backup_$timestamp.zip';
+    return 'orvia_migration_backup_$timestamp.zip';
   }
 
   Future<File> _backupToFile(
@@ -364,7 +364,7 @@ class HiveToSqliteMigrationService {
     try {
       await decision.appDataDir.create(recursive: true);
       workDir = await decision.appDataDir.createTemp(
-        '.kelivo_migration_backup_',
+        '.orvia_migration_backup_',
       );
       final manifest = await _buildBackupManifest(
         workDir,

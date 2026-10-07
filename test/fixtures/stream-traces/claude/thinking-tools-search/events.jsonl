@@ -7,7 +7,7 @@
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"thinking_delta\",\"thinking\":\" plan\\n2. Call\"}}"}
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"thinking_delta\",\"thinking\":\" get_weather for\"}}"}
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"thinking_delta\",\"thinking\":\" Kyoto\\n3.\"}}"}
-{"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"thinking_delta\",\"thinking\":\" Call lookup for kelivo\"}}"}
+{"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"thinking_delta\",\"thinking\":\" Call lookup for orvia\"}}"}
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"thinking_delta\",\"thinking\":\" \"}}"}
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"thinking_delta\",\"thinking\":\"\\n4. Call web\"}}"}
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"thinking_delta\",\"thinking\":\"_search for Ky\"}}"}
@@ -30,7 +30,7 @@
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"text_delta\",\"text\":\" data\"}}"}
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"text_delta\",\"text\":\" for Kyoto,\"}}"}
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"text_delta\",\"text\":\" look\"}}"}
-{"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"text_delta\",\"text\":\" up kelivo,\"}}"}
+{"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"text_delta\",\"text\":\" up orvia,\"}}"}
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"text_delta\",\"text\":\" and search for general\"}}"}
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"text_delta\",\"text\":\" information about Kyoto\"}}"}
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":1,\"delta\":{\"type\":\"text_delta\",\"text\":\" simultaneously\"}}"}
@@ -41,7 +41,7 @@
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":2,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"}\"}}"}
 {"event":"content_block_stop","data":"{\"type\":\"content_block_stop\",\"index\":2}"}
 {"event":"content_block_start","data":"{\"type\":\"content_block_start\",\"index\":3,\"content_block\":{\"type\":\"tool_use\",\"id\":\"toolu_bdrk_01CzXq3oeZp5ABFnfmAmBkiF\",\"caller\":{\"type\":\"direct\"},\"name\":\"lookup\",\"input\":{}}}"}
-{"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":3,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"{\\\"q\\\": \\\"kelivo\"}}"}
+{"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":3,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"{\\\"q\\\": \\\"orvia\"}}"}
 {"event":"content_block_delta","data":"{\"type\":\"content_block_delta\",\"index\":3,\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"}\"}}"}
 {"event":"content_block_stop","data":"{\"type\":\"content_block_stop\",\"index\":3}"}
 {"event":"content_block_start","data":"{\"type\":\"content_block_start\",\"index\":4,\"content_block\":{\"type\":\"server_tool_use\",\"id\":\"toolu_bdrk_01FfN2nKYzJQQKLKHhVPn2uA\",\"name\":\"web_search\",\"input\":{}}}"}

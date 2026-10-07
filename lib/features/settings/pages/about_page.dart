@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:Kelivo/theme/app_font_weights.dart';
+import 'package:orvia/theme/app_font_weights.dart';
 
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -15,8 +15,8 @@ import '../../../shared/widgets/snackbar.dart';
 import '../../../core/services/haptics.dart';
 import 'debug_page.dart';
 import 'log_viewer_page.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -83,7 +83,7 @@ class _AboutPageState extends State<AboutPage> {
 
     _appNameTapCount = 0;
     Haptics.medium();
-    final added = await context.read<SettingsProvider>().unlockKelivoSearch();
+    final added = await context.read<SettingsProvider>().unlockOrviaSearch();
     if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
     showAppSnackBar(
@@ -446,7 +446,7 @@ class _AboutPageState extends State<AboutPage> {
                             behavior: HitTestBehavior.opaque,
                             onTap: _onAppNameTap,
                             child: Text(
-                              'Kelivo',
+                              'Orvia',
                               key: const ValueKey('about-page-app-name'),
                               style: TextStyle(
                                 fontSize: 16,

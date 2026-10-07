@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/models/scheduled_task.dart';
-import 'package:Kelivo/core/services/desktop_scheduled_tasks.dart';
-import 'package:Kelivo/core/services/scheduled_task_store.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/models/scheduled_task.dart';
+import 'package:orvia/core/services/desktop_scheduled_tasks.dart';
+import 'package:orvia/core/services/scheduled_task_store.dart';
 
 import '../../support/business_test_harness.dart';
 

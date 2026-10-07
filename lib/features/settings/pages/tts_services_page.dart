@@ -16,8 +16,8 @@ import '../widgets/asr_services_section.dart';
 import '../widgets/voice_service_widgets.dart';
 import '../widgets/mimo_reference_audio_picker.dart';
 import '../../../theme/app_font_weights.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
 
 class TtsServicesPage extends StatelessWidget {
   const TtsServicesPage({super.key});

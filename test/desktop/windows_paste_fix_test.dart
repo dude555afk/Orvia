@@ -1,6 +1,6 @@
 import 'dart:ui' as ui;
 
-import 'package:Kelivo/desktop/windows_paste_fix.dart';
+import 'package:orvia/desktop/windows_paste_fix.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

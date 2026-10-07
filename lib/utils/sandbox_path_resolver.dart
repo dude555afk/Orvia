@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
 import './app_directories.dart';
-import './kelivo_file_uri.dart';
+import './orvia_file_uri.dart';
 
 /// Resolves persisted absolute file paths that include the iOS sandbox UUID
 /// to the current app container path after an app update.
@@ -17,7 +17,7 @@ import './kelivo_file_uri.dart';
 /// Documents directory. If the rewritten file exists, it returns the new path;
 /// otherwise returns the original path.
 ///
-/// Canonical `kelivo-file:///` URIs are resolved lexically against the cached
+/// Canonical `orvia-file:///` URIs are resolved lexically against the cached
 /// Documents root with no filesystem existence checks.
 class SandboxPathResolver {
   SandboxPathResolver._();
@@ -62,14 +62,14 @@ class SandboxPathResolver {
   /// If mapping succeeds and the target exists, returns the mapped path;
   /// otherwise returns [path] unchanged.
   ///
-  /// Canonical `kelivo-file:` URIs are resolved without existence probes.
+  /// Canonical `orvia-file:` URIs are resolved without existence probes.
   static String fix(String path) {
     if (path.isEmpty) return path;
 
-    if (KelivoFileUri.isKelivoFileUri(path)) {
+    if (OrviaFileUri.isOrviaFileUri(path)) {
       final docs = _docsDir;
       if (docs == null || docs.isEmpty) return path;
-      return KelivoFileUri.resolveToAbsolute(path, root: docs) ?? path;
+      return OrviaFileUri.resolveToAbsolute(path, root: docs) ?? path;
     }
 
     // Decode file:// percent-escapes before remapping (avoid %20 → %2520).
@@ -86,17 +86,17 @@ class SandboxPathResolver {
     if (docs == null || docs.isEmpty) return raw;
 
     // Determine root and tail to map. Prefer the same structured sandbox
-    // markers as KelivoFileUri.tryEncodeLegacyAbsolutePath, then generic.
+    // markers as OrviaFileUri.tryEncodeLegacyAbsolutePath, then generic.
     const subdirs = ['avatars', 'fonts', 'images', 'upload'];
     String? tail; // starts with '/'
     String rootType = 'unknown';
 
-    final encoded = KelivoFileUri.tryEncodeLegacyAbsolutePath(
+    final encoded = OrviaFileUri.tryEncodeLegacyAbsolutePath(
       raw,
       allowGenericFallback: false,
     );
     if (encoded != null) {
-      final segs = KelivoFileUri.decodeToSegments(encoded);
+      final segs = OrviaFileUri.decodeToSegments(encoded);
       if (segs != null && segs.isNotEmpty) {
         tail = '/${segs.join('/')}';
         rootType = 'structured_legacy';
@@ -223,19 +223,19 @@ class SandboxPathResolver {
   }
 
   /// Convert a local absolute path (or `file://` URL) into a stable
-  /// `kelivo-file:///` URI when it points under managed app storage.
+  /// `orvia-file:///` URI when it points under managed app storage.
   ///
-  /// Remote (`http`/`https`), `data:`, and already-canonical kelivo-file URIs
+  /// Remote (`http`/`https`), `data:`, and already-canonical orvia-file URIs
   /// pass through unchanged. External absolute paths that cannot be encoded
   /// are returned as-is (after decoding an optional local `file://` prefix).
   ///
   /// Encoding never uses the generic `/images/`·`/upload/` guess. Structured
-  /// sandbox markers (`Documents` / `kelivo` / `app_flutter`·`files`) are
+  /// sandbox markers (`Documents` / `orvia` / `app_flutter`·`files`) are
   /// still recognized after [encodeFromAbsolute] fails, so old container
   /// UUID paths canonicalize even when [_docsDir] is already set.
   static String canonicalize(String uri) {
     if (uri.isEmpty) return uri;
-    if (KelivoFileUri.isKelivoFileUri(uri)) return uri;
+    if (OrviaFileUri.isOrviaFileUri(uri)) return uri;
     // Case-insensitive: HTTPS://… must not fall into local-path heuristics.
     final lower = uri.toLowerCase();
     if (lower.startsWith('http://') ||
@@ -246,7 +246,7 @@ class SandboxPathResolver {
 
     // Portable slash path for legacy matching (Windows must still recognize
     // iOS file:///var/mobile/... markers; Uri.toFilePath is host-specific).
-    final portable = KelivoFileUri.toPortableSlashPath(uri);
+    final portable = OrviaFileUri.toPortableSlashPath(uri);
     if (portable == null) {
       // Non-local file: / UNC / empty — leave unchanged.
       return uri;
@@ -255,24 +255,24 @@ class SandboxPathResolver {
     final docs = _docsDir;
     if (docs != null && docs.isNotEmpty) {
       // Prefer encode under the live root (case-insensitive on Windows).
-      final underRoot = KelivoFileUri.encodeFromAbsolute(portable, root: docs);
+      final underRoot = OrviaFileUri.encodeFromAbsolute(portable, root: docs);
       if (underRoot != null) return underRoot;
       // Also try host-native absolute form when docsDir uses backslashes.
       final native = _decodeFileUri(uri);
       if (native != portable) {
-        final underNative = KelivoFileUri.encodeFromAbsolute(
+        final underNative = OrviaFileUri.encodeFromAbsolute(
           native,
           root: docs,
         );
         if (underNative != null) return underNative;
       }
-      return KelivoFileUri.tryEncodeLegacyAbsolutePath(
+      return OrviaFileUri.tryEncodeLegacyAbsolutePath(
             portable,
             allowGenericFallback: false,
           ) ??
           portable;
     }
-    return KelivoFileUri.tryEncodeLegacyAbsolutePath(
+    return OrviaFileUri.tryEncodeLegacyAbsolutePath(
           portable,
           allowGenericFallback: false,
         ) ??
@@ -281,29 +281,29 @@ class SandboxPathResolver {
 
   /// Restore-boundary remap: if [uri] is a known previous managed sandbox
   /// absolute path and the corresponding file exists under the current docs
-  /// root (because backup files were copied), return the kelivo-file URI.
+  /// root (because backup files were copied), return the orvia-file URI.
   ///
   /// Does **not** reopen generic `/images/` fallback for arbitrary external
   /// paths that merely share a basename with a restored file.
   static String? tryRemapRestoredManagedAbsolute(String uri) {
     final docs = _docsDir;
     if (docs == null || docs.isEmpty) return null;
-    if (KelivoFileUri.isKelivoFileUri(uri)) return uri;
+    if (OrviaFileUri.isOrviaFileUri(uri)) return uri;
     final lower = uri.toLowerCase();
     if (lower.startsWith('http://') ||
         lower.startsWith('https://') ||
         lower.startsWith('data:')) {
       return null;
     }
-    final portable = KelivoFileUri.toPortableSlashPath(uri);
+    final portable = OrviaFileUri.toPortableSlashPath(uri);
     if (portable == null) return null;
 
-    final encoded = KelivoFileUri.tryEncodeLegacyAbsolutePath(
+    final encoded = OrviaFileUri.tryEncodeLegacyAbsolutePath(
       portable,
       allowGenericFallback: false,
     );
     if (encoded == null) return null;
-    final abs = KelivoFileUri.resolveToAbsolute(encoded, root: docs);
+    final abs = OrviaFileUri.resolveToAbsolute(encoded, root: docs);
     if (abs == null) return null;
     try {
       if (File(abs).existsSync()) return encoded;
@@ -345,7 +345,7 @@ class SandboxPathResolver {
   /// Returns `null` when [path] is a non-local `file:` URI.
   static String? resolveForIo(String path) {
     if (path.isEmpty) return path;
-    if (KelivoFileUri.isKelivoFileUri(path)) return fix(path);
+    if (OrviaFileUri.isOrviaFileUri(path)) return fix(path);
 
     var candidate = path;
     if (path.toLowerCase().startsWith('file:')) {
@@ -377,12 +377,12 @@ class SandboxPathResolver {
   static String? _remapStructuredIfExists(String abs) {
     final docs = _docsDir;
     if (docs == null || docs.isEmpty) return null;
-    final uri = KelivoFileUri.tryEncodeLegacyAbsolutePath(
+    final uri = OrviaFileUri.tryEncodeLegacyAbsolutePath(
       abs,
       allowGenericFallback: false,
     );
     if (uri == null) return null;
-    final mapped = KelivoFileUri.resolveToAbsolute(uri, root: docs);
+    final mapped = OrviaFileUri.resolveToAbsolute(uri, root: docs);
     if (mapped == null) return null;
     try {
       if (File(mapped).existsSync()) return mapped;

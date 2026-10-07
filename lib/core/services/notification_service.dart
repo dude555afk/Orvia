@@ -36,7 +36,7 @@ class NotificationService {
       _pendingMessageIds.remove(conversationId);
   static const String _chatCompletionPayloadPrefix = 'chat-complete:';
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
-    'kelivo_bg_chat_v2',
+    'orvia_bg_chat_v2',
     'Chat Background',
     description: 'Notifications for chat generation status',
     importance: Importance.high,
@@ -156,7 +156,7 @@ class NotificationService {
           enableVibration: true,
           category: AndroidNotificationCategory.message,
           visibility: NotificationVisibility.public,
-          ticker: 'Kelivo',
+          ticker: 'Orvia',
           styleInformation: BigTextStyleInformation(
             body ?? 'Assistant reply has been generated',
           ),
@@ -164,7 +164,7 @@ class NotificationService {
         iOS: const DarwinNotificationDetails(
           presentAlert: true,
           presentSound: true,
-          threadIdentifier: 'kelivo.chat-completion',
+          threadIdentifier: 'orvia.chat-completion',
         ),
       ),
       payload: '$_chatCompletionPayloadPrefix$conversationId',

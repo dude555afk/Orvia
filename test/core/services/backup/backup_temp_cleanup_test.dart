@@ -3,16 +3,16 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/backup/backup_cancel_token.dart';
-import 'package:Kelivo/core/services/backup/backup_isolate_runner.dart';
-import 'package:Kelivo/core/services/backup/data_sync.dart';
+import 'package:orvia/core/services/backup/backup_cancel_token.dart';
+import 'package:orvia/core/services/backup/backup_isolate_runner.dart';
+import 'package:orvia/core/services/backup/data_sync.dart';
 
 void main() {
   test(
     'keeps workDir while isolateExited is false and deletes it on exit',
     () async {
       final workDir = await Directory.systemTemp.createTemp(
-        'kelivo_backup_alive_',
+        'orvia_backup_alive_',
       );
       final sentinel = File('${workDir.path}/sentinel');
       await sentinel.writeAsString('held', flush: true);
@@ -42,7 +42,7 @@ void main() {
     'deletes workDir immediately when the isolate has already exited',
     () async {
       final workDir = await Directory.systemTemp.createTemp(
-        'kelivo_backup_exited_',
+        'orvia_backup_exited_',
       );
       await File('${workDir.path}/sentinel').writeAsString('gone', flush: true);
 
@@ -71,15 +71,15 @@ void main() {
   });
 
   test('age cleaner skips a registered work dir older than 6 hours', () async {
-    final tmp = await Directory.systemTemp.createTemp('kelivo_backup_tmp_');
+    final tmp = await Directory.systemTemp.createTemp('orvia_backup_tmp_');
     addTearDown(() async {
       DataSync.unregisterLiveTempPath(
-        '${tmp.path}/kelivo_backup_2000-01-01T00-00-00.000000',
+        '${tmp.path}/orvia_backup_2000-01-01T00-00-00.000000',
       );
       if (await tmp.exists()) await tmp.delete(recursive: true);
     });
     final stale = Directory(
-      '${tmp.path}/kelivo_backup_2000-01-01T00-00-00.000000',
+      '${tmp.path}/orvia_backup_2000-01-01T00-00-00.000000',
     );
     await stale.create(recursive: true);
     await File('${stale.path}/orphan.zip').writeAsString('old', flush: true);
@@ -103,9 +103,9 @@ void main() {
         required Future<void> Function(File exported) persist,
       }) async {
         final workDir = await Directory.systemTemp.createTemp(
-          'kelivo_backup_export_',
+          'orvia_backup_export_',
         );
-        final exported = File('${workDir.path}/kelivo_backup_demo.zip');
+        final exported = File('${workDir.path}/orvia_backup_demo.zip');
         await exported.writeAsBytes([1, 2, 3], flush: true);
 
         try {

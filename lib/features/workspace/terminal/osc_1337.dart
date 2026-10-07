@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-/// Strips iTerm-style OSC 1337 `KelivoOpenURL` sequences from a PTY byte
+/// Strips iTerm-style OSC 1337 `OrviaOpenURL` sequences from a PTY byte
 /// stream before they reach the emulator, and reports the URL.
 ///
 /// Recognizes both BEL (`ESC ] … BEL`) and ST (`ESC ] … ESC \`) terminators.
@@ -15,8 +15,8 @@ class Osc1337Interceptor {
 
   static const int maxOscLength = 4096;
 
-  static final RegExp _kelivoOpen = RegExp(
-    r'^1337\s*;\s*KelivoOpenURL=(.*)$',
+  static final RegExp _orviaOpen = RegExp(
+    r'^1337\s*;\s*OrviaOpenURL=(.*)$',
     dotAll: true,
   );
 
@@ -59,7 +59,7 @@ class Osc1337Interceptor {
         _pending.sublist(i + 2, term.index),
         allowMalformed: true,
       );
-      if (_handleKelivoOpen(body)) {
+      if (_handleOrviaOpen(body)) {
         i = term.index + term.length;
         continue;
       }
@@ -71,8 +71,8 @@ class Osc1337Interceptor {
     return Uint8List.fromList(out);
   }
 
-  bool _handleKelivoOpen(String body) {
-    final match = _kelivoOpen.firstMatch(body);
+  bool _handleOrviaOpen(String body) {
+    final match = _orviaOpen.firstMatch(body);
     if (match == null) return false;
     final raw = match.group(1)?.trim() ?? '';
     if (raw.isEmpty) return true;

@@ -9,7 +9,7 @@ Future<void> main(List<String> arguments) async {
       .firstOrNull;
   final output = Directory(
     outputArgument?.substring('--output='.length) ??
-        '${Directory.systemTemp.path}/kelivo_chat_v2_benchmark',
+        '${Directory.systemTemp.path}/orvia_chat_v2_benchmark',
   );
   final smoke = arguments.contains('--smoke');
   final datasetArgument = arguments
@@ -49,7 +49,7 @@ Future<void> main(List<String> arguments) async {
     });
   }
   final report = {
-    'format': 'kelivo-chat-database-v2-benchmark-v1',
+    'format': 'orvia-chat-database-v2-benchmark-v1',
     'seed': ChatDatabaseV2BenchmarkFixture.seed,
     'smoke': smoke,
     'dart': Platform.version,

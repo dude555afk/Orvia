@@ -6,7 +6,7 @@ void main() {
   test(
     'iOS native environment encoding keeps large values and rejects overflow',
     () async {
-      final temp = await Directory.systemTemp.createTemp('kelivo_ios_env_');
+      final temp = await Directory.systemTemp.createTemp('orvia_ios_env_');
       addTearDown(() => temp.delete(recursive: true));
       final binary = '${temp.path}/environment_test';
       final compile = await Process.run('xcrun', [
@@ -20,7 +20,7 @@ void main() {
         '-framework',
         'Foundation',
         '-Iios/Runner/Workspace',
-        'ios/Runner/Workspace/KelivoISHEnvironment.m',
+        'ios/Runner/Workspace/OrviaISHEnvironment.m',
         'test/native/ios_environment_test.m',
         '-o',
         binary,
@@ -41,13 +41,13 @@ void main() {
       'iOS profile preserves configured variables with $shell',
       () async {
         final temp = await Directory.systemTemp.createTemp(
-          'kelivo_ios_profile_',
+          'orvia_ios_profile_',
         );
         addTearDown(() => temp.delete(recursive: true));
         final profiles = await Directory('${temp.path}/profile.d').create();
         await File(
-          'ios/sandbox/overlay/etc/profile.d/kelivo.sh',
-        ).copy('${profiles.path}/kelivo.sh');
+          'ios/sandbox/overlay/etc/profile.d/orvia.sh',
+        ).copy('${profiles.path}/orvia.sh');
         final profile = File('${temp.path}/profile');
         // Redirect only guest absolute paths into the isolated test root.
         await profile.writeAsString(

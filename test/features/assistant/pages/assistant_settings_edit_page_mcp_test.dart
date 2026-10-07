@@ -7,23 +7,23 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/reasoning_request.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/memory_provider.dart';
-import 'package:Kelivo/core/providers/memory_provider_v2.dart';
-import 'package:Kelivo/core/providers/quick_phrase_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/memory/memory_pipeline.dart';
-import 'package:Kelivo/core/services/memory/memory_repository.dart';
-import 'package:Kelivo/features/assistant/pages/assistant_settings_edit_page.dart';
-import 'package:Kelivo/features/home/services/local_tools_service.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_switch.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/reasoning_request.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/memory_provider.dart';
+import 'package:orvia/core/providers/memory_provider_v2.dart';
+import 'package:orvia/core/providers/quick_phrase_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/memory/memory_pipeline.dart';
+import 'package:orvia/core/services/memory/memory_repository.dart';
+import 'package:orvia/features/assistant/pages/assistant_settings_edit_page.dart';
+import 'package:orvia/features/home/services/local_tools_service.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_switch.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
 
 class _FakePathProviderPlatform extends PathProviderPlatform {
   _FakePathProviderPlatform(this.path);
@@ -55,7 +55,7 @@ Future<
 >
 _createAssistantProvider(WidgetTester tester) async {
   final tempDir = await tester.runAsync(
-    () => Directory.systemTemp.createTemp('kelivo_asst_edit_'),
+    () => Directory.systemTemp.createTemp('orvia_asst_edit_'),
   );
   final previousPathProvider = PathProviderPlatform.instance;
   PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir!.path);

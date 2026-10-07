@@ -7,21 +7,21 @@ import 'package:hive_flutter/hive_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/conversation_prompt_settings.dart';
-import 'package:Kelivo/core/models/instruction_injection.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/models/token_usage.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/instruction_injection_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/world_book_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/utils/token_estimator.dart';
-import 'package:Kelivo/features/home/services/context_assembly.dart';
-import 'package:Kelivo/features/home/services/context_usage_service.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/conversation_prompt_settings.dart';
+import 'package:orvia/core/models/instruction_injection.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/models/token_usage.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/instruction_injection_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/world_book_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/utils/token_estimator.dart';
+import 'package:orvia/features/home/services/context_assembly.dart';
+import 'package:orvia/features/home/services/context_usage_service.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 
 import '../../../support/business_test_harness.dart';
 
@@ -52,7 +52,7 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp(
-      'kelivo_context_usage_test_',
+      'orvia_context_usage_test_',
     );
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     SandboxPathResolver.debugSetDirs(

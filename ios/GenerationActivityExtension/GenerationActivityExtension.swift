@@ -10,7 +10,7 @@ struct GenerationActivityBundle: WidgetBundle {
 
 struct GenerationActivityWidget: Widget {
   var body: some WidgetConfiguration {
-    ActivityConfiguration(for: KelivoGenerationActivityAttributes.self) { context in
+    ActivityConfiguration(for: OrviaGenerationActivityAttributes.self) { context in
       HStack(spacing: 12) {
         Image(systemName: symbol(context.state, stale: activityIsStale(context)))
           .font(.title2).foregroundStyle(activityIsStale(context) ? .orange : .blue)
@@ -70,7 +70,7 @@ struct GenerationActivityWidget: Widget {
   }
 }
 
-private func symbol(_ state: KelivoGenerationActivityAttributes.ContentState, stale: Bool) -> String {
+private func symbol(_ state: OrviaGenerationActivityAttributes.ContentState, stale: Bool) -> String {
   if stale { return "exclamationmark.circle" }
   switch state.outcome {
   case "completed": return "checkmark.circle.fill"
@@ -82,14 +82,14 @@ private func symbol(_ state: KelivoGenerationActivityAttributes.ContentState, st
 
 private func conversationURL(_ id: String) -> URL? {
   var components = URLComponents()
-  components.scheme = "kelivo"
+  components.scheme = "orvia"
   components.host = "conversation"
   components.path = "/\(id)"
   return components.url
 }
 
 private struct GenerationElapsedTime: View {
-  let state: KelivoGenerationActivityAttributes.ContentState
+  let state: OrviaGenerationActivityAttributes.ContentState
 
   var body: some View {
     Group {
@@ -110,7 +110,7 @@ private struct GenerationElapsedTime: View {
   }
 }
 
-private func activityIsStale(_ context: ActivityViewContext<KelivoGenerationActivityAttributes>) -> Bool {
+private func activityIsStale(_ context: ActivityViewContext<OrviaGenerationActivityAttributes>) -> Bool {
   if #available(iOS 16.2, *) { return context.isStale }
   return false
 }

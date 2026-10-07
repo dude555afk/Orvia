@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/providers/mcp_provider.dart';
-import 'package:Kelivo/core/services/auth/oauth_callback.dart';
-import 'package:Kelivo/core/services/mcp/mcp_oauth_http_client.dart';
-import 'package:Kelivo/core/services/mcp/mcp_oauth_http_client_io.dart'
+import 'package:orvia/core/providers/mcp_provider.dart';
+import 'package:orvia/core/services/auth/oauth_callback.dart';
+import 'package:orvia/core/services/mcp/mcp_oauth_http_client.dart';
+import 'package:orvia/core/services/mcp/mcp_oauth_http_client_io.dart'
     show isPublicMcpOAuthAddress;
-import 'package:Kelivo/core/services/mcp/mcp_oauth_service.dart';
+import 'package:orvia/core/services/mcp/mcp_oauth_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -37,7 +37,7 @@ void main() {
       expect(callbackUri.queryParameters['code'], 'code');
       expect(callback.redirectUri, redirectUri);
       expect(responseBody, contains('You may close this window'));
-      expect(responseBody, isNot(contains('kelivo://oauth-return')));
+      expect(responseBody, isNot(contains('orvia://oauth-return')));
       expect(responseBody, isNot(contains('Authorization complete')));
     } finally {
       client.close(force: true);
@@ -97,14 +97,14 @@ void main() {
         expect(body['token_endpoint_auth_method'], 'none');
         expect(body['scope'], 'tools:read');
         expect(body['redirect_uris'], [callback.redirectUri.toString()]);
-        return http.Response(jsonEncode({'client_id': 'kelivo-client'}), 201);
+        return http.Response(jsonEncode({'client_id': 'orvia-client'}), 201);
       }
       if (request.method == 'POST' &&
           request.url.toString() == '$issuer/token') {
         tokenRequests++;
         final form = Uri.splitQueryString(request.body);
         expect(form['resource'], serverUrl);
-        expect(form['client_id'], 'kelivo-client');
+        expect(form['client_id'], 'orvia-client');
         if (form['grant_type'] == 'authorization_code') {
           expect(form['code'], 'authorization-code');
           expect(form['code_verifier'], isNotEmpty);

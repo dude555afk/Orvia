@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/services/network/dio_http_client.dart';
-import 'package:Kelivo/core/services/network/request_logger.dart';
+import 'package:orvia/core/services/network/dio_http_client.dart';
+import 'package:orvia/core/services/network/request_logger.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
@@ -29,7 +29,7 @@ void main() {
   late PathProviderPlatform previousPathProvider;
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp('kelivo_dio_error_logs_');
+    tempDir = await Directory.systemTemp.createTemp('orvia_dio_error_logs_');
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     RequestLogger.saveOutput = false;

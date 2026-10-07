@@ -190,7 +190,7 @@ class _RestoreFailureScreenState extends State<RestoreFailureScreen> {
         '-',
       );
       final file = File(
-        '${Directory.systemTemp.path}/kelivo-startup-failure-$stamp.txt',
+        '${Directory.systemTemp.path}/orvia-startup-failure-$stamp.txt',
       );
       await file.writeAsString(_report.toText(), flush: true);
       if (_isDesktop) {
@@ -242,7 +242,7 @@ class _RestoreFailureScreenState extends State<RestoreFailureScreen> {
       final archive = await StartupDiagnosticsService.createDataArchive(
         appDataDirectory: directory,
         workingDirectory: Directory(
-          '${Directory.systemTemp.path}/kelivo-recovery',
+          '${Directory.systemTemp.path}/orvia-recovery',
         ),
       );
       try {
@@ -451,7 +451,7 @@ class _RestoreFailureScreenState extends State<RestoreFailureScreen> {
       FlutterErrorDetails(
         exception: error,
         stack: stackTrace,
-        library: 'Kelivo restore',
+        library: 'Orvia restore',
         context: ErrorDescription(context),
       ),
     );

@@ -113,7 +113,7 @@ final class BusinessMigrationEngine {
       developer.log(
         'Business migration durability barrier failed; '
         'deferring legacy cleanup.',
-        name: 'Kelivo.business.migration',
+        name: 'Orvia.business.migration',
         error: error,
         stackTrace: stackTrace,
       );

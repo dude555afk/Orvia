@@ -4,16 +4,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/features/stats/models/stats_models.dart';
-import 'package:Kelivo/features/stats/pages/stats_page.dart';
-import 'package:Kelivo/features/stats/widgets/stats_heatmap.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/features/stats/models/stats_models.dart';
+import 'package:orvia/features/stats/pages/stats_page.dart';
+import 'package:orvia/features/stats/widgets/stats_heatmap.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 
 Widget _harness(StatsSnapshot snapshot) {
   return ChangeNotifierProvider(

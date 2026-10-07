@@ -9,26 +9,26 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/reasoning_request.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/memory_provider.dart';
-import 'package:Kelivo/core/providers/memory_provider_v2.dart';
-import 'package:Kelivo/core/providers/quick_phrase_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/tts_provider.dart';
-import 'package:Kelivo/core/providers/user_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/memory/memory_pipeline.dart';
-import 'package:Kelivo/core/services/memory/memory_repository.dart';
-import 'package:Kelivo/core/services/tts/tts_playback_models.dart';
-import 'package:Kelivo/features/assistant/pages/assistant_settings_edit_page.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_switch.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/reasoning_request.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/memory_provider.dart';
+import 'package:orvia/core/providers/memory_provider_v2.dart';
+import 'package:orvia/core/providers/quick_phrase_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/tts_provider.dart';
+import 'package:orvia/core/providers/user_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/memory/memory_pipeline.dart';
+import 'package:orvia/core/services/memory/memory_repository.dart';
+import 'package:orvia/core/services/tts/tts_playback_models.dart';
+import 'package:orvia/features/assistant/pages/assistant_settings_edit_page.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_switch.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
 
 class _FakeTtsProvider extends ChangeNotifier implements TtsProvider {
   @override
@@ -77,7 +77,7 @@ _createAssistantProvider(
   bool appendCurrentTimeToUserMessage = false,
 }) async {
   final tempDir = await tester.runAsync(
-    () => Directory.systemTemp.createTemp('kelivo_asst_edit_'),
+    () => Directory.systemTemp.createTemp('orvia_asst_edit_'),
   );
   final previousPathProvider = PathProviderPlatform.instance;
   PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir!.path);
@@ -175,7 +175,7 @@ Widget _buildHarness({
     child: MaterialApp(
       theme: ThemeData(
         brightness: brightness,
-        fontFamily: Platform.environment['KELIVO_TIME_SCREENSHOTS'] == null
+        fontFamily: Platform.environment['ORVIA_TIME_SCREENSHOTS'] == null
             ? null
             : 'PromptTimePreview',
       ),
@@ -213,7 +213,7 @@ Finder _systemPromptField() {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
-    if (Platform.environment['KELIVO_TIME_SCREENSHOTS'] == null) return;
+    if (Platform.environment['ORVIA_TIME_SCREENSHOTS'] == null) return;
     final bytes = await File(
       'dependencies/gpt_markdown/lib/fonts/JetBrainsMono-Regular.ttf',
     ).readAsBytes();
@@ -516,7 +516,7 @@ void main() {
           final switchRect = tester.getRect(toggle);
           expect(cardRect.contains(switchRect.topLeft), isTrue);
           expect(cardRect.contains(switchRect.bottomRight), isTrue);
-          final screenshotDir = Platform.environment['KELIVO_TIME_SCREENSHOTS'];
+          final screenshotDir = Platform.environment['ORVIA_TIME_SCREENSHOTS'];
           if (screenshotDir != null) {
             await tester.runAsync(() async {
               final boundary =

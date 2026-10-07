@@ -7,25 +7,25 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_preferences.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/android_proot_runtime.dart';
-import 'package:Kelivo/core/services/sandbox/environment_installer.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_service.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_speed_test.dart';
-import 'package:Kelivo/core/services/sandbox/mobile_workspace_bootstrap.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
-import 'package:Kelivo/core/services/workspace/workspace_paths.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/core/services/workspace/workspace_tools_service.dart';
-import 'package:Kelivo/features/workspace/terminal/terminal_session_manager.dart';
-import 'package:Kelivo/utils/app_directories.dart';
-import 'package:Kelivo/utils/mcp_structured_image.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_preferences.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/android_proot_runtime.dart';
+import 'package:orvia/core/services/sandbox/environment_installer.dart';
+import 'package:orvia/core/services/sandbox/mirror_service.dart';
+import 'package:orvia/core/services/sandbox/mirror_speed_test.dart';
+import 'package:orvia/core/services/sandbox/mobile_workspace_bootstrap.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/core/services/workspace/workspace_paths.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/workspace/workspace_tools_service.dart';
+import 'package:orvia/features/workspace/terminal/terminal_session_manager.dart';
+import 'package:orvia/utils/app_directories.dart';
+import 'package:orvia/utils/mcp_structured_image.dart';
 
 const _suiteTimeout = Timeout(Duration(minutes: 20));
 const _replacementChar = '\uFFFD';
@@ -86,7 +86,7 @@ void main() {
     await h.ensureReady();
     expect(h.env.state.phase, EnvironmentPhase.ready);
     expect(
-      File(p.join(h.installer.rootfsDir.path, kKelivoVersionFile)).existsSync(),
+      File(p.join(h.installer.rootfsDir.path, kOrviaVersionFile)).existsSync(),
       isTrue,
     );
     _log(
@@ -531,7 +531,7 @@ class _Harness {
 
   Future<void> ensureReady() async {
     final versionFile = File(
-      p.join(installer.rootfsDir.path, kKelivoVersionFile),
+      p.join(installer.rootfsDir.path, kOrviaVersionFile),
     );
     if (await versionFile.exists()) {
       alreadyInstalled = true;
@@ -684,7 +684,7 @@ Future<BusinessPreferences> _openPreferences() async {
       _log('PREFS opened existing ${appDb.path}');
       return prefs;
     } catch (error, stack) {
-      _log('PREFS existing kelivo.db failed: $error\n$stack');
+      _log('PREFS existing orvia.db failed: $error\n$stack');
     }
   } else {
     _log('PREFS no ${appDb.path}; using isolated temp DB');
@@ -692,7 +692,7 @@ Future<BusinessPreferences> _openPreferences() async {
   final isolated = File(
     p.join(
       Directory.systemTemp.path,
-      'kelivo-android-proot-it-${DateTime.now().millisecondsSinceEpoch}.db',
+      'orvia-android-proot-it-${DateTime.now().millisecondsSinceEpoch}.db',
     ),
   );
   final prefs = BusinessPreferences(
@@ -764,7 +764,7 @@ Future<void> _assertPipMirrorRoundTrip(
     final leftover = await _guestCat(h, '/etc/pip.conf');
     _log('PIP leftover without bak/sentinel; removing:\n$leftover');
     await h.run(
-      'rm -f /etc/pip.conf /etc/pip.conf.bak /etc/pip.conf.kelivo-created',
+      'rm -f /etc/pip.conf /etc/pip.conf.bak /etc/pip.conf.orvia-created',
     );
   }
   expect(
@@ -779,7 +779,7 @@ Future<void> _assertPipMirrorRoundTrip(
 
   final applied = await _guestCat(h, '/etc/pip.conf');
   expect(applied, contains(pick.host), reason: 'applied pip.conf:\n$applied');
-  expect(await _guestExists(h, '/etc/pip.conf.kelivo-created'), isTrue);
+  expect(await _guestExists(h, '/etc/pip.conf.orvia-created'), isTrue);
   expect(await _guestExists(h, '/etc/pip.conf.bak'), isFalse);
   expect(await _guestExists(h, '/root/.config/pip/pip.conf'), isFalse);
   expect(RegExp(r'index-url\s*=').allMatches(applied).length, 1);
@@ -788,7 +788,7 @@ Future<void> _assertPipMirrorRoundTrip(
   await h.mirrors.apply(MirrorCategory.pip, pick);
   final again = await _guestCat(h, '/etc/pip.conf');
   expect(again, contains(pick.host), reason: 're-applied pip.conf:\n$again');
-  expect(await _guestExists(h, '/etc/pip.conf.kelivo-created'), isTrue);
+  expect(await _guestExists(h, '/etc/pip.conf.orvia-created'), isTrue);
   expect(
     await _guestExists(h, '/etc/pip.conf.bak'),
     isFalse,
@@ -799,7 +799,7 @@ Future<void> _assertPipMirrorRoundTrip(
 
   await h.mirrors.restoreOfficial(MirrorCategory.pip);
   expect(await _guestExists(h, '/etc/pip.conf'), isFalse);
-  expect(await _guestExists(h, '/etc/pip.conf.kelivo-created'), isFalse);
+  expect(await _guestExists(h, '/etc/pip.conf.orvia-created'), isFalse);
   expect(await _guestExists(h, '/etc/pip.conf.bak'), isFalse);
 }
 
@@ -823,11 +823,11 @@ Future<void> _assertAptMirrorRoundTrip(
   final applied = await _guestCat(h, sources);
   expect(applied, contains(pick.host), reason: 'applied sources:\n$applied');
   expect(await _guestExists(h, '$sources.bak'), isTrue);
-  expect(await _guestExists(h, '$sources.kelivo-created'), isFalse);
+  expect(await _guestExists(h, '$sources.orvia-created'), isFalse);
 
   await h.mirrors.restoreOfficial(MirrorCategory.apt);
   expect(await _guestExists(h, '$sources.bak'), isFalse);
-  expect(await _guestExists(h, '$sources.kelivo-created'), isFalse);
+  expect(await _guestExists(h, '$sources.orvia-created'), isFalse);
   final restored = await _guestCat(h, sources);
   expect(
     restored,

@@ -5,11 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/chat_api_service.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/core/utils/multimodal_input_utils.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/chat_api_service.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/core/utils/multimodal_input_utils.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 import 'support/collect_generation.dart';
 
 ProviderConfig _openAiConfig(String baseUrl, {bool useResponseApi = false}) {
@@ -233,7 +233,7 @@ void main() {
         late String contentType;
         late Map<String, dynamic> requestBody;
         final tempDir = await Directory.systemTemp.createTemp(
-          'kelivo_openai_image_chat_route_',
+          'orvia_openai_image_chat_route_',
         );
         addTearDown(() async {
           if (await tempDir.exists()) {
@@ -291,7 +291,7 @@ void main() {
       late String contentType;
       late String requestBody;
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_openai_image_edit_',
+        'orvia_openai_image_edit_',
       );
       addTearDown(() async {
         if (await tempDir.exists()) {
@@ -347,7 +347,7 @@ void main() {
     test('sets jpeg content type for jpg image edit uploads', () async {
       late String requestBody;
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_openai_jpeg_edit_',
+        'orvia_openai_jpeg_edit_',
       );
       addTearDown(() async {
         if (await tempDir.exists()) {
@@ -448,7 +448,7 @@ void main() {
     test('prefers structured media mime over bare userImagePaths', () async {
       late String requestBody;
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_openai_structured_mime_',
+        'orvia_openai_structured_mime_',
       );
       addTearDown(() async {
         if (await tempDir.exists()) {
@@ -504,7 +504,7 @@ void main() {
       late String contentType;
       late String requestBody;
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_openai_media_paths_edit_',
+        'orvia_openai_media_paths_edit_',
       );
       addTearDown(() async {
         if (await tempDir.exists()) {
@@ -562,7 +562,7 @@ void main() {
       late String contentType;
       late String requestBody;
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_openai_non_image_refs_',
+        'orvia_openai_non_image_refs_',
       );
       addTearDown(() async {
         if (await tempDir.exists()) {
@@ -636,7 +636,7 @@ void main() {
     test('non-image-only structured refs do not force /images/edits', () async {
       late Uri requestUri;
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_openai_audio_only_refs_',
+        'orvia_openai_audio_only_refs_',
       );
       addTearDown(() async {
         if (await tempDir.exists()) {
@@ -751,7 +751,7 @@ void main() {
     test('saves base64 image responses with requested output format', () async {
       late Map<String, dynamic> requestBody;
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_openai_b64_output_',
+        'orvia_openai_b64_output_',
       );
       final previousPathProvider = PathProviderPlatform.instance;
       PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
@@ -799,7 +799,7 @@ void main() {
 
       final imageUri = chunks.firstImageUri!;
       expect(requestBody['output_format'], 'webp');
-      expect(imageUri, startsWith('kelivo-file:///'));
+      expect(imageUri, startsWith('orvia-file:///'));
       expect(imageUri.endsWith('.webp'), isTrue);
       final imagePath = SandboxPathResolver.fix(imageUri);
       expect(await File(imagePath).readAsBytes(), const [1, 2, 3, 4]);
@@ -809,7 +809,7 @@ void main() {
       'throws instead of rendering null when base64 image save fails',
       () async {
         final tempDir = await Directory.systemTemp.createTemp(
-          'kelivo_openai_b64_failure_',
+          'orvia_openai_b64_failure_',
         );
         final previousPathProvider = PathProviderPlatform.instance;
         PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
@@ -868,7 +868,7 @@ void main() {
         late String contentType;
         late String requestBody;
         final tempDir = await Directory.systemTemp.createTemp(
-          'kelivo_openai_assistant_image_edit_',
+          'orvia_openai_assistant_image_edit_',
         );
         addTearDown(() async {
           if (await tempDir.exists()) {
@@ -1020,7 +1020,7 @@ void main() {
   group('OpenAI Responses image generation', () {
     test('renders OpenRouter imageUrl and imageB64 outputs', () async {
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_openrouter_responses_image_',
+        'orvia_openrouter_responses_image_',
       );
       final previousPathProvider = PathProviderPlatform.instance;
       PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
@@ -1078,9 +1078,9 @@ void main() {
       // Remote URLs pass through untouched; base64 is saved to a local file.
       expect(imageUris, contains('https://example.com/generated.png'));
       final imageUri = imageUris.singleWhere(
-        (uri) => uri.startsWith('kelivo-file:///'),
+        (uri) => uri.startsWith('orvia-file:///'),
       );
-      expect(imageUri, startsWith('kelivo-file:///'));
+      expect(imageUri, startsWith('orvia-file:///'));
       expect(imageUri.endsWith('.png'), isTrue);
       expect(
         await File(SandboxPathResolver.fix(imageUri)).readAsBytes(),
@@ -1091,7 +1091,7 @@ void main() {
 
     test('emits Image events from non-stream output array', () async {
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_openrouter_responses_image_events_',
+        'orvia_openrouter_responses_image_events_',
       );
       final previousPathProvider = PathProviderPlatform.instance;
       PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
@@ -1141,7 +1141,7 @@ void main() {
       expect(chunks.whereType<ImageStart>(), hasLength(1));
       expect(chunks.whereType<ImageStart>().single.mimeType, 'image/png');
       final uri = chunks.whereType<ImageSnapshot>().single.data;
-      expect(uri, startsWith('kelivo-file:///'));
+      expect(uri, startsWith('orvia-file:///'));
       expect(uri.endsWith('.png'), isTrue);
       expect(chunks.whereType<ImageEnd>(), hasLength(1));
       expect(chunks.whereType<TextDelta>().single.text, 'Done');
@@ -1156,7 +1156,7 @@ void main() {
 
     test('renders partial image when completed output is empty', () async {
       final tempDir = await Directory.systemTemp.createTemp(
-        'kelivo_openai_responses_partial_image_',
+        'orvia_openai_responses_partial_image_',
       );
       final previousPathProvider = PathProviderPlatform.instance;
       PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);

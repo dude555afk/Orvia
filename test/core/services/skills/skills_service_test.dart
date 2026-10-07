@@ -10,12 +10,12 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/models/skill_record.dart';
-import 'package:Kelivo/core/services/skills/skill_archive.dart';
-import 'package:Kelivo/core/services/skills/skills_service.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/models/skill_record.dart';
+import 'package:orvia/core/services/skills/skill_archive.dart';
+import 'package:orvia/core/services/skills/skills_service.dart';
 
 const _skillMd = '''
 ---
@@ -60,7 +60,7 @@ void main() {
     database = AppDatabase(NativeDatabase.memory());
     store = _PausingSkillStore(database);
     await database.customSelect('SELECT 1;').getSingle();
-    tmp = await Directory.systemTemp.createTemp('kelivo_skills_');
+    tmp = await Directory.systemTemp.createTemp('orvia_skills_');
     skillsDir = Directory(p.join(tmp.path, 'skills'));
     service = SkillsService(store: store, skillsDirectory: skillsDir);
     await service.loaded;

@@ -4,10 +4,10 @@ import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/business_data.dart';
-import 'package:Kelivo/core/database/business_repository.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/business_data.dart';
+import 'package:orvia/core/database/business_repository.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
 
 void main() {
   late AppDatabase database;
@@ -379,9 +379,9 @@ END;
   test('checkpoint barriers against a real WAL file database', () async {
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
     final directory = await Directory.systemTemp.createTemp(
-      'kelivo_business_wal_checkpoint_',
+      'orvia_business_wal_checkpoint_',
     );
-    final file = File('${directory.path}/kelivo.db');
+    final file = File('${directory.path}/orvia.db');
     final walDatabase = AppDatabase.open(file: file);
     final walRepository = BusinessRepository(walDatabase);
     addTearDown(() async {

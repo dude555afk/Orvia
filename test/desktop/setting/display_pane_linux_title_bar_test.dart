@@ -1,8 +1,8 @@
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/linux_window_service.dart';
-import 'package:Kelivo/desktop/desktop_settings_page.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_switch.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/linux_window_service.dart';
+import 'package:orvia/desktop/desktop_settings_page.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_switch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

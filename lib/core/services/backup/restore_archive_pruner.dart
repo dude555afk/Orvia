@@ -5,7 +5,7 @@ import 'package:path/path.dart' as p;
 import 'restore_trace_service.dart';
 import 'restore_workspace_lock.dart';
 
-/// Trims `.kelivo_restore/completed/` archives after a few successful cold
+/// Trims `.orvia_restore/completed/` archives after a few successful cold
 /// starts so each overwrite restore does not strand a full copy of the old
 /// database and assets forever.
 ///

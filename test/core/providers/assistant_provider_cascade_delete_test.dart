@@ -6,9 +6,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/features/search/services/global_session_search_service.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/features/search/services/global_session_search_service.dart';
 
 import '../../support/business_preferences_test_harness.dart';
 
@@ -66,7 +66,7 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp(
-      'kelivo_assistant_cascade_test_',
+      'orvia_assistant_cascade_test_',
     );
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     harness = await BusinessPreferencesTestHarness.create();

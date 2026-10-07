@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/backup/backup_settings_validator.dart';
+import 'package:orvia/core/services/backup/backup_settings_validator.dart';
 
 void main() {
   group('BackupSettingsValidator', () {

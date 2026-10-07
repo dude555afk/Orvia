@@ -37,8 +37,8 @@ import '../../provider/widgets/provider_balance_badge.dart';
 import '../../provider/widgets/provider_avatar.dart';
 import '../../../utils/model_grouping.dart';
 import '../../../theme/app_font_weights.dart';
-import 'package:Kelivo/theme/app_semantic_colors.dart';
-import 'package:Kelivo/shared/widgets/section_card.dart';
+import 'package:orvia/theme/app_semantic_colors.dart';
+import 'package:orvia/shared/widgets/section_card.dart';
 
 class ProviderDetailPage extends StatefulWidget {
   const ProviderDetailPage({
@@ -134,7 +134,7 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
     final l10n = AppLocalizations.of(context)!;
     bool isUserAdded(String key) {
       const fixed = {
-        'KelivoIN',
+        'OrviaIN',
         'OpenAI',
         'Gemini',
         'SiliconFlow',
@@ -823,7 +823,7 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       children: [
-        if (widget.keyName.toLowerCase() == 'kelivoin') ...[
+        if (widget.keyName.toLowerCase() == 'orviain') ...[
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
@@ -1058,7 +1058,7 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async {
                             final uri = Uri.parse(
-                              'https://api.muteki.site/register?aff=kelivo&promo=kelivo',
+                              'https://api.muteki.site/register?aff=orvia&promo=orvia',
                             );
                             try {
                               final ok = await launchUrl(
@@ -1096,7 +1096,7 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
         // Top iOS-style section card for key settings
         SectionCard(
           children: [
-            if (widget.keyName.toLowerCase() != 'kelivoin')
+            if (widget.keyName.toLowerCase() != 'orviain')
               _providerKindRow(context),
             _providerGroupRow(context, groupName: groupName),
             _iosRow(
@@ -1338,12 +1338,12 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
           label: l10n.providerDetailPageNameLabel,
           controller: _nameCtrl,
           hint: widget.displayName,
-          enabled: widget.keyName.toLowerCase() != 'kelivoin',
+          enabled: widget.keyName.toLowerCase() != 'orviain',
           onChanged: (_) => _save(),
         ),
         const SizedBox(height: 12),
         if (!(_kind == ProviderKind.google && _vertexAI)) ...[
-          if (widget.keyName.toLowerCase() != 'kelivoin' &&
+          if (widget.keyName.toLowerCase() != 'orviain' &&
               !_multiKeyEnabled) ...[
             _inputRow(
               context,
@@ -1374,12 +1374,12 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
               widget.keyName,
               displayName: widget.displayName,
             ).baseUrl,
-            enabled: widget.keyName.toLowerCase() != 'kelivoin',
+            enabled: widget.keyName.toLowerCase() != 'orviain',
             onChanged: (_) => _save(),
           ),
         ],
         if (_kind == ProviderKind.openai &&
-            widget.keyName.toLowerCase() != 'kelivoin' &&
+            widget.keyName.toLowerCase() != 'orviain' &&
             !_useResp) ...[
           const SizedBox(height: 12),
           _inputRow(

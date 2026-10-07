@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Kelivo/core/providers/tts_provider.dart';
-import 'package:Kelivo/core/models/mobile_background_settings.dart';
-import 'package:Kelivo/core/services/mobile_background.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/core/services/tts/network_tts.dart';
-import 'package:Kelivo/core/services/tts/tts_playback_models.dart';
+import 'package:orvia/core/providers/tts_provider.dart';
+import 'package:orvia/core/models/mobile_background_settings.dart';
+import 'package:orvia/core/services/mobile_background.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/core/services/tts/network_tts.dart';
+import 'package:orvia/core/services/tts/tts_playback_models.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -352,7 +352,7 @@ void main() {
       addTearDown(provider.dispose);
       await _waitUntil(() => provider.isAvailable);
       final directory = await Directory.systemTemp.createTemp(
-        'kelivo-tts-resume',
+        'orvia-tts-resume',
       );
       final previousPaths = PathProviderPlatform.instance;
       PathProviderPlatform.instance = _FakePathProviderPlatform(directory.path);
@@ -424,7 +424,7 @@ void main() {
       addTearDown(provider.dispose);
       await _waitUntil(() => provider.isAvailable);
       final directory = await Directory.systemTemp.createTemp(
-        'kelivo-tts-background',
+        'orvia-tts-background',
       );
       final previousPaths = PathProviderPlatform.instance;
       PathProviderPlatform.instance = _FakePathProviderPlatform(directory.path);
@@ -570,7 +570,7 @@ void main() {
   test('network replay uses cached audio only when enabled', () async {
     final originalPathProvider = PathProviderPlatform.instance;
     final tempDirectory = await Directory.systemTemp.createTemp(
-      'kelivo_tts_replay_test_',
+      'orvia_tts_replay_test_',
     );
     PathProviderPlatform.instance = _FakePathProviderPlatform(
       tempDirectory.path,

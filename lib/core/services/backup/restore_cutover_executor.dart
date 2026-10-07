@@ -311,7 +311,7 @@ final class RestoreCutoverExecutor {
   }) async {
     developer.log(
       'Restore cutover failed; starting rollback.',
-      name: 'Kelivo.restore.cutover',
+      name: 'Orvia.restore.cutover',
       error: cutoverError,
       stackTrace: cutoverStackTrace,
     );
@@ -325,7 +325,7 @@ final class RestoreCutoverExecutor {
     } catch (rollbackError, rollbackStackTrace) {
       developer.log(
         'Restore rollback failed after cutover failure.',
-        name: 'Kelivo.restore.cutover',
+        name: 'Orvia.restore.cutover',
         error: rollbackError,
         stackTrace: rollbackStackTrace,
       );

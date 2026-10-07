@@ -1,14 +1,14 @@
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/assistant.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/features/assistant/pages/assistant_settings_edit_page.dart';
-import 'package:Kelivo/features/assistant/widgets/assistant_default_workspace_row.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/assistant.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/features/assistant/pages/assistant_settings_edit_page.dart';
+import 'package:orvia/features/assistant/widgets/assistant_default_workspace_row.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -58,7 +58,7 @@ void main() {
   late WorkspaceProvider workspaces;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('kelivo_assistant_ws_tab_');
+    tempDir = Directory.systemTemp.createTempSync('orvia_assistant_ws_tab_');
     previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     database = AppDatabase(NativeDatabase.memory());

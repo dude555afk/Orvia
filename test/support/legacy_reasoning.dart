@@ -1,5 +1,5 @@
-import 'package:Kelivo/core/models/model_spec.dart';
-import 'package:Kelivo/core/models/reasoning_request.dart';
+import 'package:orvia/core/models/model_spec.dart';
+import 'package:orvia/core/models/reasoning_request.dart';
 
 /// Recreates the P1 integer-budget mapping so request-body expectations stay
 /// identical after the thinking-budget path was deleted.

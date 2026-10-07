@@ -2,14 +2,14 @@ import "../../../support/business_test_harness.dart";
 import 'dart:convert';
 import 'dart:async' as async;
 
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/models/token_usage.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/services/api/generation/text_generation_result.dart';
-import 'package:Kelivo/core/services/api/stream/stream_chunk.dart';
-import 'package:Kelivo/features/home/controllers/stream_controller.dart';
-import 'package:Kelivo/features/home/controllers/chat_actions.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/models/token_usage.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/services/api/generation/text_generation_result.dart';
+import 'package:orvia/core/services/api/stream/stream_chunk.dart';
+import 'package:orvia/features/home/controllers/stream_controller.dart';
+import 'package:orvia/features/home/controllers/chat_actions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -239,7 +239,7 @@ void main() {
         jsonEncode(<String, dynamic>{
           'id': 'call_1',
           'name': 'lookup',
-          'arguments': <String, dynamic>{'q': 'kelivo'},
+          'arguments': <String, dynamic>{'q': 'orvia'},
         }),
       ),
     ]);

@@ -201,7 +201,7 @@ final class StartupFailureEnvironment {
       } catch (_) {
         note.add('unreadable');
       }
-      if (name == '.kelivo_restore') note.add('restore workspace');
+      if (name == '.orvia_restore') note.add('restore workspace');
       return StartupFailureFileFact(
         name: name,
         kind: 'dir',
@@ -418,7 +418,7 @@ final class StartupFailureReport {
   /// disk. Everything a support conversation needs is in here.
   String toText() {
     final buffer = StringBuffer()
-      ..writeln('Kelivo startup failure report')
+      ..writeln('Orvia startup failure report')
       ..writeln('captured: ${capturedAt.toIso8601String()}')
       ..writeln('stage: ${stage.code}')
       ..writeln('step: ${step ?? 'unknown'}')

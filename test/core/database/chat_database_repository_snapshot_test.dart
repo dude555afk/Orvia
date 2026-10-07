@@ -5,10 +5,10 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/chat_message.dart';
-import 'package:Kelivo/core/models/conversation.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/chat_message.dart';
+import 'package:orvia/core/models/conversation.dart';
 
 void main() {
   group('ChatDatabaseRepository snapshot', () {
@@ -19,7 +19,7 @@ void main() {
 
     setUp(() async {
       directory = await Directory.systemTemp.createTemp(
-        'kelivo_repository_snapshot_test_',
+        'orvia_repository_snapshot_test_',
       );
       sourceFile = File('${directory.path}/source.sqlite');
       sourceRepository = ChatDatabaseRepository.open(file: sourceFile);

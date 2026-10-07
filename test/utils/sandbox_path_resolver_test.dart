@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:Kelivo/utils/kelivo_file_uri.dart';
-import 'package:Kelivo/utils/sandbox_path_resolver.dart';
+import 'package:orvia/utils/orvia_file_uri.dart';
+import 'package:orvia/utils/sandbox_path_resolver.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
@@ -10,30 +10,30 @@ void main() {
     SandboxPathResolver.debugSetDirs(docsDir: null, supportDir: null);
   });
 
-  group('SandboxPathResolver.fix kelivo-file', () {
+  group('SandboxPathResolver.fix orvia-file', () {
     test('resolves canonical URI to absolute path without FS probe', () {
-      const docs = '/tmp/kelivo_docs_does_not_need_to_exist';
+      const docs = '/tmp/orvia_docs_does_not_need_to_exist';
       SandboxPathResolver.debugSetDirs(docsDir: docs);
 
-      const uri = 'kelivo-file:///upload/missing_no_fs_probe.png';
+      const uri = 'orvia-file:///upload/missing_no_fs_probe.png';
       final fixed = SandboxPathResolver.fix(uri);
 
       expect(fixed, p.join(docs, 'upload', 'missing_no_fs_probe.png'));
       expect(File(fixed).existsSync(), isFalse);
     });
 
-    test('returns kelivo-file URI unchanged when docsDir is null', () {
+    test('returns orvia-file URI unchanged when docsDir is null', () {
       SandboxPathResolver.debugSetDirs(docsDir: null);
-      const uri = 'kelivo-file:///images/photo.png';
+      const uri = 'orvia-file:///images/photo.png';
       expect(SandboxPathResolver.fix(uri), uri);
     });
 
     test(
-      'returns invalid kelivo-file URI unchanged (no strip/file fallback)',
+      'returns invalid orvia-file URI unchanged (no strip/file fallback)',
       () {
-        const docs = '/tmp/kelivo_docs';
+        const docs = '/tmp/orvia_docs';
         SandboxPathResolver.debugSetDirs(docsDir: docs);
-        const uri = 'kelivo-file:not-a-valid-structure';
+        const uri = 'orvia-file:not-a-valid-structure';
         expect(SandboxPathResolver.fix(uri), uri);
       },
     );
@@ -60,7 +60,7 @@ void main() {
 
   group('SandboxPathResolver.fix http/data pass-through', () {
     test('leaves http(s) and data URIs unchanged', () {
-      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/kelivo_docs');
+      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/orvia_docs');
 
       expect(
         SandboxPathResolver.fix('https://cdn.example.com/a.png'),
@@ -79,7 +79,7 @@ void main() {
 
   group('SandboxPathResolver.canonicalize', () {
     test('passes through remote / data / already-canonical URIs', () {
-      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/kelivo_docs');
+      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/orvia_docs');
 
       expect(SandboxPathResolver.canonicalize(''), '');
       expect(
@@ -95,28 +95,28 @@ void main() {
         'data:image/png;base64,abc',
       );
       expect(
-        SandboxPathResolver.canonicalize('kelivo-file:///upload/a.png'),
-        'kelivo-file:///upload/a.png',
+        SandboxPathResolver.canonicalize('orvia-file:///upload/a.png'),
+        'orvia-file:///upload/a.png',
       );
       // Cheap prefix: illegal structure still passes through.
       expect(
-        SandboxPathResolver.canonicalize('kelivo-file:garbage'),
-        'kelivo-file:garbage',
+        SandboxPathResolver.canonicalize('orvia-file:garbage'),
+        'orvia-file:garbage',
       );
     });
 
     test('encodes managed absolute path under docsDir', () {
-      const docs = '/tmp/kelivo_docs';
+      const docs = '/tmp/orvia_docs';
       SandboxPathResolver.debugSetDirs(docsDir: docs);
 
       final abs = p.join(docs, 'upload', 'a.png');
       expect(
         SandboxPathResolver.canonicalize(abs),
-        'kelivo-file:///upload/a.png',
+        'orvia-file:///upload/a.png',
       );
       expect(
         SandboxPathResolver.canonicalize('file://$abs'),
-        'kelivo-file:///upload/a.png',
+        'orvia-file:///upload/a.png',
       );
     });
 
@@ -126,46 +126,46 @@ void main() {
           '/var/mobile/Containers/Data/Application/A1B2C3D4-E5F6-7890-ABCD-EF1234567890/Documents/images/pic.png';
       expect(
         SandboxPathResolver.canonicalize(legacy),
-        'kelivo-file:///images/pic.png',
+        'orvia-file:///images/pic.png',
       );
     });
 
     test('returns external absolute path unchanged', () {
-      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/kelivo_docs');
+      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/orvia_docs');
       const external = '/usr/local/share/photo.png';
       expect(SandboxPathResolver.canonicalize(external), external);
       expect(SandboxPathResolver.canonicalize('file://$external'), external);
     });
 
-    test('does not guess external /images/ paths into kelivo-file', () {
-      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/kelivo_docs');
+    test('does not guess external /images/ paths into orvia-file', () {
+      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/orvia_docs');
       const external = '/mnt/archive/images/photo.jpg';
       expect(SandboxPathResolver.canonicalize(external), external);
     });
 
     test('decodes file:// percent-escapes before encoding', () {
-      const docs = '/tmp/kelivo_docs';
+      const docs = '/tmp/orvia_docs';
       SandboxPathResolver.debugSetDirs(docsDir: docs);
-      const fileUri = 'file:///tmp/kelivo_docs/upload/My%20Photo.png';
+      const fileUri = 'file:///tmp/orvia_docs/upload/My%20Photo.png';
       expect(
         SandboxPathResolver.canonicalize(fileUri),
-        'kelivo-file:///upload/My%20Photo.png',
+        'orvia-file:///upload/My%20Photo.png',
       );
     });
 
     test('passes through uppercase HTTPS without local guessing', () {
-      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/kelivo_docs');
+      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/orvia_docs');
       const remote = 'HTTPS://cdn.example.com/images/a.png';
       expect(SandboxPathResolver.canonicalize(remote), remote);
     });
 
     test('with docsDir set still encodes structured legacy UUID paths', () {
-      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/kelivo_docs_current');
+      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/orvia_docs_current');
       const legacy =
           '/var/mobile/Containers/Data/Application/A1B2C3D4-E5F6-7890-ABCD-EF1234567890/Documents/images/pic.png';
       expect(
         SandboxPathResolver.canonicalize(legacy),
-        'kelivo-file:///images/pic.png',
+        'orvia-file:///images/pic.png',
       );
       // Generic /images/ outside structured markers still not guessed.
       expect(
@@ -175,7 +175,7 @@ void main() {
     });
 
     test('leaves non-local file: URIs unchanged', () {
-      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/kelivo_docs');
+      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/orvia_docs');
       const unc = 'file://attacker/share/a.png';
       expect(SandboxPathResolver.canonicalize(unc), unc);
     });
@@ -184,7 +184,7 @@ void main() {
       SandboxPathResolver.debugSetDirs(docsDir: docs);
       final abs = p.join(docs, 'avatars', 'me.png');
       final uri = SandboxPathResolver.canonicalize(abs);
-      expect(uri, KelivoFileUri.encodeFromAbsolute(abs, root: docs));
+      expect(uri, OrviaFileUri.encodeFromAbsolute(abs, root: docs));
       expect(SandboxPathResolver.fix(uri), abs);
     });
   });
@@ -192,17 +192,17 @@ void main() {
   group('SandboxPathResolver.tryDecodeLocalFileUri', () {
     test('decodes local file URIs and rejects UNC/SMB hosts', () {
       final local = Uri.parse(
-        'file:///tmp/kelivo_docs/upload/a.png',
+        'file:///tmp/orvia_docs/upload/a.png',
       ).toFilePath();
       expect(
         SandboxPathResolver.tryDecodeLocalFileUri(
-          'file:///tmp/kelivo_docs/upload/a.png',
+          'file:///tmp/orvia_docs/upload/a.png',
         ),
         local,
       );
       expect(
         SandboxPathResolver.tryDecodeLocalFileUri(
-          'file://localhost/tmp/kelivo_docs/upload/a.png',
+          'file://localhost/tmp/orvia_docs/upload/a.png',
         ),
         local,
       );
@@ -257,7 +257,7 @@ void main() {
 
   group('SandboxPathResolver.resolveForIo UNC rejection', () {
     test('rejects //, \\, and remote file: before any existence probe', () {
-      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/kelivo_docs');
+      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/orvia_docs');
       expect(
         SandboxPathResolver.resolveForIo('//attacker/share/a.png'),
         isNull,
@@ -284,7 +284,7 @@ void main() {
       expect(SandboxPathResolver.fix(posix), posix);
     });
 
-    test('matches Windows drive paths with backslashes via Kelivo marker', () {
+    test('matches Windows drive paths with backslashes via Orvia marker', () {
       final temp = Directory.systemTemp.createTempSync('sandbox_win_');
       addTearDown(() {
         if (temp.existsSync()) temp.deleteSync(recursive: true);
@@ -292,13 +292,13 @@ void main() {
       final images = Directory(p.join(temp.path, 'images'))..createSync();
       final file = File(p.join(images.path, 'x.png'))..writeAsStringSync('x');
       SandboxPathResolver.debugSetDirs(docsDir: temp.path);
-      // Use forward-slash Windows-like legacy form (lexical); ensure Kelivo
+      // Use forward-slash Windows-like legacy form (lexical); ensure Orvia
       // case variants canonicalize even with generic fallback disabled.
       expect(
         SandboxPathResolver.canonicalize(
-          r'C:\Users\me\AppData\Local\Kelivo\images\x.png',
+          r'C:\Users\me\AppData\Local\Orvia\images\x.png',
         ),
-        'kelivo-file:///images/x.png',
+        'orvia-file:///images/x.png',
       );
       expect(file.existsSync(), isTrue);
     });
@@ -306,7 +306,7 @@ void main() {
 
   group('SandboxPathResolver.canonicalize ordinary Documents', () {
     test('does not encode ~/Documents/images as managed', () {
-      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/kelivo_docs');
+      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/orvia_docs');
       const external = '/Users/alice/Documents/images/report.png';
       expect(SandboxPathResolver.canonicalize(external), external);
     });
@@ -348,9 +348,9 @@ void main() {
 
       expect(
         SandboxPathResolver.tryRemapRestoredManagedAbsolute(
-          r'C:\Users\old-user\AppData\Roaming\com.psyche\kelivo\upload\legacy.pdf',
+          r'C:\Users\old-user\AppData\Roaming\com.psyche\orvia\upload\legacy.pdf',
         ),
-        'kelivo-file:///upload/legacy.pdf',
+        'orvia-file:///upload/legacy.pdf',
       );
     });
 
@@ -364,15 +364,15 @@ void main() {
       SandboxPathResolver.debugSetDirs(docsDir: temp.path);
 
       const oldMac =
-          '/Users/alice/Library/Application Support/com.psyche.kelivo/images/a.png';
+          '/Users/alice/Library/Application Support/com.dude555afk.orvia/images/a.png';
       expect(
         SandboxPathResolver.tryRemapRestoredManagedAbsolute(oldMac),
-        'kelivo-file:///images/a.png',
+        'orvia-file:///images/a.png',
       );
       // Missing relative must not remap.
       expect(
         SandboxPathResolver.tryRemapRestoredManagedAbsolute(
-          '/Users/alice/Library/Application Support/com.psyche.kelivo/images/missing.png',
+          '/Users/alice/Library/Application Support/com.dude555afk.orvia/images/missing.png',
         ),
         isNull,
       );
@@ -386,12 +386,12 @@ void main() {
     });
 
     test('portable iOS file: URI canonicalizes on any host separators', () {
-      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/kelivo_docs');
+      SandboxPathResolver.debugSetDirs(docsDir: '/tmp/orvia_docs');
       expect(
         SandboxPathResolver.canonicalize(
           'file:///var/mobile/Containers/Data/Application/A1B2C3D4-E5F6-7890-ABCD-EF1234567890/Documents/images/pic.png',
         ),
-        'kelivo-file:///images/pic.png',
+        'orvia-file:///images/pic.png',
       );
     });
   });

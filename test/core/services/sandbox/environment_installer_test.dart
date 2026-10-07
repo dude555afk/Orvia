@@ -9,12 +9,12 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:Kelivo/core/models/environment_state.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/services/sandbox/environment_installer.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_speed_test.dart';
-import 'package:Kelivo/core/services/sandbox/rootfs_source.dart';
-import 'package:Kelivo/core/services/sandbox/workspace_channel.dart';
+import 'package:orvia/core/models/environment_state.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/services/sandbox/environment_installer.dart';
+import 'package:orvia/core/services/sandbox/mirror_speed_test.dart';
+import 'package:orvia/core/services/sandbox/rootfs_source.dart';
+import 'package:orvia/core/services/sandbox/workspace_channel.dart';
 
 import '../../../support/business_test_harness.dart';
 
@@ -31,7 +31,7 @@ void main() {
   late String digest;
 
   setUp(() async {
-    envDir = await Directory.systemTemp.createTemp('kelivo_env_install_');
+    envDir = await Directory.systemTemp.createTemp('orvia_env_install_');
     env = EnvironmentProvider(preferences: createBusinessTestPreferences());
     await env.loaded;
     tarball = utf8.encode('tiny-rootfs-archive');
@@ -207,7 +207,7 @@ void main() {
     expect(env.state.rootfsDir, installer.rootfsDir.path);
     expect(
       await File(
-        p.join(installer.rootfsDir.path, kKelivoVersionFile),
+        p.join(installer.rootfsDir.path, kOrviaVersionFile),
       ).readAsString(),
       'ubuntu 24.04.3 arm64 noble\n',
     );
@@ -252,7 +252,7 @@ void main() {
       expect(workspace.patchArgs?['arch'], 'armhf');
       expect(
         await File(
-          p.join(installer.rootfsDir.path, kKelivoVersionFile),
+          p.join(installer.rootfsDir.path, kOrviaVersionFile),
         ).readAsString(),
         'ubuntu 24.04.3 armhf noble\n',
       );
@@ -351,7 +351,7 @@ void main() {
           );
           await installer.rootfsDir.create();
           final marker = await File(
-            p.join(installer.rootfsDir.path, kKelivoVersionFile),
+            p.join(installer.rootfsDir.path, kOrviaVersionFile),
           ).writeAsString('ubuntu 24.04.3 arm64 noble\n');
           final userFile = await File(
             p.join(installer.rootfsDir.path, 'keep.txt'),
@@ -406,7 +406,7 @@ void main() {
           expect(env.state.errorMessage, isNull);
           expect(
             await File(
-              p.join(installer.rootfsDir.path, kKelivoVersionFile),
+              p.join(installer.rootfsDir.path, kOrviaVersionFile),
             ).readAsString(),
             'ubuntu 24.04.3 armhf noble\n',
           );
@@ -504,7 +504,7 @@ void main() {
         p.join(envDir.path, 'previous-rootfs'),
       ).create();
       await File(
-        p.join(previous.path, kKelivoVersionFile),
+        p.join(previous.path, kOrviaVersionFile),
       ).writeAsString('debian 13 arm64 trixie\n');
       await File(p.join(previous.path, 'keep.txt')).writeAsString('old work');
       await env.setState(
@@ -547,7 +547,7 @@ void main() {
           expect(await outside.readAsString(), 'keep original contents');
         }
         final marker = File(
-          p.join(installer.rootfsDir.path, kKelivoVersionFile),
+          p.join(installer.rootfsDir.path, kOrviaVersionFile),
         );
         expect(
           await FileSystemEntity.type(marker.path, followLinks: false),
@@ -567,12 +567,12 @@ void main() {
           p.join(envDir.path, 'previous-rootfs'),
         ).create();
         await File(
-          p.join(previous.path, kKelivoVersionFile),
+          p.join(previous.path, kOrviaVersionFile),
         ).writeAsString('debian 12 arm64 bookworm\n');
         if (hasCurrent) {
           await installer.rootfsDir.create();
           await File(
-            p.join(installer.rootfsDir.path, kKelivoVersionFile),
+            p.join(installer.rootfsDir.path, kOrviaVersionFile),
           ).writeAsString('ubuntu 24.04.3 arm64 noble\n');
         }
         await env.setState(
@@ -597,7 +597,7 @@ void main() {
     final installer = buildInstaller(servingTarball());
     await installer.rootfsDir.create();
     await File(
-      p.join(installer.rootfsDir.path, kKelivoVersionFile),
+      p.join(installer.rootfsDir.path, kOrviaVersionFile),
     ).writeAsString('alpine 3.25.1 arm64 v3.25\n');
     expect(await installer.checkForUpdate(), isFalse);
     expect(env.state.availableVersion, isNull);
@@ -697,7 +697,7 @@ class _WorkspaceHarness {
           await Directory(dest).create(recursive: true);
           if (versionLinkTarget != null) {
             await Link(
-              p.join(dest, kKelivoVersionFile),
+              p.join(dest, kOrviaVersionFile),
             ).create(versionLinkTarget!);
           }
           sink?.success(<String, Object?>{

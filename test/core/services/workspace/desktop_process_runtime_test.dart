@@ -5,8 +5,8 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/workspace/desktop_process_runtime.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/core/services/workspace/desktop_process_runtime.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
 
 void main() {
   final isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
@@ -17,7 +17,7 @@ void main() {
 
   setUp(() async {
     runtime = DesktopProcessRuntime();
-    tmp = await Directory.systemTemp.createTemp('kelivo_desktop_runtime_');
+    tmp = await Directory.systemTemp.createTemp('orvia_desktop_runtime_');
   });
 
   tearDown(() async {
@@ -94,12 +94,12 @@ void main() {
         runtime,
         _req(
           runId: 'env',
-          command: r'echo $KELIVO_TEST',
+          command: r'echo $ORVIA_TEST',
           cwd: tmp.path,
-          env: const <String, String>{'KELIVO_TEST': 'kelivo-runtime-ok'},
+          env: const <String, String>{'ORVIA_TEST': 'orvia-runtime-ok'},
         ),
       );
-      expect(utf8.decode(_stdout(events)), contains('kelivo-runtime-ok'));
+      expect(utf8.decode(_stdout(events)), contains('orvia-runtime-ok'));
       expect(_singleExit(events).exitCode, 0);
     }, skip: !isUnix);
 

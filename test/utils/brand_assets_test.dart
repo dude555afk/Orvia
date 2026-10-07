@@ -1,4 +1,4 @@
-import 'package:Kelivo/utils/brand_assets.dart';
+import 'package:orvia/utils/brand_assets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -97,7 +97,7 @@ void main() {
         isFalse,
       );
       expect(
-        BrandAssets.assetNeedsDarkInvert('assets/icons/kelivo.png'),
+        BrandAssets.assetNeedsDarkInvert('assets/icons/orvia.png'),
         isFalse,
       );
     });

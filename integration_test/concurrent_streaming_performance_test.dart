@@ -1,26 +1,26 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:Kelivo/core/database/chat_database_observer.dart';
-import 'package:Kelivo/core/database/chat_database_repository.dart';
-import 'package:Kelivo/core/models/chat_input_data.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/message_part.dart';
-import 'package:Kelivo/core/providers/assistant_provider.dart';
-import 'package:Kelivo/core/providers/mcp_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/tts_provider.dart';
-import 'package:Kelivo/core/providers/user_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/mcp/mcp_tool_service.dart';
-import 'package:Kelivo/features/chat/widgets/frosted/chat_frosted_backdrop.dart';
-import 'package:Kelivo/features/home/controllers/home_page_controller.dart';
-import 'package:Kelivo/features/home/controllers/scroll_controller.dart';
-import 'package:Kelivo/features/home/services/ask_user_interaction_service.dart';
-import 'package:Kelivo/features/home/services/tool_approval_service.dart';
-import 'package:Kelivo/features/home/widgets/chat_input_bar.dart';
-import 'package:Kelivo/features/home/widgets/message_list_view.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
+import 'package:orvia/core/database/chat_database_observer.dart';
+import 'package:orvia/core/database/chat_database_repository.dart';
+import 'package:orvia/core/models/chat_input_data.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/message_part.dart';
+import 'package:orvia/core/providers/assistant_provider.dart';
+import 'package:orvia/core/providers/mcp_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/tts_provider.dart';
+import 'package:orvia/core/providers/user_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/mcp/mcp_tool_service.dart';
+import 'package:orvia/features/chat/widgets/frosted/chat_frosted_backdrop.dart';
+import 'package:orvia/features/home/controllers/home_page_controller.dart';
+import 'package:orvia/features/home/controllers/scroll_controller.dart';
+import 'package:orvia/features/home/services/ask_user_interaction_service.dart';
+import 'package:orvia/features/home/services/tool_approval_service.dart';
+import 'package:orvia/features/home/widgets/chat_input_bar.dart';
+import 'package:orvia/features/home/widgets/message_list_view.dart';
+import 'package:orvia/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -66,7 +66,7 @@ void main() {
     testWidgets(
       'profiles $count conversations through HTTP, dispatch, UI and SQLite',
       (tester) async {
-        final root = await Directory.systemTemp.createTemp('kelivo-replay-');
+        final root = await Directory.systemTemp.createTemp('orvia-replay-');
         final previousPaths = PathProviderPlatform.instance;
         PathProviderPlatform.instance = _Paths(root.path);
         final observer = ChatDatabaseObserver();

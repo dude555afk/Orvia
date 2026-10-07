@@ -1,32 +1,32 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:Kelivo/core/database/app_database.dart';
-import 'package:Kelivo/core/database/extension_entity_store.dart';
-import 'package:Kelivo/core/models/conversation.dart';
-import 'package:Kelivo/core/models/workspace.dart';
-import 'package:Kelivo/core/models/workspace_binding.dart';
-import 'package:Kelivo/core/providers/environment_provider.dart';
-import 'package:Kelivo/core/providers/settings_provider.dart';
-import 'package:Kelivo/core/providers/workspace_provider.dart';
-import 'package:Kelivo/core/services/chat/chat_service.dart';
-import 'package:Kelivo/core/services/sandbox/environment_manager.dart';
-import 'package:Kelivo/core/services/sandbox/mirror_service.dart';
-import 'package:Kelivo/core/services/skills/skills_service.dart';
-import 'package:Kelivo/core/services/workspace/desktop_process_runtime.dart';
-import 'package:Kelivo/core/services/workspace/workspace_runtime.dart';
-import 'package:Kelivo/desktop/desktop_settings_page.dart';
-import 'package:Kelivo/desktop/workspace_dialog.dart';
-import 'package:Kelivo/features/workspace/pages/workspaces_page.dart';
-import 'package:Kelivo/features/workspace/widgets/desktop_workspace_bar.dart';
-import 'package:Kelivo/features/workspace/widgets/environment/environment_pane.dart';
-import 'package:Kelivo/features/workspace/widgets/skills/skills_pane.dart';
-import 'package:Kelivo/shared/widgets/segmented_tabs.dart';
-import 'package:Kelivo/features/workspace/widgets/workspace_section.dart';
-import 'package:Kelivo/icons/lucide_adapter.dart';
-import 'package:Kelivo/l10n/app_localizations.dart';
-import 'package:Kelivo/shared/widgets/ios_tactile.dart';
-import 'package:Kelivo/shared/widgets/snackbar.dart';
+import 'package:orvia/core/database/app_database.dart';
+import 'package:orvia/core/database/extension_entity_store.dart';
+import 'package:orvia/core/models/conversation.dart';
+import 'package:orvia/core/models/workspace.dart';
+import 'package:orvia/core/models/workspace_binding.dart';
+import 'package:orvia/core/providers/environment_provider.dart';
+import 'package:orvia/core/providers/settings_provider.dart';
+import 'package:orvia/core/providers/workspace_provider.dart';
+import 'package:orvia/core/services/chat/chat_service.dart';
+import 'package:orvia/core/services/sandbox/environment_manager.dart';
+import 'package:orvia/core/services/sandbox/mirror_service.dart';
+import 'package:orvia/core/services/skills/skills_service.dart';
+import 'package:orvia/core/services/workspace/desktop_process_runtime.dart';
+import 'package:orvia/core/services/workspace/workspace_runtime.dart';
+import 'package:orvia/desktop/desktop_settings_page.dart';
+import 'package:orvia/desktop/workspace_dialog.dart';
+import 'package:orvia/features/workspace/pages/workspaces_page.dart';
+import 'package:orvia/features/workspace/widgets/desktop_workspace_bar.dart';
+import 'package:orvia/features/workspace/widgets/environment/environment_pane.dart';
+import 'package:orvia/features/workspace/widgets/skills/skills_pane.dart';
+import 'package:orvia/shared/widgets/segmented_tabs.dart';
+import 'package:orvia/features/workspace/widgets/workspace_section.dart';
+import 'package:orvia/icons/lucide_adapter.dart';
+import 'package:orvia/l10n/app_localizations.dart';
+import 'package:orvia/shared/widgets/ios_tactile.dart';
+import 'package:orvia/shared/widgets/snackbar.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -38,7 +38,7 @@ import 'package:provider/provider.dart';
 
 import '../../test/support/business_test_harness.dart';
 
-/// Isolated desktop smoke. `package:Kelivo/main.dart` `main()` has no
+/// Isolated desktop smoke. `package:orvia/main.dart` `main()` has no
 /// test-friendly entry: it opens the real app-data DB, increments launch
 /// count, and initializes window/hotkey services. Existing integration tests
 /// also pump focused trees. This file uses real providers + the real desktop
@@ -58,7 +58,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final tempDir = Directory.systemTemp.createTempSync(
-      'kelivo_macos_ws_smoke_',
+      'orvia_macos_ws_smoke_',
     );
     final previousPathProvider = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _FakePathProvider(tempDir.path);

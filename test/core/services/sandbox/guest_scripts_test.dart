@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:Kelivo/core/services/sandbox/guest_scripts.dart';
+import 'package:orvia/core/services/sandbox/guest_scripts.dart';
 
 void main() {
   test('applyAptMirror golden', () {
@@ -13,7 +13,7 @@ void main() {
       ),
       'set -e\n'
       'if [ -f /etc/apt/sources.list ]; then\n'
-      '  mv /etc/apt/sources.list /etc/apt/sources.list.kelivo-bak\n'
+      '  mv /etc/apt/sources.list /etc/apt/sources.list.orvia-bak\n'
       'fi\n'
       'set -e\n'
       'mkdir -p "\$(dirname /etc/apt/sources.list.d/ubuntu.sources)"\n'
@@ -85,7 +85,7 @@ void main() {
       '$distro mirror replaces the legacy list and preserves other sources',
       () async {
         final dir = await Directory.systemTemp.createTemp(
-          'kelivo_apt_sources_',
+          'orvia_apt_sources_',
         );
         addTearDown(() => dir.delete(recursive: true));
         final apt = await Directory(
@@ -105,7 +105,7 @@ void main() {
         await _runSh(script);
         expect(await legacy.exists(), isFalse);
         expect(
-          await File('${legacy.path}.kelivo-bak').readAsString(),
+          await File('${legacy.path}.orvia-bak').readAsString(),
           'old system source',
         );
         expect(await thirdParty.readAsString(), 'keep third party source');
@@ -127,7 +127,7 @@ void main() {
   test(
     'source replacement writes official content even with an old backup',
     () async {
-      final dir = await Directory.systemTemp.createTemp('kelivo_source_');
+      final dir = await Directory.systemTemp.createTemp('orvia_source_');
       addTearDown(() => dir.delete(recursive: true));
       final path = '${dir.path}/repositories';
       await File(path).writeAsString('https://old-mirror.test/\n');

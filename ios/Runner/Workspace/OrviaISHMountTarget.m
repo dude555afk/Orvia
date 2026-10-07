@@ -1,12 +1,12 @@
-#import "KelivoISHMountTarget.h"
+#import "OrviaISHMountTarget.h"
 #include <dirent.h>
 #include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
 
-const int KelivoISHMountTargetOccupied = -1101;
+const int OrviaISHMountTargetOccupied = -1101;
 
-int KelivoISHValidateMountTarget(NSString *dataPath, NSString *guestPath) {
+int OrviaISHValidateMountTarget(NSString *dataPath, NSString *guestPath) {
     if (![guestPath hasPrefix:@"/mounts/"]) return 0;
     NSString *target = [dataPath stringByAppendingPathComponent:guestPath];
     struct stat st;
@@ -15,7 +15,7 @@ int KelivoISHValidateMountTarget(NSString *dataPath, NSString *guestPath) {
     }
     // fakefs persists binds as symlinks. Do not inspect their source contents.
     if (S_ISLNK(st.st_mode)) return 0;
-    if (!S_ISDIR(st.st_mode)) return KelivoISHMountTargetOccupied;
+    if (!S_ISDIR(st.st_mode)) return OrviaISHMountTargetOccupied;
 
     DIR *directory = opendir(target.fileSystemRepresentation);
     if (directory == NULL) return -errno;
@@ -24,7 +24,7 @@ int KelivoISHValidateMountTarget(NSString *dataPath, NSString *guestPath) {
     struct dirent *entry;
     while ((entry = readdir(directory)) != NULL) {
         if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
-            result = KelivoISHMountTargetOccupied;
+            result = OrviaISHMountTargetOccupied;
             break;
         }
     }
