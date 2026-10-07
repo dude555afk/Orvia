@@ -8,13 +8,8 @@ on:
 permissions:
   contents: write
 
-concurrency:
-  group: format-pr4
-  cancel-in-progress: true
-
 jobs:
   format:
-    if: github.actor != 'github-actions[bot]' || !contains(github.event.head_commit.message, 'chore: format Dart changes')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
