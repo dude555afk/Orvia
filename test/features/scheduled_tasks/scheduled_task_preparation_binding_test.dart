@@ -431,13 +431,7 @@ void main() {
     },
   );
 
-  for (final change in [
-    'profile',
-    'create',
-    'edit',
-    'delete',
-    'limit',
-  ]) {
+  for (final change in ['profile', 'create', 'edit', 'delete', 'limit']) {
     testWidgets(
       '$change invalidates the prepared notification using actual injected memory',
       (tester) async {
