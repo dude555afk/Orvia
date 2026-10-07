@@ -34,6 +34,12 @@ for old in sorted(tracked_files(), key=lambda p: p.count('/'), reverse=True):
     subprocess.check_call(['git','mv',old,new], cwd=ROOT)
 
 replacements = [
+    ('https://github.com/Chevey339/kelivo', 'https://github.com/dude555afk/Orvia'),
+    ('https://github.com/Chevey339/orvia', 'https://github.com/dude555afk/Orvia'),
+    ('https://github.com/Chevey339/ish-arm64.git', 'https://github.com/OpenMinis/ish-arm64.git'),
+    ('Chevey339/ish-arm64', 'OpenMinis/ish-arm64'),
+    ('Chevey339/orvia', 'dude555afk/Orvia'),
+    ('Chevey339/kelivo', 'dude555afk/Orvia'),
     ('https://github.com/Chevey339/ish-arm64.git', 'https://github.com/OpenMinis/ish-arm64.git'),
     ('Chevey339/ish-arm64', 'OpenMinis/ish-arm64'),
     ('from the Chevey339', 'from the OpenMinis'),
@@ -95,8 +101,8 @@ for rel in ('PRODUCT.md','AGENTS.md'):
     text = text.replace('package:Orvia/', 'package:orvia/').replace('Package name is `Orvia`', 'Package name is `orvia`')
     path.write_text(text, encoding='utf-8')
 
-# Remove the one-shot migration files before the final commit.
-for rel in ('tool/orvia_identity_migration.py','.github/workflows/orvia-identity-migration.yml'):
+# Remove inherited funding/sponsor config and the one-shot migration files before the final commit.
+for rel in ('.github/FUNDING.yml','tool/orvia_identity_migration.py','.github/workflows/orvia-identity-migration.yml'):
     path = ROOT / rel
     if path.exists():
         subprocess.check_call(['git','rm','-f',rel], cwd=ROOT)
