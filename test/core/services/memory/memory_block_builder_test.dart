@@ -97,12 +97,12 @@ void main() {
 
       final profile = MemoryBlockBuilder.buildProfileBlock(
         fields: fields,
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
       );
       final memory = MemoryBlockBuilder.buildMemoryBlock(
         visible: entries,
         totalByType: totals,
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: 10,
       );
 
@@ -110,7 +110,7 @@ void main() {
 <user_profile>
 <preferred_name>Psyche</preferred_name>
 <preferred_language>zh-Hans</preferred_language>
-<custom name="company">Kelivo</custom>
+<custom name="company">Orvia</custom>
 </user_profile>
 ''');
 
@@ -179,7 +179,7 @@ void main() {
       expect(
         MemoryBlockBuilder.buildProfileBlock(
           fields: const [],
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         ),
         '<user_profile/>\n',
       );
@@ -192,7 +192,7 @@ void main() {
               updatedAt: DateTime(2026, 1, 1),
             ),
           ],
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         ),
         '<user_profile/>\n',
       );
@@ -202,7 +202,7 @@ void main() {
       final out = MemoryBlockBuilder.buildMemoryBlock(
         visible: const [],
         totalByType: const {},
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: 10,
       );
       expect(out, '''
@@ -227,7 +227,7 @@ void main() {
       final full = MemoryBlockBuilder.buildMemoryBlock(
         visible: atLimit,
         totalByType: {MemoryType.identity: maxItems},
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: maxItems,
       );
       expect(full.contains('mode="summary"'), isFalse);
@@ -238,7 +238,7 @@ void main() {
       final summary = MemoryBlockBuilder.buildMemoryBlock(
         visible: overLimit,
         totalByType: {MemoryType.identity: maxItems + 1},
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: maxItems,
       );
       expect(
@@ -248,7 +248,7 @@ void main() {
         isTrue,
       );
       expect('\n- ['.allMatches(summary).length, maxItems);
-      expect(summary.contains(MemoryPrompts.moreHintZh), isTrue);
+      expect(summary.contains(MemoryPrompts.moreHintEn), isTrue);
       // Newest among 0..10 is index 10; take 10 newest = 1..10, then
       // re-sort by createdAt ASC → still 1..10 chronologically.
       expect(summary.contains('entry 1'), isTrue);
@@ -305,7 +305,7 @@ void main() {
       final full = MemoryBlockBuilder.buildMemoryBlock(
         visible: fifty,
         totalByType: {MemoryType.identity: 50},
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: 50,
       );
       expect(full.contains('mode="summary"'), isFalse);
@@ -315,7 +315,7 @@ void main() {
       final summary = MemoryBlockBuilder.buildMemoryBlock(
         visible: fiftyOne,
         totalByType: {MemoryType.identity: 51},
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         maxItems: 50,
       );
       expect(
@@ -374,18 +374,18 @@ void main() {
         };
         final profile = MemoryBlockBuilder.buildProfileBlock(
           fields: const [],
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         );
         final m1 = MemoryBlockBuilder.buildMemoryBlock(
           visible: [e1, e2],
           totalByType: totals,
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           maxItems: 10,
         );
         final m2 = MemoryBlockBuilder.buildMemoryBlock(
           visible: [e2, e1],
           totalByType: totals,
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           maxItems: 10,
         );
         expect(
@@ -405,7 +405,7 @@ void main() {
             e2,
           ],
           totalByType: totals,
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           maxItems: 10,
         );
         expect(
@@ -413,7 +413,7 @@ void main() {
           isNot(MemoryBlockBuilder.hashBlocks(profile, m1)),
         );
 
-        // Language affects moreHint only in summary mode.
+        // Prompt language aliases now share the same English-only output.
         final many = List.generate(
           31,
           (i) => _entry(
@@ -423,21 +423,21 @@ void main() {
             updatedAt: DateTime(2026, 1, 1).add(Duration(hours: i)),
           ),
         );
-        final zh = MemoryBlockBuilder.buildMemoryBlock(
+        final first = MemoryBlockBuilder.buildMemoryBlock(
           visible: many,
           totalByType: {MemoryType.identity: 31},
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           maxItems: 10,
         );
-        final en = MemoryBlockBuilder.buildMemoryBlock(
+        final second = MemoryBlockBuilder.buildMemoryBlock(
           visible: many,
           totalByType: {MemoryType.identity: 31},
           lang: MemoryPromptLang.en,
           maxItems: 10,
         );
         expect(
-          MemoryBlockBuilder.hashBlocks(profile, zh),
-          isNot(MemoryBlockBuilder.hashBlocks(profile, en)),
+          MemoryBlockBuilder.hashBlocks(profile, first),
+          MemoryBlockBuilder.hashBlocks(profile, second),
         );
       },
     );
@@ -456,9 +456,9 @@ void main() {
         MemoryBlockBuilder.buildFullSnapshotPrefix(
           profile,
           memory,
-          MemoryPromptLang.zh,
+          MemoryPromptLang.en,
         ),
-        '${MemoryPrompts.introFullZh}\n$profile$memory\n',
+        '${MemoryPrompts.introFullEn}\n$profile$memory\n',
       );
     });
   });
@@ -468,15 +468,15 @@ void main() {
       final prefix = MemoryBlockBuilder.buildFullSnapshotPrefix(
         MemoryBlockBuilder.buildProfileBlock(
           fields: const [],
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
         ),
         MemoryBlockBuilder.buildMemoryBlock(
           visible: const [],
           totalByType: const {},
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           maxItems: 10,
         ),
-        MemoryPromptLang.zh,
+        MemoryPromptLang.en,
       );
       final split = MemoryBlockBuilder.splitInjectedPrefix(
         '$prefix\u4F60\u597D',
@@ -516,11 +516,11 @@ void main() {
 
     test('legacy summary payload without shown still splits', () {
       final prefix =
-          '${MemoryPrompts.introFullZh}\n'
+          '${MemoryPrompts.introFullEn}\n'
           '<user_profile/>\n'
           '<user_memory type="identity" mode="summary" total="31">\n'
           '- [2026-01-01] old entry\n'
-          '${MemoryPrompts.moreHintZh}\n'
+          '${MemoryPrompts.moreHintEn}\n'
           '</user_memory>\n'
           '<user_memory type="workflow"/>\n'
           '<user_memory type="voice"/>\n'
