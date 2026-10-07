@@ -8,7 +8,7 @@ import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
-class WorkspaceDocumentsStore(private val appData: File) {
+internal class WorkspaceDocumentsStore(private val appData: File) {
     fun list(): List<WorkspaceDocumentRoot> {
         val database = File(appData, "orvia.db")
         if (!database.isFile) return emptyList()
