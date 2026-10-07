@@ -100,7 +100,7 @@ void main() {
     settings = SettingsProvider(preferences);
     await settings.loaded;
     await settings.setMemoryModel('openai', 'gpt-test');
-    await settings.setMemoryPromptLang('zh');
+    await settings.setMemoryPromptLang('en');
 
     assistants = AssistantProvider(
       preferences: preferences,
