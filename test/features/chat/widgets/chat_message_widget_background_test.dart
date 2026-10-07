@@ -330,9 +330,9 @@ void main() {
       },
     );
 
-    testWidgets('search citation capsule drops a source when its url is invalid', (
-      tester,
-    ) async {
+    testWidgets(
+      'search citation capsule drops a source when its url is invalid',
+      (tester) async {
       final settings = await _createSettings(
         ChatMessageBackgroundStyle.defaultStyle,
       );
@@ -364,7 +364,8 @@ void main() {
 
       expect(find.text('1 citation'), findsNothing);
       expect(find.byIcon(Lucide.Globe), findsNothing);
-    });
+    },
+    );
 
     testWidgets('thinking/tool timeline card uses blur in frosted mode', (
       tester,
