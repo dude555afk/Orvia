@@ -90,7 +90,7 @@ void main() {
     await preferences.load();
     settings = SettingsProvider(preferences);
     await settings.loaded;
-    await settings.setMemoryPromptLang('zh');
+    await settings.setMemoryPromptLang('en');
     memoryProvider = MemoryProvider(preferences: preferences);
     await memoryProvider.initialize();
     await ContextLogger.setEnabled(false);
@@ -217,7 +217,7 @@ void main() {
           assistant: assistant,
           apiMessages: apiMessages,
           currentMessageId: 'u1',
-          lang: MemoryPromptLang.zh,
+          lang: MemoryPromptLang.en,
           settings: settings,
         );
         expect(result.prefix, isEmpty);
@@ -235,7 +235,7 @@ void main() {
         expect(frozen, isNotNull);
         expect(frozen!.carriesMemorySnapshot, isFalse);
         expect(frozen.payload, isNot(contains('<user_memory')));
-        expect(frozen.payload, isNot(contains(MemoryPrompts.introFullZh)));
+        expect(frozen.payload, isNot(contains(MemoryPrompts.introFullEn)));
       },
     );
 
@@ -252,15 +252,15 @@ void main() {
         final prefix = MemoryBlockBuilder.buildFullSnapshotPrefix(
           MemoryBlockBuilder.buildProfileBlock(
             fields: const [],
-            lang: MemoryPromptLang.zh,
+            lang: MemoryPromptLang.en,
           ),
           MemoryBlockBuilder.buildMemoryBlock(
             visible: const [],
             totalByType: const {},
-            lang: MemoryPromptLang.zh,
+            lang: MemoryPromptLang.en,
             maxItems: 10,
           ),
-          MemoryPromptLang.zh,
+          MemoryPromptLang.en,
         );
         final payload = '${prefix}hello';
         await chatRepository.putMessagePrompt(
@@ -291,7 +291,7 @@ void main() {
         expect(apiMessages.single['content'], isNot(contains('<user_memory')));
         expect(
           apiMessages.single['content'],
-          isNot(contains(MemoryPrompts.introFullZh)),
+          isNot(contains(MemoryPrompts.introFullEn)),
         );
 
         final frozen = await chatRepository.getMessagePrompt('u-switch');
@@ -335,7 +335,7 @@ void main() {
 
         expect(after, before);
         expect(before, contains('## Long-term memory'));
-        expect(before, contains(MemoryPrompts.rulesPastConversationRecallZh));
+        expect(before, contains(MemoryPrompts.rulesPastConversationRecallEn));
         expect(before, isNot(contains('<memories>')));
         expect(before, isNot(contains('<recent_chats>')));
         expect(before, isNot(contains('The current time is')));
@@ -353,7 +353,7 @@ void main() {
         late String content;
         await tester.runAsync(() async {
           await settings.setLegacyMemoryMode(true);
-          await settings.setMemoryPromptLang('zh');
+          await settings.setMemoryPromptLang('en');
           await memoryProvider.add(
             assistantId: assistant.id,
             content: 'User likes Flutter.',
@@ -391,10 +391,10 @@ void main() {
         expect(content, contains('create_memory'));
         expect(content, contains('The current time is'));
         expect(content, isNot(contains('## Long-term memory')));
-        expect(content, isNot(contains(MemoryPrompts.rulesZh)));
+        expect(content, isNot(contains(MemoryPrompts.rulesEn)));
         expect(
           content,
-          isNot(contains(MemoryPrompts.rulesPastConversationRecallZh)),
+          isNot(contains(MemoryPrompts.rulesPastConversationRecallEn)),
         );
       },
     );
