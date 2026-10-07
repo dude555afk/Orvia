@@ -783,7 +783,7 @@ void main() {
     expect(find.text('Account usage'), findsOneWidget);
     expect(find.text('Check usage'), findsNothing);
     expect(find.text('750 credits remaining'), findsOneWidget);
-    expect(find.text('250 / 1,000 credits used'), findsOneWidget);
+    expect(find.text('250 of 1,000 credits used'), findsOneWidget);
 
     final queryAction = find.byKey(
       const ValueKey('search-service-usage-query'),
