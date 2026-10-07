@@ -23,7 +23,6 @@ import '../pages/message_style_settings_page.dart';
 import '../pages/mobile_background_settings_page.dart';
 import '../pages/network_proxy_page.dart';
 import '../pages/phone_control_settings_page.dart';
-import '../pages/sponsor_page.dart';
 import '../pages/storage_space_page.dart';
 import '../pages/theme_advanced_settings_page.dart';
 import '../pages/theme_settings_page.dart';
@@ -73,7 +72,6 @@ Future<void> openMobileSettingsSearchResult(
     SettingsSearchDestination.toolSchemas => const ToolSchemaSettingsPage(),
     SettingsSearchDestination.logs => const LogViewerPage(),
     SettingsSearchDestination.about => const AboutPage(),
-    SettingsSearchDestination.sponsor => const SponsorPage(),
     SettingsSearchDestination.colorMode || SettingsSearchDestination.hotkeys =>
       throw StateError('This destination is handled by its settings host.'),
   };
