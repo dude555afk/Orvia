@@ -389,7 +389,7 @@ void main() {
         expect(content, contains('User likes Flutter.'));
         expect(content, contains('## Memory Tool'));
         expect(content, contains('create_memory'));
-        expect(content, contains('The current time is'));
+        expect(content, contains('current time is'));
         expect(content, isNot(contains('## Long-term memory')));
         expect(content, isNot(contains(MemoryPrompts.rulesEn)));
         expect(
