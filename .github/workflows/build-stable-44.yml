@@ -46,13 +46,6 @@ on:
         required: false
         default: false
         type: boolean
-  push:
-    branches: [ main ]
-    paths:
-      - 'lib/**'
-      - 'android/**'
-      - 'pubspec.yaml'
-      - '.github/workflows/build-stable-44.yml'
 
 concurrency:
   group: build-stable-44-${{ github.ref }}
