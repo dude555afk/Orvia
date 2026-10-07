@@ -54,7 +54,7 @@ object RootfsInfo {
         val release = guestFile(root, "/etc/os-release")
         val fields = if (release.isFile) release.readLines().mapNotNull { line ->
             val at = line.indexOf('=')
-            if (at <= 0) null else line.substring(0, at).trim() to line.substring(at + 1).trim().trim('"', "'")
+            if (at <= 0) null else line.substring(0, at).trim() to line.substring(at + 1).trim().trim('"', '\'')
         }.toMap() else emptyMap()
         val distro = fields["ID"]?.takeIf { it.matches(Regex("[a-zA-Z0-9._-]+")) } ?: "custom"
         val version = fields["VERSION_ID"]?.takeIf { it.matches(Regex("[a-zA-Z0-9._-]+")) } ?: "local"
