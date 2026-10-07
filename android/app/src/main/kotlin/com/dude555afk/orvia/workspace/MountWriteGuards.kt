@@ -49,7 +49,34 @@ internal object MountWriteGuards {
             |$MARKER
             |cfg=$quotedConfig
             |check_target() {
-            |    [ -f "$cfg" ] || return 0
+            |    [ -f "${'
+            |    resolved=${'$'}(PATH=/usr/bin:/bin realpath -m -- "${'$'}1" 2>/dev/null) ||
+            |        resolved=${'$'}(PATH=/usr/bin:/bin readlink -f -- "${'$'}1" 2>/dev/null) || resolved="${'$'}1"
+            |    case "${'$'}resolved" in /*) ;; *) resolved="${'$'}PWD/${'$'}resolved";; esac
+            |    while IFS= read -r prefix; do
+            |        [ -n "${'$'}prefix" ] || continue
+            |        case "${'$'}resolved" in
+            |            "${'$'}prefix"|"${'$'}prefix"/*)
+            |                printf '%s\n' "$name: ${'$'}1: read-only mounted folder; enable writes in Environment settings" >&2
+            |                exit 1;;
+            |        esac
+            |    done < "${'$'}cfg"
+            |}
+            |for arg do
+            |    case "${'$'}arg" in
+            |        -*) continue;;
+            |    esac
+            |    if [ "$name" = dd ]; then
+            |        case "${'$'}arg" in of=*) check_target "${'$'}{arg#of=}";; esac
+            |    else
+            |        check_target "${'$'}arg"
+            |    fi
+            |done
+            |PATH=/usr/bin:/bin exec $name "${'$'}@"
+            |""".trimMargin()
+    }
+}
+}cfg" ] || return 0
             |    resolved=${'$'}(PATH=/usr/bin:/bin realpath -m -- "${'$'}1" 2>/dev/null) ||
             |        resolved=${'$'}(PATH=/usr/bin:/bin readlink -f -- "${'$'}1" 2>/dev/null) || resolved="${'$'}1"
             |    case "${'$'}resolved" in /*) ;; *) resolved="${'$'}PWD/${'$'}resolved";; esac
