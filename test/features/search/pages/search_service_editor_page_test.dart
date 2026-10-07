@@ -782,9 +782,9 @@ void main() {
 
     expect(find.text('Account usage'), findsOneWidget);
     expect(find.text('Check usage'), findsNothing);
-    expect(find.text('\u5269\u4F59 750 \u989D\u5EA6'), findsOneWidget);
+    expect(find.text('750 credits remaining'), findsOneWidget);
     expect(
-      find.text('\u5DF2\u4F7F\u7528 250 / 1,000 \u989D\u5EA6'),
+      find.text('250 / 1,000 credits used'),
       findsOneWidget,
     );
 
@@ -814,7 +814,7 @@ void main() {
   ) async {
     await tester.pumpWidget(linkUpSearchUsageCardPreview());
 
-    expect(find.text('\u4F59\u989D 123.46'), findsOneWidget);
+    expect(find.text('Balance: 123.46'), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsNothing);
   });
 
