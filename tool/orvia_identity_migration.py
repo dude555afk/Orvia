@@ -48,7 +48,7 @@ replacements = [
 
 for rel in tracked_files():
     rel = rename_path(rel)
-    if not is_first_party(rel) or rel == 'README.md':
+    if not is_first_party(rel) or rel in {'README.md','tool/orvia_identity_migration.py','.github/workflows/orvia-identity-migration.yml'}:
         continue
     path = ROOT / rel
     if not path.exists() or path.suffix.lower() in BINARY_EXTS:
@@ -94,4 +94,4 @@ for rel in ('PRODUCT.md','AGENTS.md'):
 for rel in ('tool/orvia_identity_migration.py','.github/workflows/orvia-identity-migration.yml'):
     path = ROOT / rel
     if path.exists():
-        subprocess.check_call(['git','rm',rel], cwd=ROOT)
+        subprocess.check_call(['git','rm','-f',rel], cwd=ROOT)
