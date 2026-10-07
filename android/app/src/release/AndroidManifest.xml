@@ -1,0 +1,14 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application>
+        <!--
+          Internet-sideloaded APKs that expose an AccessibilityService are
+          automatically blocked by Google Play Protect's anti-fraud protection
+          in supported markets. Keep phone-control available to debug/developer
+          builds, but remove it from public release APKs.
+        -->
+        <service
+            android:name=".PhoneControlService"
+            tools:node="remove" />
+    </application>
+</manifest>
