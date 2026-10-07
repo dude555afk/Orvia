@@ -1,0 +1,35 @@
+name: One-shot Orvia formatter
+
+on:
+  push:
+    branches:
+      - cleanup/orvia-identity
+    paths:
+      - .github/workflows/orvia-format-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+      - name: Format Dart sources
+        run: dart format lib test integration_test tool
+      - name: Commit formatting
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'style: format Orvia identity migration'
+          git push origin HEAD:cleanup/orvia-identity
