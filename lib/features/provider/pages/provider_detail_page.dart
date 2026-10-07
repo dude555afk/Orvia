@@ -2597,22 +2597,22 @@ class _ProviderDetailPageState extends State<ProviderDetailPage> {
       builder: (context, constraints) {
         final availableWidth = constraints.maxWidth;
         final compact = availableWidth < 370;
-        final horizontalMargin = compact ? 10.0 : 16.0;
-        final itemGap = compact ? 8.0 : 10.0;
+        final horizontalMargin = compact ? 8.0 : 16.0;
+        final itemGap = compact ? 6.0 : 10.0;
         final toolbarPadding = EdgeInsets.symmetric(
-          horizontal: compact ? 10 : 14,
+          horizontal: compact ? 8 : 14,
           vertical: 10,
         );
         final textButtonPadding = EdgeInsets.symmetric(
-          horizontal: compact ? 14 : 18,
+          horizontal: compact ? 10 : 18,
           vertical: 10,
         );
         final iconButtonPadding = EdgeInsets.symmetric(
-          horizontal: compact ? 12 : 14,
+          horizontal: compact ? 8 : 14,
           vertical: compact ? 10 : 9,
         );
         final iconOnlyPadding = EdgeInsets.symmetric(
-          horizontal: compact ? 12 : 18,
+          horizontal: compact ? 8 : 18,
           vertical: 10,
         );
         final selectLabel = allSelected
