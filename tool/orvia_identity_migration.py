@@ -59,7 +59,7 @@ replacements = [
 
 for rel in tracked_files():
     rel = rename_path(rel)
-    if not is_first_party(rel) or rel in {'README.md','tool/orvia_identity_migration.py','.github/workflows/orvia-identity-migration.yml'}:
+    if not is_first_party(rel) or rel == 'README.md' or rel.startswith('.github/workflows/') or rel == 'tool/orvia_identity_migration.py':
         continue
     path = ROOT / rel
     if not path.exists() or path.suffix.lower() in BINARY_EXTS:
@@ -102,7 +102,7 @@ for rel in ('PRODUCT.md','AGENTS.md'):
     path.write_text(text, encoding='utf-8')
 
 # Remove inherited funding/sponsor config and the one-shot migration files before the final commit.
-for rel in ('.github/FUNDING.yml','tool/orvia_identity_migration.py','.github/workflows/orvia-identity-migration.yml'):
+for rel in ('.github/FUNDING.yml','tool/orvia_identity_migration.py'):
     path = ROOT / rel
     if path.exists():
         subprocess.check_call(['git','rm','-f',rel], cwd=ROOT)
