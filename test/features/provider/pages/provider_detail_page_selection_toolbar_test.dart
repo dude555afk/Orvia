@@ -105,7 +105,7 @@ void main() {
       await _pumpSelectedToolbar(tester, width: 400);
 
       final detectText = find.text('Detect');
-      expect(find.text('Clear'), findsOneWidget);
+      expect(find.text('Clear'), findsNothing);
       expect(detectText, findsOneWidget);
       expect(tester.getSize(detectText).width, greaterThan(20));
       expect(find.text('Delete'), findsNothing);
