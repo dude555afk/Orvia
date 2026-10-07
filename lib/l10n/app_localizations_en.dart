@@ -531,28 +531,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsPageCustomRangeApply => 'Apply';
 
   @override
-  String get sponsorPageMethodsSectionTitle => 'Sponsorship Methods';
-
-  @override
-  String get sponsorPageSponsorsSectionTitle => 'Sponsors';
-
-  @override
-  String get sponsorPageEmpty => 'No sponsors yet';
-
-  @override
-  String get sponsorPageAfdianTitle => 'Afdian';
-
-  @override
-  @override
-  String get sponsorPageWeChatTitle => 'WeChat Sponsor';
-
-  @override
-  String get sponsorPageWeChatSubtitle => 'WeChat sponsor code';
-
-  @override
-  String get sponsorPageScanQrHint => 'Scan the QR code to sponsor';
-
-  @override
   String get languageDisplaySimplifiedChinese => 'Simplified Chinese';
 
   @override
