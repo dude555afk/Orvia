@@ -9,7 +9,7 @@ import java.io.File
 import java.io.IOException
 
 internal class WorkspaceDocumentsStore(private val appData: File) {
-    fun list(): List<WorkspaceDocumentRoot> {
+    internal fun list(): List<WorkspaceDocumentRoot> {
         val database = File(appData, "orvia.db")
         if (!database.isFile) return emptyList()
         try {
