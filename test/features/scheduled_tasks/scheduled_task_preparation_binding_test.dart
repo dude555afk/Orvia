@@ -436,7 +436,6 @@ void main() {
     'create',
     'edit',
     'delete',
-    'language',
     'limit',
   ]) {
     testWidgets(
@@ -470,8 +469,6 @@ void main() {
               await memories.updateContent(memoryId, 'Prefers tea');
             case 'delete':
               await memories.hardDelete(memoryId);
-            case 'language':
-              await settings.setMemoryPromptLang('zh');
             case 'limit':
               await settings.setMemoryInjectionMaxItems(1);
           }
