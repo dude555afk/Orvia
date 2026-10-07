@@ -34,6 +34,10 @@ for old in sorted(tracked_files(), key=lambda p: p.count('/'), reverse=True):
     subprocess.check_call(['git','mv',old,new], cwd=ROOT)
 
 replacements = [
+    ('https://github.com/Chevey339/ish-arm64.git', 'https://github.com/OpenMinis/ish-arm64.git'),
+    ('Chevey339/ish-arm64', 'OpenMinis/ish-arm64'),
+    ('https://github.com/Chevey339/kelivo', 'https://github.com/dude555afk/Orvia'),
+    ('https://github.com/Chevey339/orvia', 'https://github.com/dude555afk/Orvia'),
     ('package:Kelivo/', 'package:orvia/'),
     ('name: Kelivo', 'name: orvia'),
     ('com.psyche.kelivo', 'com.dude555afk.orvia'),
