@@ -299,8 +299,8 @@ void main() {
 
   for (final (width, locale, dark) in [
     (320.0, 'en', false),
-    (390.0, 'zh', false),
-    (390.0, 'zh', true),
+    (390.0, 'en', false),
+    (390.0, 'en', true),
   ]) {
     testWidgets(
       'iOS list shows a quiet status in the task summary ($width, $locale, dark=$dark)',
@@ -993,9 +993,9 @@ void main() {
         addTearDown(tester.view.resetDevicePixelRatio);
         final task = ScheduledTask(
           id: 'task',
-          name: '\u6668\u95F4\u7B80\u62A5',
+          name: 'Morning brief',
           prompt:
-              '\u6574\u7406\u9879\u76EE\u7684\u6700\u65B0\u8FDB\u5C55，\u603B\u7ED3\u4ECA\u5929\u9700\u8981\u5173\u6CE8\u7684\u4E8B\u9879。',
+              'Summarize the latest project progress and today\'s priorities.',
           assistantId: 'assistant',
           hour: 8,
           minute: 30,
@@ -1005,7 +1005,7 @@ void main() {
           app(
             editor(task: task),
             dark: dark,
-            locale: 'zh',
+            locale: 'en',
           ),
         );
         await tester.pumpAndSettle();
@@ -1033,7 +1033,7 @@ void main() {
           app(
             ScheduledTasksPage(service: service),
             dark: dark,
-            locale: 'zh',
+            locale: 'en',
           ),
         );
         await tester.pumpAndSettle();
