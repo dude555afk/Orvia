@@ -102,6 +102,23 @@ jobs:
             sha256sum "$apk"
           done
 
+      - name: Verify release APK omits accessibility service
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          APKANALYZER="$(find "$SDK_ROOT/cmdline-tools" -type f -name apkanalyzer | head -n 1)"
+          if [ -z "$APKANALYZER" ]; then
+            echo "::error::apkanalyzer not found"
+            exit 1
+          fi
+          APK="$(find build/app/outputs/flutter-apk -maxdepth 1 -name 'app-*-release.apk' | head -n 1)"
+          test -n "$APK"
+          if "$APKANALYZER" manifest print "$APK" | grep -q 'PhoneControlService'; then
+            echo "::error::Public release still exposes PhoneControlService; refusing to publish."
+            exit 1
+          fi
+
       - name: Rename APKs
         shell: bash
         run: |
