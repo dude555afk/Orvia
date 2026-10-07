@@ -104,9 +104,7 @@ final class OrviaFileUri {
   /// Known production bundle / package identifiers that own managed roots.
   /// Substring matches (e.g. `com.other.orvia.notes`) are intentionally
   /// rejected — only exact whitelist entries count.
-  static const Set<String> _knownBundleIds = {
-    'com.dude555afk.orvia',
-  };
+  static const Set<String> _knownBundleIds = {'com.dude555afk.orvia'};
 
   /// Windows AppData folder name (Flutter BINARY_NAME). Compared
   /// case-insensitively as a whole segment — not a substring.
