@@ -296,7 +296,7 @@ void main() {
       await pump(tester, const Scaffold(body: EnvironmentPane()));
       await tester.pumpAndSettle();
       expect(
-        find.textContaining('Reinstall the sandbox before using it'),
+        find.textContaining('Reinstall the sandbox to continue'),
         findsOneWidget,
       );
       await tester.tap(find.byKey(EnvironmentPane.retryKey));
