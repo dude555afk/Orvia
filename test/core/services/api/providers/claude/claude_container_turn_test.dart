@@ -255,9 +255,7 @@ void main() {
     );
 
     test('a slow file download does not hold up the text after it', () async {
-      final tempDir = await Directory.systemTemp.createTemp(
-        'orvia_claude_dl_',
-      );
+      final tempDir = await Directory.systemTemp.createTemp('orvia_claude_dl_');
       final previousPathProvider = PathProviderPlatform.instance;
       PathProviderPlatform.instance = FakePathProviderPlatform(tempDir.path);
       SandboxPathResolver.debugSetDirs(docsDir: tempDir.path);
@@ -337,9 +335,7 @@ void main() {
     });
 
     test('a download that breaks off leaves no file behind', () async {
-      final tempDir = await Directory.systemTemp.createTemp(
-        'orvia_claude_dl_',
-      );
+      final tempDir = await Directory.systemTemp.createTemp('orvia_claude_dl_');
       final previousPathProvider = PathProviderPlatform.instance;
       PathProviderPlatform.instance = FakePathProviderPlatform(tempDir.path);
       SandboxPathResolver.debugSetDirs(docsDir: tempDir.path);

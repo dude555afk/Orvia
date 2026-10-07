@@ -30,9 +30,7 @@ void main() {
           int.tryParse(Platform.environment['ORVIA_BENCH_ASSET_MB'] ?? '') ??
           150;
       final assetFiles =
-          int.tryParse(
-            Platform.environment['ORVIA_BENCH_ASSET_FILES'] ?? '',
-          ) ??
+          int.tryParse(Platform.environment['ORVIA_BENCH_ASSET_FILES'] ?? '') ??
           300;
       final root = await Directory.systemTemp.createTemp(
         'orvia_restore_bench_',

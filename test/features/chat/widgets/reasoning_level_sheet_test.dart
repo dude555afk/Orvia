@@ -137,11 +137,7 @@ void main() {
       tester,
     ) async {
       final config = _budgetConfig();
-      final settings = await _settingsWith(
-        tester,
-        config,
-        'orvia-test-budget',
-      );
+      final settings = await _settingsWith(tester, config, 'orvia-test-budget');
       addTearDown(settings.dispose);
       await _pumpSheet(
         tester,
@@ -177,10 +173,7 @@ void main() {
       tester,
     ) async {
       final config = _effortConfig();
-      final spec = ModelSpecResolver.instance.spec(
-        config,
-        'orvia-test-effort',
-      );
+      final spec = ModelSpecResolver.instance.spec(config, 'orvia-test-effort');
       expect(spec.supportsReasoning, isTrue);
       expect(spec.reasoning.canDisable, isFalse);
       expect(spec.reasoning.levels, [
@@ -189,11 +182,7 @@ void main() {
         ReasoningLevel.high,
       ]);
 
-      final settings = await _settingsWith(
-        tester,
-        config,
-        'orvia-test-effort',
-      );
+      final settings = await _settingsWith(tester, config, 'orvia-test-effort');
       await _pumpSheet(
         tester,
         settings: settings,
@@ -292,11 +281,7 @@ void main() {
       tester,
     ) async {
       final config = _effortConfig();
-      final settings = await _settingsWith(
-        tester,
-        config,
-        'orvia-test-effort',
-      );
+      final settings = await _settingsWith(tester, config, 'orvia-test-effort');
       await _pumpSheet(
         tester,
         settings: settings,
@@ -317,11 +302,7 @@ void main() {
       tester,
     ) async {
       final config = _effortConfig();
-      final settings = await _settingsWith(
-        tester,
-        config,
-        'orvia-test-effort',
-      );
+      final settings = await _settingsWith(tester, config, 'orvia-test-effort');
       await settings.setReasoningChoice(
         'Test',
         'orvia-test-effort',
@@ -345,15 +326,8 @@ void main() {
       tester,
     ) async {
       final config = _budgetConfig();
-      final spec = ModelSpecResolver.instance.spec(
-        config,
-        'orvia-test-budget',
-      );
-      final settings = await _settingsWith(
-        tester,
-        config,
-        'orvia-test-budget',
-      );
+      final spec = ModelSpecResolver.instance.spec(config, 'orvia-test-budget');
+      final settings = await _settingsWith(tester, config, 'orvia-test-budget');
       await _pumpSheet(
         tester,
         settings: settings,

@@ -124,8 +124,7 @@ void main() {
             '\u62A5\u544A \u7D42\u7A3F.txt',
         'orvia://workspace/\u8CC7\u6599/한글.txt': '\u8CC7\u6599/한글.txt',
         'orvia://workspace/literal%2520%25.txt': 'literal%20%.txt',
-        'orvia://workspace/invalid%ZZ.txt':
-            'orvia://workspace/invalid%ZZ.txt',
+        'orvia://workspace/invalid%ZZ.txt': 'orvia://workspace/invalid%ZZ.txt',
       };
       for (final testCase in cases.entries) {
         final entry = collectProducedFileEntries([

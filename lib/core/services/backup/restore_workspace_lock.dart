@@ -105,9 +105,7 @@ final class RestoreWorkspaceLock {
       throw StateError('restore_recovery_marker_type');
     }
     if (entries.isEmpty) return;
-    final archive = await appDataDirectory.createTemp(
-      '.orvia_restore_failed_',
-    );
+    final archive = await appDataDirectory.createTemp('.orvia_restore_failed_');
     await durability.restrictDirectory(archive);
     await durability.syncDirectory(appDataDirectory, fullBarrier: true);
     for (final entry in entries) {

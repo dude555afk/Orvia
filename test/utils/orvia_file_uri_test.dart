@@ -370,10 +370,7 @@ void main() {
 
   group('OrviaFileUri.isOrviaFileUri', () {
     test('is a cheap prefix check', () {
-      expect(
-        OrviaFileUri.isOrviaFileUri('orvia-file:///upload/a.png'),
-        isTrue,
-      );
+      expect(OrviaFileUri.isOrviaFileUri('orvia-file:///upload/a.png'), isTrue);
       expect(OrviaFileUri.isOrviaFileUri('orvia-file:anything'), isTrue);
       expect(OrviaFileUri.isOrviaFileUri('file:///upload/a.png'), isFalse);
       expect(

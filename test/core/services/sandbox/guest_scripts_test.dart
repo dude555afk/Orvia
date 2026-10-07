@@ -84,9 +84,7 @@ void main() {
     test(
       '$distro mirror replaces the legacy list and preserves other sources',
       () async {
-        final dir = await Directory.systemTemp.createTemp(
-          'orvia_apt_sources_',
-        );
+        final dir = await Directory.systemTemp.createTemp('orvia_apt_sources_');
         addTearDown(() => dir.delete(recursive: true));
         final apt = await Directory(
           '${dir.path}/etc/apt/sources.list.d',

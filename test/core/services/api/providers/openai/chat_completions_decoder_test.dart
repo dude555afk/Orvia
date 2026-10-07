@@ -115,10 +115,7 @@ void main() {
     expect(start.chunks.whereType<ToolCallStart>().single.id, 'call_1');
     expect(start.chunks.whereType<ToolCallStart>().single.toolName, 'lookup');
     expect(start.chunks.whereType<ToolCallDelta>().single.inputDelta, '{"q":');
-    expect(
-      end.chunks.whereType<ToolCallDelta>().single.inputDelta,
-      '"orvia"}',
-    );
+    expect(end.chunks.whereType<ToolCallDelta>().single.inputDelta, '"orvia"}');
     expect(end.chunks.whereType<ToolCallEnd>().single.id, 'call_1');
     expect(decoder.onClosed(), isEmpty);
 

@@ -238,9 +238,7 @@ void main() {
     final afterMigration = await HiveToSqliteMigrationService.check();
     expect(afterMigration.needsMigration, isFalse);
     expect(
-      HiveMigrationMarker.isMigrationComplete(
-        File('${tempDir.path}/orvia.db'),
-      ),
+      HiveMigrationMarker.isMigrationComplete(File('${tempDir.path}/orvia.db')),
       isTrue,
     );
 

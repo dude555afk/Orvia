@@ -596,9 +596,7 @@ class WorkspaceToolsService {
           paths.tmpHostRoot,
           resolved.hostPath,
         );
-        return rel == null
-            ? null
-            : 'orvia://tmp/${OrviaLink.encodePath(rel)}';
+        return rel == null ? null : 'orvia://tmp/${OrviaLink.encodePath(rel)}';
       case WorkspaceZone.external:
         for (final mount in paths.externalMounts) {
           final rel = WorkspacePaths.relativeToHostRoot(

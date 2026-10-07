@@ -76,9 +76,7 @@ Future<void> exportSkill(BuildContext context, Skill skill) async {
   final l10n = AppLocalizations.of(context)!;
   final service = context.read<SkillsService>();
   try {
-    final outDir = await Directory.systemTemp.createTemp(
-      'orvia_skill_export_',
-    );
+    final outDir = await Directory.systemTemp.createTemp('orvia_skill_export_');
     final zip = await service.exportZip(skill.record.id, outDir);
     if (!context.mounted) return;
     final savePath = await saveHostFileWithPicker(

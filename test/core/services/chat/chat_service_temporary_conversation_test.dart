@@ -41,9 +41,7 @@ void main() {
   final services = <ChatService>[];
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp(
-      'orvia_chat_service_test_',
-    );
+    tempDir = await Directory.systemTemp.createTemp('orvia_chat_service_test_');
     PathProviderPlatform.instance = _FakePathProviderPlatform(tempDir.path);
     SandboxPathResolver.debugSetDirs(
       docsDir: tempDir.path,

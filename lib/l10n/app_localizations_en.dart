@@ -543,7 +543,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sponsorPageAfdianTitle => 'Afdian';
 
   @override
-
   @override
   String get sponsorPageWeChatTitle => 'WeChat Sponsor';
 

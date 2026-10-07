@@ -260,10 +260,7 @@ class SandboxPathResolver {
       // Also try host-native absolute form when docsDir uses backslashes.
       final native = _decodeFileUri(uri);
       if (native != portable) {
-        final underNative = OrviaFileUri.encodeFromAbsolute(
-          native,
-          root: docs,
-        );
+        final underNative = OrviaFileUri.encodeFromAbsolute(native, root: docs);
         if (underNative != null) return underNative;
       }
       return OrviaFileUri.tryEncodeLegacyAbsolutePath(

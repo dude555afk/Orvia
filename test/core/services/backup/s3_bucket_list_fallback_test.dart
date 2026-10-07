@@ -196,9 +196,7 @@ void main() {
         expect(items, hasLength(1));
         expect(
           seenPaths,
-          contains(
-            '/backup-bucket/orvia_backups/.orvia_backups_manifest.json',
-          ),
+          contains('/backup-bucket/orvia_backups/.orvia_backups_manifest.json'),
         );
       },
     );

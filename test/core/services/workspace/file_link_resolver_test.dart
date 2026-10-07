@@ -44,9 +44,7 @@ void main() {
 
   group('OrviaLink.tryParse', () {
     test('parses workspace, chat, skill, and terminal kinds', () {
-      final workspace = OrviaLink.tryParse(
-        'orvia://workspace/docs/readme.md',
-      );
+      final workspace = OrviaLink.tryParse('orvia://workspace/docs/readme.md');
       expect(workspace?.kind, OrviaLinkKind.workspaceFile);
       expect(workspace?.relativePath, 'docs/readme.md');
 
@@ -91,9 +89,7 @@ void main() {
     });
 
     test('accepts underscores in workspace paths', () {
-      final link = OrviaLink.tryParse(
-        'orvia://workspace/shenyu/daily_sign.py',
-      );
+      final link = OrviaLink.tryParse('orvia://workspace/shenyu/daily_sign.py');
       expect(link?.kind, OrviaLinkKind.workspaceFile);
       expect(link?.relativePath, 'shenyu/daily_sign.py');
     });
@@ -119,9 +115,7 @@ void main() {
     });
 
     test('decodes encoded directory segments', () {
-      final link = OrviaLink.tryParse(
-        'orvia://workspace/sub%20dir/a%20b.txt',
-      );
+      final link = OrviaLink.tryParse('orvia://workspace/sub%20dir/a%20b.txt');
       expect(link?.kind, OrviaLinkKind.workspaceFile);
       expect(link?.relativePath, 'sub dir/a b.txt');
     });

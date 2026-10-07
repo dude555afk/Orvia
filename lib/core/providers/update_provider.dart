@@ -89,9 +89,7 @@ class UpdateProvider extends ChangeNotifier {
     notifyListeners();
     try {
       final ts = DateTime.now().millisecondsSinceEpoch;
-      final url = Uri.parse(
-        'https://orvia.psycheas.top/update.json?orvia=$ts',
-      );
+      final url = Uri.parse('https://orvia.psycheas.top/update.json?orvia=$ts');
       final resp = await http.get(url);
       if (resp.statusCode != 200) {
         throw Exception('HTTP ${resp.statusCode}');

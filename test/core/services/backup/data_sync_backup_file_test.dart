@@ -677,9 +677,7 @@ void main() {
         final first = (await RestoreStartupGate.inspect(
           appDataDirectory: root,
         ))!;
-        final run = Directory(
-          '${root.path}/.orvia_restore/run_${first.runId}',
-        );
+        final run = Directory('${root.path}/.orvia_restore/run_${first.runId}');
         final candidate = File('${run.path}/candidate/database/orvia.db');
         await candidate.writeAsString('damaged candidate');
         final evidence = File('${run.path}/previous/preserved.txt');
@@ -5207,12 +5205,8 @@ void main() {
 
   group('orvia-file portable attachments', () {
     test('resolve after root change without rewriting persisted URIs', () async {
-      final rootA = await Directory.systemTemp.createTemp(
-        'orvia_file_root_a_',
-      );
-      final rootB = await Directory.systemTemp.createTemp(
-        'orvia_file_root_b_',
-      );
+      final rootA = await Directory.systemTemp.createTemp('orvia_file_root_a_');
+      final rootB = await Directory.systemTemp.createTemp('orvia_file_root_b_');
       addTearDown(() async {
         SandboxPathResolver.debugSetDirs(docsDir: null, supportDir: null);
         if (await rootA.exists()) await rootA.delete(recursive: true);

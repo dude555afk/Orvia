@@ -11,9 +11,7 @@ void main() {
   late BackgroundIconStore store;
 
   setUp(() async {
-    temporary = await Directory.systemTemp.createTemp(
-      'orvia-background-icon-',
-    );
+    temporary = await Directory.systemTemp.createTemp('orvia-background-icon-');
     store = BackgroundIconStore(supportDirectory: () async => temporary);
   });
   tearDown(() async => temporary.delete(recursive: true));

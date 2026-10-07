@@ -39,8 +39,7 @@ class OrviaLink {
     final root = switch (kind) {
       OrviaLinkKind.workspaceFile => WorkspacePaths.guestWorkspace,
       OrviaLinkKind.chatFile => WorkspacePaths.guestChat,
-      OrviaLinkKind.chatAttachment =>
-        '${WorkspacePaths.guestChat}/attachments',
+      OrviaLinkKind.chatAttachment => '${WorkspacePaths.guestChat}/attachments',
       OrviaLinkKind.chatOutput => '${WorkspacePaths.guestChat}/outputs',
       OrviaLinkKind.skillFile => WorkspacePaths.guestSkills,
       OrviaLinkKind.temporaryFile => WorkspacePaths.guestTmp,
