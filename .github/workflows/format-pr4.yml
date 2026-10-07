@@ -1,0 +1,55 @@
+name: Format PR 4
+
+on:
+  push:
+    branches:
+      - fix/complete-orvia-bootstrap
+
+permissions:
+  contents: write
+
+concurrency:
+  group: format-pr4
+  cancel-in-progress: true
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]' || !contains(github.event.head_commit.message, 'chore: format Dart changes')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: fix/complete-orvia-bootstrap
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+          cache: true
+
+      - name: Format changed Dart files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          files="$(git diff --diff-filter=ACMR --name-only origin/main...HEAD -- | grep -E '^(lib|test|integration_test)/.*\.dart$' || true)"
+          if [ -z "$files" ]; then
+            echo "No changed Dart files."
+            exit 0
+          fi
+          dart format $files
+
+      - name: Commit formatting
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "Already formatted."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib test integration_test
+          git commit -m "chore: format Dart changes"
+          git push origin HEAD:fix/complete-orvia-bootstrap
