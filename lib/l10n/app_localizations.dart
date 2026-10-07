@@ -1030,53 +1030,6 @@ abstract class AppLocalizations {
   /// **'Apply'**
   String get statsPageCustomRangeApply;
 
-  /// No description provided for @sponsorPageMethodsSectionTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Sponsorship Methods'**
-  String get sponsorPageMethodsSectionTitle;
-
-  /// No description provided for @sponsorPageSponsorsSectionTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Sponsors'**
-  String get sponsorPageSponsorsSectionTitle;
-
-  /// No description provided for @sponsorPageEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'No sponsors yet'**
-  String get sponsorPageEmpty;
-
-  /// No description provided for @sponsorPageAfdianTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Afdian'**
-  String get sponsorPageAfdianTitle;
-
-  /// No description provided for @sponsorPageAfdianSubtitle.
-  ///
-  /// In en, this message translates to:
-  String get sponsorPageAfdianSubtitle;
-
-  /// No description provided for @sponsorPageWeChatTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'WeChat Sponsor'**
-  String get sponsorPageWeChatTitle;
-
-  /// No description provided for @sponsorPageWeChatSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'WeChat sponsor code'**
-  String get sponsorPageWeChatSubtitle;
-
-  /// No description provided for @sponsorPageScanQrHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Scan the QR code to sponsor'**
-  String get sponsorPageScanQrHint;
-
   /// No description provided for @languageDisplaySimplifiedChinese.
   ///
   /// In en, this message translates to:
