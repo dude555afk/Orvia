@@ -36,6 +36,7 @@ for old in sorted(tracked_files(), key=lambda p: p.count('/'), reverse=True):
 replacements = [
     ('https://github.com/Chevey339/ish-arm64.git', 'https://github.com/OpenMinis/ish-arm64.git'),
     ('Chevey339/ish-arm64', 'OpenMinis/ish-arm64'),
+    ('from the Chevey339', 'from the OpenMinis'),
     ('https://github.com/Chevey339/kelivo', 'https://github.com/dude555afk/Orvia'),
     ('https://github.com/Chevey339/orvia', 'https://github.com/dude555afk/Orvia'),
     ('package:Kelivo/', 'package:orvia/'),
