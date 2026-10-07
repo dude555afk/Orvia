@@ -65,24 +65,24 @@ Here you go:
   group('MemoryExtractor.buildPrompt', () {
     test('appends toolDefault scope rule', () {
       final prompt = MemoryExtractor.buildPrompt(
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         conversation: 'c',
         existingMemory: 'm',
         writeScope: MemoryWriteScope.toolDefaultGlobal,
       );
-      expect(prompt, contains(MemoryPrompts.extractToolDefaultScopeRuleZh));
+      expect(prompt, contains(MemoryPrompts.extractToolDefaultScopeRuleEn));
     });
 
     test('does not append scope rule for alwaysGlobal', () {
       final prompt = MemoryExtractor.buildPrompt(
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         conversation: 'c',
         existingMemory: 'm',
         writeScope: MemoryWriteScope.alwaysGlobal,
       );
       expect(
         prompt,
-        isNot(contains(MemoryPrompts.extractToolDefaultScopeRuleZh)),
+        isNot(contains(MemoryPrompts.extractToolDefaultScopeRuleEn)),
       );
     });
 
