@@ -222,7 +222,7 @@ void main() {
               ToolUIPart(
                 id: 'search-web-second',
                 toolName: 'search_web',
-                arguments: {'query': 'Kelivo release'},
+                arguments: {'query': 'Orvia release'},
                 content:
                     '{"items":[{"title":"Third source","url":"https://three.example.com/c","text":"C"}]}',
               ),
@@ -330,7 +330,7 @@ void main() {
       },
     );
 
-    testWidgets('search citation capsule falls back when source url is invalid', (
+    testWidgets('search citation capsule drops a source when its url is invalid', (
       tester,
     ) async {
       final settings = await _createSettings(
@@ -362,8 +362,8 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('1 citation'), findsOneWidget);
-      expect(find.byIcon(Lucide.Globe), findsOneWidget);
+      expect(find.text('1 citation'), findsNothing);
+      expect(find.byIcon(Lucide.Globe), findsNothing);
     });
 
     testWidgets('thinking/tool timeline card uses blur in frosted mode', (
@@ -418,7 +418,7 @@ void main() {
         _expectedNeutralStrong(),
       );
       expect(
-        tester.widget<Text>(find.text('Web Search: Kelivo')).style?.color,
+        tester.widget<Text>(find.text('Web Search: Orvia')).style?.color,
         _expectedNeutralStrong(),
       );
       expect(
@@ -470,7 +470,7 @@ void main() {
         _expectedNeutralStrong(),
       );
       expect(
-        tester.widget<Text>(find.text('Web Search: Kelivo')).style?.color,
+        tester.widget<Text>(find.text('Web Search: Orvia')).style?.color,
         _expectedNeutralStrong(),
       );
     });
@@ -501,7 +501,7 @@ void main() {
 
       expect(find.byType(FrostedSurface), findsOneWidget);
       expect(
-        tester.widget<Text>(find.text('Web Search: Kelivo')).style?.color,
+        tester.widget<Text>(find.text('Web Search: Orvia')).style?.color,
         _expectedNeutralStrong(),
       );
     });
@@ -532,7 +532,7 @@ void main() {
 
       expect(find.byType(FrostedSurface), findsNothing);
       expect(
-        tester.widget<Text>(find.text('Web Search: Kelivo')).style?.color,
+        tester.widget<Text>(find.text('Web Search: Orvia')).style?.color,
         _expectedNeutralStrong(),
       );
     });
@@ -800,7 +800,7 @@ void main() {
         ChatMessageBackgroundStyle.defaultStyle,
       );
       const query =
-          'Kelivo Flutter chat message thinking tool timeline connector wraps';
+          'Orvia Flutter chat message thinking tool timeline connector wraps';
 
       await tester.pumpWidget(
         _buildHarness(
