@@ -259,7 +259,12 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('download-source-tuna')));
       expect(installer.calls, 0);
       final save = find.byKey(const ValueKey('download-source-save'));
-      await tester.ensureVisible(save);
+      await tester.scrollUntilVisible(
+        save,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pumpAndSettle();
       await tester.tap(save);
       await tester.runAsync(
         () async => Future<void>.delayed(const Duration(milliseconds: 30)),
@@ -302,7 +307,12 @@ void main() {
       await tester.tap(find.byKey(EnvironmentPane.retryKey));
       await tester.pumpAndSettle();
       final save = find.byKey(const ValueKey('download-source-save'));
-      await tester.ensureVisible(save);
+      await tester.scrollUntilVisible(
+        save,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pumpAndSettle();
       await tester.tap(save);
       await tester.runAsync(
         () async => Future<void>.delayed(const Duration(milliseconds: 30)),
@@ -314,7 +324,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         find.textContaining(
-          'Changing this will replace packages and files in the current environment',
+          'This replaces installed packages and files inside the current environment',
         ),
         findsOneWidget,
       );
@@ -361,7 +371,12 @@ void main() {
         'file:///tmp/rootfs.tar.gz',
       );
       final save = find.byKey(const ValueKey('download-source-save'));
-      await tester.ensureVisible(save);
+      await tester.scrollUntilVisible(
+        save,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pumpAndSettle();
       await tester.tap(save);
       await tester.pumpAndSettle();
       expect(env.downloadSource, RootfsDownloadSource.automatic);
@@ -370,7 +385,12 @@ void main() {
         find.byType(TextField),
         'https://mirror.test/image.tar.gz?token=x%2Fy',
       );
-      await tester.ensureVisible(save);
+      await tester.scrollUntilVisible(
+        save,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pumpAndSettle();
       await tester.tap(save);
       await tester.runAsync(
         () async => Future<void>.delayed(const Duration(milliseconds: 30)),
