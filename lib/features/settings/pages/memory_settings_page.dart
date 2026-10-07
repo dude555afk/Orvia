@@ -1079,56 +1079,6 @@ class _NavRow extends StatelessWidget {
   }
 }
 
-class _LangRow extends StatelessWidget {
-  const _LangRow({
-    required this.lang,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String lang;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
-    final title = switch (lang) {
-      'zh' => l10n.memorySettingsPromptLangZh,
-      'en' => l10n.memorySettingsPromptLangEn,
-      _ => l10n.memorySettingsPromptLangAuto,
-    };
-    final subtitle = switch (lang) {
-      'zh' => l10n.memorySettingsPromptLangZhSubtitle,
-      'en' => l10n.memorySettingsPromptLangEnSubtitle,
-      _ => l10n.memorySettingsPromptLangAutoSubtitle,
-    };
-    return IosCardPress(
-      onTap: onTap,
-      borderRadius: BorderRadius.zero,
-      padding: EdgeInsets.zero,
-      baseColor: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 11, 12, 11),
-        child: Row(
-          children: [
-            Expanded(
-              child: _RowText(title: title, subtitle: subtitle),
-            ),
-            const SizedBox(width: 12),
-            AnimatedOpacity(
-              opacity: selected ? 1 : 0,
-              duration: const Duration(milliseconds: 160),
-              child: Icon(Lucide.Check, size: 18, color: cs.primary),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _RowText extends StatelessWidget {
   const _RowText({required this.title, required this.subtitle});
 
