@@ -85,6 +85,9 @@ jobs:
       - name: No first-party Chinese text
         run: python3 tool/check_no_cjk_first_party.py
 
+      - name: Orvia identity guard
+        run: python3 tool/check_orvia_identity.py
+
       - name: dart analyze (root package only)
         run: dart analyze --fatal-infos lib test integration_test
 
