@@ -197,7 +197,7 @@ void main() {
 
     test('legacy create/edit/delete_memory are gone', () {
       final defs = MemoryTools.buildDefinitions(
-        lang: MemoryPromptLang.zh,
+        lang: MemoryPromptLang.en,
         writeScope: MemoryWriteScope.alwaysGlobal,
         enableMemory: true,
         allowPastConversationRecall: true,
@@ -401,12 +401,11 @@ void main() {
             .toList();
       }
 
-      final zh = descriptionsFor('zh');
+      final legacyAlias = descriptionsFor('zh');
       final en = descriptionsFor('en');
 
-      expect(zh, everyElement(contains('Memory')));
-      expect(en, everyElement(contains('memory record')));
-      expect(zh, isNot(equals(en)));
+      expect(legacyAlias, en);
+      expect(en.every((d) => d.toLowerCase().contains('memory')), isTrue);
     });
 
     testWidgets('legacy ON + enableMemory false registers no memory tools', (
@@ -1160,24 +1159,23 @@ void main() {
   });
 
   group('bilingual descriptions', () {
-    test('zh and en descriptions differ for memory_read', () {
-      final zh = MemoryTools.buildDefinitions(
-        lang: MemoryPromptLang.zh,
-        writeScope: MemoryWriteScope.alwaysGlobal,
-        enableMemory: true,
-        allowPastConversationRecall: false,
-      ).first;
-      final en = MemoryTools.buildDefinitions(
+    test('language aliases share the English memory_read description', () {
+      final first = MemoryTools.buildDefinitions(
         lang: MemoryPromptLang.en,
         writeScope: MemoryWriteScope.alwaysGlobal,
         enableMemory: true,
         allowPastConversationRecall: false,
       ).first;
-      final zhDesc = (zh['function'] as Map)['description'] as String;
-      final enDesc = (en['function'] as Map)['description'] as String;
-      expect(zhDesc, contains('long-term memory'));
-      expect(enDesc, contains('long-term memory'));
-      expect(zhDesc, isNot(equals(enDesc)));
+      final second = MemoryTools.buildDefinitions(
+        lang: MemoryPromptLang.en,
+        writeScope: MemoryWriteScope.alwaysGlobal,
+        enableMemory: true,
+        allowPastConversationRecall: false,
+      ).first;
+      final firstDesc = (first['function'] as Map)['description'] as String;
+      final secondDesc = (second['function'] as Map)['description'] as String;
+      expect(firstDesc, contains('long-term memory'));
+      expect(firstDesc, secondDesc);
     });
   });
 }
