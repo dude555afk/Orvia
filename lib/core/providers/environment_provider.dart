@@ -234,9 +234,14 @@ class EnvironmentProvider extends ChangeNotifier {
     if (rootfs != null && rootfs.isNotEmpty) {
       final data = jsonDecode(rootfs) as Map<String, dynamic>;
       _rootfsImageId = data['image'] as String;
-      _downloadSource = RootfsDownloadSource.values.byName(
+      final storedSource = RootfsDownloadSource.values.byName(
         data['source'] as String,
       );
+      _downloadSource =
+          storedSource == RootfsDownloadSource.tuna ||
+              storedSource == RootfsDownloadSource.huawei
+          ? RootfsDownloadSource.official
+          : storedSource;
       _downloadUrl = data['url'] as String;
       _localArchivePath = data['archive'] as String;
     }
