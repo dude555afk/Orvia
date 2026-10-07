@@ -45,34 +45,35 @@ internal object MountWriteGuards {
     internal fun commandScript(name: String, config: String = CONFIG): String {
         require(name in commands)
         val quotedConfig = "'" + config.replace("'", "'\"'\"'") + "'"
+        val dollar = "$"
         return """#!/bin/sh
             |$MARKER
             |cfg=$quotedConfig
             |check_target() {
-            |    [ -f "${'$'}cfg" ] || return 0
-            |    resolved=${'$'}(PATH=/usr/bin:/bin realpath -m -- "${'$'}1" 2>/dev/null) ||
-            |        resolved=${'$'}(PATH=/usr/bin:/bin readlink -f -- "${'$'}1" 2>/dev/null) || resolved="${'$'}1"
-            |    case "${'$'}resolved" in /*) ;; *) resolved="${'$'}PWD/${'$'}resolved";; esac
+            |    [ -f "${dollar}cfg" ] || return 0
+            |    resolved=${dollar}(PATH=/usr/bin:/bin realpath -m -- "${dollar}1" 2>/dev/null) ||
+            |        resolved=${dollar}(PATH=/usr/bin:/bin readlink -f -- "${dollar}1" 2>/dev/null) || resolved="${dollar}1"
+            |    case "${dollar}resolved" in /*) ;; *) resolved="${dollar}PWD/${dollar}resolved";; esac
             |    while IFS= read -r prefix; do
-            |        [ -n "${'$'}prefix" ] || continue
-            |        case "${'$'}resolved" in
-            |            "${'$'}prefix"|"${'$'}prefix"/*)
-            |                printf '%s\n' "$name: ${'$'}1: read-only mounted folder; enable writes in Environment settings" >&2
+            |        [ -n "${dollar}prefix" ] || continue
+            |        case "${dollar}resolved" in
+            |            "${dollar}prefix"|"${dollar}prefix"/*)
+            |                printf '%s\n' "$name: ${dollar}1: read-only mounted folder; enable writes in Environment settings" >&2
             |                exit 1;;
             |        esac
-            |    done < "${'$'}cfg"
+            |    done < "${dollar}cfg"
             |}
             |for arg do
-            |    case "${'$'}arg" in
+            |    case "${dollar}arg" in
             |        -*) continue;;
             |    esac
             |    if [ "$name" = dd ]; then
-            |        case "${'$'}arg" in of=*) check_target "${'$'}{arg#of=}";; esac
+            |        case "${dollar}arg" in of=*) check_target "${dollar}{arg#of=}";; esac
             |    else
-            |        check_target "${'$'}arg"
+            |        check_target "${dollar}arg"
             |    fi
             |done
-            |PATH=/usr/bin:/bin exec $name "${'$'}@"
+            |PATH=/usr/bin:/bin exec $name "${dollar}@"
             |""".trimMargin()
     }
 }
