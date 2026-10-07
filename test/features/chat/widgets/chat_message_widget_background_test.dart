@@ -333,38 +333,38 @@ void main() {
     testWidgets(
       'search citation capsule drops a source when its url is invalid',
       (tester) async {
-      final settings = await _createSettings(
-        ChatMessageBackgroundStyle.defaultStyle,
-      );
+        final settings = await _createSettings(
+          ChatMessageBackgroundStyle.defaultStyle,
+        );
 
-      await tester.pumpWidget(
-        _buildHarness(
-          settings: settings,
-          locale: const Locale('en'),
-          child: ChatMessageWidget(
-            message: ChatMessage(
-              role: 'assistant',
-              content: 'Answer with one broken citation.',
-              conversationId: 'conversation-search-capsule-invalid-url',
-            ),
-            showModelIcon: false,
-            toolParts: const [
-              ToolUIPart(
-                id: 'builtin-search-invalid-url',
-                toolName: 'builtin_search',
-                arguments: {},
-                content:
-                    '{"items":[{"title":"Broken","url":"","text":"No usable source"}]}',
+        await tester.pumpWidget(
+          _buildHarness(
+            settings: settings,
+            locale: const Locale('en'),
+            child: ChatMessageWidget(
+              message: ChatMessage(
+                role: 'assistant',
+                content: 'Answer with one broken citation.',
+                conversationId: 'conversation-search-capsule-invalid-url',
               ),
-            ],
+              showModelIcon: false,
+              toolParts: const [
+                ToolUIPart(
+                  id: 'builtin-search-invalid-url',
+                  toolName: 'builtin_search',
+                  arguments: {},
+                  content:
+                      '{"items":[{"title":"Broken","url":"","text":"No usable source"}]}',
+                ),
+              ],
+            ),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      expect(find.text('1 citation'), findsNothing);
-      expect(find.byIcon(Lucide.Globe), findsNothing);
-    },
+        expect(find.text('1 citation'), findsNothing);
+        expect(find.byIcon(Lucide.Globe), findsNothing);
+      },
     );
 
     testWidgets('thinking/tool timeline card uses blur in frosted mode', (
