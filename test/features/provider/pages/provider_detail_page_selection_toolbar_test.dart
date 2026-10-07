@@ -83,7 +83,7 @@ Future<void> _pumpSelectedToolbar(
   );
   await tester.pumpAndSettle();
 
-  await tester.tap(find.text('Model'));
+  await tester.tap(find.text('Models'));
   await tester.pumpAndSettle();
   await tester.tap(find.byIcon(Lucide.CheckSquare).first);
   await tester.pumpAndSettle();
