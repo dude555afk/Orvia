@@ -89,23 +89,7 @@ class MemorySettingsContent extends StatelessWidget {
       ],
     );
 
-    // Shared: the prompt language picks which template both modes edit and send.
-    final langSection = _SettingsSection(
-      title: l10n.memorySettingsPromptLangSection,
-      children: [
-        for (final lang in const ['auto', 'zh', 'en'])
-          _LangRow(
-            lang: lang,
-            selected: settings.memoryPromptLang == lang,
-            onTap: () =>
-                context.read<SettingsProvider>().setMemoryPromptLang(lang),
-          ),
-      ],
-    );
-
     final legacyChildren = <Widget>[
-      langSection,
-      const SizedBox(height: 18),
       _SettingsSection(
         title: l10n.memorySettingsPromptsSection,
         children: [
@@ -181,8 +165,6 @@ class MemorySettingsContent extends StatelessWidget {
           ),
         ],
       ),
-      const SizedBox(height: 18),
-      langSection,
       const SizedBox(height: 18),
       _SettingsSection(
         title: l10n.memorySettingsPromptsSection,
@@ -519,7 +501,7 @@ class _MemoryPromptEditPageState extends State<_MemoryPromptEditPage> {
   /// Templates are stored per language, but only the one matching
   /// [SettingsProvider.resolvedMemoryPromptLang] is ever sent to the model, so
   /// editing the other one is busywork on a string the user will never see.
-  late final MemoryPromptLang _lang;
+  final MemoryPromptLang _lang = MemoryPromptLang.en;
   late final TextEditingController _main;
 
   /// Smart Add runs a second, genuinely different prompt for batch candidates.
@@ -544,7 +526,6 @@ class _MemoryPromptEditPageState extends State<_MemoryPromptEditPage> {
     if (_hydrated) return;
     _hydrated = true;
     final settings = context.read<SettingsProvider>();
-    _lang = settings.resolvedMemoryPromptLang;
     _main.text = _load(settings);
     if (_isSmartAdd) {
       _batch!.text = _isZh
