@@ -21,7 +21,7 @@ import '../../../core/models/assistant.dart';
 import '../../chat/pages/chat_history_page.dart';
 import '../../../desktop/chat_history_dialog.dart';
 import 'package:flutter/services.dart';
-import 'dart:io' show File;
+import 'dart:io' show File, Platform;
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:url_launcher/url_launcher.dart';
@@ -4012,7 +4012,9 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
               if (upd.checking && info == null) return const SizedBox.shrink();
               if (info == null) return const SizedBox.shrink();
               final url = info.bestDownloadUrl();
-              if (url == null || url.isEmpty) return const SizedBox.shrink();
+              if (!Platform.isAndroid && (url == null || url.isEmpty)) {
+                return const SizedBox.shrink();
+              }
               final ver = info.version;
               final build = info.build;
               final l10n = AppLocalizations.of(context)!;
@@ -4027,21 +4029,28 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                   borderRadius: BorderRadius.circular(12),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
-                    onTap: () async {
-                      final uri = Uri.parse(url);
-                      try {
-                        // ignore: deprecated_member_use
-                        await launchUrl(uri);
-                      } catch (_) {
-                        Clipboard.setData(ClipboardData(text: url));
-                        if (!context.mounted) return;
-                        showAppSnackBar(
-                          context,
-                          message: l10n.sideDrawerLinkCopied,
-                          type: NotificationType.success,
-                        );
-                      }
-                    },
+                    onTap: (upd.downloading || upd.installing)
+                        ? null
+                        : () async {
+                            try {
+                              if (Platform.isAndroid) {
+                                await upd.downloadAndInstallAvailable();
+                                return;
+                              }
+                              final externalUrl = url;
+                              if (externalUrl == null || externalUrl.isEmpty) {
+                                return;
+                              }
+                              await launchUrl(Uri.parse(externalUrl));
+                            } catch (error) {
+                              if (!context.mounted) return;
+                              showAppSnackBar(
+                                context,
+                                message: error.toString(),
+                                type: NotificationType.error,
+                              );
+                            }
+                          },
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: Column(
@@ -4072,6 +4081,28 @@ class _SideDrawerState extends State<SideDrawer> with TickerProviderStateMixin {
                               style: TextStyle(
                                 fontSize: 13,
                                 color: cs2.onSurface.withValues(alpha: 0.8),
+                              ),
+                            ),
+                          ],
+                          if (upd.downloading || upd.installing) ...[
+                            const SizedBox(height: 10),
+                            LinearProgressIndicator(
+                              value: upd.downloading
+                                  ? upd.downloadProgress
+                                  : null,
+                              minHeight: 3,
+                              borderRadius: BorderRadius.circular(99),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              upd.installing
+                                  ? 'Opening Android installer…'
+                                  : upd.downloadProgress == null
+                                  ? 'Downloading update…'
+                                  : 'Downloading update… ${(upd.downloadProgress! * 100).round()}%',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: cs2.onSurface.withValues(alpha: 0.7),
                               ),
                             ),
                           ],

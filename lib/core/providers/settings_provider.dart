@@ -881,10 +881,7 @@ class SettingsProvider extends ChangeNotifier {
     }
     _memoryModelThinkingEnabled =
         prefs.getBool(_memoryModelThinkingEnabledKey) ?? false;
-    final memoryLang = prefs.getString(_memoryPromptLangKey);
-    _memoryPromptLang = (memoryLang == 'zh' || memoryLang == 'en')
-        ? memoryLang!
-        : 'auto';
+    _memoryPromptLang = 'en';
     _memoryTraceEnabled = prefs.getBool(_memoryTraceEnabledKey) ?? true;
     MemoryTraceRecorder.instance.setEnabled(_memoryTraceEnabled);
     _legacyMemoryMode = prefs.getBool(_legacyMemoryModeKey) ?? false;
@@ -4112,8 +4109,8 @@ Requirements:
   bool _memoryModelThinkingEnabled = false;
   bool get memoryModelThinkingEnabled => _memoryModelThinkingEnabled;
 
-  /// Stored value: `auto` / `zh` / `en`. Default `auto`.
-  String _memoryPromptLang = 'auto';
+  /// Orvia uses English memory prompts.
+  String _memoryPromptLang = 'en';
   String get memoryPromptLang => _memoryPromptLang;
 
   /// Records step-by-step traces of every background memory run. Default on.
@@ -4137,19 +4134,7 @@ Requirements:
   Locale get effectiveLocale =>
       isFollowingSystemLocale ? PlatformDispatcher.instance.locale : appLocale;
 
-  /// Resolves `auto` → zh when the interface is Chinese, else en.
-  MemoryPromptLang get resolvedMemoryPromptLang {
-    switch (_memoryPromptLang) {
-      case 'zh':
-        return MemoryPromptLang.zh;
-      case 'en':
-        return MemoryPromptLang.en;
-      default:
-        return effectiveLocale.languageCode == 'zh'
-            ? MemoryPromptLang.zh
-            : MemoryPromptLang.en;
-    }
-  }
+  MemoryPromptLang get resolvedMemoryPromptLang => MemoryPromptLang.en;
 
   String _memoryRulesPromptZh = MemoryPrompts.rulesZh;
   String _memoryRulesPromptEn = MemoryPrompts.rulesEn;
@@ -4263,12 +4248,10 @@ Requirements:
       setLegacyMemoryPromptEn(MemoryPrompts.legacyRulesEn);
 
   Future<void> setMemoryPromptLang(String lang) async {
-    final normalized = (lang == 'zh' || lang == 'en') ? lang : 'auto';
-    if (_memoryPromptLang == normalized) return;
-    _memoryPromptLang = normalized;
+    if (_memoryPromptLang == 'en') return;
+    _memoryPromptLang = 'en';
     notifyListeners();
-    final prefs = _preferences;
-    await prefs.setString(_memoryPromptLangKey, _memoryPromptLang);
+    await _preferences.setString(_memoryPromptLangKey, 'en');
   }
 
   Future<void> setMemoryRulesPromptZh(String prompt) async {

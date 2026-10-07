@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show Platform;
+import 'dart:io' show Directory, File, Platform;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
 
 class UpdateInfo {
   final String app;
@@ -75,12 +77,25 @@ class UpdateInfo {
 }
 
 class UpdateProvider extends ChangeNotifier {
+  UpdateProvider() {
+    if (!kIsWeb && Platform.isAndroid) {
+      unawaited(_cleanupStaleUpdateApks());
+    }
+  }
+
+  static const MethodChannel _androidUpdater = MethodChannel('app.updater');
   UpdateInfo? _available;
   UpdateInfo? get available => _available;
   bool _checking = false;
   bool get checking => _checking;
   String? _error;
   String? get error => _error;
+  bool _downloading = false;
+  bool get downloading => _downloading;
+  bool _installing = false;
+  bool get installing => _installing;
+  double? _downloadProgress;
+  double? get downloadProgress => _downloadProgress;
 
   Future<void> checkForUpdates() async {
     if (_checking) return;
@@ -88,23 +103,53 @@ class UpdateProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      final ts = DateTime.now().millisecondsSinceEpoch;
-      final url = Uri.parse('https://orvia.psycheas.top/update.json?orvia=$ts');
-      final resp = await http.get(url);
+      await _cleanupStaleUpdateApks();
+      final resp = await http.get(
+        Uri.parse(
+          'https://api.github.com/repos/dude555afk/Orvia/releases/latest',
+        ),
+        headers: const {
+          'Accept': 'application/vnd.github+json',
+          'User-Agent': 'Orvia',
+        },
+      );
       if (resp.statusCode != 200) {
-        throw Exception('HTTP ${resp.statusCode}');
+        throw Exception('GitHub HTTP ${resp.statusCode}');
       }
-      final data =
+      final release =
           jsonDecode(utf8.decode(resp.bodyBytes)) as Map<String, dynamic>;
-      final info = UpdateInfo.fromJson(data);
+      final rawTag = (release['tag_name'] ?? '').toString().trim();
+      final version = rawTag.startsWith('v') ? rawTag.substring(1) : rawTag;
+      final downloads = <String, String>{};
+      for (final asset in (release['assets'] as List? ?? const [])) {
+        if (asset is! Map) continue;
+        final name = (asset['name'] ?? '').toString();
+        final url = (asset['browser_download_url'] ?? '').toString();
+        if (url.isEmpty || !name.toLowerCase().endsWith('.apk')) continue;
+        if (name.contains('arm64-v8a')) {
+          downloads['androidArm64'] = url;
+        } else if (name.contains('armeabi-v7a')) {
+          downloads['androidArmv7'] = url;
+        } else if (name.contains('x86_64')) {
+          downloads['androidX64'] = url;
+        } else {
+          downloads['android'] = url;
+        }
+      }
+      final info = UpdateInfo(
+        app: 'Orvia',
+        version: version,
+        releasedAt: DateTime.tryParse(
+          (release['published_at'] ?? '').toString(),
+        ),
+        notes: (release['body'] ?? '').toString(),
+        downloads: downloads,
+      );
 
       final pkg = await PackageInfo.fromPlatform();
-      final currentVer = pkg.version; // e.g., 1.0.0
-
-      // Compare by version only; ignore build numbers
       final hasNew = _isRemoteNewer(
         remoteVersion: info.version,
-        currentVersion: currentVer,
+        currentVersion: pkg.version,
       );
       _available = hasNew ? info : null;
     } catch (e) {
@@ -113,6 +158,112 @@ class UpdateProvider extends ChangeNotifier {
       _checking = false;
       notifyListeners();
     }
+  }
+
+  Future<void> downloadAndInstallAvailable() async {
+    if (_downloading || _installing) return;
+    final info = _available;
+    if (info == null) throw StateError('No update is available');
+    if (!Platform.isAndroid) {
+      throw UnsupportedError(
+        'In-app installation is only available on Android',
+      );
+    }
+
+    _downloading = true;
+    _downloadProgress = 0;
+    _error = null;
+    notifyListeners();
+
+    File? apk;
+    http.Client? client;
+    try {
+      final abi = await _androidUpdater.invokeMethod<String>('getPreferredAbi');
+      final url =
+          switch (abi) {
+            'arm64-v8a' => info.downloads['androidArm64'],
+            'armeabi-v7a' => info.downloads['androidArmv7'],
+            'x86_64' => info.downloads['androidX64'],
+            _ => null,
+          } ??
+          info.downloads['androidArm64'] ??
+          info.downloads['android'] ??
+          (info.downloads.isNotEmpty ? info.downloads.values.first : null);
+      if (url == null || url.isEmpty) {
+        throw StateError('No compatible Android APK is available');
+      }
+
+      await _cleanupStaleUpdateApks();
+      final dir = Directory(
+        '${(await getTemporaryDirectory()).path}/orvia_updates',
+      );
+      await dir.create(recursive: true);
+      final name = Uri.parse(url).pathSegments.last;
+      apk = File('${dir.path}/$name');
+
+      client = http.Client();
+      final request = http.Request('GET', Uri.parse(url))
+        ..headers['Accept'] = 'application/octet-stream'
+        ..headers['User-Agent'] = 'Orvia';
+      final response = await client.send(request);
+      if (response.statusCode != 200) {
+        throw Exception('APK download failed: HTTP ${response.statusCode}');
+      }
+      final total = response.contentLength;
+      var received = 0;
+      final sink = apk.openWrite();
+      try {
+        await for (final chunk in response.stream) {
+          sink.add(chunk);
+          received += chunk.length;
+          if (total != null && total > 0) {
+            _downloadProgress = received / total;
+            notifyListeners();
+          }
+        }
+      } finally {
+        await sink.close();
+      }
+
+      _downloading = false;
+      _downloadProgress = 1;
+      _installing = true;
+      notifyListeners();
+
+      await _androidUpdater.invokeMethod<bool>('installApk', {
+        'path': apk.path,
+      });
+    } catch (e) {
+      _error = e.toString();
+      if (apk != null) {
+        try {
+          if (await apk.exists()) await apk.delete();
+        } catch (_) {}
+      }
+      rethrow;
+    } finally {
+      client?.close();
+      _downloading = false;
+      _installing = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _cleanupStaleUpdateApks() async {
+    if (!Platform.isAndroid) return;
+    try {
+      final dir = Directory(
+        '${(await getTemporaryDirectory()).path}/orvia_updates',
+      );
+      if (!await dir.exists()) return;
+      await for (final entry in dir.list()) {
+        if (entry is File && entry.path.toLowerCase().endsWith('.apk')) {
+          try {
+            await entry.delete();
+          } catch (_) {}
+        }
+      }
+    } catch (_) {}
   }
 
   bool _isRemoteNewer({

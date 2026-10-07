@@ -4,10 +4,13 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.net.Uri
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.os.StatFs
 import android.provider.DocumentsContract
+import android.provider.Settings
+import androidx.core.content.FileProvider
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.android.FlutterSurfaceView
 import io.flutter.embedding.engine.FlutterEngine
@@ -54,6 +57,7 @@ class MainActivity : FlutterActivity() {
 
     private companion object {
         const val CREATE_DOCUMENT_REQUEST_CODE = 4107
+        const val INSTALL_UNKNOWN_APPS_REQUEST_CODE = 4111
     }
 
     private enum class WritableFileState {
@@ -63,9 +67,13 @@ class MainActivity : FlutterActivity() {
     private val processTextChannelName = "app.process_text"
     private val fileSaveChannelName = "app.file_save"
     private val deviceStorageChannelName = "app.device_storage"
+    private val updaterChannelName = "app.updater"
     private var processTextChannel: MethodChannel? = null
     private var fileSaveChannel: MethodChannel? = null
     private var deviceStorageChannel: MethodChannel? = null
+    private var updaterChannel: MethodChannel? = null
+    private var pendingUpdateInstallResult: MethodChannel.Result? = null
+    private var pendingUpdateApkPath: String? = null
     private var pendingProcessText: String? = null
      private var pendingSaveResult: MethodChannel.Result? = null
      private var pendingSaveSourcePath: String? = null
@@ -136,6 +144,14 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+        updaterChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, updaterChannelName)
+        updaterChannel?.setMethodCallHandler { call, result ->
+            when (call.method) {
+                "getPreferredAbi" -> result.success(Build.SUPPORTED_ABIS.firstOrNull())
+                "installApk" -> handleInstallApk(call.arguments, result)
+                else -> result.notImplemented()
+            }
+        }
     }
 
     private fun usableBytesForAppData(): Long? = try {
@@ -166,6 +182,10 @@ class MainActivity : FlutterActivity() {
         processTextChannel?.setMethodCallHandler(null)
         fileSaveChannel?.setMethodCallHandler(null)
         deviceStorageChannel?.setMethodCallHandler(null)
+        updaterChannel?.setMethodCallHandler(null)
+        pendingUpdateInstallResult?.error("cancelled", "Update installation was interrupted.", null)
+        pendingUpdateInstallResult = null
+        pendingUpdateApkPath = null
         highRefreshRate.dispose()
         pendingSaveResult?.error("cancelled", "The file picker was closed.", null)
         pendingSaveResult = null
@@ -199,6 +219,26 @@ class MainActivity : FlutterActivity() {
      }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == INSTALL_UNKNOWN_APPS_REQUEST_CODE) {
+            super.onActivityResult(requestCode, resultCode, data)
+            val result = pendingUpdateInstallResult
+            val path = pendingUpdateApkPath
+            pendingUpdateInstallResult = null
+            pendingUpdateApkPath = null
+            if (result == null || path.isNullOrBlank()) return
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                !packageManager.canRequestPackageInstalls()) {
+                result.error("permission_denied", "Install unknown apps permission was not granted.", null)
+                return
+            }
+            try {
+                launchApkInstaller(File(path))
+                result.success(true)
+            } catch (e: Exception) {
+                result.error("install_launch_failed", e.message, null)
+            }
+            return
+        }
         if (workspacePlugin?.onActivityResult(requestCode, resultCode, data) == true) return
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode != CREATE_DOCUMENT_REQUEST_CODE) {
@@ -207,6 +247,66 @@ class MainActivity : FlutterActivity() {
 
         val destUri = if (resultCode == Activity.RESULT_OK) data?.data else null
         handleSaveDestination(destUri)
+    }
+
+    private fun handleInstallApk(arguments: Any?, result: MethodChannel.Result) {
+        if (pendingUpdateInstallResult != null) {
+            result.error("busy", "Another update installation is already in progress.", null)
+            return
+        }
+        val args = arguments as? Map<*, *>
+        val rawPath = args?.get("path")?.toString()?.trim().orEmpty()
+        if (rawPath.isEmpty()) {
+            result.error("invalid_args", "Missing APK path.", null)
+            return
+        }
+        val apk = File(rawPath)
+        val cacheRoot = cacheDir.canonicalFile
+        val candidate = try {
+            apk.canonicalFile
+        } catch (e: Exception) {
+            result.error("invalid_path", e.message, null)
+            return
+        }
+        if (!candidate.path.startsWith(cacheRoot.path + File.separator) ||
+            !candidate.isFile ||
+            !candidate.name.endsWith(".apk", ignoreCase = true)) {
+            result.error("invalid_path", "APK must be an existing file inside Orvia's cache.", null)
+            return
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            !packageManager.canRequestPackageInstalls()) {
+            pendingUpdateInstallResult = result
+            pendingUpdateApkPath = candidate.absolutePath
+            val intent = Intent(
+                Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                Uri.parse("package:$packageName"),
+            )
+            startActivityForResult(intent, INSTALL_UNKNOWN_APPS_REQUEST_CODE)
+            return
+        }
+
+        try {
+            launchApkInstaller(candidate)
+            result.success(true)
+        } catch (e: Exception) {
+            result.error("install_launch_failed", e.message, null)
+        }
+    }
+
+    private fun launchApkInstaller(apk: File) {
+        val uri = FileProvider.getUriForFile(
+            this,
+            "$packageName.update.fileprovider",
+            apk,
+        )
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
     }
 
     private fun handleSaveFileFromPath(arguments: Any?, result: MethodChannel.Result) {

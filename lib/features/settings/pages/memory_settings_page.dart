@@ -89,23 +89,7 @@ class MemorySettingsContent extends StatelessWidget {
       ],
     );
 
-    // Shared: the prompt language picks which template both modes edit and send.
-    final langSection = _SettingsSection(
-      title: l10n.memorySettingsPromptLangSection,
-      children: [
-        for (final lang in const ['auto', 'zh', 'en'])
-          _LangRow(
-            lang: lang,
-            selected: settings.memoryPromptLang == lang,
-            onTap: () =>
-                context.read<SettingsProvider>().setMemoryPromptLang(lang),
-          ),
-      ],
-    );
-
     final legacyChildren = <Widget>[
-      langSection,
-      const SizedBox(height: 18),
       _SettingsSection(
         title: l10n.memorySettingsPromptsSection,
         children: [
@@ -181,8 +165,6 @@ class MemorySettingsContent extends StatelessWidget {
           ),
         ],
       ),
-      const SizedBox(height: 18),
-      langSection,
       const SizedBox(height: 18),
       _SettingsSection(
         title: l10n.memorySettingsPromptsSection,
@@ -519,7 +501,7 @@ class _MemoryPromptEditPageState extends State<_MemoryPromptEditPage> {
   /// Templates are stored per language, but only the one matching
   /// [SettingsProvider.resolvedMemoryPromptLang] is ever sent to the model, so
   /// editing the other one is busywork on a string the user will never see.
-  late final MemoryPromptLang _lang;
+  final MemoryPromptLang _lang = MemoryPromptLang.en;
   late final TextEditingController _main;
 
   /// Smart Add runs a second, genuinely different prompt for batch candidates.
@@ -544,7 +526,6 @@ class _MemoryPromptEditPageState extends State<_MemoryPromptEditPage> {
     if (_hydrated) return;
     _hydrated = true;
     final settings = context.read<SettingsProvider>();
-    _lang = settings.resolvedMemoryPromptLang;
     _main.text = _load(settings);
     if (_isSmartAdd) {
       _batch!.text = _isZh
@@ -1093,56 +1074,6 @@ class _NavRow extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _LangRow extends StatelessWidget {
-  const _LangRow({
-    required this.lang,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String lang;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
-    final title = switch (lang) {
-      'zh' => l10n.memorySettingsPromptLangZh,
-      'en' => l10n.memorySettingsPromptLangEn,
-      _ => l10n.memorySettingsPromptLangAuto,
-    };
-    final subtitle = switch (lang) {
-      'zh' => l10n.memorySettingsPromptLangZhSubtitle,
-      'en' => l10n.memorySettingsPromptLangEnSubtitle,
-      _ => l10n.memorySettingsPromptLangAutoSubtitle,
-    };
-    return IosCardPress(
-      onTap: onTap,
-      borderRadius: BorderRadius.zero,
-      padding: EdgeInsets.zero,
-      baseColor: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 11, 12, 11),
-        child: Row(
-          children: [
-            Expanded(
-              child: _RowText(title: title, subtitle: subtitle),
-            ),
-            const SizedBox(width: 12),
-            AnimatedOpacity(
-              opacity: selected ? 1 : 0,
-              duration: const Duration(milliseconds: 160),
-              child: Icon(Lucide.Check, size: 18, color: cs.primary),
-            ),
-          ],
-        ),
       ),
     );
   }

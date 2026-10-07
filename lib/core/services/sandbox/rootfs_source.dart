@@ -31,13 +31,9 @@ class RootfsSource {
     _ => null,
   };
 
-  List<RootfsDownloadSource> get availableSources => [
+  List<RootfsDownloadSource> get availableSources => const [
     RootfsDownloadSource.automatic,
     RootfsDownloadSource.official,
-    if (image.distro != 'debian') ...[
-      RootfsDownloadSource.tuna,
-      RootfsDownloadSource.huawei,
-    ],
     RootfsDownloadSource.custom,
     RootfsDownloadSource.local,
   ];
@@ -54,13 +50,7 @@ class RootfsSource {
 
   List<Uri> tarballCandidates(String arch) => cdimageReleaseBases != null
       ? [for (final base in cdimageReleaseBases!) tarballUri(base, arch)]
-      : [
-          for (final source in availableSources)
-            if (source == RootfsDownloadSource.official ||
-                source == RootfsDownloadSource.tuna ||
-                source == RootfsDownloadSource.huawei)
-              selectedUri(source, '', arch)!,
-        ];
+      : [officialTarballUri(arch)];
 
   Uri? selectedUri(RootfsDownloadSource source, String customUrl, String arch) {
     if (!availableSources.contains(source)) {
@@ -78,16 +68,8 @@ class RootfsSource {
         return customTarballUri(customUrl, arch, image: image);
       case RootfsDownloadSource.tuna:
       case RootfsDownloadSource.huawei:
-        final host = source == RootfsDownloadSource.tuna
-            ? 'mirrors.tuna.tsinghua.edu.cn'
-            : 'repo.huaweicloud.com';
-        final official = Uri.parse(image.urls[arch]!);
-        return official.replace(
-          host: host,
-          path: image.distro == 'ubuntu'
-              ? '/ubuntu-cdimage${official.path}'
-              : official.path,
-        );
+        // Legacy saved values from upstream builds migrate to Official.
+        return officialTarballUri(arch);
     }
   }
 
