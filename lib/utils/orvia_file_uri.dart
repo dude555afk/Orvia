@@ -106,7 +106,6 @@ final class OrviaFileUri {
   /// rejected — only exact whitelist entries count.
   static const Set<String> _knownBundleIds = {
     'com.dude555afk.orvia',
-    'com.dude555afk.orvia',
   };
 
   /// Windows AppData folder name (Flutter BINARY_NAME). Compared
