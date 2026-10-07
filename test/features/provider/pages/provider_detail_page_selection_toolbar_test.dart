@@ -95,7 +95,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
-    'model selection toolbar keeps detect label before delete label on narrow phones',
+    'model selection toolbar keeps detect action accessible on narrow phones',
     (tester) async {
       tester.view.physicalSize = const Size(400, 720);
       tester.view.devicePixelRatio = 1;
@@ -104,10 +104,9 @@ void main() {
 
       await _pumpSelectedToolbar(tester, width: 400);
 
-      final detectText = find.text('Detect');
       expect(find.text('Clear'), findsNothing);
-      expect(detectText, findsOneWidget);
-      expect(tester.getSize(detectText).width, greaterThan(20));
+      expect(find.text('Detect'), findsNothing);
+      expect(find.byTooltip('Detect'), findsOneWidget);
       expect(find.text('Delete'), findsNothing);
       expect(find.byIcon(Lucide.HeartPulse), findsOneWidget);
       expect(find.byIcon(Lucide.Trash2), findsWidgets);
