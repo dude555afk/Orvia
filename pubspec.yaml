@@ -183,6 +183,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/app_icon.png
+    - docs/orvia-logo.png
     - assets/app_icon.ico
     - assets/icon_mac.png
     - assets/mermaid.min.js
@@ -219,9 +220,9 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: assets/app_icon_foreground.png
+  image_path: docs/orvia-logo.png
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: assets/app_icon_foreground.png
+  adaptive_icon_foreground: docs/orvia-logo.png
   remove_alpha_ios: true
 
 flutter_native_splash:
@@ -234,8 +235,8 @@ flutter_native_splash:
   color_dark: "#000000"
 
   # Center image (re-use app icon foreground)
-  image: assets/start.png
-  image_dark: assets/start.png
+  image: docs/orvia-logo.png
+  image_dark: docs/orvia-logo.png
 
   # iOS content mode to keep logo centered
   ios_content_mode: center
@@ -244,5 +245,5 @@ flutter_native_splash:
   android_12:
     color: "#FFFFFF"
     color_dark: "#000000"
-    image: assets/start.png
-    image_dark: assets/start.png
+    image: docs/orvia-logo.png
+    image_dark: docs/orvia-logo.png
