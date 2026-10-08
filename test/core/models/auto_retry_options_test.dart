@@ -5,7 +5,7 @@ void main() {
   const defaults = AutoRetryOptions.defaults();
 
   test('defaults match the product spec', () {
-    expect(defaults.enabled, isFalse);
+    expect(defaults.enabled, isTrue);
     expect(defaults.maxRetries, 3);
     expect(defaults.initialDelayMs, 1000);
     expect(defaults.multiplier, 2.0);
