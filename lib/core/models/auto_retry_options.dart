@@ -39,7 +39,7 @@ class AutoRetryOptions {
   });
 
   const AutoRetryOptions.defaults()
-    : enabled = false,
+    : enabled = true,
       maxRetries = 3,
       initialDelayMs = 1000,
       multiplier = 2.0,
