@@ -16,7 +16,7 @@ void main() {
       expect(
         httpStatusFromError(
           const HttpException(
-            'HTTP 429: {"error":{"code":"1305","message":"\u8BBF\u95EE\u91CF\u8FC7\u5927"}}',
+            'HTTP 429: {"error":{"code":"1305","message":"rate limit exceeded"}}',
           ),
         ),
         429,
@@ -74,7 +74,7 @@ void main() {
       );
       expect(
         shouldRetryError(
-          Exception('\u8BBF\u95EE\u91CF\u8FC7\u5927 but quota exceeded'),
+          Exception('rate limit exceeded but quota exceeded'),
           options,
         ),
         isFalse,
@@ -211,7 +211,7 @@ void main() {
         expect(
           shouldRetryError(
             TimeoutException(
-              'TimeoutException after 0:00:30.000000: \u8D85\u65F6',
+              'TimeoutException after 0:00:30.000000: timeout',
             ),
             imageOpts,
           ),
