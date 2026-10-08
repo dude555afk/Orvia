@@ -490,16 +490,19 @@ class _AboutPageState extends State<AboutPage> {
                     updates.checking
                         ? 'Checking GitHub releases…'
                         : updates.downloading
-                            ? 'Downloading update… ${((updates.downloadProgress ?? 0) * 100).round()}%'
-                            : updates.installing
-                                ? 'Opening Android installer…'
-                                : updates.available != null
-                                    ? 'Version ${updates.available!.version} available'
-                                    : updates.error != null
-                                        ? 'Update check failed: ${updates.error}'
-                                        : 'Check for the latest Orvia release',
+                        ? 'Downloading update… ${((updates.downloadProgress ?? 0) * 100).round()}%'
+                        : updates.installing
+                        ? 'Opening Android installer…'
+                        : updates.available != null
+                        ? 'Version ${updates.available!.version} available'
+                        : updates.error != null
+                        ? 'Update check failed: ${updates.error}'
+                        : 'Check for the latest Orvia release',
                   ),
-                  trailing: updates.checking || updates.downloading || updates.installing
+                  trailing:
+                      updates.checking ||
+                          updates.downloading ||
+                          updates.installing
                       ? const SizedBox(
                           width: 20,
                           height: 20,
@@ -515,9 +518,14 @@ class _AboutPageState extends State<AboutPage> {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: updates.checking || updates.downloading || updates.installing
+                          onPressed:
+                              updates.checking ||
+                                  updates.downloading ||
+                                  updates.installing
                               ? null
-                              : () => context.read<UpdateProvider>().checkForUpdates(),
+                              : () => context
+                                    .read<UpdateProvider>()
+                                    .checkForUpdates(),
                           child: const Text('Check for updates'),
                         ),
                       ),
@@ -529,11 +537,19 @@ class _AboutPageState extends State<AboutPage> {
                                 ? null
                                 : () async {
                                     try {
-                                      await context.read<UpdateProvider>().downloadAndInstallAvailable();
+                                      await context
+                                          .read<UpdateProvider>()
+                                          .downloadAndInstallAvailable();
                                     } catch (error) {
                                       if (!context.mounted) return;
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Update failed: $error')),
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Update failed: $error',
+                                          ),
+                                        ),
                                       );
                                     }
                                   },
