@@ -67,10 +67,7 @@ void main() {
       source.selectedUri(RootfsDownloadSource.automatic, '', 'arm64'),
       isNull,
     );
-    expect(
-      source.selectedUri(RootfsDownloadSource.local, '', 'arm64'),
-      isNull,
-    );
+    expect(source.selectedUri(RootfsDownloadSource.local, '', 'arm64'), isNull);
     expect(
       source.selectedUri(RootfsDownloadSource.official, '', 'arm64'),
       source.officialTarballUri('arm64'),
