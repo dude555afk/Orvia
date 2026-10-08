@@ -180,6 +180,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(settings.legacyMemoryPromptEn, 'Custom legacy rules');
-    expect(settings.legacyMemoryPromptZh, MemoryPrompts.legacyRulesEn);
+    expect(settings.legacyMemoryPromptZh, MemoryPrompts.legacyRulesZh);
   });
 }
