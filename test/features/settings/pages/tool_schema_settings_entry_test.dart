@@ -15,43 +15,42 @@ void main() {
     SharedPreferences.setMockInitialValues(const {});
   });
 
-  testWidgets(
-    'mobile settings lists Tool Descriptions below Logs',
-    (tester) async {
-      tester.view.physicalSize = const Size(400, 4000);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+  testWidgets('mobile settings lists Tool Descriptions below Logs', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(400, 4000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
 
-      final settings = SettingsProvider(createBusinessTestPreferences());
-      addTearDown(settings.dispose);
-      await settings.loaded;
-      await settings.setRequestLogEnabled(true);
+    final settings = SettingsProvider(createBusinessTestPreferences());
+    addTearDown(settings.dispose);
+    await settings.loaded;
+    await settings.setRequestLogEnabled(true);
 
-      await tester.pumpWidget(
-        ChangeNotifierProvider<SettingsProvider>.value(
-          value: settings,
-          child: const MaterialApp(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            locale: Locale('en'),
-            home: SettingsPage(),
-          ),
+    await tester.pumpWidget(
+      ChangeNotifierProvider<SettingsProvider>.value(
+        value: settings,
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: Locale('en'),
+          home: SettingsPage(),
         ),
-      );
-      await tester.pumpAndSettle();
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      final labels = _listTexts(tester);
-      expect(
-        labels.indexOf('Tool Descriptions'),
-        greaterThan(labels.indexOf('Logs')),
-      );
-      expect(
-        labels.indexOf('Tool Descriptions'),
-        greaterThan(labels.indexOf('Search')),
-      );
-    },
-  );
+    final labels = _listTexts(tester);
+    expect(
+      labels.indexOf('Tool Descriptions'),
+      greaterThan(labels.indexOf('Logs')),
+    );
+    expect(
+      labels.indexOf('Tool Descriptions'),
+      greaterThan(labels.indexOf('Search')),
+    );
+  });
 
   testWidgets(
     'desktop settings lists Tool Descriptions below Statistics and above About',
