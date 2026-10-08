@@ -151,7 +151,7 @@ void main() {
   test('disabled options never retry', () async {
     var attempts = 0;
     final stream = retryingStream<int>(
-      options: const AutoRetryOptions.defaults().copyWith(enabled: false),
+      options: AutoRetryOptions.defaults().copyWith(enabled: false),
       isCancelled: () => false,
       shouldRetry: (_) => true,
       attempt: (i) async* {
