@@ -64,7 +64,7 @@ void main() {
     tester,
   ) async {
     final settings = await _createSettings();
-    await settings.setMemoryPromptLang('zh');
+    await settings.setMemoryPromptLang('en');
 
     await tester.pumpWidget(_wrap(settings, locale: const Locale('en')));
     await tester.pumpAndSettle();
@@ -76,7 +76,7 @@ void main() {
     expect(find.byType(TextField), findsOneWidget);
     expect(find.byType(TabBar), findsNothing);
     final field = tester.widget<TextField>(find.byType(TextField));
-    expect(field.controller!.text, MemoryPrompts.rulesZh);
+    expect(field.controller!.text, MemoryPrompts.rulesEn);
   });
 
   testWidgets('editor follows an explicit English prompt language', (
@@ -101,7 +101,7 @@ void main() {
     tester,
   ) async {
     final settings = await _createSettings();
-    await settings.setMemoryPromptLang('zh');
+    await settings.setMemoryPromptLang('en');
 
     await tester.pumpWidget(_wrap(settings, locale: const Locale('en')));
     await tester.pumpAndSettle();
@@ -113,8 +113,8 @@ void main() {
     await tester.tap(find.byTooltip(l10n.memoryPromptEditSave));
     await tester.pumpAndSettle();
 
-    expect(settings.memoryRulesPromptZh, 'Custom rules');
-    expect(settings.memoryRulesPromptEn, MemoryPrompts.rulesEn);
+    expect(settings.memoryRulesPromptEn, 'Custom rules');
+    expect(settings.memoryRulesPromptZh, MemoryPrompts.rulesEn);
   });
 
   testWidgets('legacy mode exposes and saves the legacy rules template', (
@@ -122,7 +122,7 @@ void main() {
   ) async {
     final settings = await _createSettings();
     await settings.setLegacyMemoryMode(true);
-    await settings.setMemoryPromptLang('zh');
+    await settings.setMemoryPromptLang('en');
 
     await tester.pumpWidget(_wrap(settings, locale: const Locale('en')));
     await tester.pumpAndSettle();
@@ -131,14 +131,14 @@ void main() {
     await _openRulesEditor(tester, l10n.memorySettingsLegacyPromptTitle);
 
     final field = tester.widget<TextField>(find.byType(TextField));
-    expect(field.controller!.text, MemoryPrompts.legacyRulesZh);
+    expect(field.controller!.text, MemoryPrompts.legacyRulesEn);
 
     await tester.enterText(find.byType(TextField), 'Custom legacy rules');
     await tester.tap(find.byTooltip(l10n.memoryPromptEditSave));
     await tester.pumpAndSettle();
 
-    expect(settings.legacyMemoryPromptZh, 'Custom legacy rules');
-    expect(settings.legacyMemoryPromptEn, MemoryPrompts.legacyRulesEn);
+    expect(settings.legacyMemoryPromptEn, 'Custom legacy rules');
+    expect(settings.legacyMemoryPromptZh, MemoryPrompts.legacyRulesEn);
   });
 
   testWidgets('legacy mode hides settings for the new memory system', (
@@ -180,6 +180,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(settings.legacyMemoryPromptEn, 'Custom legacy rules');
-    expect(settings.legacyMemoryPromptZh, MemoryPrompts.legacyRulesZh);
+    expect(settings.legacyMemoryPromptZh, MemoryPrompts.legacyRulesEn);
   });
 }
