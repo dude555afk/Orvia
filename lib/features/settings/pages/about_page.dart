@@ -432,7 +432,7 @@ class _AboutPageState extends State<AboutPage> {
                           width: 54,
                           height: 54,
                           child: Image.asset(
-                            'assets/app_icon.png',
+                            'docs/orvia-logo.png',
                             fit: BoxFit.cover,
                           ),
                         ),
