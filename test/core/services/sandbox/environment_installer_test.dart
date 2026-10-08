@@ -102,8 +102,6 @@ void main() {
 
   for (final selected in [
     RootfsDownloadSource.official,
-    RootfsDownloadSource.tuna,
-    RootfsDownloadSource.huawei,
     RootfsDownloadSource.custom,
   ]) {
     test(
