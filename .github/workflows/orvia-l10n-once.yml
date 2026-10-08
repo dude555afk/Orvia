@@ -1,0 +1,36 @@
+name: Regenerate Orvia l10n
+
+on:
+  push:
+    branches:
+      - cleanup/neutral-defaults
+    paths:
+      - .github/workflows/orvia-l10n-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  l10n:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+      - run: flutter pub get
+      - run: flutter gen-l10n
+      - run: dart format lib test
+      - name: Commit generated files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore: regenerate Orvia localization'
+          git push origin HEAD:cleanup/neutral-defaults
