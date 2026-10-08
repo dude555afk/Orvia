@@ -24,7 +24,10 @@ void main() {
         expect(image.checksums[arch], matches(RegExp(r'^[a-f0-9]{64}$')));
         expect(imageSource.officialTarballUri(arch).scheme, 'https');
         expect(image.cacheName(arch), contains(image.id));
-        expect(imageSource.officialTarballUri(arch).path, endsWith(image.format));
+        expect(
+          imageSource.officialTarballUri(arch).path,
+          endsWith(image.format),
+        );
       }
       expect(imageSource.availableSources, const [
         RootfsDownloadSource.automatic,
