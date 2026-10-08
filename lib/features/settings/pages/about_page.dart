@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../icons/lucide_adapter.dart';
 import 'package:provider/provider.dart';
+import '../../../core/providers/update_provider.dart';
 import '../../../core/providers/settings_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/ios_switch.dart';
@@ -476,6 +477,76 @@ class _AboutPageState extends State<AboutPage> {
             ],
           ),
 
+          const SizedBox(height: 12),
+
+          // GitHub release updates, including on-device APK installation.
+          Consumer<UpdateProvider>(
+            builder: (context, updates, _) => SectionCard(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.system_update_alt_rounded),
+                  title: const Text('App updates'),
+                  subtitle: Text(
+                    updates.checking
+                        ? 'Checking GitHub releases…'
+                        : updates.downloading
+                            ? 'Downloading update… ${((updates.downloadProgress ?? 0) * 100).round()}%'
+                            : updates.installing
+                                ? 'Opening Android installer…'
+                                : updates.available != null
+                                    ? 'Version ${updates.available!.version} available'
+                                    : updates.error != null
+                                        ? 'Update check failed: ${updates.error}'
+                                        : 'Check for the latest Orvia release',
+                  ),
+                  trailing: updates.checking || updates.downloading || updates.installing
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : null,
+                ),
+                if (updates.downloading)
+                  LinearProgressIndicator(value: updates.downloadProgress),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: updates.checking || updates.downloading || updates.installing
+                              ? null
+                              : () => context.read<UpdateProvider>().checkForUpdates(),
+                          child: const Text('Check for updates'),
+                        ),
+                      ),
+                      if (updates.available != null && Platform.isAndroid) ...[
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: FilledButton(
+                            onPressed: updates.downloading || updates.installing
+                                ? null
+                                : () async {
+                                    try {
+                                      await context.read<UpdateProvider>().downloadAndInstallAvailable();
+                                    } catch (error) {
+                                      if (!context.mounted) return;
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Update failed: $error')),
+                                      );
+                                    }
+                                  },
+                            child: const Text('Download & install'),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 12),
 
           // iOS-style list card
