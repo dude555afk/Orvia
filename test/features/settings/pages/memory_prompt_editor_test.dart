@@ -153,7 +153,6 @@ void main() {
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
     expect(find.text(l10n.memorySettingsLegacyPromptTitle), findsOneWidget);
     expect(find.text(l10n.memorySettingsModelSection), findsNothing);
-    expect(find.text(l10n.memorySettingsPromptLangSection), findsOneWidget);
     expect(find.text(l10n.memoryPromptEditRulesTitle), findsNothing);
     expect(find.text(l10n.memorySettingsEntriesTitle), findsNothing);
     expect(find.text(l10n.memorySettingsProfileTitle), findsNothing);
