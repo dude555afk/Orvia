@@ -118,7 +118,7 @@ void main() {
             },
           ],
           onToolCall: (name, arguments, {toolCallId}) async => 'ok',
-          retryOverride: const AutoRetryOptions.defaults().copyWith(enabled: false),
+          retryOverride: AutoRetryOptions.defaults().copyWith(enabled: false),
           onUsage: captured.handle,
         ),
         throwsA(isA<HttpException>()),
