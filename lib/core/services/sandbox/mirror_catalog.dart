@@ -37,20 +37,10 @@ class MirrorCatalog {
 
   static final List<MirrorCandidate> _aptArm64 = [
     _apt('http://ports.ubuntu.com/ubuntu-ports', official: true),
-    _apt('https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports'),
-    _apt('https://mirrors.ustc.edu.cn/ubuntu-ports'),
-    _apt('https://mirrors.aliyun.com/ubuntu-ports'),
-    _apt('https://mirrors.cloud.tencent.com/ubuntu-ports'),
-    _apt('https://repo.huaweicloud.com/ubuntu-ports'),
   ];
 
   static final List<MirrorCandidate> _aptAmd64 = [
     _apt('http://archive.ubuntu.com/ubuntu', official: true),
-    _apt('https://mirrors.tuna.tsinghua.edu.cn/ubuntu'),
-    _apt('https://mirrors.ustc.edu.cn/ubuntu'),
-    _apt('https://mirrors.aliyun.com/ubuntu'),
-    _apt('https://mirrors.cloud.tencent.com/ubuntu'),
-    _apt('https://repo.huaweicloud.com/ubuntu'),
   ];
 
   static final List<MirrorCandidate> _apk = [
@@ -59,22 +49,14 @@ class MirrorCatalog {
       'last-updated',
       official: true,
     ),
-    _entry('https://mirrors.tuna.tsinghua.edu.cn/alpine', 'last-updated'),
-    _entry('https://mirrors.ustc.edu.cn/alpine', 'last-updated'),
-    _entry('https://mirrors.aliyun.com/alpine', 'last-updated'),
   ];
 
   static final List<MirrorCandidate> _pip = [
     _entry('https://pypi.org/simple', 'pip/', official: true),
-    _entry('https://pypi.tuna.tsinghua.edu.cn/simple', 'pip/'),
-    _entry('https://mirrors.aliyun.com/pypi/simple', 'pip/'),
-    _entry('https://pypi.mirrors.ustc.edu.cn/simple', 'pip/'),
-    _entry('https://mirrors.cloud.tencent.com/pypi/simple', 'pip/'),
   ];
 
   static final List<MirrorCandidate> _npm = [
     _entry('https://registry.npmjs.org', '-/ping', official: true),
-    _entry('https://registry.npmmirror.com', '-/ping'),
   ];
 
   static MirrorCandidate _apt(String base, {bool official = false}) {

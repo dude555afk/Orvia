@@ -3,6 +3,7 @@ import 'package:orvia/core/services/sandbox/rootfs_source.dart';
 
 void main() {
   const source = RootfsSource();
+
   test(
     'Ubuntu 24.04.3 stays the default while newer releases are available',
     () {
@@ -15,33 +16,31 @@ void main() {
       ]);
     },
   );
-  test(
-    'catalog keeps ABI-specific verified images and distro-specific mirrors',
-    () {
-      for (final image in RootfsCatalog.images) {
-        final source = RootfsSource(image: image);
-        for (final arch in ['armhf', 'arm64', 'amd64']) {
-          expect(image.checksums[arch], matches(RegExp(r'^[a-f0-9]{64}$')));
-          expect(source.officialTarballUri(arch).scheme, 'https');
-          expect(image.cacheName(arch), contains(image.id));
-          expect(source.officialTarballUri(arch).path, endsWith(image.format));
-        }
-        if (image.distro == 'debian') {
-          expect(
-            source.availableSources,
-            isNot(contains(RootfsDownloadSource.tuna)),
-          );
-        } else if (image.distro == 'alpine') {
-          expect(
-            source.selectedUri(RootfsDownloadSource.tuna, '', 'arm64')!.path,
-            '/alpine/${image.codename}/releases/aarch64/alpine-minirootfs-${image.version}-aarch64.tar.gz',
-          );
-        }
+
+  test('catalog keeps ABI-specific verified images', () {
+    for (final image in RootfsCatalog.images) {
+      final imageSource = RootfsSource(image: image);
+      for (final arch in ['armhf', 'arm64', 'amd64']) {
+        expect(image.checksums[arch], matches(RegExp(r'^[a-f0-9]{64}$')));
+        expect(imageSource.officialTarballUri(arch).scheme, 'https');
+        expect(image.cacheName(arch), contains(image.id));
+        expect(
+          imageSource.officialTarballUri(arch).path,
+          endsWith(image.format),
+        );
       }
-      expect(RootfsSource.archiveFormat('LOCAL.TAR.XZ'), 'tar.xz');
-      expect(RootfsSource.archiveFormat('image.iso'), isNull);
-    },
-  );
+      expect(imageSource.availableSources, const [
+        RootfsDownloadSource.automatic,
+        RootfsDownloadSource.official,
+        RootfsDownloadSource.custom,
+        RootfsDownloadSource.local,
+      ]);
+    }
+
+    expect(RootfsSource.archiveFormat('LOCAL.TAR.XZ'), 'tar.xz');
+    expect(RootfsSource.archiveFormat('image.iso'), isNull);
+  });
+
   test('ABI map and pinned hashes match the official 24.04.3 manifest', () {
     expect(RootfsSource.archForAbi('arm64-v8a'), 'arm64');
     expect(RootfsSource.archForAbi('x86_64'), 'amd64');
@@ -62,24 +61,19 @@ void main() {
       '6bc2cde3930ad088b3bb46fa45279e96d25bc3810f209850ecbe4722711874f9',
     );
   });
-  test('automatic probes, explicit sources resolve without choosing again', () {
+
+  test('automatic and local defer while official resolves directly', () {
     expect(
       source.selectedUri(RootfsDownloadSource.automatic, '', 'arm64'),
       isNull,
     );
+    expect(source.selectedUri(RootfsDownloadSource.local, '', 'arm64'), isNull);
     expect(
       source.selectedUri(RootfsDownloadSource.official, '', 'arm64'),
       source.officialTarballUri('arm64'),
     );
-    expect(
-      source.selectedUri(RootfsDownloadSource.tuna, '', 'amd64').toString(),
-      'https://mirrors.tuna.tsinghua.edu.cn/ubuntu-cdimage/ubuntu-base/releases/24.04/release/ubuntu-base-24.04.3-base-amd64.tar.gz',
-    );
-    expect(
-      source.selectedUri(RootfsDownloadSource.huawei, '', 'arm64').toString(),
-      'https://repo.huaweicloud.com/ubuntu-cdimage/ubuntu-base/releases/24.04/release/ubuntu-base-24.04.3-base-arm64.tar.gz',
-    );
   });
+
   test('custom directory follows ABI, full URLs preserve query parameters', () {
     expect(
       RootfsSource.customTarballUri(
@@ -104,13 +98,6 @@ void main() {
     );
   });
 
-  test('ARMv7 Alpine mirrors use armv7 archives', () {
-    const alpine = RootfsSource(image: RootfsCatalog.alpine324);
-    expect(
-      alpine.selectedUri(RootfsDownloadSource.tuna, '', 'armhf').toString(),
-      'https://mirrors.tuna.tsinghua.edu.cn/alpine/v3.24/releases/armv7/alpine-minirootfs-3.24.1-armv7.tar.gz',
-    );
-  });
   test('reject malformed, credential-bearing and non-HTTP custom sources', () {
     for (final url in [
       '',

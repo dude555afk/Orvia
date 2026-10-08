@@ -13,7 +13,7 @@ void main() {
       await env.loaded;
       await env.setRootfsSelection(
         imageId: 'alpine-3.24.1',
-        source: RootfsDownloadSource.tuna,
+        source: RootfsDownloadSource.official,
       );
       await env.setProotOptions(
         shell: '/bin/sh',
@@ -22,7 +22,7 @@ void main() {
       final restored = EnvironmentProvider(preferences: prefs);
       await restored.loaded;
       expect(restored.rootfsImage.distro, 'alpine');
-      expect(restored.downloadSource, RootfsDownloadSource.tuna);
+      expect(restored.downloadSource, RootfsDownloadSource.official);
       expect(restored.prootShell, '/bin/sh');
       expect(restored.prootArguments, [
         '-k',
@@ -34,7 +34,7 @@ void main() {
       await expectLater(
         restored.setRootfsSelection(
           imageId: 'debian-13',
-          source: RootfsDownloadSource.tuna,
+          source: RootfsDownloadSource.official,
         ),
         throwsFormatException,
       );

@@ -256,7 +256,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(EnvironmentDownloadPage), findsOneWidget);
       expect(installer.calls, 0);
-      await tester.tap(find.byKey(const ValueKey('download-source-tuna')));
+      await tester.tap(find.byKey(const ValueKey('download-source-official')));
       expect(installer.calls, 0);
       final save = find.byKey(const ValueKey('download-source-save'));
       await tester.scrollUntilVisible(
@@ -275,7 +275,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(installer.calls, 1);
-      expect(installer.usedSource, RootfsDownloadSource.tuna);
+      expect(installer.usedSource, RootfsDownloadSource.official);
       expect(mirrors.autoDetectCalls, 0);
       expect(tester.takeException(), isNull);
     },

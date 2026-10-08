@@ -7386,30 +7386,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter a number between 1 and 100';
 
   @override
-  String get memorySettingsPromptLangSection => 'Prompt language';
-
-  @override
-  String get memorySettingsPromptLangAuto => 'Auto';
-
-  @override
-  String get memorySettingsPromptLangAutoSubtitle =>
-      'Follow the UI language (Chinese → zh, otherwise en)';
-
-  @override
-  String get memorySettingsPromptLangZh => 'Chinese';
-
-  @override
-  String get memorySettingsPromptLangZhSubtitle =>
-      'Always use Chinese memory prompts and tool descriptions';
-
-  @override
-  String get memorySettingsPromptLangEn => 'English';
-
-  @override
-  String get memorySettingsPromptLangEnSubtitle =>
-      'Always use English memory prompts and tool descriptions';
-
-  @override
   String get memorySettingsPromptsSection => 'Prompt templates';
 
   @override
@@ -10866,24 +10842,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workspaceEnvMirrorNameOfficialNpm => 'Official npm';
 
   @override
-  String get workspaceEnvMirrorNameTuna => 'Tsinghua TUNA';
-
-  @override
-  String get workspaceEnvMirrorNameAlibaba => 'Alibaba';
-
-  @override
-  String get workspaceEnvMirrorNameUstc => 'USTC';
-
-  @override
-  String get workspaceEnvMirrorNameHuawei => 'Huawei';
-
-  @override
-  String get workspaceEnvMirrorNameTencent => 'Tencent';
-
-  @override
-  String get workspaceEnvMirrorNameNetease => 'NetEase';
-
-  @override
   String get workspaceEnvMirrorNameLeaseweb => 'LEASEWEB UK';
 
   @override
@@ -10894,9 +10852,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workspaceEnvMirrorNameKakao => 'Kakao Korea';
-
-  @override
-  String get workspaceEnvMirrorNameNpmmirror => 'npmmirror';
 
   @override
   String workspaceEnvSelectionNamed(String name, String region) {

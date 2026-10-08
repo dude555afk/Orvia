@@ -1,7 +1,7 @@
 import 'rootfs_catalog.dart';
 export 'rootfs_catalog.dart';
 
-enum RootfsDownloadSource { automatic, official, tuna, huawei, custom, local }
+enum RootfsDownloadSource { automatic, official, custom, local }
 
 class RootfsSource {
   const RootfsSource({
@@ -66,10 +66,6 @@ class RootfsSource {
         return officialTarballUri(arch);
       case RootfsDownloadSource.custom:
         return customTarballUri(customUrl, arch, image: image);
-      case RootfsDownloadSource.tuna:
-      case RootfsDownloadSource.huawei:
-        // Legacy saved values from upstream builds migrate to Official.
-        return officialTarballUri(arch);
     }
   }
 

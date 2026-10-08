@@ -24,8 +24,6 @@ String environmentDownloadSourceLabel(
 ) => switch (source) {
   RootfsDownloadSource.automatic => l10n.workspaceEnvDownloadAutomatic,
   RootfsDownloadSource.official => l10n.workspaceEnvOfficial,
-  RootfsDownloadSource.tuna => l10n.workspaceEnvMirrorNameTuna,
-  RootfsDownloadSource.huawei => l10n.workspaceEnvMirrorNameHuawei,
   RootfsDownloadSource.custom => l10n.workspaceEnvDownloadCustom,
   RootfsDownloadSource.local => l10n.workspaceEnvLocalImage,
 };
@@ -113,14 +111,11 @@ class _EnvironmentDownloadPageState extends State<EnvironmentDownloadPage> {
       final arch = RootfsSource.archForAbi(probe.abi);
       if (arch == null) throw StateError('Unsupported ABI');
       final urls = <RootfsDownloadSource, Uri>{
-        for (final source in [
+        RootfsDownloadSource.official: _resolver.selectedUri(
           RootfsDownloadSource.official,
-          if (_resolver.availableSources.contains(RootfsDownloadSource.tuna))
-            RootfsDownloadSource.tuna,
-          if (_resolver.availableSources.contains(RootfsDownloadSource.huawei))
-            RootfsDownloadSource.huawei,
-        ])
-          source: _resolver.selectedUri(source, '', arch)!,
+          '',
+          arch,
+        )!,
         if (_source == RootfsDownloadSource.custom)
           RootfsDownloadSource.custom: RootfsSource.customTarballUri(
             _url.text,

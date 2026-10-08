@@ -13453,48 +13453,6 @@ abstract class AppLocalizations {
   /// **'Enter a number between 1 and 100'**
   String get memorySettingsInjectionMaxItemsCustomInvalid;
 
-  /// No description provided for @memorySettingsPromptLangSection.
-  ///
-  /// In en, this message translates to:
-  /// **'Prompt language'**
-  String get memorySettingsPromptLangSection;
-
-  /// No description provided for @memorySettingsPromptLangAuto.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto'**
-  String get memorySettingsPromptLangAuto;
-
-  /// No description provided for @memorySettingsPromptLangAutoSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Follow the UI language (Chinese → zh, otherwise en)'**
-  String get memorySettingsPromptLangAutoSubtitle;
-
-  /// No description provided for @memorySettingsPromptLangZh.
-  ///
-  /// In en, this message translates to:
-  /// **'Chinese'**
-  String get memorySettingsPromptLangZh;
-
-  /// No description provided for @memorySettingsPromptLangZhSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Always use Chinese memory prompts and tool descriptions'**
-  String get memorySettingsPromptLangZhSubtitle;
-
-  /// No description provided for @memorySettingsPromptLangEn.
-  ///
-  /// In en, this message translates to:
-  /// **'English'**
-  String get memorySettingsPromptLangEn;
-
-  /// No description provided for @memorySettingsPromptLangEnSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Always use English memory prompts and tool descriptions'**
-  String get memorySettingsPromptLangEnSubtitle;
-
   /// No description provided for @memorySettingsPromptsSection.
   ///
   /// In en, this message translates to:
@@ -19473,42 +19431,6 @@ abstract class AppLocalizations {
   /// **'Official npm'**
   String get workspaceEnvMirrorNameOfficialNpm;
 
-  /// No description provided for @workspaceEnvMirrorNameTuna.
-  ///
-  /// In en, this message translates to:
-  /// **'Tsinghua TUNA'**
-  String get workspaceEnvMirrorNameTuna;
-
-  /// No description provided for @workspaceEnvMirrorNameAlibaba.
-  ///
-  /// In en, this message translates to:
-  /// **'Alibaba'**
-  String get workspaceEnvMirrorNameAlibaba;
-
-  /// No description provided for @workspaceEnvMirrorNameUstc.
-  ///
-  /// In en, this message translates to:
-  /// **'USTC'**
-  String get workspaceEnvMirrorNameUstc;
-
-  /// No description provided for @workspaceEnvMirrorNameHuawei.
-  ///
-  /// In en, this message translates to:
-  /// **'Huawei'**
-  String get workspaceEnvMirrorNameHuawei;
-
-  /// No description provided for @workspaceEnvMirrorNameTencent.
-  ///
-  /// In en, this message translates to:
-  /// **'Tencent'**
-  String get workspaceEnvMirrorNameTencent;
-
-  /// No description provided for @workspaceEnvMirrorNameNetease.
-  ///
-  /// In en, this message translates to:
-  /// **'NetEase'**
-  String get workspaceEnvMirrorNameNetease;
-
   /// No description provided for @workspaceEnvMirrorNameLeaseweb.
   ///
   /// In en, this message translates to:
@@ -19532,12 +19454,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Kakao Korea'**
   String get workspaceEnvMirrorNameKakao;
-
-  /// No description provided for @workspaceEnvMirrorNameNpmmirror.
-  ///
-  /// In en, this message translates to:
-  /// **'npmmirror'**
-  String get workspaceEnvMirrorNameNpmmirror;
 
   /// No description provided for @workspaceEnvSelectionNamed.
   ///

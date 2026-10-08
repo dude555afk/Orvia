@@ -231,30 +231,6 @@ String workspaceEnvMirrorDisplayName(AppLocalizations l10n, MirrorEntry entry) {
       return l10n.workspaceEnvMirrorNameOfficialNpm;
     case 'apt.official':
       return l10n.workspaceEnvMirrorNameOfficial;
-    case 'alpine.tuna':
-    case 'apt.tuna':
-    case 'pip.tuna':
-      return l10n.workspaceEnvMirrorNameTuna;
-    case 'alpine.aliyun':
-    case 'apt.aliyun':
-    case 'pip.aliyun':
-      return l10n.workspaceEnvMirrorNameAlibaba;
-    case 'alpine.ustc':
-    case 'apt.ustc':
-    case 'pip.ustc':
-      return l10n.workspaceEnvMirrorNameUstc;
-    case 'alpine.huawei':
-    case 'apt.huawei':
-    case 'pip.huawei':
-    case 'npm.huawei':
-      return l10n.workspaceEnvMirrorNameHuawei;
-    case 'alpine.tencent':
-    case 'apt.tencent':
-    case 'pip.tencent':
-    case 'npm.tencent':
-      return l10n.workspaceEnvMirrorNameTencent;
-    case 'apt.netease':
-      return l10n.workspaceEnvMirrorNameNetease;
     case 'alpine.leaseweb':
       return l10n.workspaceEnvMirrorNameLeaseweb;
     case 'alpine.rwth':
@@ -263,8 +239,6 @@ String workspaceEnvMirrorDisplayName(AppLocalizations l10n, MirrorEntry entry) {
       return l10n.workspaceEnvMirrorNameJaist;
     case 'alpine.kakao':
       return l10n.workspaceEnvMirrorNameKakao;
-    case 'npm.npmmirror':
-      return l10n.workspaceEnvMirrorNameNpmmirror;
     default:
       return entry.name;
   }
