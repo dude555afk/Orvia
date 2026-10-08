@@ -82,7 +82,7 @@ void main() {
     settings = SettingsProvider(preferences);
     await settings.loaded;
     await settings.setMemoryModel('openai', 'gpt-test');
-    await settings.setMemoryPromptLang('zh');
+    await settings.setMemoryPromptLang('en');
 
     // Seed a listed model so existence check passes.
     final cfg = settings.getProviderConfig('openai');
@@ -350,7 +350,7 @@ void main() {
         window: sampleWindow(conversationId: convo.id, endOrder: 5),
         llmCall: (prompt) async {
           calls++;
-          expect(prompt, contains('\u5206\u6790\u4EE5\u4E0B\u5BF9\u8BDD'));
+          expect(prompt, contains('Analyse the conversation'));
           return '<gate><user_memory>false</user_memory></gate>';
         },
       );
@@ -452,7 +452,7 @@ void main() {
 
     test('user prompt override is used for Gatekeeper', () async {
       await seedAssistant('a1');
-      await settings.setMemoryGatePromptZh('OVERRIDE-GATE {{conversation}}');
+      await settings.setMemoryGatePromptEn('OVERRIDE-GATE {{conversation}}');
       final convo = await chatService.createConversation(
         title: 't',
         assistantId: 'a1',
@@ -470,7 +470,7 @@ void main() {
         },
       );
       expect(seen, startsWith('OVERRIDE-GATE '));
-      expect(seen, isNot(contains(MemoryPrompts.gateZh.substring(0, 8))));
+      expect(seen, isNot(contains(MemoryPrompts.gateEn.substring(0, 8))));
     });
   });
 

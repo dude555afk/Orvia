@@ -34,7 +34,7 @@ void main() {
       await expectLater(
         restored.setRootfsSelection(
           imageId: 'debian-13',
-          source: RootfsDownloadSource.official,
+          source: RootfsDownloadSource.local,
         ),
         throwsFormatException,
       );

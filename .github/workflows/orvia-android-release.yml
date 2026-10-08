@@ -39,6 +39,10 @@ jobs:
 
       - name: Flutter dependencies
         run: flutter pub get
+      - name: Generate Orvia launcher icons and splash
+        run: |
+          dart run flutter_launcher_icons
+          dart run flutter_native_splash:create
 
       - name: Inject fallback
         shell: bash
