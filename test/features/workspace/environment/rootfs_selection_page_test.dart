@@ -109,7 +109,7 @@ void main() {
     await tester.tap(find.text('Ubuntu').last);
     await tester.pumpAndSettle();
     expect(find.text('24.04.3'), findsOneWidget);
-    expect(find.byKey(const ValueKey('download-source-tuna')), findsOneWidget);
+    expect(find.byKey(const ValueKey('download-source-tuna')), findsNothing);
     await tester.tap(find.byKey(const ValueKey('rootfs-distro')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Debian').last);
