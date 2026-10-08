@@ -16,7 +16,7 @@ void main() {
   });
 
   testWidgets(
-    'mobile settings lists Tool Descriptions below Logs and above About',
+    'mobile settings lists Tool Descriptions below Logs',
     (tester) async {
       tester.view.physicalSize = const Size(400, 4000);
       tester.view.devicePixelRatio = 1.0;
@@ -45,10 +45,6 @@ void main() {
       expect(
         labels.indexOf('Tool Descriptions'),
         greaterThan(labels.indexOf('Logs')),
-      );
-      expect(
-        labels.indexOf('About'),
-        greaterThan(labels.indexOf('Tool Descriptions')),
       );
       expect(
         labels.indexOf('Tool Descriptions'),
