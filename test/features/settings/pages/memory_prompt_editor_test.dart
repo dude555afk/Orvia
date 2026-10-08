@@ -114,7 +114,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(settings.memoryRulesPromptEn, 'Custom rules');
-    expect(settings.memoryRulesPromptZh, MemoryPrompts.rulesEn);
+    expect(settings.memoryRulesPromptZh, MemoryPrompts.rulesZh);
   });
 
   testWidgets('legacy mode exposes and saves the legacy rules template', (
@@ -138,7 +138,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(settings.legacyMemoryPromptEn, 'Custom legacy rules');
-    expect(settings.legacyMemoryPromptZh, MemoryPrompts.legacyRulesEn);
+    expect(settings.legacyMemoryPromptZh, MemoryPrompts.legacyRulesZh);
   });
 
   testWidgets('legacy mode hides settings for the new memory system', (
