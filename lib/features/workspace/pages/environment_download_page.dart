@@ -111,8 +111,11 @@ class _EnvironmentDownloadPageState extends State<EnvironmentDownloadPage> {
       final arch = RootfsSource.archForAbi(probe.abi);
       if (arch == null) throw StateError('Unsupported ABI');
       final urls = <RootfsDownloadSource, Uri>{
-        RootfsDownloadSource.official:
-            _resolver.selectedUri(RootfsDownloadSource.official, '', arch)!,
+        RootfsDownloadSource.official: _resolver.selectedUri(
+          RootfsDownloadSource.official,
+          '',
+          arch,
+        )!,
         if (_source == RootfsDownloadSource.custom)
           RootfsDownloadSource.custom: RootfsSource.customTarballUri(
             _url.text,
