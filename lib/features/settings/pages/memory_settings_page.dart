@@ -496,12 +496,6 @@ class _MemoryPromptEditPage extends StatefulWidget {
 }
 
 class _MemoryPromptEditPageState extends State<_MemoryPromptEditPage> {
-  /// The prompt this editor writes.
-  ///
-  /// Templates are stored per language, but only the one matching
-  /// [SettingsProvider.resolvedMemoryPromptLang] is ever sent to the model, so
-  /// editing the other one is busywork on a string the user will never see.
-  final MemoryPromptLang _lang = MemoryPromptLang.en;
   late final TextEditingController _main;
 
   /// Smart Add runs a second, genuinely different prompt for batch candidates.
@@ -511,7 +505,6 @@ class _MemoryPromptEditPageState extends State<_MemoryPromptEditPage> {
 
   bool get _isSmartAdd => widget.entry.kind == _PromptKind.smartAdd;
   bool get _isLegacyRules => widget.entry.kind == _PromptKind.legacyRules;
-  bool get _isZh => _lang == MemoryPromptLang.zh;
 
   @override
   void initState() {
@@ -528,30 +521,26 @@ class _MemoryPromptEditPageState extends State<_MemoryPromptEditPage> {
     final settings = context.read<SettingsProvider>();
     _main.text = _load(settings);
     if (_isSmartAdd) {
-      _batch!.text = _isZh
-          ? settings.memorySmartAddBatchPromptZh
-          : settings.memorySmartAddBatchPromptEn;
+      _batch!.text = settings.memorySmartAddBatchPromptEn;
     }
   }
 
   String _load(SettingsProvider s) {
     switch (widget.entry.kind) {
       case _PromptKind.rules:
-        return _isZh ? s.memoryRulesPromptZh : s.memoryRulesPromptEn;
+        return s.memoryRulesPromptEn;
       case _PromptKind.gate:
-        return _isZh ? s.memoryGatePromptZh : s.memoryGatePromptEn;
+        return s.memoryGatePromptEn;
       case _PromptKind.extract:
-        return _isZh ? s.memoryExtractPromptZh : s.memoryExtractPromptEn;
+        return s.memoryExtractPromptEn;
       case _PromptKind.smartAdd:
-        return _isZh ? s.memorySmartAddPromptZh : s.memorySmartAddPromptEn;
+        return s.memorySmartAddPromptEn;
       case _PromptKind.distill:
-        return _isZh
-            ? s.memoryProfileDistillPromptZh
-            : s.memoryProfileDistillPromptEn;
+        return s.memoryProfileDistillPromptEn;
       case _PromptKind.migrate:
-        return _isZh ? s.memoryMigratePromptZh : s.memoryMigratePromptEn;
+        return s.memoryMigratePromptEn;
       case _PromptKind.legacyRules:
-        return _isZh ? s.legacyMemoryPromptZh : s.legacyMemoryPromptEn;
+        return s.legacyMemoryPromptEn;
     }
   }
 
@@ -560,42 +549,26 @@ class _MemoryPromptEditPageState extends State<_MemoryPromptEditPage> {
     final text = _main.text;
     switch (widget.entry.kind) {
       case _PromptKind.rules:
-        await (_isZh
-            ? s.setMemoryRulesPromptZh(text)
-            : s.setMemoryRulesPromptEn(text));
+        await s.setMemoryRulesPromptEn(text);
         break;
       case _PromptKind.gate:
-        await (_isZh
-            ? s.setMemoryGatePromptZh(text)
-            : s.setMemoryGatePromptEn(text));
+        await s.setMemoryGatePromptEn(text);
         break;
       case _PromptKind.extract:
-        await (_isZh
-            ? s.setMemoryExtractPromptZh(text)
-            : s.setMemoryExtractPromptEn(text));
+        await s.setMemoryExtractPromptEn(text);
         break;
       case _PromptKind.smartAdd:
-        await (_isZh
-            ? s.setMemorySmartAddPromptZh(text)
-            : s.setMemorySmartAddPromptEn(text));
-        await (_isZh
-            ? s.setMemorySmartAddBatchPromptZh(_batch!.text)
-            : s.setMemorySmartAddBatchPromptEn(_batch!.text));
+        await s.setMemorySmartAddPromptEn(text);
+        await s.setMemorySmartAddBatchPromptEn(_batch!.text);
         break;
       case _PromptKind.distill:
-        await (_isZh
-            ? s.setMemoryProfileDistillPromptZh(text)
-            : s.setMemoryProfileDistillPromptEn(text));
+        await s.setMemoryProfileDistillPromptEn(text);
         break;
       case _PromptKind.migrate:
-        await (_isZh
-            ? s.setMemoryMigratePromptZh(text)
-            : s.setMemoryMigratePromptEn(text));
+        await s.setMemoryMigratePromptEn(text);
         break;
       case _PromptKind.legacyRules:
-        await (_isZh
-            ? s.setLegacyMemoryPromptZh(text)
-            : s.setLegacyMemoryPromptEn(text));
+        await s.setLegacyMemoryPromptEn(text);
         break;
     }
     if (mounted) Navigator.of(context).maybePop();
@@ -605,58 +578,34 @@ class _MemoryPromptEditPageState extends State<_MemoryPromptEditPage> {
     final s = context.read<SettingsProvider>();
     switch (widget.entry.kind) {
       case _PromptKind.rules:
-        await (_isZh
-            ? s.resetMemoryRulesPromptZh()
-            : s.resetMemoryRulesPromptEn());
-        _main.text = _isZh ? MemoryPrompts.rulesZh : MemoryPrompts.rulesEn;
+        await s.resetMemoryRulesPromptEn();
+        _main.text = MemoryPrompts.rulesEn;
         break;
       case _PromptKind.gate:
-        await (_isZh
-            ? s.resetMemoryGatePromptZh()
-            : s.resetMemoryGatePromptEn());
-        _main.text = _isZh ? MemoryPrompts.gateZh : MemoryPrompts.gateEn;
+        await s.resetMemoryGatePromptEn();
+        _main.text = MemoryPrompts.gateEn;
         break;
       case _PromptKind.extract:
-        await (_isZh
-            ? s.resetMemoryExtractPromptZh()
-            : s.resetMemoryExtractPromptEn());
-        _main.text = _isZh ? MemoryPrompts.extractZh : MemoryPrompts.extractEn;
+        await s.resetMemoryExtractPromptEn();
+        _main.text = MemoryPrompts.extractEn;
         break;
       case _PromptKind.smartAdd:
-        await (_isZh
-            ? s.resetMemorySmartAddPromptZh()
-            : s.resetMemorySmartAddPromptEn());
-        await (_isZh
-            ? s.resetMemorySmartAddBatchPromptZh()
-            : s.resetMemorySmartAddBatchPromptEn());
-        _main.text = _isZh
-            ? MemoryPrompts.smartAddZh
-            : MemoryPrompts.smartAddEn;
-        _batch!.text = _isZh
-            ? MemoryPrompts.smartAddBatchZh
-            : MemoryPrompts.smartAddBatchEn;
+        await s.resetMemorySmartAddPromptEn();
+        await s.resetMemorySmartAddBatchPromptEn();
+        _main.text = MemoryPrompts.smartAddEn;
+        _batch!.text = MemoryPrompts.smartAddBatchEn;
         break;
       case _PromptKind.distill:
-        await (_isZh
-            ? s.resetMemoryProfileDistillPromptZh()
-            : s.resetMemoryProfileDistillPromptEn());
-        _main.text = _isZh
-            ? MemoryPrompts.profileDistillZh
-            : MemoryPrompts.profileDistillEn;
+        await s.resetMemoryProfileDistillPromptEn();
+        _main.text = MemoryPrompts.profileDistillEn;
         break;
       case _PromptKind.migrate:
-        await (_isZh
-            ? s.resetMemoryMigratePromptZh()
-            : s.resetMemoryMigratePromptEn());
-        _main.text = _isZh ? MemoryPrompts.migrateZh : MemoryPrompts.migrateEn;
+        await s.resetMemoryMigratePromptEn();
+        _main.text = MemoryPrompts.migrateEn;
         break;
       case _PromptKind.legacyRules:
-        await (_isZh
-            ? s.resetLegacyMemoryPromptZh()
-            : s.resetLegacyMemoryPromptEn());
-        _main.text = _isZh
-            ? MemoryPrompts.legacyRulesZh
-            : MemoryPrompts.legacyRulesEn;
+        await s.resetLegacyMemoryPromptEn();
+        _main.text = MemoryPrompts.legacyRulesEn;
         break;
     }
     setState(() {});
