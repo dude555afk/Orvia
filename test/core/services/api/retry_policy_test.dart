@@ -16,7 +16,7 @@ void main() {
       expect(
         httpStatusFromError(
           const HttpException(
-            'HTTP 429: {"error":{"code":"1305","message":"\u8BBF\u95EE\u91CF\u8FC7\u5927"}}',
+            'HTTP 429: {"error":{"code":"1305","message":"rate limit exceeded"}}',
           ),
         ),
         429,
@@ -49,9 +49,7 @@ void main() {
     test('retries on retry keywords even without a status code', () {
       expect(
         shouldRetryError(
-          Exception(
-            '\u8BE5\u6A21\u578B\u5F53\u524D\u8BBF\u95EE\u91CF\u8FC7\u5927，\u8BF7\u60A8\u7A0D\u540E\u518D\u8BD5',
-          ),
+          Exception('This model is overloaded; please try again later'),
           options,
         ),
         isTrue,
@@ -65,16 +63,14 @@ void main() {
     test('stop keywords beat retry keywords and status codes', () {
       expect(
         shouldRetryError(
-          const HttpException(
-            'HTTP 429: \u4F59\u989D\u4E0D\u8DB3，\u8BF7\u5145\u503C',
-          ),
+          const HttpException('HTTP 429: insufficient balance; please top up'),
           options,
         ),
         isFalse,
       );
       expect(
         shouldRetryError(
-          Exception('\u8BBF\u95EE\u91CF\u8FC7\u5927 but quota exceeded'),
+          Exception('rate limit exceeded but quota exceeded'),
           options,
         ),
         isFalse,
@@ -210,9 +206,7 @@ void main() {
         );
         expect(
           shouldRetryError(
-            TimeoutException(
-              'TimeoutException after 0:00:30.000000: \u8D85\u65F6',
-            ),
+            TimeoutException('TimeoutException after 0:00:30.000000: timeout'),
             imageOpts,
           ),
           isFalse,

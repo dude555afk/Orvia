@@ -13,8 +13,18 @@ void main() {
     expect(defaults.jitter, isTrue);
     expect(defaults.retryOnNetworkError, isTrue);
     expect(defaults.retryStatusCodes, {408, 425, 429, 500, 502, 503, 504, 529});
-    expect(defaults.retryKeywords, contains('\u8BBF\u95EE\u91CF\u8FC7\u5927'));
-    expect(defaults.stopKeywords, contains('\u4F59\u989D'));
+    expect(defaults.retryKeywords, contains('rate limit'));
+    expect(defaults.stopKeywords, contains('balance'));
+  });
+
+  test('default retry labels contain no Chinese characters', () {
+    final chineseCharacters = RegExp(r'[\u3400-\u9FFF]');
+    for (final keyword in [
+      ...defaults.retryKeywords,
+      ...defaults.stopKeywords,
+    ]) {
+      expect(keyword, isNot(matches(chineseCharacters)));
+    }
   });
 
   test('toJson/fromJson round-trip', () {

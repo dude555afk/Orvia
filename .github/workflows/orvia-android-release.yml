@@ -139,6 +139,7 @@ jobs:
           tag_name: ${{ env.RELEASE_TAG }}
           name: Orvia ${{ env.RELEASE_TAG }}
           generate_release_notes: true
+          prerelease: true
           files: |
             build/app/outputs/flutter-apk/Orvia_android_*_arm64-v8a.apk
             build/app/outputs/flutter-apk/Orvia_android_*_armeabi-v7a.apk
