@@ -381,7 +381,7 @@ class SettingsPage extends StatelessWidget {
             children: [
               _iosNavRow(
                 context,
-                icon: Lucide.Plug,
+                icon: Lucide.Link,
                 label: 'Integrations',
                 onTap: () {
                   Navigator.of(context).push(
