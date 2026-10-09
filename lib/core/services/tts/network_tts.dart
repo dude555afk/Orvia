@@ -26,7 +26,7 @@ enum NetworkTtsKind {
 String networkTtsKindDisplayName(NetworkTtsKind k) {
   switch (k) {
     case NetworkTtsKind.edgeNeural:
-      return 'Edge Neural (keyless)';
+      return 'Microsoft Edge TTS (keyless)';
     case NetworkTtsKind.openai:
       return 'OpenAI';
     case NetworkTtsKind.gemini:
@@ -955,10 +955,20 @@ class NetworkTtsService {
       outputFormat: EdgeTtsOutputFormat.audio24Khz96KbitrateMonoMp3,
     );
     try {
-      final result = await tts.synthesize(text);
+      // The unofficial Edge service can stall; return an actionable error
+      // instead of leaving playback permanently buffering.
+      final result = await tts.synthesize(text).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () => throw TimeoutException(
+          'Edge TTS request timed out. Check the connection or try again.',
+        ),
+      );
       return Uint8List.fromList(result.audioBytes);
     } finally {
-      await tts.close();
+      // Cleanup should never hide the synthesis exception.
+      try {
+        await tts.close().timeout(const Duration(seconds: 5));
+      } catch (_) {}
     }
   }
 
