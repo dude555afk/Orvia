@@ -238,7 +238,7 @@ void main() {
   }
 
   testWidgets(
-    'OAuth \u5931\u6548\u4FDD\u7559\u90E8\u5206\u56DE\u590D\u5E76\u6301\u4E45\u5316\u6062\u590D\u5165\u53E3，\u4E0D\u89E6\u53D1\u666E\u901A\u9519\u8BEF\u63D0\u793A',
+    'Expired OAuth preserves partial response and recovery state without a generic error',
     (tester) async {
       final service = _ThrowingFinalizeChatService(failCompletion: false);
       final settings = SettingsProvider(createBusinessTestPreferences());
@@ -328,7 +328,7 @@ void main() {
   );
 
   testWidgets(
-    '\u7EC8\u6001\u5199\u5E93\u5931\u8D25\u4ECD\u8D70 failed \u6536\u5C3E\u5E76\u901A\u77E5 onStreamError',
+    'Terminal persistence failure still finalizes as failed and calls onStreamError',
     (tester) async {
       final service = _ThrowingFinalizeChatService();
       final settings = SettingsProvider(createBusinessTestPreferences());
