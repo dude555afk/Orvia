@@ -26,7 +26,7 @@ void main() {
   });
 
   testWidgets(
-    '\u751F\u6210\u7ED3\u675F\u65F6\u5C3E\u90E8\u9AD8\u5EA6\u53D8\u5316\u88AB\u5E03\u5C40\u9636\u6BB5\u5438\u6536，\u4E0D\u518D\u8DF3\u4E00\u4E0B\u518D\u6ED1\u56DE\u5E95\u90E8',
+    'Final stream layout change does not jump before returning to bottom',
     (tester) async {
       tester.view.physicalSize = const Size(1170, 2100);
       tester.view.devicePixelRatio = 3.0;
