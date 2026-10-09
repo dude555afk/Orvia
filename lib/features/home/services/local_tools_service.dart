@@ -538,7 +538,9 @@ class LocalToolsService {
     }
     if (LocalToolNames.emailTools.contains(name) && !kIsWeb) {
       return EmailIntegrationService.instance.handleTool(
-        name, args, sendApproved: emailSendApproved,
+        name,
+        args,
+        sendApproved: emailSendApproved,
       );
     }
     if (name == LocalToolNames.timeInfo) {

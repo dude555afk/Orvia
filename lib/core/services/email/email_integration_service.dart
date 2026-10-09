@@ -44,21 +44,42 @@ class EmailAccount {
     smtpStartTls: json['smtpStartTls'] == true,
   );
 
-  static ({String imap, String smtp, int smtpPort, bool startTls})?
-  preset(String address) {
+  static ({String imap, String smtp, int smtpPort, bool startTls})? preset(
+    String address,
+  ) {
     switch (address.trim().toLowerCase().split('@').last) {
       case 'gmail.com':
       case 'googlemail.com':
-        return (imap: 'imap.gmail.com', smtp: 'smtp.gmail.com', smtpPort: 465, startTls: false);
+        return (
+          imap: 'imap.gmail.com',
+          smtp: 'smtp.gmail.com',
+          smtpPort: 465,
+          startTls: false,
+        );
       case 'outlook.com':
       case 'hotmail.com':
       case 'live.com':
-        return (imap: 'outlook.office365.com', smtp: 'smtp.office365.com', smtpPort: 587, startTls: true);
+        return (
+          imap: 'outlook.office365.com',
+          smtp: 'smtp.office365.com',
+          smtpPort: 587,
+          startTls: true,
+        );
       case 'yahoo.com':
-        return (imap: 'imap.mail.yahoo.com', smtp: 'smtp.mail.yahoo.com', smtpPort: 465, startTls: false);
+        return (
+          imap: 'imap.mail.yahoo.com',
+          smtp: 'smtp.mail.yahoo.com',
+          smtpPort: 465,
+          startTls: false,
+        );
       case 'icloud.com':
       case 'me.com':
-        return (imap: 'imap.mail.me.com', smtp: 'smtp.mail.me.com', smtpPort: 587, startTls: true);
+        return (
+          imap: 'imap.mail.me.com',
+          smtp: 'smtp.mail.me.com',
+          smtpPort: 587,
+          startTls: true,
+        );
       default:
         return null;
     }
@@ -71,12 +92,12 @@ class EmailAccount {
     }
     for (final host in [imapHost, smtpHost]) {
       if (!RegExp(r'^[a-zA-Z0-9.-]+$').hasMatch(host) ||
-          host.startsWith('-') || host.contains('..')) {
+          host.startsWith('-') ||
+          host.contains('..')) {
         throw const FormatException('Invalid mail server name.');
       }
     }
-    if (imapPort < 1 || imapPort > 65535 ||
-        smtpPort < 1 || smtpPort > 65535) {
+    if (imapPort < 1 || imapPort > 65535 || smtpPort < 1 || smtpPort > 65535) {
       throw const FormatException('Invalid mail server port.');
     }
   }
@@ -94,7 +115,10 @@ class EmailIntegrationService {
     final data = await _storage.read(key: _accountsKey);
     if (data == null || data.isEmpty) return [];
     return (jsonDecode(data) as List)
-        .map((value) => EmailAccount.fromJson(Map<String, dynamic>.from(value as Map)))
+        .map(
+          (value) =>
+              EmailAccount.fromJson(Map<String, dynamic>.from(value as Map)),
+        )
         .toList();
   }
 
@@ -102,21 +126,30 @@ class EmailIntegrationService {
     account.validate();
     await _withInbox(account, (imap) async {});
     final all = await accounts();
-    all.removeWhere((e) => e.address.toLowerCase() == account.address.toLowerCase());
+    all.removeWhere(
+      (e) => e.address.toLowerCase() == account.address.toLowerCase(),
+    );
     all.add(account);
-    await _storage.write(key: _accountsKey, value: jsonEncode(all.map((a) => a.toJson()).toList()));
+    await _storage.write(
+      key: _accountsKey,
+      value: jsonEncode(all.map((a) => a.toJson()).toList()),
+    );
   }
 
   Future<void> remove(String address) async {
     final all = await accounts();
     all.removeWhere((e) => e.address.toLowerCase() == address.toLowerCase());
-    await _storage.write(key: _accountsKey, value: jsonEncode(all.map((e) => e.toJson()).toList()));
+    await _storage.write(
+      key: _accountsKey,
+      value: jsonEncode(all.map((e) => e.toJson()).toList()),
+    );
     await _storage.delete(key: _cursorKey(address));
   }
 
   Future<EmailAccount> _resolve(Object? address) async {
     final all = await accounts();
-    if (all.isEmpty) throw StateError('Connect email in Settings > Integrations > Email.');
+    if (all.isEmpty)
+      throw StateError('Connect email in Settings > Integrations > Email.');
     final key = (address ?? '').toString().trim().toLowerCase();
     if (key.isEmpty && all.length == 1) return all.single;
     for (final account in all) {
@@ -125,12 +158,20 @@ class EmailIntegrationService {
     throw StateError('Select an email account in Integrations settings.');
   }
 
-  String _cursorKey(String address) => 'orvia_email_last_seen_' + address.trim().toLowerCase();
+  String _cursorKey(String address) =>
+      'orvia_email_last_seen_' + address.trim().toLowerCase();
 
-  Future<T> _withInbox<T>(EmailAccount account, Future<T> Function(ImapClient) action) async {
+  Future<T> _withInbox<T>(
+    EmailAccount account,
+    Future<T> Function(ImapClient) action,
+  ) async {
     final client = ImapClient(isLogEnabled: false);
     try {
-      await client.connectToServer(account.imapHost, account.imapPort, isSecure: true);
+      await client.connectToServer(
+        account.imapHost,
+        account.imapPort,
+        isSecure: true,
+      );
       await client.login(account.address, account.password);
       await client.selectInbox();
       return await action(client);
@@ -149,18 +190,29 @@ class EmailIntegrationService {
 
   Future<Map<String, dynamic>> check({Object? account}) async {
     final cfg = await _resolve(account);
-    final last = int.tryParse(await _storage.read(key: _cursorKey(cfg.address)) ?? '') ?? 0;
+    final last =
+        int.tryParse(await _storage.read(key: _cursorKey(cfg.address)) ?? '') ??
+        0;
     final items = await _withInbox(cfg, (imap) async {
-      final r = await imap.fetchRecentMessages(messageCount: 25, criteria: '(UID FLAGS BODY.PEEK[])');
+      final r = await imap.fetchRecentMessages(
+        messageCount: 25,
+        criteria: '(UID FLAGS BODY.PEEK[])',
+      );
       return r.messages.where((m) => m.uid != null).toList();
     });
     items.sort((a, b) => a.uid!.compareTo(b.uid!));
     final news = items.where((m) => m.uid! > last).toList();
     if (items.isNotEmpty && items.last.uid! > last) {
-      await _storage.write(key: _cursorKey(cfg.address), value: items.last.uid!.toString());
+      await _storage.write(
+        key: _cursorKey(cfg.address),
+        value: items.last.uid!.toString(),
+      );
     }
-    return {'account': cfg.address, 'count': news.length,
-      'messages': news.map((m) => _summary(m, cfg.address)).toList()};
+    return {
+      'account': cfg.address,
+      'count': news.length,
+      'messages': news.map((m) => _summary(m, cfg.address)).toList(),
+    };
   }
 
   Future<Map<String, dynamic>> read({Object? account, required int uid}) async {
@@ -172,42 +224,64 @@ class EmailIntegrationService {
       return r.messages.first;
     });
     final body = msg.decodeTextPlainPart() ?? '';
-    return {..._summary(msg, cfg.address),
-      'body': body.length > 40000 ? body.substring(0, 40000) : body};
+    return {
+      ..._summary(msg, cfg.address),
+      'body': body.length > 40000 ? body.substring(0, 40000) : body,
+    };
   }
 
-  Future<Map<String, dynamic>> search({Object? account, required String query}) async {
+  Future<Map<String, dynamic>> search({
+    Object? account,
+    required String query,
+  }) async {
     final cfg = await _resolve(account);
-    if (query.trim().isEmpty || query.length > 200 ||
+    if (query.trim().isEmpty ||
+        query.length > 200 ||
         query.contains(RegExp(r'[\r\n]'))) {
       throw const FormatException('Search query must be 1-200 characters.');
     }
     final term = query.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
     final messages = await _withInbox(cfg, (imap) async {
       final search = await imap.uidSearchMessages(
-        searchCriteria: 'OR OR FROM "' + term + '" SUBJECT "' + term + '" TEXT "' + term + '"',
+        searchCriteria:
+            'OR OR FROM "' +
+            term +
+            '" SUBJECT "' +
+            term +
+            '" TEXT "' +
+            term +
+            '"',
       );
       final ids = search.matchingSequence?.toList() ?? <int>[];
       if (ids.isEmpty) return <MimeMessage>[];
       final recent = ids.length > 25 ? ids.sublist(ids.length - 25) : ids;
       final fetched = await imap.uidFetchMessages(
-        MessageSequence.fromIds(recent, isUid: true), '(UID FLAGS BODY.PEEK[])',
+        MessageSequence.fromIds(recent, isUid: true),
+        '(UID FLAGS BODY.PEEK[])',
       );
       return fetched.messages;
     });
-    return {'account': cfg.address, 'count': messages.length,
-      'messages': messages.map((m) => _summary(m, cfg.address)).toList()};
+    return {
+      'account': cfg.address,
+      'count': messages.length,
+      'messages': messages.map((m) => _summary(m, cfg.address)).toList(),
+    };
   }
 
   /// Only called after the user's per-message send confirmation.
   Future<Map<String, dynamic>> send({
-    Object? account, required String to, required String subject,
-    required String body, int? replyUid,
+    Object? account,
+    required String to,
+    required String subject,
+    required String body,
+    int? replyUid,
   }) async {
     final cfg = await _resolve(account);
     if (!RegExp(r'^[^\s@,;]+@[^\s@,;]+\.[^\s@,;]+$').hasMatch(to.trim()) ||
-        body.trim().isEmpty || body.length > 100000 ||
-        subject.length > 998 || subject.contains(RegExp(r'[\r\n]'))) {
+        body.trim().isEmpty ||
+        body.length > 100000 ||
+        subject.length > 998 ||
+        subject.contains(RegExp(r'[\r\n]'))) {
       throw const FormatException('Invalid recipient, subject, or body.');
     }
     MimeMessage? replyTo;
@@ -219,17 +293,27 @@ class EmailIntegrationService {
         return r.messages.first;
       });
       final expected = replyTo.replyTo?.firstOrNull?.email ?? replyTo.fromEmail;
-      if (expected == null || expected.toLowerCase() != to.trim().toLowerCase()) {
-        throw const FormatException('Reply recipient must match original sender.');
+      if (expected == null ||
+          expected.toLowerCase() != to.trim().toLowerCase()) {
+        throw const FormatException(
+          'Reply recipient must match original sender.',
+        );
       }
     }
     final message = MessageBuilder.buildSimpleTextMessage(
-      MailAddress('', cfg.address), [MailAddress('', to.trim())], body,
-      subject: subject, replyToMessage: replyTo,
+      MailAddress('', cfg.address),
+      [MailAddress('', to.trim())],
+      body,
+      subject: subject,
+      replyToMessage: replyTo,
     );
     final smtp = SmtpClient(cfg.address.split('@').last, isLogEnabled: false);
     try {
-      await smtp.connectToServer(cfg.smtpHost, cfg.smtpPort, isSecure: !cfg.smtpStartTls);
+      await smtp.connectToServer(
+        cfg.smtpHost,
+        cfg.smtpPort,
+        isSecure: !cfg.smtpStartTls,
+      );
       await smtp.ehlo();
       if (cfg.smtpStartTls) {
         await smtp.startTls();
@@ -238,18 +322,28 @@ class EmailIntegrationService {
       final mechanism = smtp.serverInfo.supportsAuth(AuthMechanism.plain)
           ? AuthMechanism.plain
           : smtp.serverInfo.supportsAuth(AuthMechanism.login)
-              ? AuthMechanism.login : null;
-      if (mechanism == null) throw StateError('Mail server does not offer password authentication.');
+          ? AuthMechanism.login
+          : null;
+      if (mechanism == null)
+        throw StateError('Mail server does not offer password authentication.');
       await smtp.authenticate(cfg.address, cfg.password, mechanism);
       final response = await smtp.sendMessage(message);
-      if (!response.isOkStatus) throw StateError('Mail server rejected the message.');
-      return {'status': 'sent', 'account': cfg.address, 'to': to, 'subject': subject};
+      if (!response.isOkStatus)
+        throw StateError('Mail server rejected the message.');
+      return {
+        'status': 'sent',
+        'account': cfg.address,
+        'to': to,
+        'subject': subject,
+      };
     } finally {
       if (smtp.isConnected) await smtp.disconnect();
     }
   }
 
-  Future<String> handleTool(String tool, Map<String, dynamic> args, {
+  Future<String> handleTool(
+    String tool,
+    Map<String, dynamic> args, {
     bool sendApproved = false,
   }) async {
     try {
@@ -257,28 +351,42 @@ class EmailIntegrationService {
       Map<String, dynamic> result;
       switch (tool) {
         case 'setup_email':
-          result = {'message': 'Open Settings > Integrations > Email to connect an account securely. Never send passwords in chat.'};
+          result = {
+            'message':
+                'Open Settings > Integrations > Email to connect an account securely. Never send passwords in chat.',
+          };
           break;
         case 'check_email':
           result = await check(account: account);
           break;
         case 'search_email':
-          result = await search(account: account, query: (args['query'] ?? '').toString());
+          result = await search(
+            account: account,
+            query: (args['query'] ?? '').toString(),
+          );
           break;
         case 'read_email':
-          result = await read(account: account, uid: int.parse((args['uid'] ?? '').toString()));
+          result = await read(
+            account: account,
+            uid: int.parse((args['uid'] ?? '').toString()),
+          );
           break;
         case 'compose_email':
         case 'reply_email':
           if (!sendApproved) {
-            result = {'error': 'approval_required', 'message': 'Confirm each outgoing email before sending.'};
+            result = {
+              'error': 'approval_required',
+              'message': 'Confirm each outgoing email before sending.',
+            };
           } else {
             result = await send(
               account: account,
               to: (args['to'] ?? '').toString(),
               subject: (args['subject'] ?? '').toString(),
               body: (args['body'] ?? '').toString(),
-              replyUid: tool == 'reply_email' ? int.parse((args['uid'] ?? '').toString()) : null,
+              replyUid: tool == 'reply_email'
+                  ? int.parse((args['uid'] ?? '').toString())
+                  : null,
             );
           }
           break;
@@ -288,8 +396,11 @@ class EmailIntegrationService {
       }
       return jsonEncode(result);
     } catch (_) {
-      return jsonEncode({'error': 'email_operation_failed',
-        'message': 'Email action failed. Check server, permissions and account settings.'});
+      return jsonEncode({
+        'error': 'email_operation_failed',
+        'message':
+            'Email action failed. Check server, permissions and account settings.',
+      });
     }
   }
 }

@@ -40,9 +40,11 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
   Future<void> _refresh() async {
     try {
       final all = await EmailIntegrationService.instance.accounts();
-      if (mounted) setState(() => _connected = all.map((a) => a.address).toList());
+      if (mounted)
+        setState(() => _connected = all.map((a) => a.address).toList());
     } catch (_) {
-      if (mounted) setState(() => _error = 'Unable to open secure email storage.');
+      if (mounted)
+        setState(() => _error = 'Unable to open secure email storage.');
     }
   }
 
@@ -86,12 +88,19 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
       await _refresh();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Email account connected. Enable email tools for an assistant to use it.')),
+          const SnackBar(
+            content: Text(
+              'Email account connected. Enable email tools for an assistant to use it.',
+            ),
+          ),
         );
       }
     } catch (_) {
-      if (mounted) setState(() => _error =
-          'Could not connect. Check the server details and use an app password if your provider requires one.');
+      if (mounted)
+        setState(
+          () => _error =
+              'Could not connect. Check the server details and use an app password if your provider requires one.',
+        );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -102,10 +111,18 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Disconnect email?'),
-        content: Text('Remove the saved credentials for $account from this device?'),
+        content: Text(
+          'Remove the saved credentials for $account from this device?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Disconnect')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Disconnect'),
+          ),
         ],
       ),
     );
@@ -121,7 +138,10 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text('Connected accounts', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            'Connected accounts',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           if (_connected.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 12),
@@ -138,8 +158,10 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
               ),
             ),
           const Divider(height: 32),
-          const Text('Connect an email account',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            'Connect an email account',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           const Text(
             'Uses IMAP and SMTP with encrypted connections. Some providers '
@@ -152,7 +174,8 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
             keyboardType: TextInputType.emailAddress,
             autofillHints: const [AutofillHints.email],
             decoration: const InputDecoration(
-              labelText: 'Email address', border: OutlineInputBorder(),
+              labelText: 'Email address',
+              border: OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 8),
@@ -168,7 +191,8 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
             enableSuggestions: false,
             autocorrect: false,
             decoration: const InputDecoration(
-              labelText: 'Mail app password', border: OutlineInputBorder(),
+              labelText: 'Mail app password',
+              border: OutlineInputBorder(),
             ),
           ),
           SwitchListTile(
@@ -180,42 +204,63 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
           if (_advanced) ...[
             TextField(
               controller: _imap,
-              decoration: const InputDecoration(labelText: 'IMAP server (TLS)', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'IMAP server (TLS)',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _imapPort,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'IMAP port (normally 993)', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'IMAP port (normally 993)',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _smtp,
-              decoration: const InputDecoration(labelText: 'SMTP server', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'SMTP server',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _smtpPort,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'SMTP port', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'SMTP port',
+                border: OutlineInputBorder(),
+              ),
             ),
             SwitchListTile(
               title: const Text('SMTP STARTTLS'),
-              subtitle: const Text('Use for port 587. Port 465 uses TLS immediately.'),
+              subtitle: const Text(
+                'Use for port 587. Port 465 uses TLS immediately.',
+              ),
               value: _smtpStartTls,
               onChanged: (value) => setState(() => _smtpStartTls = value),
             ),
           ],
-          if (_error != null) Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-          ),
+          if (_error != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                _error!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
           const SizedBox(height: 8),
           FilledButton.icon(
             onPressed: _busy ? null : _connect,
             icon: _busy
-                ? const SizedBox(height: 18, width: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2))
+                ? const SizedBox(
+                    height: 18,
+                    width: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : const Icon(Icons.link),
             label: const Text('Connect'),
           ),

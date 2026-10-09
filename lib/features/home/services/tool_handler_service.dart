@@ -571,7 +571,8 @@ class ToolHandlerService {
           name,
           args,
           assistant,
-          emailSendApproved: LocalToolNames.emailSendTools.contains(name) &&
+          emailSendApproved:
+              LocalToolNames.emailSendTools.contains(name) &&
               approvalService != null,
           onSpeakText: (text) async {
             final tts = contextProvider.read<TtsProvider>();

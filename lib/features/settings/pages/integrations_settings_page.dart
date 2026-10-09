@@ -18,7 +18,9 @@ class IntegrationsSettingsPage extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.mail_outline),
             title: const Text('Email'),
-            subtitle: const Text('Connect IMAP/SMTP accounts and manage email tools'),
+            subtitle: const Text(
+              'Connect IMAP/SMTP accounts and manage email tools',
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const EmailIntegrationPage()),
