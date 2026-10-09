@@ -19,7 +19,7 @@ ChatMessage _message({
 void main() {
   group('ActiveStreamingMessageStore', () {
     test(
-      '\u53D6\u6D88\u76EE\u6807\u4E0D\u4F9D\u8D56\u6D88\u606F\u662F\u5426\u4ECD\u5728\u52A0\u8F7D\u7A97\u53E3',
+      'Cancellation target survives eviction from the loaded message window',
       () {
         final store = ActiveStreamingMessageStore();
         final active = _message(id: 'off-window', conversationId: 'chat');
@@ -32,7 +32,7 @@ void main() {
     );
 
     test(
-      '\u517C\u5BB9\u56DE\u9000\u53EA\u9009\u62E9\u76EE\u6807\u4F1A\u8BDD\u5185\u6700\u540E\u4E00\u4E2A streaming assistant',
+      'Fallback selects the last streaming assistant only in the target conversation',
       () {
         final store = ActiveStreamingMessageStore();
         final target = store.cancellationTarget('chat', [
@@ -46,7 +46,7 @@ void main() {
     );
 
     test(
-      '\u65E7\u7EC8\u6001\u4E0D\u80FD\u79FB\u9664\u540C\u4F1A\u8BDD\u4E2D\u5DF2\u7ECF\u66FF\u6362\u7684\u65B0 generation',
+      'Old terminal state cannot remove a newer generation in the same conversation',
       () {
         final store = ActiveStreamingMessageStore();
         final old = _message(id: 'old', conversationId: 'chat');
@@ -63,7 +63,7 @@ void main() {
     );
 
     test(
-      '\u53D6\u6D88\u79FB\u9664 active \u540E\u65E7 prepare \u4E0D\u80FD\u91CD\u65B0\u5F00\u59CB generation',
+      'Stale prepare cannot restart generation after cancellation removed active entry',
       () {
         final store = ActiveStreamingMessageStore();
         final preparing = _message(id: 'preparing', conversationId: 'chat');
