@@ -91,7 +91,7 @@ void main() {
     }
 
     test(
-      '\u5347\u7EA7\u540E\u7684\u7B2C\u4E00\u6B21\u542F\u52A8\u4E0D\u7ACB\u523B\u5F00\u8DD1，\u53EA\u662F\u8BB0\u4E0B\u65F6\u95F4',
+      'First launch after upgrade records time without running immediately',
       () async {
         // \u88C5\u4E86\u8FD9\u4E2A\u7248\u672C\u7684\u6240\u6709\u7528\u6237\u90FD\u6CA1\u6709\u5907\u4EFD\u8BB0\u5F55。\u82E5\u4E0D\u7ED9\u5BBD\u9650\u671F，\u6BCF\u4E2A\u4EBA\u90FD\u4F1A\u5728
         // \u66F4\u65B0\u540E\u7B2C\u4E00\u6B21\u542F\u52A8\u7684\u7B2C 8 \u79D2\u5403\u4E00\u6B21\u5B8C\u6574 vacuum + \u6253\u5305——\u5927\u5E93\u4E0A\u5C31\u662F\u51E0\u5206\u949F。
@@ -127,7 +127,7 @@ void main() {
     );
 
     test(
-      '\u5BBD\u9650\u671F\u53EA\u7BA1\u7B2C\u4E00\u6B21，\u4E4B\u540E\u6309\u5468\u671F\u8D70',
+      'Grace period applies only to first run; later uses schedule',
       () async {
         final service = build();
         await service.runIfDue(now: DateTime.utc(2026, 5, 1));
@@ -142,7 +142,7 @@ void main() {
     );
 
     test(
-      '\u88AB\u5360\u7528\u65F6\u4E5F\u628A\u539F\u56E0\u8BB0\u4E0B\u6765',
+      'Records reason when service is busy',
       () async {
         await build(
           isBusy: () => LocalSnapshotSkipReason.generating,
@@ -156,7 +156,7 @@ void main() {
     );
 
     test(
-      '\u9996\u6B21\u8FD0\u884C\u5C31\u4EA7\u4E00\u4EFD\u526F\u672C',
+      'Creates a snapshot on first eligible run',
       () async {
         final result = await build().runIfDue(now: DateTime.utc(2026, 5, 1));
 
@@ -169,7 +169,7 @@ void main() {
       },
     );
 
-    test('\u672A\u5230\u5468\u671F\u4E0D\u91CD\u590D\u4EA7', () async {
+    test('Does not snapshot before interval elapses', () async {
       final service = build();
       await service.runIfDue(now: DateTime.utc(2026, 5, 1));
       await touchDatabase();
@@ -185,7 +185,7 @@ void main() {
     });
 
     test(
-      '\u6570\u636E\u6CA1\u53D8\u5C31\u6574\u8F6E\u8DF3\u8FC7，\u4E0D\u505A\u4EFB\u4F55\u6253\u5305',
+      'Skips entire cycle without packaging when data unchanged',
       () async {
         final service = build();
         await service.runIfDue(now: DateTime.utc(2026, 5, 1));
@@ -201,7 +201,7 @@ void main() {
     );
 
     test(
-      '\u8DF3\u8FC7"\u6CA1\u53D8"\u4E0D\u63A8\u8FDB\u4E0A\u6B21\u6210\u529F\u65F6\u95F4，\u6539\u52A8\u540E\u7ACB\u523B\u5C31\u80FD\u4EA7',
+      'Unchanged data skip does not advance last success time',
       () async {
         final service = build();
         await service.runIfDue(now: DateTime.utc(2026, 5, 1));
@@ -215,7 +215,7 @@ void main() {
       },
     );
 
-    test('\u5173\u95ED\u540E\u4E0D\u8DD1', () async {
+    test('Does not run when disabled', () async {
       await preferences.writeSettings(
         const LocalSnapshotSettings(enabled: false),
       );
@@ -230,7 +230,7 @@ void main() {
     });
 
     test(
-      '\u6B63\u5728\u751F\u6210\u65F6\u8BA9\u8DEF，\u4E0D\u4E0E\u7528\u6237\u62A2 IO',
+      'Yields to active generation instead of competing for IO',
       () async {
         final result = await build(
           isBusy: () => LocalSnapshotSkipReason.generating,
@@ -245,7 +245,7 @@ void main() {
     );
 
     test(
-      '\u5269\u4F59\u7A7A\u95F4\u4E0D\u8DB3\u65F6\u4E0D\u52A8\u624B',
+      'Does not run when free space is insufficient',
       () async {
         final result = await build(
           freeBytes: () async => LocalSnapshotSchedule.freeSpaceFloor,
@@ -264,7 +264,7 @@ void main() {
     );
 
     test(
-      '\u63A2\u6D4B\u4E0D\u5230\u5269\u4F59\u7A7A\u95F4\u65F6\u7167\u5E38\u8FDB\u884C',
+      'Runs when free space cannot be measured',
       () async {
         final result = await build(
           freeBytes: () async => null,
@@ -275,7 +275,7 @@ void main() {
     );
 
     test(
-      '\u6253\u5305\u5931\u8D25\u88AB\u8BB0\u5F55\u4E0B\u6765，\u4E14\u4E0D\u629B\u7ED9\u8C03\u7528\u65B9',
+      'Records packaging failure without throwing to caller',
       () async {
         packError = StateError('disk on fire');
 
@@ -290,7 +290,7 @@ void main() {
     );
 
     test(
-      '\u8FDE\u7EED\u5931\u8D25\u9000\u907F\u8D8A\u6765\u8D8A\u4E45，\u4E0D\u662F\u6BCF\u6B21 resume \u90FD\u767D\u8DD1',
+      'Repeated failures increase backoff instead of retrying each resume',
       () async {
         packError = StateError('nope');
         final service = build();
@@ -319,7 +319,7 @@ void main() {
       },
     );
 
-    test('\u6210\u529F\u540E\u6E05\u7A7A\u5931\u8D25\u8BA1\u6570', () async {
+    test('Success resets failure count', () async {
       packError = StateError('nope');
       final service = build();
       await service.runIfDue(now: DateTime.utc(2026, 5, 1));
@@ -334,7 +334,7 @@ void main() {
     });
 
     test(
-      '\u4EA7\u5B8C\u987A\u5E26\u6309\u7B56\u7565\u6E05\u7406，\u4F46\u4E0D\u78B0\u6700\u65B0\u4E00\u4EFD\u6709\u5185\u5BB9\u7684',
+      'Prunes by policy after snapshot while retaining latest populated one',
       () async {
         await preferences.writeSettings(
           const LocalSnapshotSettings(
@@ -361,7 +361,7 @@ void main() {
       },
     );
 
-    test('\u5927\u5E93\u9ED8\u8BA4\u62C9\u957F\u5468\u671F', () async {
+    test('Large databases use longer default interval', () async {
       expect(
         LocalSnapshotSchedule.defaultIntervalFor(10 * 1024 * 1024),
         const Duration(days: 1),
@@ -377,7 +377,7 @@ void main() {
     });
 
     test(
-      '\u7528\u6237\u8BBE\u5B9A\u7684\u5468\u671F\u8986\u76D6\u81EA\u9002\u5E94\u9ED8\u8BA4\u503C',
+      'User interval overrides adaptive default',
       () async {
         await preferences.writeSettings(
           const LocalSnapshotSettings(intervalDays: 7),
@@ -396,7 +396,7 @@ void main() {
     );
 
     test(
-      '\u5907\u4EFD\u8FDB\u884C\u5F53\u4E2D\u5199\u5165\u7684\u6570\u636E，\u4E0B\u4E00\u8F6E\u4ECD\u4F1A\u88AB\u5F53\u4F5C\u6709\u6539\u52A8',
+      'Writes during backup remain detectable in next cycle',
       () async {
         // \u8BB0\u5F55\u7684\u6307\u7EB9\u5FC5\u987B\u63CF\u8FF0"\u8FD9\u4EFD\u526F\u672C\u88C5\u7684\u662F\u54EA\u4E2A\u72B6\u6001"，\u4E5F\u5C31\u662F\u5907\u4EFD\u5F00\u59CB\u4E4B\u524D\u90A3\u4E2A。
         // \u82E5\u8BB0\u6210\u5907\u4EFD\u7ED3\u675F\u540E\u7684\u72B6\u6001，\u5907\u4EFD\u8FDB\u884C\u671F\u95F4\u5199\u8FDB\u53BB\u7684\u6570\u636E\u4F1A\u88AB"\u6CA1\u53D8\u5316"\u8FD9\u9053\u95F8
@@ -415,7 +415,7 @@ void main() {
     );
 
     test(
-      '\u624B\u52A8\u5907\u4EFD\u5931\u8D25\u4E5F\u8981\u7559\u4E0B\u8BB0\u5F55，\u5426\u5219\u8F6C\u540E\u53F0\u5931\u8D25\u5C31\u65E0\u58F0\u65E0\u606F',
+      'Manual backup failure is recorded even when backgrounded',
       () async {
         // \u8F6C\u5230\u540E\u53F0\u4E4B\u540E\u5F39\u7A97\u5DF2\u7ECF\u5378\u8F7D，\u5F02\u6B65\u9519\u8BEF\u88AB\u6D88\u8D39\u6389\u53EA\u7528\u4E8E\u91CA\u653E\u8D44\u6E90。
         // \u82E5\u8FD9\u91CC\u4E0D\u8BB0，\u7528\u6237\u53EA\u4F1A\u770B\u5230"\u6B63\u5728\u540E\u53F0\u5907\u4EFD"，\u7136\u540E\u518D\u65E0\u4E0B\u6587。
@@ -433,7 +433,7 @@ void main() {
     );
 
     test(
-      '\u624B\u52A8\u4E00\u4EFD\u6807\u6210 manual，\u4E14\u4E0D\u53D7\u5468\u671F\u9650\u5236',
+      'Manual snapshot is marked manual and bypasses interval',
       () async {
         final service = build();
         await service.runIfDue(now: DateTime.utc(2026, 5, 1));
@@ -446,7 +446,7 @@ void main() {
     );
 
     test(
-      '\u6253\u5305\u4EA7\u7269\u5728\u53D1\u5E03\u540E\u4E0D\u6B8B\u7559\u5728\u4E34\u65F6\u4F4D\u7F6E',
+      'Published package leaves no temporary artifacts',
       () async {
         final service = build();
         await service.take(origin: LocalSnapshotOrigin.manual);
