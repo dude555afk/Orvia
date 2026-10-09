@@ -278,6 +278,22 @@ void main() {
       );
     });
 
+    test('Edge reports empty synthesis instead of playing silence', () async {
+      final edge = EdgeNeuralTtsOptions(
+        enabled: true,
+        name: 'Edge Neural',
+        voice: 'en-GB-SoniaNeural',
+      );
+      await expectLater(
+        NetworkTtsService.synthesize(
+          options: edge,
+          text: 'Testing voice',
+          edgeTtsSynthesizer: (_, _) async => Uint8List(0),
+        ),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
     test('Azure sends escaped SSML and returns MP3 audio', () async {
       late HttpRequest captured;
       late String requestBody;

@@ -11,43 +11,52 @@ import 'package:orvia/core/services/asr/sherpa_model_manager.dart';
 
 void main() {
   group('SherpaModelCatalog', () {
-    test('contains the three official downloadable model variants', () {
+    test('contains three downloadable English-only recognizers', () {
       expect(SherpaModelCatalog.models, hasLength(3));
 
-      final paraformer = SherpaModelCatalog.byId(
-        'paraformer-zh-small-2024-03-09',
-      )!;
-      expect(paraformer.downloadBytes, 77920048);
+      final zipformer = SherpaModelCatalog.byId('zipformer-en-20m-2023-02-17')!;
       expect(
-        paraformer.archiveUri.toString(),
-        'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
-        'sherpa-onnx-paraformer-zh-small-2024-03-09.tar.bz2',
+        zipformer.architecture,
+        SherpaModelArchitecture.streamingZipformer,
       );
-      expect(paraformer.requiredFiles, ['model.int8.onnx', 'tokens.txt']);
-
-      final senseVoice = SherpaModelCatalog.byId(
-        'sense-voice-multilingual-int8-2025-09-09',
-      )!;
-      expect(senseVoice.downloadBytes, 165783878);
-      expect(senseVoice.requiredFiles, ['model.int8.onnx', 'tokens.txt']);
-
-      final zipformer = SherpaModelCatalog.byId(
-        'zipformer-zh-en-mobile-2023-02-20',
-      )!;
-      expect(zipformer.downloadBytes, 346965352);
       expect(zipformer.requiredFiles, [
         'encoder-epoch-99-avg-1.int8.onnx',
         'decoder-epoch-99-avg-1.onnx',
         'joiner-epoch-99-avg-1.int8.onnx',
         'tokens.txt',
       ]);
+      final tiny = SherpaModelCatalog.byId('moonshine-tiny-en-int8')!;
+      final base = SherpaModelCatalog.byId('moonshine-base-en-int8')!;
+      for (final model in [tiny, base]) {
+        expect(model.architecture, SherpaModelArchitecture.moonshine);
+        expect(model.requiredFiles, [
+          'preprocess.onnx',
+          'encode.int8.onnx',
+          'uncached_decode.int8.onnx',
+          'cached_decode.int8.onnx',
+          'tokens.txt',
+        ]);
+      }
       expect(
         SherpaModelCatalog.models.every(
           (model) =>
+              model.name.toLowerCase().contains('english') &&
               model.archiveUri.host == 'github.com' &&
-              model.archiveUri.path.contains('/k2-fsa/sherpa-onnx/'),
+              model.archiveUri.path.contains('/k2-fsa/sherpa-onnx/') &&
+              !RegExp(
+                r'[\u3400-\u9fff]',
+              ).hasMatch('${model.name} ${model.description}'),
         ),
         isTrue,
+      );
+      expect(SherpaModelCatalog.byId('paraformer-zh-small-2024-03-09'), isNull);
+      expect(
+        SherpaModelCatalog.byId('sense-voice-multilingual-int8-2025-09-09'),
+        isNull,
+      );
+      expect(
+        SherpaModelCatalog.byId('zipformer-zh-en-mobile-2023-02-20'),
+        isNull,
       );
     });
   });
@@ -98,6 +107,15 @@ void main() {
 
     tearDown(() async {
       if (await root.exists()) await root.delete(recursive: true);
+    });
+
+    test('removed model IDs are unavailable rather than throwing', () async {
+      final manager = SherpaModelManager(modelsRoot: root);
+      addTearDown(manager.dispose);
+      expect(
+        await manager.isInstalled('paraformer-zh-small-2024-03-09'),
+        isFalse,
+      );
     });
 
     test('reports, validates, and deletes installed model files', () async {

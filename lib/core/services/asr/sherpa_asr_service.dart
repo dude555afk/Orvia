@@ -72,6 +72,9 @@ final class SherpaAsrService {
       language: language.trim().isEmpty ? 'auto' : language.trim(),
       numThreads: numThreads,
       modelFile: model.modelFile,
+      preprocessorFile: model.preprocessorFile,
+      uncachedDecoderFile: model.uncachedDecoderFile,
+      cachedDecoderFile: model.cachedDecoderFile,
       tokensFile: model.tokensFile,
       encoderFile: model.encoderFile,
       decoderFile: model.decoderFile,
@@ -178,6 +181,9 @@ final class _SherpaRecognitionRequest {
     required this.language,
     required this.numThreads,
     required this.modelFile,
+    required this.preprocessorFile,
+    required this.uncachedDecoderFile,
+    required this.cachedDecoderFile,
     required this.tokensFile,
     required this.encoderFile,
     required this.decoderFile,
@@ -191,6 +197,9 @@ final class _SherpaRecognitionRequest {
   final String language;
   final int numThreads;
   final String? modelFile;
+  final String? preprocessorFile;
+  final String? uncachedDecoderFile;
+  final String? cachedDecoderFile;
   final String tokensFile;
   final String? encoderFile;
   final String? decoderFile;
@@ -213,6 +222,7 @@ String _recognize(_SherpaRecognitionRequest request) {
       request,
       samples,
     ),
+    SherpaModelArchitecture.moonshine => _recognizeMoonshine(request, samples),
   };
 }
 
@@ -264,6 +274,53 @@ String _recognizeSenseVoice(
           model: modelPath,
           language: request.language,
           useInverseTextNormalization: true,
+        ),
+        tokens: p.join(request.directoryPath, request.tokensFile),
+        numThreads: request.numThreads,
+        debug: false,
+      ),
+    ),
+  );
+  sherpa.OfflineStream? stream;
+  try {
+    stream = recognizer.createStream();
+    stream.acceptWaveform(samples: samples, sampleRate: request.sampleRate);
+    recognizer.decode(stream);
+    return recognizer.getResult(stream).text.trim();
+  } finally {
+    stream?.free();
+    recognizer.free();
+  }
+}
+
+String _recognizeMoonshine(
+  _SherpaRecognitionRequest request,
+  Float32List samples,
+) {
+  final recognizer = sherpa.OfflineRecognizer(
+    sherpa.OfflineRecognizerConfig(
+      model: sherpa.OfflineModelConfig(
+        moonshine: sherpa.OfflineMoonshineModelConfig(
+          preprocessor: _requiredModelPath(
+            request.directoryPath,
+            request.preprocessorFile,
+            'Moonshine preprocessor',
+          ),
+          encoder: _requiredModelPath(
+            request.directoryPath,
+            request.encoderFile,
+            'Moonshine encoder',
+          ),
+          uncachedDecoder: _requiredModelPath(
+            request.directoryPath,
+            request.uncachedDecoderFile,
+            'Moonshine uncached decoder',
+          ),
+          cachedDecoder: _requiredModelPath(
+            request.directoryPath,
+            request.cachedDecoderFile,
+            'Moonshine cached decoder',
+          ),
         ),
         tokens: p.join(request.directoryPath, request.tokensFile),
         numThreads: request.numThreads,

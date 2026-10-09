@@ -313,7 +313,7 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    await selectProvider('OpenAI', 'Fish Audio');
+    await selectProvider('Edge Neural (keyless)', 'Fish Audio');
     expect(find.text('Temperature'), findsOneWidget);
     expect(find.text('Top P'), findsOneWidget);
     expect(find.text('Latency'), findsOneWidget);
