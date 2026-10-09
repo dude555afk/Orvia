@@ -286,7 +286,8 @@ class EmailIntegrationService {
         if (r.messages.isEmpty) throw StateError('Original message not found.');
         return r.messages.first;
       });
-      final expected = replyTo!.replyTo?.firstOrNull?.email ?? replyTo!.fromEmail;
+      final expected =
+          replyTo!.replyTo?.firstOrNull?.email ?? replyTo!.fromEmail;
       if (expected == null ||
           expected.toLowerCase() != to.trim().toLowerCase()) {
         throw const FormatException(
