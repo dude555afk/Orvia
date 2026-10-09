@@ -262,6 +262,58 @@ class EmailIntegrationService {
     };
   }
 
+  /// Mirrors Kai's best-effort Sent mailbox handling. A failed archive must
+  /// never turn a successfully delivered SMTP message into a resend.
+  Future<String?> _saveSentCopy(
+    EmailAccount account,
+    MimeMessage message,
+  ) async {
+    // Gmail automatically saves messages sent through its SMTP server.
+    if (account.smtpHost.toLowerCase() == 'smtp.gmail.com') {
+      return '[Gmail]/Sent Mail';
+    }
+    final imap = ImapClient(isLogEnabled: false);
+    try {
+      await imap.connectToServer(
+        account.imapHost,
+        account.imapPort,
+        isSecure: true,
+      );
+      await imap.login(account.address, account.password);
+      final mailboxes = await imap.listMailboxes(recursive: true);
+      final candidates = <String>[
+        ...mailboxes.where((m) => m.isSent).map((m) => m.path),
+        ...const ['Sent', 'Sent Messages', 'Sent Items', 'INBOX.Sent'],
+      ].toSet();
+      for (final path in candidates) {
+        try {
+          final response = await imap.appendMessage(
+            message,
+            targetMailboxPath: path,
+          );
+          if (response.isOkStatus) return path;
+        } catch (_) {
+          // Some servers reject paths that are not configured.
+        }
+      }
+      try {
+        await imap.createMailbox('Sent');
+        final response = await imap.appendMessage(
+          message,
+          targetMailboxPath: 'Sent',
+        );
+        if (response.isOkStatus) return 'Sent';
+      } catch (_) {
+        // The outgoing message was already delivered via SMTP.
+      }
+    } catch (_) {
+      // Sent-folder archival is intentionally best effort.
+    } finally {
+      if (imap.isConnected) await imap.disconnect();
+    }
+    return null;
+  }
+
   /// Only called after the user's per-message send confirmation.
   Future<Map<String, dynamic>> send({
     Object? account,
@@ -330,11 +382,15 @@ class EmailIntegrationService {
       if (!response.isOkStatus) {
         throw StateError('Mail server rejected the message.');
       }
+      final sentFolder = await _saveSentCopy(cfg, message);
       return {
         'status': 'sent',
         'account': cfg.address,
         'to': to,
         'subject': subject,
+        if (sentFolder != null) 'saved_to_sent_folder': sentFolder,
+        if (sentFolder == null)
+          'warning': 'Message sent, but could not save a Sent-folder copy.',
       };
     } finally {
       if (smtp.isConnected) await smtp.disconnect();
