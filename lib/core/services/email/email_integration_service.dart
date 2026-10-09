@@ -189,30 +189,62 @@ class EmailIntegrationService {
     'unread': !(m.flags?.contains(r'\Seen') ?? false),
   };
 
+  /// Returns previously unsurfaced unread messages, mirroring Kai's
+  /// per-account UID watermark. An omitted account checks all connected inboxes.
   Future<Map<String, dynamic>> check({Object? account}) async {
-    final cfg = await _resolve(account);
-    final last =
-        int.tryParse(await _storage.read(key: _cursorKey(cfg.address)) ?? '') ??
-        0;
-    final items = await _withInbox(cfg, (imap) async {
-      final r = await imap.fetchRecentMessages(
-        messageCount: 25,
-        criteria: '(UID FLAGS BODY.PEEK[])',
-      );
-      return r.messages.where((m) => m.uid != null).toList();
-    });
-    items.sort((a, b) => a.uid!.compareTo(b.uid!));
-    final news = items.where((m) => m.uid! > last).toList();
-    if (items.isNotEmpty && items.last.uid! > last) {
-      await _storage.write(
-        key: _cursorKey(cfg.address),
-        value: items.last.uid!.toString(),
-      );
+    final requested = (account ?? '').toString().trim();
+    final targets = requested.isEmpty
+        ? await accounts()
+        : <EmailAccount>[await _resolve(requested)];
+    if (targets.isEmpty) {
+      throw StateError('Connect email in Settings > Integrations > Email.');
+    }
+
+    final messages = <Map<String, dynamic>>[];
+    final errors = <String>[];
+    for (final cfg in targets) {
+      try {
+        final last =
+            int.tryParse(
+              await _storage.read(key: _cursorKey(cfg.address)) ?? '',
+            ) ??
+            0;
+        final news = await _withInbox(cfg, (imap) async {
+          final result = await imap.uidSearchMessages(
+            searchCriteria: 'UNSEEN',
+          );
+          final unseenUids = result.matchingSequence?.toList() ?? <int>[];
+          final newUids = unseenUids.where((uid) => uid > last).toList()
+            ..sort();
+          if (newUids.isEmpty) return <MimeMessage>[];
+          final selected = newUids.length > 20
+              ? newUids.sublist(newUids.length - 20)
+              : newUids;
+          final fetched = await imap.uidFetchMessages(
+            MessageSequence.fromIds(selected, isUid: true),
+            '(UID FLAGS BODY.PEEK[])',
+          );
+          return fetched.messages;
+        });
+        news.sort((a, b) => (a.uid ?? 0).compareTo(b.uid ?? 0));
+        messages.addAll(news.map((m) => _summary(m, cfg.address)));
+        if (news.isNotEmpty && news.last.uid != null) {
+          await _storage.write(
+            key: _cursorKey(cfg.address),
+            value: news.last.uid!.toString(),
+          );
+        }
+      } catch (_) {
+        errors.add('Could not check ${cfg.address}. Verify mail settings.');
+      }
     }
     return {
-      'account': cfg.address,
-      'count': news.length,
-      'messages': news.map((m) => _summary(m, cfg.address)).toList(),
+      'count': messages.length,
+      'messages': messages,
+      'accounts': targets.map((account) => account.address).toList(),
+      if (errors.isNotEmpty) 'errors': errors,
+      if (messages.isEmpty)
+        'hint': 'No new unread mail. Use search_email to find older messages.',
     };
   }
 
