@@ -938,7 +938,19 @@ class NetworkTtsService {
     final voice = opt.voice.trim().isEmpty
         ? 'en-US-AriaNeural'
         : opt.voice.trim();
-    final audio = await (synthesizer ?? _synthesizeEdgeNeural)(text, voice);
+    // The unofficial Edge websocket can stall when the service is unavailable.
+    // Bound synthesis so playback reports an error instead of buffering forever.
+    final Uint8List audio;
+    try {
+      audio = await (synthesizer ?? _synthesizeEdgeNeural)(
+        text,
+        voice,
+      ).timeout(const Duration(seconds: 30));
+    } on TimeoutException {
+      throw TimeoutException('Edge Neural TTS timed out. Try again later.');
+    } catch (error) {
+      throw StateError('Edge Neural TTS failed: $error');
+    }
     if (await (cancelled?.call() ?? false)) throw _Cancelled();
     if (audio.isEmpty) {
       throw const FormatException('Edge Neural returned empty audio.');
