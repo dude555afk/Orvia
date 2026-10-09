@@ -15,7 +15,10 @@ void main() {
       expect(SherpaModelCatalog.models, hasLength(3));
 
       final zipformer = SherpaModelCatalog.byId('zipformer-en-20m-2023-02-17')!;
-      expect(zipformer.architecture, SherpaModelArchitecture.streamingZipformer);
+      expect(
+        zipformer.architecture,
+        SherpaModelArchitecture.streamingZipformer,
+      );
       expect(zipformer.requiredFiles, [
         'encoder-epoch-99-avg-1.int8.onnx',
         'decoder-epoch-99-avg-1.onnx',
@@ -40,9 +43,9 @@ void main() {
               model.name.toLowerCase().contains('english') &&
               model.archiveUri.host == 'github.com' &&
               model.archiveUri.path.contains('/k2-fsa/sherpa-onnx/') &&
-              !RegExp(r'[\u3400-\u9fff]').hasMatch(
-                '${model.name} ${model.description}',
-              ),
+              !RegExp(
+                r'[\u3400-\u9fff]',
+              ).hasMatch('${model.name} ${model.description}'),
         ),
         isTrue,
       );
@@ -109,7 +112,10 @@ void main() {
     test('removed model IDs are unavailable rather than throwing', () async {
       final manager = SherpaModelManager(modelsRoot: root);
       addTearDown(manager.dispose);
-      expect(await manager.isInstalled('paraformer-zh-small-2024-03-09'), isFalse);
+      expect(
+        await manager.isInstalled('paraformer-zh-small-2024-03-09'),
+        isFalse,
+      );
     });
 
     test('reports, validates, and deletes installed model files', () async {
