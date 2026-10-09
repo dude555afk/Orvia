@@ -139,7 +139,7 @@ void main() {
     );
 
     test(
-      '\u4E00\u6B21\u4E8B\u52A1\u5199\u5165\u5B8C\u6574\u6D88\u606F\u5FEB\u7167\u548C tool events \u4E14\u4E0D\u6539\u53D8\u987A\u5E8F',
+      'Single transaction persists full message snapshot and tool events in order',
       () async {
         final snapshot = ChatMessage(
           id: 'streaming',
@@ -211,7 +211,7 @@ void main() {
     );
 
     test(
-      'checkpoint \u6309 parts \u4EA4\u9519\u987A\u5E8F\u843D\u5E93\u800C\u4E0D\u662F\u62CD\u5E73',
+      'Checkpoint persists interleaved part order rather than flattening',
       () async {
         const toolEvents = [
           {'id': 'tool-1', 'name': 'search', 'content': 'result'},
@@ -247,7 +247,7 @@ void main() {
     );
 
     test(
-      '\u76F8\u90BB data \u8BB0\u5F55\u4E2D\u7684\u659C\u4F53\u6BB5\u843D\u9010\u5B57\u8FDB\u5165 checkpoint \u548C API \u5386\u53F2',
+      'Italic paragraphs across adjacent data records reach checkpoint and API history exactly',
       () async {
         const fragments = <String>[
           '*\u88AB\u7A9D\u88F9\u4F4F，\u5979\u53CD\u800C\u7B11\u5F97\u66F4',
@@ -326,7 +326,7 @@ void main() {
     );
 
     test(
-      '\u5DF2 finalize \u7684\u6D88\u606F\u4E0D\u4F1A\u88AB\u8FDF\u5230\u7684\u6D41\u5F0F checkpoint \u590D\u6D3B',
+      'Late streaming checkpoint cannot revive finalized message',
       () async {
         // Terminal write commits the finalized (non-streaming) content.
         await repository.updateStreamingCheckpoint(
@@ -373,7 +373,7 @@ void main() {
     );
 
     test(
-      '\u4E0D\u5B58\u5728\u7684\u6D88\u606F\u4E0D\u4F1A\u88AB checkpoint \u610F\u5916\u63D2\u5165',
+      'Checkpoint does not insert a nonexistent message',
       () async {
         await expectLater(
           repository.updateStreamingCheckpoint(
@@ -394,7 +394,7 @@ void main() {
     );
 
     test(
-      'cold start \u4E00\u6B21\u4E8B\u52A1\u6E05\u7406\u672A\u767B\u8BB0 flag \u548C\u5B64\u513F tracking metadata',
+      'Cold start cleans unregistered flags and orphan tracking metadata atomically',
       () async {
         final createdAt = DateTime.now().toUtc();
         await repository.createGenerationRun(
@@ -471,7 +471,7 @@ void main() {
     });
 
     test(
-      'tool parts \u5185\u5BB9\u4E0E ordinal \u5728\u4EC5\u6B63\u6587\u53D8\u5316\u7684 checkpoint \u540E\u4FDD\u6301\u7B49\u4EF7',
+      'Tool part content and ordinals survive text-only checkpoint',
       () async {
         const toolEvents = [
           {
@@ -542,7 +542,7 @@ void main() {
     );
 
     test(
-      'tool events \u53D8\u5316\u65F6\u56DE\u9000\u5168\u91CF\u91CD\u5EFA',
+      'Changed tool events trigger full rebuild',
       () async {
         ChatMessage snapshot(String content) => ChatMessage(
           id: 'streaming',
@@ -595,7 +595,7 @@ void main() {
     );
 
     test(
-      'message_rows \u4E0D\u518D\u5305\u542B content / reasoning_text \u5F71\u5B50\u5217',
+      'message_rows omit shadow content and reasoning_text columns',
       () async {
         final raw = sqlite.sqlite3.open('${directory.path}/chat.sqlite');
         try {
@@ -612,7 +612,7 @@ void main() {
     );
 
     test(
-      '\u4EFB\u4F55\u5199\u5165\u8DEF\u5F84\u90FD\u4E0D\u4F1A\u4EA7\u751F tool_result part',
+      'No write path creates a tool_result part',
       () async {
         await repository.updateStreamingCheckpoint(
           ChatMessage(
@@ -682,7 +682,7 @@ void main() {
     );
 
     test(
-      '\u5D29\u6E83\u6062\u590D\u540E parts \u53EF\u8BFB\u4E14 FTS \u53EF\u641C\u7D22',
+      'Parts remain readable and FTS-searchable after crash recovery',
       () async {
         final createdAt = DateTime.now().toUtc();
         await repository.createGenerationRun(
@@ -863,7 +863,7 @@ void main() {
     });
 
     test(
-      'ServerToolStart \u5230 checkpoint \u518D\u5230 ServerToolEnd \u5DE5\u5177\u5361\u4E0D\u4E22\u4E14\u4F4D\u7F6E\u4E0D\u53D8',
+      'Tool card survives checkpoint between ServerToolStart and ServerToolEnd in place',
       () async {
         final handler = StreamChunkHandler();
         handler.handle(
@@ -933,7 +933,7 @@ void main() {
     );
 
     test(
-      'toolEvents \u5C11\u4E8E ToolCallPart \u65F6\u672A\u5339\u914D\u7684\u5DE5\u5177\u5361\u4FDD\u7559\u539F\u4F4D',
+      'Unmatched tool cards retain position when toolEvents are fewer than ToolCallPart',
       () async {
         await repository.updateStreamingCheckpoint(
           ChatMessage(
@@ -983,7 +983,7 @@ void main() {
     );
 
     test(
-      '\u591A\u4F59 toolEvents \u63D2\u5728\u6700\u540E\u4E00\u4E2A\u5DE5\u5177\u5361\u4E4B\u540E\u800C\u4E0D\u662F\u5168\u6587\u672B\u5C3E',
+      'Extra toolEvents insert after last tool card rather than at end of text',
       () async {
         await repository.updateStreamingCheckpoint(
           ChatMessage(
@@ -1023,7 +1023,7 @@ void main() {
     );
 
     test(
-      '\u672A\u5339\u914D\u7684\u975E\u7A7A toolEvent ID \u4E0D\u4F1A\u6539\u5199\u53E6\u4E00\u5F20\u5DE5\u5177\u5361',
+      'Unmatched nonempty toolEvent ID does not overwrite another tool card',
       () async {
         await repository.updateStreamingCheckpoint(
           ChatMessage(
@@ -1068,7 +1068,7 @@ void main() {
     );
 
     test(
-      '\u6709 ID \u7684\u4E8B\u4EF6\u4E0D\u4F1A\u88AB\u524D\u9762\u7684\u65E0 ID \u5DE5\u5177\u5361\u62A2\u8D70',
+      'ID-bearing event is not consumed by earlier ID-less tool card',
       () async {
         await repository.updateStreamingCheckpoint(
           ChatMessage(
@@ -1117,7 +1117,7 @@ void main() {
     );
 
     test(
-      '\u53EA\u6709\u65E0 ID \u5DE5\u5177\u5361\u65F6\u4ECD\u5141\u8BB8\u6309\u4F4D\u7F6E\u5408\u5E76\u6709 ID \u7684\u4E8B\u4EF6',
+      'ID-bearing events merge by position if all tool cards lack IDs',
       () async {
         await repository.updateStreamingCheckpoint(
           ChatMessage(
@@ -1151,7 +1151,7 @@ void main() {
     );
 
     test(
-      'checkpoint \u5408\u5E76\u540C id \u5F15\u7528 items \u800C\u4E0D\u662F\u53EA\u7559\u6700\u540E\u4E00\u6761',
+      'Checkpoint merges citation items with same ID instead of keeping only last',
       () async {
         await repository.updateStreamingCheckpoint(
           ChatMessage(
@@ -1189,7 +1189,7 @@ void main() {
     );
 
     test(
-      '\u7A7A toolEvent arguments \u4E0D\u4F1A\u8986\u76D6 checkpoint \u91CC\u5DF2\u6709\u7684\u4EE3\u7801',
+      'Empty toolEvent arguments do not overwrite stored checkpoint code',
       () async {
         await repository.updateStreamingCheckpoint(
           ChatMessage(
@@ -1228,7 +1228,7 @@ void main() {
     );
 
     test(
-      '\u666E\u901A\u5DE5\u5177\u7684 items \u4E0D\u88AB\u5F53\u6210\u641C\u7D22\u5F15\u7528\u5408\u5E76',
+      'Ordinary tool items are not merged as search citations',
       () async {
         await repository.updateStreamingCheckpoint(
           ChatMessage(

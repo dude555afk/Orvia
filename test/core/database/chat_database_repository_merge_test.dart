@@ -218,7 +218,7 @@ void main() {
     }
 
     test(
-      '\u65E0\u51B2\u7A81 conversation \u539F ID \u5BFC\u5165\u4E14 order/\u5173\u8054\u6570\u636E\u5B8C\u6574',
+      'Conflict-free conversation imports original ID with order and links intact',
       () async {
         await putConversation(
           source,
@@ -255,7 +255,7 @@ void main() {
     );
 
     test(
-      '\u4F1A\u8BDD\u7EA7\u6A21\u578B\u9501\u5B9A\u968F\u5408\u5E76\u5BFC\u5165\u4E00\u5E76\u643A\u5E26',
+      'Conversation model lock follows merged import',
       () async {
         await putConversation(
           source,
@@ -278,7 +278,7 @@ void main() {
     );
 
     test(
-      '\u76F8\u540C ID \u4E0E\u5185\u5BB9\u6309 hash \u53BB\u91CD，\u91CD\u590D\u5BFC\u5165\u4FDD\u6301\u5E42\u7B49',
+      'Matching ID and content deduplicate by hash across repeated imports',
       () async {
         for (final repository in [live, source]) {
           await putConversation(
@@ -302,7 +302,7 @@ void main() {
     );
 
     test(
-      '\u4EC5 sender_id \u4E0D\u540C\u4E0D\u4F1A\u88AB\u8BEF\u5224\u4E3A\u91CD\u590D',
+      'Different sender_id is not treated as duplicate',
       () async {
         for (final repository in [live, source]) {
           await putConversation(
@@ -346,7 +346,7 @@ void main() {
     );
 
     test(
-      '\u4EC5\u6D88\u606F extras_json \u4E0D\u540C\u4E0D\u4F1A\u88AB\u8BEF\u5224\u4E3A\u91CD\u590D',
+      'Different extras_json is not treated as duplicate',
       () async {
         for (final repository in [live, source]) {
           await putConversation(
@@ -378,7 +378,7 @@ void main() {
     );
 
     test(
-      '\u591A\u6D88\u606F\u4F1A\u8BDD parts \u6309 revision \u5206\u7EC4\u540E\u6307\u7EB9\u4E00\u81F4，\u91CD\u590D\u5BFC\u5165\u53BB\u91CD',
+      'Revision-grouped parts fingerprint deduplicates repeated multi-message import',
       () async {
         for (final repository in [live, source]) {
           await putTwoMessageConversation(
@@ -401,7 +401,7 @@ void main() {
     );
 
     test(
-      '\u591A\u6D88\u606F\u4F1A\u8BDD\u6B63\u6587\u4E92\u6362\u540E\u6307\u7EB9\u4E0D\u540C，\u4E0D\u4F1A\u88AB\u8BEF\u5224\u4E3A\u91CD\u590D',
+      'Swapped message bodies change fingerprint and avoid false deduplication',
       () async {
         // Both sides hold the same multiset of text/reasoning/tool payloads, the
         // same signature and the same per-position timestamps, and differ only in
@@ -463,7 +463,7 @@ void main() {
     );
 
     test(
-      '\u6B63\u6587\u76F8\u540C\u4F46\u9644\u4EF6\u4E0D\u540C\u4E0D\u4F1A\u88AB\u8BEF\u5224\u4E3A\u91CD\u590D',
+      'Different attachments prevent deduplication of same text',
       () async {
         await putConversationWithAttachments(
           live,
@@ -502,7 +502,7 @@ void main() {
     );
 
     test(
-      '\u4EC5 unavailable \u4E0D\u540C\u4ECD\u6309\u9644\u4EF6\u8EAB\u4EFD\u53BB\u91CD',
+      'Availability difference still deduplicates by attachment identity',
       () async {
         await putConversationWithAttachments(
           live,
@@ -543,7 +543,7 @@ void main() {
     );
 
     test(
-      '\u9644\u4EF6 ordinal \u987A\u5E8F\u4E0D\u540C\u4EA7\u751F\u4E0D\u540C\u6307\u7EB9',
+      'Attachment ordinal order changes fingerprint',
       () async {
         await putConversationWithAttachments(
           live,
@@ -576,7 +576,7 @@ void main() {
     );
 
     test(
-      '\u540C conversation ID \u5F02\u5185\u5BB9\u65F6\u6574\u4F1A\u8BDD remap \u5E76\u53EF\u91CD\u590D\u53BB\u91CD',
+      'Conflicting conversation ID remaps entire conversation with repeatable deduplication',
       () async {
         await putConversation(
           live,
@@ -614,7 +614,7 @@ void main() {
     );
 
     test(
-      'conversation ID \u53EF\u7528\u4F46 message ID \u51B2\u7A81\u65F6\u6574\u4F1A\u8BDD remap',
+      'Conflicting message ID remaps whole conversation despite free conversation ID',
       () async {
         await putConversation(
           live,
@@ -653,7 +653,7 @@ void main() {
     );
 
     test(
-      '\u8FC1\u79FB\u6279\u5199\u5165\u540E\u5DE5\u5177\u4E8B\u4EF6\u4E0E\u7B7E\u540D\u7269\u5316\u8FDB parts/artifacts \u53EF\u8BFB',
+      'Migrated tool events and signatures materialize in readable parts and artifacts',
       () async {
         await putConversation(
           live,
@@ -676,7 +676,7 @@ void main() {
     );
 
     test(
-      'merge \u62F7\u8D1D parts/artifacts，\u65E0 legacy \u8868\u65F6\u4ECD\u53EF\u8BFB',
+      'Merge copies parts and artifacts without legacy tables',
       () async {
         await putConversation(
           source,
@@ -711,7 +711,7 @@ void main() {
     );
 
     test(
-      'remap \u65F6 group_id \u4E3A null \u7684 v0 \u4E0E\u540E\u7EED\u7248\u672C\u4ECD\u5C5E\u540C\u4E00\u7248\u672C\u7EC4',
+      'Null group_id v0 remains grouped with later versions after remap',
       () async {
         await putConversation(
           live,
@@ -772,7 +772,7 @@ void main() {
     );
 
     test(
-      '\u5220\u9664\u4E2D\u95F4\u6D88\u606F\u540E\u7684\u7A00\u758F order \u53EF\u5BFC\u5165、\u7A33\u5B9A\u53BB\u91CD\u5E76\u4FDD\u7559\u6C34\u4F4D',
+      'Sparse order after deletion imports and deduplicates while preserving high-water mark',
       () async {
         await putSparseConversation(
           conversationId: 'sparse',
@@ -804,7 +804,7 @@ void main() {
     );
 
     test(
-      '\u7A00\u758F order \u5728 conversation ID \u51B2\u7A81\u65F6\u53EF\u6574\u4F1A\u8BDD remap',
+      'Sparse order remaps entire conversation on ID conflict',
       () async {
         await putConversation(
           live,
@@ -840,7 +840,7 @@ void main() {
     );
 
     test(
-      '\u975E\u6CD5 order \u4EC5\u8DF3\u8FC7\u6240\u5C5E\u4F1A\u8BDD\u5E76\u8BA1\u6570',
+      'Invalid order skips and counts only affected conversation',
       () async {
         await putConversation(
           source,
