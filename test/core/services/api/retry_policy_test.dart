@@ -49,9 +49,7 @@ void main() {
     test('retries on retry keywords even without a status code', () {
       expect(
         shouldRetryError(
-          Exception(
-            'This model is overloaded; please try again later',
-          ),
+          Exception('This model is overloaded; please try again later'),
           options,
         ),
         isTrue,
@@ -65,9 +63,7 @@ void main() {
     test('stop keywords beat retry keywords and status codes', () {
       expect(
         shouldRetryError(
-          const HttpException(
-            'HTTP 429: insufficient balance; please top up',
-          ),
+          const HttpException('HTTP 429: insufficient balance; please top up'),
           options,
         ),
         isFalse,
@@ -210,9 +206,7 @@ void main() {
         );
         expect(
           shouldRetryError(
-            TimeoutException(
-              'TimeoutException after 0:00:30.000000: timeout',
-            ),
+            TimeoutException('TimeoutException after 0:00:30.000000: timeout'),
             imageOpts,
           ),
           isFalse,
