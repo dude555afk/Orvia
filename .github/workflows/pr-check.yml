@@ -52,10 +52,7 @@ jobs:
 
           echo "Format-checking files:"
           echo "$files"
-          # Diagnostic: show the exact Dart formatter patch for this draft PR.
-          dart format --output=write $files
-          git diff -- $files
-          git diff --exit-code -- $files
+          dart format --output=none --set-exit-if-changed $files
 
       - name: Generate l10n and ensure committed outputs
         run: |
