@@ -16,6 +16,38 @@ void main() {
     SharedPreferences.setMockInitialValues(const {});
   });
 
+  testWidgets('app language picker only offers System and English', (
+    tester,
+  ) async {
+    final settings = SettingsProvider(createBusinessTestPreferences());
+    addTearDown(settings.dispose);
+    await settings.loaded;
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<SettingsProvider>.value(
+        value: settings,
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: DisplaySettingsPage(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('App Language'));
+    await tester.pumpAndSettle();
+    expect(find.text('Simplified Chinese'), findsNothing);
+    expect(find.text('Traditional Chinese'), findsNothing);
+    expect(find.text('English'), findsOneWidget);
+    expect(find.text('System'), findsWidgets);
+
+    await tester.tap(find.text('English'));
+    await tester.pumpAndSettle();
+    expect(settings.appLocaleForMaterialApp, const Locale('en', 'US'));
+    expect(find.text('English'), findsOneWidget);
+  });
+
   testWidgets('input background opacity sheet shows light and dark controls', (
     tester,
   ) async {

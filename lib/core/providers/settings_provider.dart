@@ -2092,10 +2092,10 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   // ===== App locale (UI language) =====
-  String? _appLocaleTag; // 'system', 'zh_CN', 'zh_Hant', 'en_US'
+  String? _appLocaleTag; // 'system' or 'en_US'
   static String _readAppLocaleTag(BusinessPreferences preferences) {
     final value = preferences.get(_appLocaleKey);
-    const supportedTags = {'system', 'zh_CN', 'zh_Hant', 'en_US'};
+    const supportedTags = {'system', 'en_US'};
     return value is String && supportedTags.contains(value) ? value : 'system';
   }
 
@@ -2121,27 +2121,11 @@ class SettingsProvider extends ChangeNotifier {
     await prefs.setString(_appLocaleKey, 'system');
   }
 
-  String _localeToTag(Locale l) {
-    final lc = l.languageCode.toLowerCase();
-    if (lc == 'zh') {
-      final script = (l.scriptCode ?? '').toLowerCase();
-      if (script == 'hant') return 'zh_Hant';
-      return 'zh_CN';
-    }
-    return 'en_US';
-  }
+  // Orvia only ships English UI localization. Map any requested locale
+  // to English so unsupported saved or device locales cannot select Chinese UI.
+  String _localeToTag(Locale locale) => 'en_US';
 
-  Locale _parseLocaleTag(String tag) {
-    switch (tag) {
-      case 'zh_CN':
-        return const Locale('zh', 'CN');
-      case 'zh_Hant':
-        return const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
-      case 'en_US':
-      default:
-        return const Locale('en', 'US');
-    }
-  }
+  Locale _parseLocaleTag(String tag) => const Locale('en', 'US');
 
   // ===== Backup & WebDAV settings =====
   WebDavConfig _webDavConfig = const WebDavConfig();
