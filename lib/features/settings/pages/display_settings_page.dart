@@ -42,9 +42,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
     String paletteName() {
       final settings = context.read<SettingsProvider>();
       final palette = ThemePalettes.byId(settings.themePaletteId);
-      return Localizations.localeOf(context).languageCode == 'zh'
-          ? palette.displayNameZh
-          : palette.displayNameEn;
+      return palette.displayNameEn;
     }
 
     return Scaffold(
@@ -82,20 +80,10 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                 label: l10n.displaySettingsPageLanguageTitle,
                 detailBuilder: (ctx) {
                   final settings = ctx.watch<SettingsProvider>();
-                  String labelFor(Locale l) {
-                    if (l.languageCode == 'zh') {
-                      if ((l.scriptCode ?? '').toLowerCase() == 'hant') {
-                        return l10n.languageDisplayTraditionalChinese;
-                      }
-                      return l10n.displaySettingsPageLanguageChineseLabel;
-                    }
-                    return l10n.displaySettingsPageLanguageEnglishLabel;
-                  }
-
                   return Text(
                     settings.isFollowingSystemLocale
                         ? l10n.settingsPageSystemMode
-                        : labelFor(settings.appLocale),
+                        : l10n.displaySettingsPageLanguageEnglishLabel,
                     style: TextStyle(
                       color: cs.onSurface.withValues(alpha: 0.6),
                       fontSize: 13,
@@ -440,18 +428,6 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                 _sheetDividerNoIcon(ctx),
                 _sheetOption(
                   ctx,
-                  label: l10n.displaySettingsPageLanguageChineseLabel,
-                  onTap: () => Navigator.of(ctx).pop('zh_CN'),
-                ),
-                _sheetDividerNoIcon(ctx),
-                _sheetOption(
-                  ctx,
-                  label: l10n.languageDisplayTraditionalChinese,
-                  onTap: () => Navigator.of(ctx).pop('zh_Hant'),
-                ),
-                _sheetDividerNoIcon(ctx),
-                _sheetOption(
-                  ctx,
                   label: l10n.displaySettingsPageLanguageEnglishLabel,
                   onTap: () => Navigator.of(ctx).pop('en_US'),
                 ),
@@ -468,14 +444,6 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
     switch (selected) {
       case 'system':
         await settings.setAppLocaleFollowSystem();
-        break;
-      case 'zh_CN':
-        await settings.setAppLocale(const Locale('zh', 'CN'));
-        break;
-      case 'zh_Hant':
-        await settings.setAppLocale(
-          const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
-        );
         break;
       case 'en_US':
       default:
