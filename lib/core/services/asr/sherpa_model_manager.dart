@@ -9,7 +9,12 @@ import 'package:path/path.dart' as p;
 
 import '../../../utils/app_directories.dart';
 
-enum SherpaModelArchitecture { paraformer, senseVoice, streamingZipformer, moonshine }
+enum SherpaModelArchitecture {
+  paraformer,
+  senseVoice,
+  streamingZipformer,
+  moonshine,
+}
 
 /// A downloadable model published by sherpa-onnx's official `asr-models`
 /// GitHub release.
@@ -78,7 +83,8 @@ abstract final class SherpaModelCatalog {
     SherpaModelDefinition(
       id: 'moonshine-tiny-en-int8',
       name: 'Moonshine Tiny English',
-      description: 'Fast, English-only offline transcription (about 103 MB download)',
+      description:
+          'Fast, English-only offline transcription (about 103 MB download)',
       architecture: SherpaModelArchitecture.moonshine,
       archiveUri: Uri.parse(
         'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
@@ -101,7 +107,8 @@ abstract final class SherpaModelCatalog {
     SherpaModelDefinition(
       id: 'moonshine-base-en-int8',
       name: 'Moonshine Base English',
-      description: 'Higher-accuracy English transcription (about 239 MB download)',
+      description:
+          'Higher-accuracy English transcription (about 239 MB download)',
       architecture: SherpaModelArchitecture.moonshine,
       archiveUri: Uri.parse(
         'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
