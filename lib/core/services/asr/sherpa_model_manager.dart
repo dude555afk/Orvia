@@ -285,6 +285,9 @@ final class SherpaModelManager {
   }
 
   Future<bool> isInstalled(String modelId) async {
+    // Old saved services can still refer to a removed language preset.
+    // Treat them as unavailable so upgrades do not crash voice settings.
+    if (!catalog.any((model) => model.id == modelId)) return false;
     final model = modelById(modelId);
     return validateModelDirectory(model, await modelDirectory(modelId));
   }
