@@ -791,7 +791,7 @@ void main() {
     });
 
     testWidgets(
-      '\u9876\u90E8\u8986\u76D6\u5C42\u4E0B\u7684\u8FDE\u7EED\u6D88\u606F\u8DF3\u8F6C\u4FDD\u6301\u7CBE\u786E\u843D\u70B9',
+      'Consecutive message jumps land precisely beneath the top overlay',
       (tester) async {
         final messages = <_NavMessage>[
           for (var i = 0; i < 40; i++)
@@ -892,7 +892,7 @@ void main() {
     );
 
     testWidgets(
-      '\u76F8\u90BB\u8DF3\u8F6C\u5E73\u6ED1\u7A7F\u8FC7\u5927\u6D88\u606F\u7684\u771F\u5B9E\u9AD8\u5EA6\u4FEE\u6B63',
+      'Adjacent jumps smoothly handle corrected height of long messages',
       (tester) async {
         final messages = <_NavMessage>[
           for (var i = 0; i < 2000; i++)
@@ -972,7 +972,7 @@ void main() {
     );
 
     testWidgets(
-      '\u4E0A\u4E00\u6761\u6D88\u606F\u4EE5\u7D22\u5F15\u5217\u8868\u7684\u5F53\u524D\u53EF\u89C1\u9879\u4E3A\u951A\u70B9',
+      'Previous-message jump anchors to the indexed list's visible item',
       (tester) async {
         final messages = <_NavMessage>[
           for (var i = 0; i < 40; i++)
@@ -1017,7 +1017,7 @@ void main() {
     );
 
     testWidgets(
-      '\u4E0B\u4E00\u6761\u6D88\u606F\u4EE5\u7D22\u5F15\u5217\u8868\u7684\u5F53\u524D\u53EF\u89C1\u9879\u4E3A\u951A\u70B9',
+      'Next-message jump anchors to the indexed list's visible item',
       (tester) async {
         final messages = <_NavMessage>[
           for (var i = 0; i < 40; i++)
