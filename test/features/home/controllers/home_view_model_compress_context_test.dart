@@ -24,7 +24,7 @@ ChatMessage _message({
 void main() {
   group('buildCompressContextContent', () {
     test(
-      '\u77ED\u5185\u5BB9\u5728\u9650\u5236\u5185\u4FDD\u6301\u539F\u6837',
+      'Short content remains unchanged within limit',
       () {
         const joined = 'User: hello\n\nAssistant: hi';
 
@@ -41,7 +41,7 @@ void main() {
       },
     );
 
-    test('\u8D85\u957F\u5185\u5BB9\u53EF\u4FDD\u7559\u5F00\u5934', () {
+    test('Oversized content can preserve the beginning', () {
       final early = 'User: first round\n\nAssistant: early answer\n\n';
       final middle = 'x' * 6000;
       final latest = '\n\nUser: thirtieth round\n\nAssistant: latest answer';
@@ -61,7 +61,7 @@ void main() {
     });
 
     test(
-      '\u8D85\u957F\u5185\u5BB9\u53EF\u4FDD\u7559\u6700\u8FD1\u5C3E\u90E8',
+      'Oversized content can preserve the recent tail',
       () {
         final early = 'User: first round\n\nAssistant: early answer\n\n';
         final middle = 'x' * 6000;
@@ -82,7 +82,7 @@ void main() {
       },
     );
 
-    test('\u65E0\u9650\u5236\u4FDD\u7559\u5B8C\u6574\u5185\u5BB9', () {
+    test('Unlimited mode preserves complete content', () {
       final joined = 'a' * 7000;
 
       final content = buildCompressContextContent(
@@ -94,7 +94,7 @@ void main() {
     });
 
     test(
-      'keepRecent \u76F4\u901A\u539F\u6587，\u4E0D\u6309\u5B57\u7B26\u7A97\u622A\u65AD',
+      'keepRecent preserves original input without character-window truncation',
       () {
         final joined = 'a' * 7000;
 
@@ -110,7 +110,7 @@ void main() {
       },
     );
 
-    test('\u622A\u65AD\u4E0D\u5288\u5F00 emoji \u4EE3\u7406\u5BF9', () {
+    test('Truncation does not split emoji surrogate pairs', () {
       // '😀' occupies two UTF-16 code units. A raw cut at 4 would tear it.
       const joined = 'abc😀def';
 
@@ -138,7 +138,7 @@ void main() {
 
   group('buildConversationTextForCompression', () {
     test(
-      '\u4F7F\u7528\u5B8C\u6574\u5386\u53F2\u751F\u6210\u538B\u7F29\u6587\u672C',
+      'Uses full history to build compression text',
       () {
         final visibleWindow = [
           _message(id: 'u80', role: 'user', content: 'visible user'),
@@ -160,7 +160,7 @@ void main() {
     );
 
     test(
-      '\u538B\u7F29\u6587\u672C\u4F1A\u5FFD\u7565\u7A7A\u5185\u5BB9\u6D88\u606F',
+      'Compression text skips messages with empty content',
       () {
         final text = buildConversationTextForCompression([
           _message(id: 'u1', role: 'user', content: '  '),
@@ -174,7 +174,7 @@ void main() {
 
   group('HomeViewModel.computeClearContextRemainingMessageCount', () {
     test(
-      '\u8BA1\u6570\u6765\u81EA\u6301\u4E45\u5316\u603B\u6570，\u4E0E\u7A97\u53E3\u7F13\u5B58\u65E0\u5173',
+      'Counts persisted total independent of window cache',
       () {
         final count = HomeViewModel.computeClearContextRemainingMessageCount(
           totalMessages: 100,
@@ -186,7 +186,7 @@ void main() {
     );
 
     test(
-      '\u5DF2\u6709\u6E05\u7A7A\u70B9\u65F6\u4ECE\u6301\u4E45\u5316\u622A\u65AD\u4F4D\u7F6E\u5F00\u59CB\u8BA1\u6570',
+      'Existing clear point counts from persisted truncation position',
       () {
         final count = HomeViewModel.computeClearContextRemainingMessageCount(
           totalMessages: 100,
@@ -198,7 +198,7 @@ void main() {
     );
 
     test(
-      '\u622A\u65AD\u4F4D\u7F6E\u8D8A\u754C\u65F6\u6309\u672A\u6E05\u7A7A\u5904\u7406',
+      'Out-of-range truncation position is treated as uncleared',
       () {
         final beyond = HomeViewModel.computeClearContextRemainingMessageCount(
           totalMessages: 100,
@@ -217,7 +217,7 @@ void main() {
 
   group('selectKeepRecentMessages', () {
     test(
-      '\u4FDD\u7559\u6700\u8FD1 N \u6761\u7528\u6237\u6D88\u606F\u53CA\u5176\u540E\u7684\u5168\u90E8\u6D88\u606F，\u8FB9\u754C\u4EE5\u7528\u6237\u6D88\u606F\u5F00\u59CB',
+      'Retains last N user messages and everything following from user boundary',
       () {
         final messages = <ChatMessage>[
           _message(id: 'u1', role: 'user', content: 'q1'),
@@ -235,7 +235,7 @@ void main() {
     );
 
     test(
-      '\u4FDD\u7559\u533A\u53EF\u5305\u542B\u672A\u7B54\u590D\u7684\u5C3E\u90E8\u7528\u6237\u6D88\u606F',
+      'Retained region may contain unanswered trailing user message',
       () {
         final messages = <ChatMessage>[
           _message(id: 'u1', role: 'user', content: 'q1'),
@@ -250,7 +250,7 @@ void main() {
     );
 
     test(
-      'N \u8986\u76D6\u5168\u90E8\u7528\u6237\u6D88\u606F\u65F6\u8FD4\u56DE\u5B8C\u6574\u5217\u8868（\u65E0\u53EF\u538B\u7F29\u5185\u5BB9）',
+      'Returns full list when N covers all user messages',
       () {
         final messages = <ChatMessage>[
           _message(id: 'u1', role: 'user', content: 'q1'),
@@ -265,7 +265,7 @@ void main() {
     );
 
     test(
-      '\u7A7A\u5185\u5BB9\u7684\u7528\u6237\u6D88\u606F\u4E0D\u53C2\u4E0E\u8BA1\u6570',
+      'User messages with empty content do not count',
       () {
         final messages = <ChatMessage>[
           _message(id: 'u1', role: 'user', content: 'q1'),
@@ -282,7 +282,7 @@ void main() {
     );
 
     test(
-      '\u4FDD\u7559\u533A\u5185\u7684\u7A7A\u5185\u5BB9\u52A9\u624B\u6D88\u606F（\u7EAF\u5DE5\u5177\u8C03\u7528）\u4E25\u683C\u4FDD\u7559\u4E3A\u7A7A\u6C14\u6CE1',
+      'Preserves empty assistant tool-call message in retained region',
       () {
         final messages = <ChatMessage>[
           _message(id: 'u1', role: 'user', content: 'q1'),
@@ -297,7 +297,7 @@ void main() {
       },
     );
 
-    test('\u7A7A\u8F93\u5165 / \u65E0 user / N ≤ 0 \u8FD4\u56DE\u7A7A', () {
+    test('Empty input, no user or N at most zero yields empty', () {
       expect(
         selectKeepRecentMessages([
           _message(id: 'a1', role: 'assistant', content: 'a1'),
@@ -317,7 +317,7 @@ void main() {
 
   group('countUserMessages', () {
     test(
-      '\u53EA\u7EDF\u8BA1\u5185\u5BB9\u975E\u7A7A\u7684\u7528\u6237\u6D88\u606F',
+      'Counts only user messages with nonempty content',
       () {
         final messages = <ChatMessage>[
           _message(id: 'u1', role: 'user', content: 'q1'),
@@ -333,7 +333,7 @@ void main() {
 
   group('defaultKeepUserMessageCountFor', () {
     test(
-      '\u5C11\u4E8E 5 \u6761\u7528\u6237\u6D88\u606F\u65F6\u9ED8\u8BA4 1',
+      'Defaults to one when fewer than five user messages',
       () {
         expect(defaultKeepUserMessageCountFor(0), 1);
         expect(defaultKeepUserMessageCountFor(1), 1);
@@ -342,13 +342,13 @@ void main() {
       },
     );
 
-    test('5-9 \u6761\u7528\u6237\u6D88\u606F\u65F6\u9ED8\u8BA4 2', () {
+    test('Defaults to two with five to nine user messages', () {
       expect(defaultKeepUserMessageCountFor(5), 2);
       expect(defaultKeepUserMessageCountFor(9), 2);
     });
 
     test(
-      '10 \u6761\u53CA\u4EE5\u4E0A\u7528\u6237\u6D88\u606F\u65F6\u9ED8\u8BA4 3',
+      'Defaults to three with ten or more user messages',
       () {
         expect(defaultKeepUserMessageCountFor(10), 3);
         expect(defaultKeepUserMessageCountFor(100), 3);
@@ -358,7 +358,7 @@ void main() {
 
   group('estimateCompressionTokens', () {
     test(
-      '\u4FDD\u7559\u533A\u6309\u957F\u5EA6\u5360\u6BD4\u6298\u7B97 token',
+      'Retained region estimates tokens by length ratio',
       () {
         final est = estimateCompressionTokens(
           totalText: 'a' * 1000,
@@ -373,7 +373,7 @@ void main() {
       },
     );
 
-    test('CJK \u8D70 tokenx \u6C49\u5B57\u6743\u91CD', () {
+    test('CJK uses tokenx ideograph weighting', () {
       final est = estimateCompressionTokens(
         totalText: '\u4E2D' * 400,
         keptText: '\u4E2D' * 100,
@@ -384,7 +384,7 @@ void main() {
     });
 
     test(
-      '\u6DF7\u5408\u6587\u672C\u8D70 tokenx（\u6574\u6BB5\u547D\u4E2D CJK \u5219\u6309\u6C49\u5B57\u8BA1\u4EF7）',
+      'Mixed text uses tokenx CJK weighting for matching text',
       () {
         final est = estimateCompressionTokens(
           totalText: '\u4E2D' * 200 + 'a' * 400,
@@ -395,7 +395,7 @@ void main() {
       },
     );
 
-    test('\u7A7A\u6587\u672C\u8FD4\u56DE\u5168\u96F6', () {
+    test('Empty text returns all zero estimates', () {
       final est = estimateCompressionTokens(totalText: '', keptText: '');
 
       expect(est.totalTokens, 0);
@@ -404,7 +404,7 @@ void main() {
       expect(est.maxResultTokens, 0);
     });
 
-    test('\u533A\u95F4\u4E0A\u754C\u4E0D\u4F4E\u4E8E\u4E0B\u754C', () {
+    test('Upper interval bound is never below lower bound', () {
       final est = estimateCompressionTokens(
         totalText: 'a' * 5000,
         keptText: 'b' * 100,
@@ -417,7 +417,7 @@ void main() {
 
   group('buildBoundedConversationText', () {
     test(
-      'start \u4E0E\u5148\u62FC\u63A5\u518D\u622A\u65AD\u5728\u5E38\u89C4\u957F\u5EA6\u4E0A\u8BED\u4E49\u4E00\u81F4',
+      'start matches concatenate-then-truncate on typical lengths',
       () {
         final messages = [
           _message(id: 'u1', role: 'user', content: 'first round'),
@@ -443,7 +443,7 @@ void main() {
     );
 
     test(
-      'recent \u4E0E\u5148\u62FC\u63A5\u518D\u622A\u65AD\u5728\u5E38\u89C4\u957F\u5EA6\u4E0A\u8BED\u4E49\u4E00\u81F4',
+      'recent matches concatenate-then-truncate on typical lengths',
       () {
         final messages = [
           _message(id: 'u1', role: 'user', content: 'first round'),
@@ -469,7 +469,7 @@ void main() {
     );
 
     test(
-      '\u8D85\u957F\u5386\u53F2\u589E\u91CF\u622A\u65AD\u4E14\u4E0D\u8D85\u8FC7\u7A97\u53E3，\u65E0\u9700\u5148\u62FC\u63A5\u5168\u6587',
+      'Incrementally truncates long history within window without joining all text',
       () {
         final messages = [
           for (var i = 0; i < 200; i++)
@@ -503,7 +503,7 @@ void main() {
 
   group('chunkMessagesForCompression', () {
     test(
-      '\u8D85\u8FC7\u9884\u7B97\u7684\u591A\u6761\u6D88\u606F\u6309\u6D88\u606F\u8FB9\u754C\u62C6\u6210\u591A\u5757',
+      'Splits messages over budget into chunks at message boundaries',
       () {
         final messages = [
           _message(id: 'u1', role: 'user', content: 'aaa'),
@@ -521,7 +521,7 @@ void main() {
     );
 
     test(
-      '\u5355\u6761\u8D85\u957F\u6D88\u606F\u6309 UTF-16 \u5B89\u5168\u5207\u5206\u4E14\u4E0D\u5288\u5F00 emoji',
+      'Splits single long message safely on UTF-16 boundaries',
       () {
         const emoji = '😀';
         final messages = [
@@ -543,7 +543,7 @@ void main() {
 
   group('buildCompressRequestContents', () {
     test(
-      'unlimited \u8D85\u8FC7\u5B89\u5168\u4E0A\u9650\u65F6\u6309\u6D88\u606F\u8FB9\u754C\u5206\u5757\u4E14\u4E0D\u4E22\u5185\u5BB9',
+      'unlimited chunks beyond safety limit without losing messages',
       () {
         final messages = [
           for (var i = 0; i < 5; i++)
@@ -566,7 +566,7 @@ void main() {
     );
 
     test(
-      'keepRecent \u65E7\u4FA7\u540C\u6837\u53D7\u5B89\u5168\u4E0A\u9650\u7EA6\u675F',
+      'keepRecent older side obeys safety limit',
       () {
         final messages = [
           for (var i = 0; i < 4; i++)
@@ -625,7 +625,7 @@ void main() {
   });
 
   group('resolveCompressContextModel', () {
-    test('\u4F18\u5148\u4F7F\u7528\u663E\u5F0F\u538B\u7F29\u6A21\u578B', () {
+    test('Prefers explicitly chosen compression model', () {
       final resolved = resolveCompressContextModel(
         compressProvider: 'OpenAI',
         compressModelId: 'gpt-4o-mini',
@@ -640,7 +640,7 @@ void main() {
     });
 
     test(
-      '\u672A\u8BBE\u7F6E\u538B\u7F29\u6A21\u578B\u65F6\u6309 summary → title → assistant → current \u56DE\u9000',
+      'Falls back summary, title, assistant, current when compression model absent',
       () {
         expect(
           resolveCompressContextModel(
@@ -683,7 +683,7 @@ void main() {
       },
     );
 
-    test('\u5168\u90E8\u672A\u8BBE\u7F6E\u65F6\u8FD4\u56DE\u7A7A', () {
+    test('Returns null when all models are unset', () {
       final resolved = resolveCompressContextModel();
 
       expect(resolved.providerKey, isNull);
