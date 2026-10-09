@@ -31,7 +31,7 @@ void main() {
   }
 
   testWidgets(
-    '\u7ED3\u675F\u65F6\u5148\u6392\u7A7A\u5E73\u6ED1\u7F13\u51B2，\u907F\u514D\u5C3E\u90E8\u4E00\u6B21\u6027\u8DF3\u53D8',
+    'Flushes smoothing buffer before finish to avoid sudden tail jump',
     (tester) async {
       final settings = SettingsProvider(createBusinessTestPreferences());
       final controller = buildController(settings);
@@ -74,7 +74,7 @@ void main() {
   );
 
   testWidgets(
-    '\u6392\u7A7A\u53D7\u65F6\u95F4\u9884\u7B97\u7EA6\u675F，\u4E0D\u4F1A\u62D6\u4F4F\u7ED3\u675F\u6D41\u7A0B',
+    'Buffer drain respects time budget and does not block finish',
     (tester) async {
       final settings = SettingsProvider(createBusinessTestPreferences());
       final controller = buildController(settings);
