@@ -43,7 +43,6 @@ void main() {
       }
     });
 
-
     test('uses concise default display names', () {
       final options = <AsrServiceOptions>[
         SherpaOnnxAsrOptions(),
