@@ -27,7 +27,7 @@ void main() {
         .map((entry) => entry.id)
         .toList();
 
-    test('\u5355\u4EFD\u526F\u672C\u6C38\u8FDC\u4E0D\u5220', () {
+    test('Never deletes sole snapshot', () {
       expect(
         deleted(LocalSnapshotRetentionPolicy.gfsLite, [
           entry('only', age: const Duration(days: 400)),
@@ -36,7 +36,7 @@ void main() {
       );
     });
 
-    test('GFS-lite \u4FDD\u7559 \u8FD1\u671F3 + \u5468 + \u6708', () {
+    test('GFS-lite retains three recent plus weekly and monthly', () {
       final entries = [
         entry('d0', age: const Duration(hours: 1)),
         entry('d1', age: const Duration(days: 1)),
@@ -59,7 +59,7 @@ void main() {
     });
 
     test(
-      '\u5468/\u6708\u69FD\u53D6\u7684\u662F\u6700\u65B0\u4E00\u4EFD\u591F\u9F84\u7684，\u4E0D\u662F\u6700\u8001\u7684\u90A3\u4EFD',
+      'Weekly and monthly slots choose newest eligible rather than oldest',
       () {
         final entries = [
           entry('new', age: const Duration(hours: 1)),
@@ -76,7 +76,7 @@ void main() {
     );
 
     test(
-      '\u7A7A\u526F\u672C\u6324\u4E0D\u6389\u6700\u540E\u4E00\u4EFD\u6709\u5185\u5BB9\u7684',
+      'Empty snapshot cannot evict last populated copy',
       () {
         final entries = [
           entry('empty2', age: const Duration(hours: 1), messageCount: 0),
@@ -94,7 +94,7 @@ void main() {
     );
 
     test(
-      '\u5185\u5BB9\u9AA4\u964D\u65F6\u9489\u4F4F\u9AD8\u6C34\u4F4D\u90A3\u4E00\u4EFD',
+      'Sudden data shrink protects high-water snapshot',
       () {
         final entries = [
           entry('after2', age: const Duration(hours: 1), messageCount: 10),
@@ -112,7 +112,7 @@ void main() {
     );
 
     test(
-      '\u5185\u5BB9\u5E73\u7A33\u53D8\u5316\u4E0D\u89E6\u53D1\u9AD8\u6C34\u4F4D\u4FDD\u62A4',
+      'Stable data changes do not trigger high-water protection',
       () {
         final entries = [
           entry('c', age: const Duration(hours: 1), messageCount: 900),
@@ -130,7 +130,7 @@ void main() {
     );
 
     test(
-      '\u9AD8\u6C34\u4F4D\u4FDD\u62A4\u6709\u671F\u9650，\u4E0D\u4F1A\u6C38\u4E45\u7559\u7740\u5DF2\u5220\u7684\u6570\u636E',
+      'High-water protection expires instead of retaining deleted data forever',
       () {
         final entries = [
           entry('after', age: const Duration(days: 1), messageCount: 10),
@@ -147,7 +147,7 @@ void main() {
     );
 
     test(
-      'pinned \u7684\u526F\u672C\u4E0D\u53C2\u4E0E\u81EA\u52A8\u6E05\u7406',
+      'Pinned snapshots are excluded from automatic cleanup',
       () {
         final entries = [
           entry('new', age: const Duration(hours: 1)),
@@ -165,7 +165,7 @@ void main() {
     );
 
     test(
-      '\u8D85\u51FA\u603B\u91CF\u4E0A\u9650\u65F6\u7EE7\u7EED\u780D\u69FD\u4F4D，\u4F46\u4E0D\u52A8\u53D7\u4FDD\u62A4\u7684',
+      'Over quota removes additional slots without touching protected snapshots',
       () {
         final entries = [
           entry('d0', age: const Duration(hours: 1), bytes: 400),
@@ -185,7 +185,7 @@ void main() {
     );
 
     test(
-      '\u603B\u91CF\u4E0A\u9650\u538B\u4E0D\u6389\u6700\u540E\u4E00\u4EFD\u6709\u5185\u5BB9\u7684\u526F\u672C',
+      'Total size cap cannot remove last populated snapshot',
       () {
         final entries = [
           entry(

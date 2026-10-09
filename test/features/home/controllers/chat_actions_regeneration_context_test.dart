@@ -145,7 +145,7 @@ void main() {
 
   group('ChatActions.shouldBeginNewAssistantReply', () {
     test(
-      '\u5220\u6389\u5E95\u90E8\u5168\u90E8\u56DE\u590D\u540E\u4ECE\u7528\u6237\u6D88\u606F\u91CD\u8BD5\u4F1A\u65B0\u5EFA\u56DE\u590D\u800C\u4E0D\u662F\u62A5 invalid_versioning',
+      'Retry after deleting all bottom responses creates new reply rather than invalid_versioning',
       () {
         expect(
           ChatActions.shouldBeginNewAssistantReply(
@@ -159,7 +159,7 @@ void main() {
     );
 
     test(
-      'assistant \u5F53\u4F5C\u65B0\u56DE\u590D\u65F6\u8D70\u65B0\u5EFA\u56DE\u590D\u8DEF\u5F84',
+      'Assistant as new reply uses creation path',
       () {
         expect(
           ChatActions.shouldBeginNewAssistantReply(
@@ -173,7 +173,7 @@ void main() {
     );
 
     test(
-      '\u5DF2\u6709\u56DE\u590D\u7EC4\u65F6\u8D70\u7248\u672C\u8FFD\u52A0\u800C\u4E0D\u662F\u65B0\u5EFA\u56DE\u590D',
+      'Existing reply group appends version instead of creating reply',
       () {
         expect(
           ChatActions.shouldBeginNewAssistantReply(
@@ -195,7 +195,7 @@ void main() {
     );
 
     test(
-      'assistant \u5374\u7B97\u4E0D\u51FA\u56DE\u590D\u7EC4\u4ECD\u89C6\u4E3A\u975E\u6CD5 versioning',
+      'Assistant without resolvable reply group is invalid versioning',
       () {
         expect(
           ChatActions.shouldBeginNewAssistantReply(
@@ -235,7 +235,7 @@ void main() {
 
   group('ChatActions.buildRegenerationMessages', () {
     test(
-      '\u957F\u4F1A\u8BDD\u7A97\u53E3\u91CD\u8BD5\u4F1A\u4FDD\u7559\u76EE\u6807\u6D88\u606F\u4E4B\u524D\u7684\u5B8C\u6574\u5386\u53F2\u524D\u7F00',
+      'Retry in long conversation preserves full history before target',
       () {
         final messages = <ChatMessage>[
           for (var i = 0; i < 90; i++)
@@ -269,7 +269,7 @@ void main() {
     );
 
     test(
-      '\u91CD\u8BD5 assistant \u65F6\u4E0D\u4F1A\u628A\u540E\u7EED\u5206\u7EC4\u5E26\u5165\u4E0A\u4E0B\u6587',
+      'Retrying assistant excludes later groups from context',
       () {
         final messages = <ChatMessage>[
           _message(id: 'u1', role: 'user', groupId: 'u1', version: 0),
@@ -302,7 +302,7 @@ void main() {
     );
 
     test(
-      '\u91CD\u8BD5 user \u65F6\u53EA\u4FDD\u7559\u8BE5\u7528\u6237\u6D88\u606F\u4E4B\u524D\u7684\u4E0A\u4E0B\u6587\u5E76\u8FFD\u52A0\u65B0\u7684\u56DE\u590D\u5360\u4F4D',
+      'Retrying user preserves earlier context and appends response placeholder',
       () {
         final messages = <ChatMessage>[
           _message(id: 'u1', role: 'user', groupId: 'u1', version: 0),
@@ -337,7 +337,7 @@ void main() {
     );
 
     test(
-      '\u5220\u6389\u5E95\u90E8\u56DE\u590D\u540E targetGroupId \u4E3A\u7A7A\u4ECD\u80FD\u628A\u5360\u4F4D\u63A5\u5230\u7528\u6237\u6D88\u606F\u540E\u9762',
+      'After deleting bottom reply, null targetGroupId still attaches placeholder to user',
       () {
         final messages = <ChatMessage>[
           _message(id: 'u1', role: 'user', groupId: 'u1', version: 0),
@@ -363,7 +363,7 @@ void main() {
 
   group('ChatActions.conversationForMessageContext', () {
     test(
-      '\u6295\u5F71\u5386\u53F2\u77ED\u4E8E\u6301\u4E45\u5316\u622A\u65AD\u70B9\u65F6\u4E0D\u622A\u7A7A\u91CD\u8BD5\u4E0A\u4E0B\u6587',
+      'Projected history shorter than persisted truncation does not erase retry context',
       () {
         final messages = <ChatMessage>[
           for (var i = 0; i < 20; i++)
@@ -389,7 +389,7 @@ void main() {
     );
 
     test(
-      '\u91CD\u8BD5\u76EE\u6807\u4E4B\u524D\u7684\u4E0A\u4E0B\u6587\u4E0D\u4F7F\u7528\u672A\u6765\u622A\u65AD\u70B9',
+      'Context before retry target ignores future truncation point',
       () {
         final messages = <ChatMessage>[
           for (var i = 0; i < 60; i++)
@@ -416,7 +416,7 @@ void main() {
     );
 
     test(
-      '\u5B8C\u6574\u5386\u53F2\u4E0A\u4E0B\u6587\u4FDD\u7559\u6301\u4E45\u5316\u622A\u65AD\u70B9',
+      'Full history context keeps persisted truncation point',
       () {
         final messages = <ChatMessage>[
           for (var i = 0; i < 80; i++)

@@ -14,7 +14,7 @@ void main() {
       );
 
   test(
-    '\u89E3\u6790\u5FEB\u4E8E\u5EF6\u8FDF\u65F6\u89E3\u6790\u6761\u6839\u672C\u4E0D\u51FA\u73B0',
+    'Indicator stays hidden if parsing finishes before delay',
     () {
       fakeAsync((async) {
         final controller = newController();
@@ -36,7 +36,7 @@ void main() {
   );
 
   test(
-    '\u89E3\u6790\u8D85\u8FC7\u5EF6\u8FDF\u540E\u51FA\u73B0，\u5E76\u81F3\u5C11\u505C\u7559\u6700\u77ED\u5C55\u793A\u65F6\u95F4',
+    'Indicator appears after delay and stays for minimum display time',
     () {
       fakeAsync((async) {
         final controller = newController();
@@ -57,7 +57,7 @@ void main() {
   );
 
   test(
-    '\u5C55\u793A\u65F6\u95F4\u5DF2\u8FC7\u540E\u7ED3\u675F\u4F1A\u7ACB\u5373\u9690\u85CF',
+    'Indicator hides immediately if minimum display time elapsed',
     () {
       fakeAsync((async) {
         final controller = newController();
@@ -74,7 +74,7 @@ void main() {
   );
 
   test(
-    '\u5BF9\u8BDD A \u7ED3\u675F\u4E0D\u4F1A\u53D6\u6D88\u5BF9\u8BDD B \u5F85\u663E\u793A\u7684\u89E3\u6790\u6761',
+    'Finishing conversation A does not cancel pending indicator for B',
     () {
       fakeAsync((async) {
         final controller = newController();
@@ -99,7 +99,7 @@ void main() {
   );
 
   test(
-    '\u5BF9\u8BDD A \u7ED3\u675F\u4E0D\u4F1A\u9690\u85CF\u5BF9\u8BDD B \u5DF2\u663E\u793A\u7684\u89E3\u6790\u6761',
+    'Finishing conversation A does not hide visible indicator for B',
     () {
       fakeAsync((async) {
         final controller = newController();
@@ -118,7 +118,7 @@ void main() {
   );
 
   test(
-    '\u65B0\u7684\u89E3\u6790\u7ACB\u5373\u4ECE\u4E0A\u4E00\u6761\u624B\u91CC\u63A5\u7BA1',
+    'New parsing immediately takes ownership from previous',
     () {
       fakeAsync((async) {
         final controller = newController();
@@ -143,7 +143,7 @@ void main() {
   );
 
   test(
-    'null \u4F1A\u6E05\u6389\u5F53\u524D\u6301\u6709\u8005，\u4E0D\u7BA1\u5B83\u662F\u8C01',
+    'Null clears current owner regardless of identity',
     () {
       fakeAsync((async) {
         final controller = newController();
@@ -161,7 +161,7 @@ void main() {
   );
 
   test(
-    'null \u6E05\u7406\u4ECD\u7136\u9075\u5B88\u6700\u77ED\u5C55\u793A\u65F6\u95F4',
+    'Null cleanup honors minimum display duration',
     () {
       fakeAsync((async) {
         final controller = newController();
@@ -179,7 +179,7 @@ void main() {
   );
 
   test(
-    'reset \u5FFD\u7565\u6700\u77ED\u5C55\u793A\u65F6\u95F4\u7ACB\u523B\u6E05\u7A7A',
+    'reset clears immediately without minimum duration',
     () {
       fakeAsync((async) {
         final controller = newController();
