@@ -9,7 +9,12 @@ import 'package:path/path.dart' as p;
 
 import '../../../utils/app_directories.dart';
 
-enum SherpaModelArchitecture { paraformer, senseVoice, streamingZipformer, moonshine }
+enum SherpaModelArchitecture {
+  paraformer,
+  senseVoice,
+  streamingZipformer,
+  moonshine,
+}
 
 /// A downloadable model published by sherpa-onnx's official `asr-models`
 /// GitHub release.
