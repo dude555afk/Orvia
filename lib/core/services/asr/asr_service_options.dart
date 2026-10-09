@@ -64,8 +64,7 @@ abstract class AsrServiceOptions {
         // Upgrade saved Chinese-focused presets to the English replacements.
         // Reset the old model directory because its weights are incompatible.
         final modelId = switch (oldModelId) {
-          'paraformer-zh-small-2024-03-09' =>
-            'zipformer-en-20m-2023-02-17',
+          'paraformer-zh-small-2024-03-09' => 'zipformer-en-20m-2023-02-17',
           'sense-voice-multilingual-int8-2025-09-09' =>
             'moonshine-tiny-en-int8',
           'zipformer-zh-en-mobile-2023-02-20' =>
