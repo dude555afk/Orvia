@@ -148,8 +148,9 @@ class EmailIntegrationService {
 
   Future<EmailAccount> _resolve(Object? address) async {
     final all = await accounts();
-    if (all.isEmpty)
+    if (all.isEmpty) {
       throw StateError('Connect email in Settings > Integrations > Email.');
+    }
     final key = (address ?? '').toString().trim().toLowerCase();
     if (key.isEmpty && all.length == 1) return all.single;
     for (final account in all) {
@@ -159,7 +160,7 @@ class EmailIntegrationService {
   }
 
   String _cursorKey(String address) =>
-      'orvia_email_last_seen_' + address.trim().toLowerCase();
+      'orvia_email_last_seen_${address.trim().toLowerCase()}';
 
   Future<T> _withInbox<T>(
     EmailAccount account,
@@ -243,14 +244,7 @@ class EmailIntegrationService {
     final term = query.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
     final messages = await _withInbox(cfg, (imap) async {
       final search = await imap.uidSearchMessages(
-        searchCriteria:
-            'OR OR FROM "' +
-            term +
-            '" SUBJECT "' +
-            term +
-            '" TEXT "' +
-            term +
-            '"',
+        searchCriteria: 'OR OR FROM "${term}" SUBJECT "${term}" TEXT "${term}"',
       );
       final ids = search.matchingSequence?.toList() ?? <int>[];
       if (ids.isEmpty) return <MimeMessage>[];
@@ -292,7 +286,7 @@ class EmailIntegrationService {
         if (r.messages.isEmpty) throw StateError('Original message not found.');
         return r.messages.first;
       });
-      final expected = replyTo.replyTo?.firstOrNull?.email ?? replyTo.fromEmail;
+      final expected = replyTo!.replyTo?.firstOrNull?.email ?? replyTo!.fromEmail;
       if (expected == null ||
           expected.toLowerCase() != to.trim().toLowerCase()) {
         throw const FormatException(
@@ -316,7 +310,10 @@ class EmailIntegrationService {
       );
       await smtp.ehlo();
       if (cfg.smtpStartTls) {
-        await smtp.startTls();
+        final upgraded = await smtp.startTls();
+        if (!upgraded.isOkStatus) {
+          throw StateError('SMTP server refused STARTTLS encryption.');
+        }
         await smtp.ehlo();
       }
       final mechanism = smtp.serverInfo.supportsAuth(AuthMechanism.plain)
@@ -324,12 +321,14 @@ class EmailIntegrationService {
           : smtp.serverInfo.supportsAuth(AuthMechanism.login)
           ? AuthMechanism.login
           : null;
-      if (mechanism == null)
+      if (mechanism == null) {
         throw StateError('Mail server does not offer password authentication.');
+      }
       await smtp.authenticate(cfg.address, cfg.password, mechanism);
       final response = await smtp.sendMessage(message);
-      if (!response.isOkStatus)
+      if (!response.isOkStatus) {
         throw StateError('Mail server rejected the message.');
+      }
       return {
         'status': 'sent',
         'account': cfg.address,

@@ -40,11 +40,13 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
   Future<void> _refresh() async {
     try {
       final all = await EmailIntegrationService.instance.accounts();
-      if (mounted)
+      if (mounted) {
         setState(() => _connected = all.map((a) => a.address).toList());
+      }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(() => _error = 'Unable to open secure email storage.');
+      }
     }
   }
 
@@ -96,11 +98,12 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
         );
       }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => _error =
               'Could not connect. Check the server details and use an app password if your provider requires one.',
         );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
