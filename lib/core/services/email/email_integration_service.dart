@@ -311,28 +311,22 @@ class EmailIntegrationService {
       );
       await imap.login(account.address, account.password);
       final mailboxes = await imap.listMailboxes(recursive: true);
-      final candidates = <String>[
+      final candidates = <String>{
         ...mailboxes.where((m) => m.isSent).map((m) => m.path),
         ...const ['Sent', 'Sent Messages', 'Sent Items', 'INBOX.Sent'],
-      ].toSet();
+      };
       for (final path in candidates) {
         try {
-          final response = await imap.appendMessage(
-            message,
-            targetMailboxPath: path,
-          );
-          if (response.isOkStatus) return path;
+          await imap.appendMessage(message, targetMailboxPath: path);
+          return path;
         } catch (_) {
           // Some servers reject paths that are not configured.
         }
       }
       try {
         await imap.createMailbox('Sent');
-        final response = await imap.appendMessage(
-          message,
-          targetMailboxPath: 'Sent',
-        );
-        if (response.isOkStatus) return 'Sent';
+        await imap.appendMessage(message, targetMailboxPath: 'Sent');
+        return 'Sent';
       } catch (_) {
         // The outgoing message was already delivered via SMTP.
       }
