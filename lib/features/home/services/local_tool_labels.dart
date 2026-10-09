@@ -13,6 +13,7 @@ List<String> availableLocalToolIds() => [
 ];
 
 IconData localToolIcon(String id) {
+  if (LocalToolNames.emailTools.contains(id)) return Lucide.Link;
   switch (id) {
     case LocalToolNames.timeInfo:
       return Lucide.clock;
@@ -50,6 +51,17 @@ IconData localToolIcon(String id) {
 }
 
 String localToolTitle(AppLocalizations l10n, String id) {
+  if (LocalToolNames.emailTools.contains(id)) {
+    return switch (id) {
+      LocalToolNames.setupEmail => 'Connect email',
+      LocalToolNames.checkEmail => 'Check email',
+      LocalToolNames.readEmail => 'Read email',
+      LocalToolNames.searchEmail => 'Search email',
+      LocalToolNames.replyEmail => 'Reply to email',
+      LocalToolNames.composeEmail => 'Compose email',
+      _ => id,
+    };
+  }
   switch (id) {
     case LocalToolNames.timeInfo:
       return l10n.assistantEditLocalToolTimeInfoTitle;
