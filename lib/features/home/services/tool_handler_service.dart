@@ -520,6 +520,16 @@ class ToolHandlerService {
           return memoryResult;
         }
 
+        // Email can never send without a working approval UI.
+        if (LocalToolNames.emailSendTools.contains(name) &&
+            approvalService == null) {
+          return _toolError(
+            error: 'approval_unavailable',
+            message: 'Email sending requires interactive user approval.',
+            tool: name,
+          );
+        }
+
         // Creating calendar events or changing reminders modifies user data,
         // so those tools always require explicit user approval first.
         if (LocalToolNames.requiresUserApproval.contains(name) &&
@@ -561,6 +571,9 @@ class ToolHandlerService {
           name,
           args,
           assistant,
+          emailSendApproved:
+              LocalToolNames.emailSendTools.contains(name) &&
+              approvalService != null,
           onSpeakText: (text) async {
             final tts = contextProvider.read<TtsProvider>();
             if (!tts.isAvailable) {

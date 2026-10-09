@@ -28,6 +28,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  enough_mail: ^2.1.7
+  flutter_secure_storage: ^10.3.4
   flutter:
     sdk: flutter
   logging: ^1.2.0

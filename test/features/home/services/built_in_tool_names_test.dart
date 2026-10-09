@@ -38,6 +38,12 @@ void main() {
       LocalToolNames.remindersQuery,
       LocalToolNames.remindersCreate,
       LocalToolNames.remindersComplete,
+      LocalToolNames.setupEmail,
+      LocalToolNames.checkEmail,
+      LocalToolNames.readEmail,
+      LocalToolNames.searchEmail,
+      LocalToolNames.replyEmail,
+      LocalToolNames.composeEmail,
     ]);
   });
 }
