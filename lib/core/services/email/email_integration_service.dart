@@ -205,7 +205,9 @@ class EmailIntegrationService {
     for (final cfg in targets) {
       try {
         final last =
-            int.tryParse(await _storage.read(key: _cursorKey(cfg.address)) ?? '') ??
+            int.tryParse(
+              await _storage.read(key: _cursorKey(cfg.address)) ?? '',
+            ) ??
             0;
         final news = await _withInbox(cfg, (imap) async {
           final result = await imap.uidSearchMessages(searchCriteria: 'UNSEEN');
