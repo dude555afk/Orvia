@@ -26,17 +26,21 @@ abstract final class EmailToolDefinitions {
       case 'read_email':
         properties['uid'] = {'type': 'integer', 'description': 'Inbox message UID'};
         required.add('uid');
+        break;
       case 'search_email':
         properties['query'] = {'type': 'string', 'description': 'Search sender, subject and text'};
         required.add('query');
+        break;
       case 'reply_email':
         properties['uid'] = {'type': 'integer', 'description': 'UID of original inbox message'};
         required.add('uid');
         properties.addAll(_sendProperties());
         required.addAll(['to', 'subject', 'body']);
+        break;
       case 'compose_email':
         properties.addAll(_sendProperties());
         required.addAll(['to', 'subject', 'body']);
+        break;
       case 'setup_email':
       case 'check_email':
         break;

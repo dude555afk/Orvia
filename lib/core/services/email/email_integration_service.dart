@@ -258,12 +258,16 @@ class EmailIntegrationService {
       switch (tool) {
         case 'setup_email':
           result = {'message': 'Open Settings > Integrations > Email to connect an account securely. Never send passwords in chat.'};
+          break;
         case 'check_email':
           result = await check(account: account);
+          break;
         case 'search_email':
           result = await search(account: account, query: (args['query'] ?? '').toString());
+          break;
         case 'read_email':
           result = await read(account: account, uid: int.parse((args['uid'] ?? '').toString()));
+          break;
         case 'compose_email':
         case 'reply_email':
           if (!sendApproved) {
@@ -277,8 +281,10 @@ class EmailIntegrationService {
               replyUid: tool == 'reply_email' ? int.parse((args['uid'] ?? '').toString()) : null,
             );
           }
+          break;
         default:
           result = {'error': 'unknown_email_tool'};
+          break;
       }
       return jsonEncode(result);
     } catch (_) {

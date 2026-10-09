@@ -13,7 +13,7 @@ List<String> availableLocalToolIds() => [
 ];
 
 IconData localToolIcon(String id) {
-  if (LocalToolNames.emailTools.contains(id)) return Lucide.Mail;
+  if (LocalToolNames.emailTools.contains(id)) return Lucide.Link;
   switch (id) {
     case LocalToolNames.timeInfo:
       return Lucide.clock;
