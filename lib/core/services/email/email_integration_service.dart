@@ -244,7 +244,7 @@ class EmailIntegrationService {
     final term = query.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
     final messages = await _withInbox(cfg, (imap) async {
       final search = await imap.uidSearchMessages(
-        searchCriteria: 'OR OR FROM "${term}" SUBJECT "${term}" TEXT "${term}"',
+        searchCriteria: 'OR OR FROM "$term" SUBJECT "$term" TEXT "$term"',
       );
       final ids = search.matchingSequence?.toList() ?? <int>[];
       if (ids.isEmpty) return <MimeMessage>[];
@@ -287,7 +287,7 @@ class EmailIntegrationService {
         return r.messages.first;
       });
       final expected =
-          replyTo!.replyTo?.firstOrNull?.email ?? replyTo!.fromEmail;
+          replyTo!.replyTo?.firstOrNull?.email ?? replyTo.fromEmail;
       if (expected == null ||
           expected.toLowerCase() != to.trim().toLowerCase()) {
         throw const FormatException(
