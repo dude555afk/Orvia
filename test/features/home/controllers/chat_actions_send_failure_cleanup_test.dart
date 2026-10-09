@@ -45,7 +45,7 @@ void main() {
   SharedPreferences.setMockInitialValues(const {});
 
   testWidgets(
-    '\u540E\u53F0\u751F\u6210\u5931\u8D25\u65F6\u6536\u5C3E\u5199\u5E93\u518D\u5931\u8D25，\u539F\u59CB\u9519\u8BEF\u4ECD\u7136\u9001\u5230 UI',
+    'Original error reaches UI when background generation and final persistence both fail',
     (tester) async {
       final service = _ThrowingFinalizeChatService();
       final settings = SettingsProvider(createBusinessTestPreferences());
