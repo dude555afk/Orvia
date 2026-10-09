@@ -352,7 +352,7 @@ void main() {
 
     group('recoveryActionFor', () {
       test(
-        'database_schema_too_new \u6620\u5C04\u4E3A\u5347\u7EA7\u63D0\u793A',
+        'database_schema_too_new maps to upgrade prompt',
         () async {
           final action = await DatabaseInstallationGate.recoveryActionFor(
             appDataDirectory: directory,
@@ -365,7 +365,7 @@ void main() {
       );
 
       test(
-        '\u4E0E\u6570\u636E\u5E93\u65E0\u5173\u7684\u9519\u8BEF\u4E0D\u89E6\u53D1\u6062\u590D',
+        'Unrelated errors do not trigger recovery',
         () async {
           final action = await DatabaseInstallationGate.recoveryActionFor(
             appDataDirectory: directory,
@@ -378,7 +378,7 @@ void main() {
       );
 
       test(
-        '\u5DF2\u6709 receipt \u7684\u635F\u574F\u5E93\u4E0D\u81EA\u52A8\u91CD\u5EFA',
+        'Corrupt database with receipt is not auto-rebuilt',
         () async {
           await DatabaseInstallationGate.ensureReady(
             appDataDirectory: directory,
@@ -395,7 +395,7 @@ void main() {
       );
 
       test(
-        '\u65E0\u6CD5\u89E3\u6790\u7684 receipt \u540C\u6837\u963B\u6B62\u81EA\u52A8\u91CD\u5EFA',
+        'Unreadable receipt also blocks auto-rebuild',
         () async {
           await DatabaseInstallationGate.ensureReady(
             appDataDirectory: directory,
@@ -418,7 +418,7 @@ void main() {
       );
 
       test(
-        '\u65E0 receipt \u4E14 Hive \u6E90\u5728\u65F6\u5F15\u5BFC\u91CD\u8FC1\u79FB',
+        'Missing receipt with Hive source prompts re-migration',
         () async {
           await databaseFile(directory).writeAsString('not a sqlite database');
 
@@ -433,7 +433,7 @@ void main() {
       );
 
       test(
-        '\u539F\u59CB sqlite \u9519\u8BEF\u4EC5\u5728\u53EF\u91CD\u8FC1\u79FB\u65F6\u5F15\u5BFC',
+        'Raw SQLite errors prompt re-migration only when possible',
         () async {
           final rawError = sqlite.SqliteException(
             extendedResultCode: 11,
@@ -457,7 +457,7 @@ void main() {
       );
 
       test(
-        '\u9996\u542F\u534A\u6210\u54C1\u5E93（userVersion=0）\u53EF\u81EA\u52A8\u91CD\u5EFA',
+        'Incomplete first-run database with userVersion zero can be rebuilt',
         () async {
           final raw = sqlite.sqlite3.open(databaseFile(directory).path);
           raw.close();
@@ -473,7 +473,7 @@ void main() {
       );
 
       test(
-        '\u5217\u51FA\u6539\u540D\u526F\u672C\u65F6\u6309\u65F6\u95F4\u5012\u5E8F\u5E76\u7B97\u4E0A\u6574\u4E2A family',
+        'Lists renamed copies newest-first including sidecars',
         () async {
           await DatabaseInstallationGate.ensureReady(
             appDataDirectory: directory,
@@ -497,7 +497,7 @@ void main() {
           expect(copies, hasLength(1));
           expect(copies.single.displacedAt, isNotNull);
           expect(await copies.single.file.exists(), isTrue);
-          // -wal \u4E5F\u7B97\u8FDB\u53BB，\u4E0D\u7136\u663E\u793A\u7684\u5927\u5C0F\u4F1A\u5C0F\u4E8E\u771F\u6B63\u5360\u7684\u7A7A\u95F4。
+          // Include -wal in reported size to avoid undercounting disk use.
           expect(
             copies.single.bytes,
             greaterThan(await copies.single.file.length()),
@@ -506,7 +506,7 @@ void main() {
       );
 
       test(
-        '\u5220\u9664\u5355\u4EFD\u6539\u540D\u526F\u672C\u4F1A\u8FDE sidecar \u4E00\u8D77\u6E05\u6389',
+        'Deleting renamed copy removes its sidecars',
         () async {
           await DatabaseInstallationGate.ensureReady(
             appDataDirectory: directory,
@@ -546,7 +546,7 @@ void main() {
         },
       );
 
-      test('\u62D2\u7EDD\u4F2A\u9020\u7684 stamp', () async {
+      test('Rejects forged stamp', () async {
         await expectLater(
           DatabaseInstallationGate.deleteDisplacedDatabase(
             appDataDirectory: directory,
@@ -557,7 +557,7 @@ void main() {
       });
 
       test(
-        '\u65E0\u6CD5\u8BFB\u53D6 userVersion \u7684\u6587\u4EF6\u4E0D\u81EA\u52A8\u91CD\u5EFA',
+        'Unreadable userVersion prevents auto-rebuild',
         () async {
           // "Unreadable right now" is also what a healthy database looks like
           // while the OS denies the read, so it may never authorise a delete.
@@ -574,7 +574,7 @@ void main() {
       );
 
       test(
-        '\u5B58\u5728\u975E\u7A7A WAL \u65F6\u4E0D\u81EA\u52A8\u91CD\u5EFA',
+        'Nonempty WAL prevents auto-rebuild',
         () async {
           final raw = sqlite.sqlite3.open(databaseFile(directory).path);
           raw.close();
@@ -593,7 +593,7 @@ void main() {
       );
 
       test(
-        '\u5B58\u5728\u7528\u6237\u6587\u4EF6\u65F6\u4E0D\u81EA\u52A8\u91CD\u5EFA',
+        'Existing user files prevent auto-rebuild',
         () async {
           final raw = sqlite.sqlite3.open(databaseFile(directory).path);
           raw.close();
@@ -614,7 +614,7 @@ void main() {
       );
 
       test(
-        '\u5B58\u5728\u672C\u5730\u526F\u672C\u65F6\u4E0D\u81EA\u52A8\u91CD\u5EFA',
+        'Existing local copies prevent auto-rebuild',
         () async {
           final raw = sqlite.sqlite3.open(databaseFile(directory).path);
           raw.close();
@@ -640,7 +640,7 @@ void main() {
       );
 
       test(
-        '\u7A7A\u7684\u7528\u6237\u76EE\u5F55\u4E0D\u7B97\u4F7F\u7528\u75D5\u8FF9',
+        'Empty user directory does not count as usage',
         () async {
           final raw = sqlite.sqlite3.open(databaseFile(directory).path);
           raw.close();
@@ -658,7 +658,7 @@ void main() {
       );
 
       test(
-        '\u5148\u524D\u7684 displaced \u526F\u672C\u963B\u6B62\u518D\u6B21\u81EA\u52A8\u91CD\u5EFA',
+        'Displaced copy prevents another auto-rebuild',
         () async {
           final raw = sqlite.sqlite3.open(databaseFile(directory).path);
           raw.close();
@@ -679,7 +679,7 @@ void main() {
       );
 
       test(
-        '\u5DF2\u5EFA schema \u7684\u5E93\u5373\u4F7F\u65E0 receipt \u4E5F\u4E0D\u81EA\u52A8\u91CD\u5EFA',
+        'Initialized schema is not rebuilt even without receipt',
         () async {
           final repository = ChatDatabaseRepository.open(
             file: databaseFile(directory),
@@ -719,7 +719,7 @@ void main() {
             ..sort();
 
       test(
-        '\u66FF\u6362\u6B8B\u7F3A\u5E93\u5E76\u7B7E\u53D1\u65B0 receipt',
+        'Replaces incomplete database and issues new receipt',
         () async {
           final file = databaseFile(directory);
           await file.writeAsString('not a sqlite database');
@@ -741,7 +741,7 @@ void main() {
       );
 
       test(
-        '\u9ED8\u8BA4\u4FDD\u7559\u6574\u5957\u65E7\u5E93\u800C\u4E0D\u662F\u5220\u9664',
+        'Preserves old database family instead of deleting by default',
         () async {
           final file = databaseFile(directory);
           await file.writeAsString('not a sqlite database');
@@ -769,7 +769,7 @@ void main() {
       );
 
       test(
-        'preserveDisplacedCopy=false \u4E0D\u7559\u526F\u672C\u5E76\u6E05\u6389\u65E7\u526F\u672C',
+        'preserveDisplacedCopy false removes old copies',
         () async {
           final file = databaseFile(directory);
           await file.writeAsString('not a sqlite database');
@@ -788,7 +788,7 @@ void main() {
       );
 
       test(
-        '\u526F\u672C\u4EE3\u6570\u6709\u4E0A\u9650，\u4F46\u6700\u65E7\u7684\u90A3\u4EE3\u6C38\u8FDC\u4FDD\u7559',
+        'Limits copy generations while preserving the oldest',
         () async {
           // The oldest generation holds what was on disk before anything started
           // displacing; a retrying caller must not be able to walk it off the
@@ -828,13 +828,13 @@ void main() {
       );
     });
 
-    group('\u8FC1\u79FB\u524D\u526F\u672C\u7684\u6E05\u626B', () {
+    group('Pre-migration backup cleanup', () {
       File backupFor(File database) => File(
         '${database.path}${ChatDatabaseRepository.premigrationBackupPrefix}1',
       );
 
       test(
-        '\u6570\u636E\u5E93\u5065\u5EB7\u65F6\u5220\u9664\u526F\u672C',
+        'Deletes backup when database is healthy',
         () async {
           await DatabaseInstallationGate.ensureReady(
             appDataDirectory: directory,
@@ -852,7 +852,7 @@ void main() {
       );
 
       test(
-        '\u6570\u636E\u5E93\u7F3A\u5931\u65F6\u7528\u526F\u672C\u6062\u590D，\u800C\u4E0D\u662F\u628A\u526F\u672C\u5220\u6389',
+        'Restores backup when database is missing instead of deleting it',
         () async {
           final receipt = await DatabaseInstallationGate.ensureReady(
             appDataDirectory: directory,
@@ -878,7 +878,7 @@ void main() {
       );
 
       test(
-        '\u6570\u636E\u5E93\u635F\u574F\u65F6\u540C\u6837\u7528\u526F\u672C\u6062\u590D',
+        'Restores backup when database is corrupt',
         () async {
           final receipt = await DatabaseInstallationGate.ensureReady(
             appDataDirectory: directory,
@@ -905,7 +905,7 @@ void main() {
       );
 
       test(
-        '\u7ED3\u6784\u7F3A\u5931（quick_check \u4ECD ok）\u65F6\u4E0D\u5220\u526F\u672C，\u800C\u662F\u56DE\u6EDA',
+        'Rolls back missing schema even when quick_check passes',
         () async {
           // A migration that commits but leaves the schema incomplete is
           // physically sound, so quick_check passes. Deleting the copy here
@@ -959,7 +959,7 @@ void main() {
       );
 
       test(
-        '\u7A7A\u5E93（userVersion 0）\u7B97\u635F\u574F\u800C\u4E0D\u662F\u672A\u77E5\u7248\u672C',
+        'Treats empty userVersion zero database as corrupt',
         () async {
           final receipt = await DatabaseInstallationGate.ensureReady(
             appDataDirectory: directory,
@@ -982,7 +982,7 @@ void main() {
       );
 
       test(
-        '\u964D\u7EA7\u8FD0\u884C\u65F6\u4E0D\u62FF\u65E7\u526F\u672C\u8986\u76D6\u66F4\u9AD8\u7248\u672C\u7684\u6570\u636E\u5E93',
+        'Downgrade does not overwrite a newer database with older copy',
         () async {
           // A newer build migrated the database and crashed before deleting its
           // copy; this older build must not mistake "version I do not know" for
@@ -1036,7 +1036,7 @@ void main() {
       );
 
       test(
-        '\u56DE\u6EDA\u4E0D\u5220\u9664\u88AB\u8986\u76D6\u7684\u5E93，\u800C\u662F\u7559\u526F\u672C',
+        'Rollback preserves replaced database copy',
         () async {
           // classifyInstalledDatabase reports "unusable" for a file it merely
           // failed to open, so the rollback must stay reversible.
@@ -1078,7 +1078,7 @@ void main() {
       );
 
       test(
-        '\u56DE\u6EDA\u53CD\u590D\u5931\u8D25\u4E5F\u4E0D\u4F1A\u6324\u6389\u7528\u6237\u539F\u59CB\u6570\u636E\u90A3\u4E00\u4EE3',
+        'Repeated rollback failures never discard original user data',
         () async {
           // A rollback whose backup is itself unusable throws before deleting
           // the backup, so the sweep repeats on every launch and displaces
@@ -1109,7 +1109,7 @@ void main() {
       );
 
       test(
-        '\u591A\u4E2A\u526F\u672C\u4E14\u6570\u636E\u5E93\u4E0D\u53EF\u7528\u65F6\u62D2\u7EDD\u731C\u6D4B',
+        'Refuses to guess between copies when database is unavailable',
         () async {
           await DatabaseInstallationGate.ensureReady(
             appDataDirectory: directory,
