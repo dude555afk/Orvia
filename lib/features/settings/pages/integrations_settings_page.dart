@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../mcp/pages/mcp_page.dart';
 
@@ -17,7 +16,7 @@ class IntegrationsSettingsPage extends StatelessWidget {
       body: ListView(
         children: [
           const ListTile(
-            leading: Icon(Lucide.Mail),
+            leading: Icon(Icons.mail_outline),
             title: Text('Email'),
             subtitle: Text(
               'Coming soon: connect email accounts, read, search, draft and reply. Sending will require your confirmation.',
@@ -25,12 +24,12 @@ class IntegrationsSettingsPage extends StatelessWidget {
           ),
           const Divider(height: 1),
           ListTile(
-            leading: const Icon(Lucide.Plug),
+            leading: const Icon(Icons.extension_outlined),
             title: const Text('MCP integrations'),
             subtitle: const Text(
               'Configure available external tools and services',
             ),
-            trailing: const Icon(Lucide.ChevronRight),
+            trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(
               context,
             ).push(MaterialPageRoute(builder: (_) => const McpPage())),
