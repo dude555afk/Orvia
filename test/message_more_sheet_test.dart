@@ -54,7 +54,7 @@ Future<void> _openMoreSheet(
 
 void main() {
   testWidgets(
-    '\u591A\u7248\u672C\u6D88\u606F\u83DC\u5355\u663E\u793A\u5220\u9664\u5168\u90E8\u7248\u672C',
+    'Multi-version message menu shows Delete all versions',
     (tester) async {
       await _openMoreSheet(tester, canDeleteAllVersions: true);
 
@@ -66,7 +66,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5355\u7248\u672C\u6D88\u606F\u83DC\u5355\u4E0D\u663E\u793A\u5220\u9664\u5168\u90E8\u7248\u672C',
+    'Single-version message menu hides Delete all versions',
     (tester) async {
       await _openMoreSheet(tester, canDeleteAllVersions: false);
 
@@ -77,7 +77,7 @@ void main() {
   );
 
   testWidgets(
-    '\u4E34\u65F6\u4F1A\u8BDD\u6D88\u606F\u83DC\u5355\u4E0D\u663E\u793A\u521B\u5EFA\u5206\u652F',
+    'Temporary chat menu hides Create branch',
     (tester) async {
       await _openMoreSheet(
         tester,
