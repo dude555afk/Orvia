@@ -14,9 +14,7 @@ void main() {
     test('contains three English downloadable model variants', () {
       expect(SherpaModelCatalog.models, hasLength(3));
 
-      final zipformer = SherpaModelCatalog.byId(
-        'zipformer-en-20m-2023-02-17',
-      )!;
+      final zipformer = SherpaModelCatalog.byId('zipformer-en-20m-2023-02-17')!;
       expect(zipformer.name, 'Zipformer English 20M');
       expect(
         zipformer.architecture,
@@ -37,7 +35,10 @@ void main() {
         final model = SherpaModelCatalog.byId(id)!;
         expect(model.architecture, SherpaModelArchitecture.moonshine);
         expect(model.name, contains('English'));
-        expect(model.archiveUri.toString(), contains('sherpa-onnx-$id.tar.bz2'));
+        expect(
+          model.archiveUri.toString(),
+          contains('sherpa-onnx-$id.tar.bz2'),
+        );
         expect(model.requiredFiles, [
           'preprocess.onnx',
           'encode.int8.onnx',
