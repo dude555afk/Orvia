@@ -1,0 +1,20 @@
+name: Temporary Dart Format Diff
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  format-diff:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+      - name: Print exact formatter diff
+        shell: bash
+        run: |
+          dart format lib/core/services/asr/asr_service_options.dart lib/core/services/tts/network_tts.dart test/core/services/asr/asr_service_options_test.dart test/core/services/asr/sherpa_model_manager_test.dart
+          git --no-pager diff --no-color -- lib/core/services/asr/asr_service_options.dart lib/core/services/tts/network_tts.dart test/core/services/asr/asr_service_options_test.dart test/core/services/asr/sherpa_model_manager_test.dart
