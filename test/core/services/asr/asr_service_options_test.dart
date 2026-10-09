@@ -21,43 +21,6 @@ void main() {
     });
   });
 
-  group('English-only offline ASR migration', () {
-    const retired = <String, String>{
-      'paraformer-zh-small-2024-03-09': 'zipformer-en-20m-2023-02-17',
-      'sense-voice-multilingual-int8-2025-09-09': 'moonshine-tiny-en-int8',
-      'zipformer-zh-en-mobile-2023-02-20': 'moonshine-base-en-int8',
-    };
-
-    for (final entry in retired.entries) {
-      test('converts saved ${entry.key} preset without old model files', () {
-        final parsed = AsrServiceOptions.fromJson({
-          'kind': 'sherpa_onnx',
-          'id': 'speech-service',
-          'name': 'Offline Model',
-          'modelId': entry.key,
-          'modelDirectory': '/old/weights',
-          'language': 'zh',
-        }) as SherpaOnnxAsrOptions;
-        expect(parsed.modelId, entry.value);
-        expect(parsed.modelDirectory, isEmpty);
-        expect(parsed.language, 'en');
-        expect(parsed.id, 'speech-service');
-      });
-    }
-
-    test('leaves new English profiles unchanged', () {
-      final parsed = AsrServiceOptions.fromJson({
-        'kind': 'sherpa_onnx',
-        'modelId': 'moonshine-tiny-en-int8',
-        'modelDirectory': '/already/installed',
-        'language': 'en',
-      }) as SherpaOnnxAsrOptions;
-      expect(parsed.modelId, 'moonshine-tiny-en-int8');
-      expect(parsed.modelDirectory, '/already/installed');
-      expect(parsed.language, 'en');
-    });
-  });
-
   group('AsrServiceOptions', () {
     test('migrates retired offline presets and clears incompatible paths', () {
       final migrations = <String, String>{
