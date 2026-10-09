@@ -67,32 +67,20 @@ class AutoRetryOptions {
   };
 
   static const List<String> defaultRetryKeywords = [
-    '\u5E76\u53D1',
-    '\u7A0D\u540E',
-    '\u91CD\u8BD5',
-    '\u8BBF\u95EE\u91CF\u8FC7\u5927',
-    '\u7E41\u5FD9',
-    '\u9650\u6D41',
     'rate limit',
     'too many requests',
     'overloaded',
     'try again',
     'timeout',
-    '\u8D85\u65F6',
   ];
 
   static const List<String> defaultStopKeywords = [
-    '\u4F59\u989D',
-    '\u4E0D\u8DB3',
-    '\u989D\u5EA6',
-    '\u6B20\u8D39',
     'balance',
     'insufficient',
     'quota',
     'invalid api key',
     'unauthorized',
     'permission',
-    '\u672A\u5B9E\u540D',
   ];
 
   /// When false, the first attempt is never retried.
