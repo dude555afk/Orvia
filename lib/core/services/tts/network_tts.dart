@@ -957,12 +957,14 @@ class NetworkTtsService {
     try {
       // The unofficial Edge service can stall; return an actionable error
       // instead of leaving playback permanently buffering.
-      final result = await tts.synthesize(text).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () => throw TimeoutException(
-          'Edge TTS request timed out. Check the connection or try again.',
-        ),
-      );
+      final result = await tts
+          .synthesize(text)
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw TimeoutException(
+              'Edge TTS request timed out. Check the connection or try again.',
+            ),
+          );
       return Uint8List.fromList(result.audioBytes);
     } finally {
       // Cleanup should never hide the synthesis exception.
