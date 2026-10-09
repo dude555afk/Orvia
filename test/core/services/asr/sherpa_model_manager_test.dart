@@ -106,6 +106,12 @@ void main() {
       if (await root.exists()) await root.delete(recursive: true);
     });
 
+    test('removed model IDs are unavailable rather than throwing', () async {
+      final manager = SherpaModelManager(modelsRoot: root);
+      addTearDown(manager.dispose);
+      expect(await manager.isInstalled('paraformer-zh-small-2024-03-09'), isFalse);
+    });
+
     test('reports, validates, and deletes installed model files', () async {
       final model = _fixtureModel();
       final manager = SherpaModelManager(modelsRoot: root, catalog: [model]);
