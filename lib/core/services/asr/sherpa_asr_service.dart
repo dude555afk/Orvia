@@ -222,10 +222,7 @@ String _recognize(_SherpaRecognitionRequest request) {
       request,
       samples,
     ),
-    SherpaModelArchitecture.moonshine => _recognizeMoonshine(
-      request,
-      samples,
-    ),
+    SherpaModelArchitecture.moonshine => _recognizeMoonshine(request, samples),
   };
 }
 
