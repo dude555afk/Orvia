@@ -91,7 +91,7 @@ void main() {
   }
 
   testWidgets(
-    '\u63D0\u4EA4\u7ED3\u679C queued \u65F6\u4F1A\u6E05\u7A7A\u8F93\u5165',
+    'Queued submission clears composer',
     (tester) async {
       final controller = TextEditingController(text: 'queued message');
       final focusNode = FocusNode();
@@ -119,7 +119,7 @@ void main() {
   );
 
   testWidgets(
-    '\u63D0\u4EA4\u7ED3\u679C rejected \u65F6\u4FDD\u7559\u8F93\u5165\u5185\u5BB9',
+    'Rejected submission preserves composer input',
     (tester) async {
       final controller = TextEditingController(text: 'keep me');
       final focusNode = FocusNode();
@@ -142,7 +142,7 @@ void main() {
   );
 
   testWidgets(
-    '\u53D1\u9001\u6309\u94AE\u53EF\u663E\u793A\u7F16\u8F91\u6001\u4FDD\u5B58\u5E76\u53D1\u9001\u63D0\u793A',
+    'Send button shows edit-mode Save and send tooltip',
     (tester) async {
       final controller = TextEditingController(text: 'edited message');
       final focusNode = FocusNode();
@@ -164,7 +164,7 @@ void main() {
   );
 
   testWidgets(
-    '\u6709\u6392\u961F\u9879\u65F6\u663E\u793A\u72B6\u6001\u5E76\u5141\u8BB8\u53D6\u6D88',
+    'Queued item displays status and can be cancelled',
     (tester) async {
       final controller = TextEditingController();
       final focusNode = FocusNode();
@@ -206,7 +206,7 @@ void main() {
   );
 
   testWidgets(
-    '\u7ED8\u56FE\u6A21\u5F0F\u80F6\u56CA\u53EF\u5173\u95ED\u5E76\u4F20\u9012\u804A\u5929\u63A5\u53E3\u8DEF\u7531',
+    'Image-mode chip can be dismissed and routes chat correctly',
     (tester) async {
       final controller = TextEditingController(text: 'draw a cat');
       final focusNode = FocusNode();
@@ -258,7 +258,7 @@ void main() {
   );
 
   testWidgets(
-    '\u7ED8\u56FE\u6A21\u5F0F\u5173\u95ED\u540E\u5207\u6362\u5BF9\u8BDD\u4F1A\u91CD\u65B0\u663E\u793A',
+    'Image-mode chip reappears after switching chats',
     (tester) async {
       final controller = TextEditingController(text: 'draw a cat');
       final focusNode = FocusNode();
@@ -312,7 +312,7 @@ void main() {
   );
 
   testWidgets(
-    '\u975E\u7ED8\u56FE\u6A21\u578B\u4FDD\u6301\u9ED8\u8BA4\u8DEF\u7531\u8BB8\u53EF',
+    'Non-image models preserve default routing permission',
     (tester) async {
       final controller = TextEditingController(text: 'hello');
       final focusNode = FocusNode();
@@ -341,7 +341,7 @@ void main() {
   );
 
   testWidgets(
-    '\u8F93\u5165\u6846\u5728\u4EAE\u8272\u4E3B\u9898\u4E0B\u6709\u7A33\u5B9A\u5E95\u8272',
+    'Composer has stable surface color in light theme',
     (tester) async {
       final controller = TextEditingController();
       final focusNode = FocusNode();
@@ -364,7 +364,7 @@ void main() {
   );
 
   testWidgets(
-    '\u8F93\u5165\u6846\u5728\u6697\u8272\u4E3B\u9898\u4E0B\u4E0D\u662F\u7EAF\u900F\u660E\u6BDB\u73BB\u7483',
+    'Composer is not fully transparent frosted glass in dark theme',
     (tester) async {
       final controller = TextEditingController();
       final focusNode = FocusNode();
@@ -387,7 +387,7 @@ void main() {
   );
 
   testWidgets(
-    '\u8F93\u5165\u6846\u5728\u80CC\u666F\u56FE\u6A21\u5F0F\u4E0B\u964D\u4F4E\u7EAF\u8272\u8986\u76D6',
+    'Wallpaper mode reduces solid composer overlay',
     (tester) async {
       final controller = TextEditingController();
       final focusNode = FocusNode();
@@ -411,7 +411,7 @@ void main() {
   );
 
   testWidgets(
-    '\u8F93\u5165\u6846\u80CC\u666F\u900F\u660E\u5EA6\u6309\u5F53\u524D\u4E3B\u9898\u9009\u62E9\u5B9E\u9645 alpha',
+    'Composer opacity uses correct alpha for current theme',
     (tester) async {
       final lightController = TextEditingController();
       final lightFocusNode = FocusNode();
@@ -458,7 +458,7 @@ void main() {
   );
 
   testWidgets(
-    '\u80CC\u666F\u56FE\u6A21\u5F0F\u540C\u6837\u9075\u5FAA\u8F93\u5165\u6846\u80CC\u666F\u900F\u660E\u5EA6\u8BBE\u7F6E',
+    'Wallpaper mode respects composer opacity setting',
     (tester) async {
       final controller = TextEditingController();
       final focusNode = FocusNode();
@@ -483,7 +483,7 @@ void main() {
   );
 
   testWidgets(
-    '\u56FE\u7247\u548C\u6587\u4EF6\u9884\u89C8\u663E\u793A\u5728\u4E3B\u8F93\u5165\u6846\u5185\u90E8\u9876\u90E8',
+    'Image and file previews appear inside top of composer',
     (tester) async {
       final controller = TextEditingController();
       final focusNode = FocusNode();
@@ -567,7 +567,7 @@ void main() {
   );
 
   testWidgets(
-    '\u8F93\u5165\u6846\u5916\u5C42\u5E95\u90E8\u7559\u767D\u53EA\u4E0B\u79FB\u4E00\u70B9',
+    'Outer composer bottom padding shifts down only slightly',
     (tester) async {
       final controller = TextEditingController();
       final focusNode = FocusNode();

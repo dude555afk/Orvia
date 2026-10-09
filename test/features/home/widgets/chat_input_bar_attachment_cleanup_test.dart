@@ -156,7 +156,7 @@ void main() {
   }
 
   testWidgets(
-    'Windows \u5386\u53F2\u7C98\u8D34\u590D\u7528\u6587\u672C、\u957F\u6587\u672C\u9644\u4EF6\u548C\u56FE\u7247\u5165\u53E3',
+    'Windows Legacy paste supports text, long-text attachments and images',
     (tester) async {
       final nativeClipboardContext = MockMessageChannelContext()
         ..registerMockMethodCallHandler('ClipboardReader', (_) {
@@ -263,7 +263,7 @@ void main() {
   );
 
   testWidgets(
-    '\u8D85\u8FC7 5000 \u4E2A\u5B57\u7B26\u7684\u7C98\u8D34\u5185\u5BB9\u8F6C\u4E3A\u6587\u672C\u9644\u4EF6',
+    'Paste over 5000 characters becomes a text attachment',
     (tester) async {
       final nativeClipboardContext = MockMessageChannelContext()
         ..registerMockMethodCallHandler('ClipboardReader', (_) {
@@ -403,7 +403,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5173\u95ED\u8D85\u957F\u7C98\u8D34\u8F6C\u6587\u4EF6\u540E\u4FDD\u6301\u4E3A\u8F93\u5165\u6587\u672C',
+    'Disabling long-paste attachment keeps text in composer',
     (tester) async {
       final nativeClipboardContext = MockMessageChannelContext()
         ..registerMockMethodCallHandler('ClipboardReader', (_) {
@@ -464,7 +464,7 @@ void main() {
   );
 
   testWidgets(
-    '\u81EA\u5B9A\u4E49\u9608\u503C\u51B3\u5B9A\u662F\u5426\u5C06\u7C98\u8D34\u8F6C\u4E3A\u6587\u672C\u9644\u4EF6',
+    'Custom threshold controls conversion of pasted text to attachment',
     (tester) async {
       final nativeClipboardContext = MockMessageChannelContext()
         ..registerMockMethodCallHandler('ClipboardReader', (_) {
@@ -551,7 +551,7 @@ void main() {
   );
 
   testWidgets(
-    '\u8F93\u5165\u6CD5\u56FE\u7247\u843D\u76D8\u671F\u95F4\u963B\u6B62\u53D1\u9001\u5E76\u5728\u53D6\u6D88\u65F6\u6E05\u7406\u7F13\u5B58',
+    'IME image save blocks send and cleans cache on cancel',
     (tester) async {
       final controller = TextEditingController(text: 'send with image');
       final focusNode = FocusNode();
@@ -758,7 +758,7 @@ void main() {
   );
 
   testWidgets(
-    '\u9000\u51FA\u9875\u9762\u4F1A\u6E05\u7406\u6392\u961F\u4E2D\u7684\u5E94\u7528\u4E34\u65F6\u56FE\u7247',
+    'Leaving page cleans queued app-owned temporary images',
     (tester) async {
       final controller = TextEditingController();
       final focusNode = FocusNode();
@@ -818,7 +818,7 @@ void main() {
   );
 
   testWidgets(
-    '\u53D1\u9001\u540E\u4FDD\u7559\u7528\u6237\u6E90\u6587\u4EF6，\u63D0\u4EA4\u7684\u662F\u538B\u7F29\u526F\u672C',
+    'Sending preserves user source file and submits compressed copy',
     (tester) async {
       late File source;
       await tester.runAsync(() async {
@@ -869,7 +869,7 @@ void main() {
   );
 
   testWidgets(
-    'restoreInput \u6E05\u7A7A\u8349\u7A3F\u540E\u4FDD\u7559\u7528\u6237\u6E90\u6587\u4EF6',
+    'restoreInput preserves user source file after clearing draft',
     (tester) async {
       late File source;
       await tester.runAsync(() async {
@@ -913,7 +913,7 @@ void main() {
     },
   );
 
-  testWidgets('dispose \u540E\u4FDD\u7559\u7528\u6237\u6E90\u6587\u4EF6', (
+  testWidgets('dispose preserves user source file', (
     tester,
   ) async {
     late File source;
@@ -954,7 +954,7 @@ void main() {
   });
 
   testWidgets(
-    '\u4E22\u5F03\u590D\u7528\u7684\u5DF2\u6709\u4E0A\u4F20\u65F6\u4E0D\u5220\u9664\u8BE5\u6587\u4EF6',
+    'Discarding reused upload does not delete original file',
     (tester) async {
       final controller = TextEditingController();
       final focusNode = FocusNode();
@@ -1008,7 +1008,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5904\u7406\u4E2D\u4E22\u5F03\u53EA\u6E05\u7406\u538B\u7F29\u526F\u672C，\u4FDD\u7559\u7528\u6237\u6E90\u6587\u4EF6',
+    'Discard during processing removes compressed copy only',
     (tester) async {
       final controller = TextEditingController();
       final focusNode = FocusNode();
@@ -1073,7 +1073,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5E94\u7528\u81EA\u6709\u4E34\u65F6\u6E90\u5728\u5904\u7406\u5B8C\u6210\u540E\u88AB\u5220\u9664',
+    'App-owned temporary source is deleted after processing',
     (tester) async {
       late File tempSource;
       await tester.runAsync(() async {
@@ -1114,7 +1114,7 @@ void main() {
   );
 
   testWidgets(
-    '\u6E90\u6587\u4EF6\u5220\u9664\u5931\u8D25\u4F1A\u8BB0\u5F55\u65E5\u5FD7\u4E14\u4FDD\u7559\u6E90\u6587\u4EF6',
+    'Source deletion failure is logged and source preserved',
     (tester) async {
       final logs = <String>[];
       final previousDebugPrint = debugPrint;
@@ -1174,7 +1174,7 @@ void main() {
   );
 
   testWidgets(
-    '\u538B\u7F29\u5931\u8D25\u4F1A\u8BB0\u5F55\u65E5\u5FD7\u4E14\u4FDD\u7559\u7528\u6237\u6E90\u6587\u4EF6',
+    'Compression failure is logged and user source preserved',
     (tester) async {
       final logs = <String>[];
       final previousDebugPrint = debugPrint;
