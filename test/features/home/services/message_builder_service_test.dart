@@ -98,7 +98,7 @@ void main() {
   );
 
   test(
-    'collapseVersions \u6309\u771F\u5B9E\u7248\u672C\u53F7\u9009\u62E9\u6D88\u606F',
+    'collapseVersions Selects messages by actual version number',
     () {
       final service = MessageBuilderService(
         chatService: _FakeChatService(const {}),
@@ -282,7 +282,7 @@ void main() {
     );
 
     test(
-      '\u9ED8\u8BA4\u5C06\u89C6\u9891\u548C\u97F3\u9891 FilePart \u7EB3\u5165\u5A92\u4F53\u8DEF\u5F84\u4F9B API \u4F7F\u7528',
+      'Includes video and audio FilePart paths in API media by default',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService(const {}),
@@ -319,7 +319,7 @@ void main() {
     );
 
     test(
-      '\u7F16\u8F91\u6062\u590D\u8349\u7A3F\u65F6\u4E0D\u628A\u89C6\u9891\u548C\u97F3\u9891 FilePart \u4F2A\u88C5\u6210\u56FE\u7247',
+      'Does not treat video and audio FileParts as images when restoring edited draft',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService(const {}),
@@ -561,7 +561,7 @@ void main() {
 
   group('MessageBuilderService.buildApiMessages', () {
     test(
-      '\u6709\u5DE5\u5177\u8C03\u7528\u65F6\u4F1A\u628A reasoning_content \u56DE\u586B\u5230 assistant tool \u6D88\u606F',
+      'Replays reasoning_content into assistant tool message when tool calls exist',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({
@@ -740,7 +740,7 @@ void main() {
     );
 
     test(
-      'reasoningText \u4E3A\u7A7A\u65F6\u4E0D\u4F1A\u4F2A\u9020 reasoning_content',
+      'Does not invent reasoning_content when reasoningText is empty',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({
@@ -790,7 +790,7 @@ void main() {
     );
 
     test(
-      'reasoning_details \u53EA\u6302\u5728\u6700\u7EC8 assistant \u6D88\u606F，\u4E0D\u91CD\u590D\u5230 tool call \u6D88\u606F',
+      'Attaches reasoning_details only to final assistant message, not tool calls',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({
@@ -853,7 +853,7 @@ void main() {
     );
 
     test(
-      '\u6062\u590D\u5DE5\u5177\u56DE\u7B54\u7EED\u5199\u65F6\u53EA\u53D1\u9001 tool call \u548C tool result',
+      'Resuming tool response sends only tool call and result',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({
@@ -911,7 +911,7 @@ void main() {
     );
 
     test(
-      '\u4F20\u5165\u6D88\u606F\u7F3A\u5C11 reasoningText \u65F6\u4F1A\u4ECE\u5DF2\u6301\u4E45\u5316\u6D88\u606F\u515C\u5E95\u56DE\u586B',
+      'Restores missing reasoningText from persisted messages',
       () {
         final persistedAssistant = _message(
           id: 'a1',
@@ -985,7 +985,7 @@ void main() {
     );
 
     test(
-      '\u5173\u95ED OpenAI \u5DE5\u5177\u6D88\u606F\u91CD\u5EFA\u65F6\u4E0D\u989D\u5916\u6CE8\u5165 assistant tool \u6D88\u606F',
+      'Disabled OpenAI tool reconstruction does not inject assistant tool messages',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({
@@ -1029,7 +1029,7 @@ void main() {
     );
 
     test(
-      '\u5DE5\u5177\u5386\u53F2\u4F1A\u4FDD\u7559 provider \u5143\u6570\u636E\u4F9B Claude \u548C Gemini \u91CD\u653E',
+      'Tool history retains provider metadata for Claude and Gemini replay',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({
@@ -1111,7 +1111,7 @@ void main() {
     );
 
     test(
-      '\u5DE5\u5177\u5386\u53F2\u4F1A\u4FDD\u7559 OpenAI \u517C\u5BB9 Gemini \u7684 extra_content',
+      'Tool history retains OpenAI-compatible Gemini extra_content',
       () {
         const extraContent = <String, dynamic>{
           'google': <String, dynamic>{'thought_signature': 'sig-create-memory'},
@@ -1156,7 +1156,7 @@ void main() {
     );
 
     test(
-      '\u672A\u5B8C\u6210\u7684\u5DE5\u5177\u5360\u4F4D\u4E8B\u4EF6\u4E0D\u4F1A\u88AB\u91CD\u5EFA\u4E3A API tool call',
+      'Incomplete placeholder tool events are not reconstructed as API calls',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({
@@ -1216,7 +1216,7 @@ void main() {
     );
 
     test(
-      'user \u6D88\u606F\u4F1A\u9644\u5E26\u5185\u90E8 revision id，strip \u540E\u4E0D\u518D\u51FA\u73B0',
+      'User messages include internal revision ID until stripped',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({}),
@@ -1255,7 +1255,7 @@ void main() {
     );
 
     test(
-      'WorldBook \u6CE8\u5165\u540E\u7684\u6700\u7EC8\u88C1\u526A\u4F1A\u9650\u5236\u53D1\u9001\u6D88\u606F\u6570',
+      'Final trimming caps sent messages after WorldBook injection',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({}),
@@ -1297,7 +1297,7 @@ void main() {
     );
 
     test(
-      '\u4E0A\u4E0B\u6587\u88C1\u526A\u4F1A\u4E22\u6389\u5386\u53F2\u56FE\u7247\u6D88\u606F\u5E76\u4FDD\u7559\u5185\u90E8 revision id',
+      'Context trimming drops old images while retaining internal revision IDs',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({}),
@@ -1361,7 +1361,7 @@ void main() {
     );
 
     test(
-      '\u65E0\u9650\u5236\u4E0A\u4E0B\u6587\u4E0D\u4F1A\u88C1\u6389\u4E00\u5343\u6761\u4EE5\u4E0A\u7684\u6D88\u606F',
+      'Unlimited context does not trim over one thousand messages',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({}),
@@ -1391,7 +1391,7 @@ void main() {
     );
 
     test(
-      '\u4E0A\u4E0B\u6587\u88C1\u526A\u4E0D\u4F1A\u4FDD\u7559\u7F3A\u5C11 tool result \u7684 assistant tool call',
+      'Context trimming removes assistant tool calls missing results',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({}),
@@ -1446,7 +1446,7 @@ void main() {
     );
 
     test(
-      '\u4E0A\u4E0B\u6587\u88C1\u526A\u4F1A\u4FDD\u7559\u5B8C\u6574\u7684 assistant tool call \u4E0E tool result',
+      'Context trimming preserves matched assistant tool calls and results',
       () {
         final service = MessageBuilderService(
           chatService: _FakeChatService({}),
@@ -1549,7 +1549,7 @@ void main() {
     ];
 
     test(
-      '\u7EAF\u6587\u672C\u6D88\u606F\u6CA1\u6709\u5F85\u89E3\u6790\u9644\u4EF6',
+      'Plain-text message has no pending attachment parsing',
       () async {
         final settings = await settingsWithOcr();
         final user = ChatMessage(
@@ -1570,7 +1570,7 @@ void main() {
     );
 
     test(
-      '\u5173\u95ED OCR \u65F6\u7EAF\u56FE\u7247\u6D88\u606F\u6CA1\u6709\u5F85\u89E3\u6790\u9644\u4EF6',
+      'Image-only message has no pending parsing when OCR disabled',
       () async {
         final settings = await newSettings();
         final user = ChatMessage(
@@ -1594,7 +1594,7 @@ void main() {
     );
 
     test(
-      '\u5F00\u542F OCR \u65F6\u56FE\u7247\u6D88\u606F\u9700\u8981\u89E3\u6790',
+      'Image message requires parsing when OCR enabled',
       () async {
         final settings = await settingsWithOcr();
         final user = ChatMessage(
@@ -1618,7 +1618,7 @@ void main() {
     );
 
     test(
-      '\u6587\u6863\u9644\u4EF6\u65E0\u8BBA OCR \u5F00\u5173\u90FD\u9700\u8981\u89E3\u6790',
+      'Document attachment always requires parsing regardless of OCR',
       () async {
         final settings = await newSettings();
         final user = ChatMessage(
@@ -1642,7 +1642,7 @@ void main() {
     );
 
     test(
-      '\u97F3\u89C6\u9891\u9644\u4EF6\u4E0D\u7B97\u5F85\u89E3\u6790\u6587\u6863',
+      'Audio and video attachments do not count as pending documents',
       () async {
         final settings = await newSettings();
         final user = ChatMessage(
@@ -1670,7 +1670,7 @@ void main() {
     );
 
     test(
-      '\u7F3A\u5C11 revision id \u7684 WorldBook lore \u4E0D\u7B97\u5F85\u89E3\u6790\u9644\u4EF6',
+      'WorldBook lore without revision ID is not a pending attachment',
       () async {
         final settings = await settingsWithOcr();
         expect(
@@ -1685,7 +1685,7 @@ void main() {
 
   group('MessageBuilderService.processUserMessagesForApi', () {
     test(
-      '\u4E0D\u5904\u7406\u7F3A\u5C11\u5185\u90E8 revision ID \u7684 WorldBook lore user \u6D88\u606F',
+      'Skips WorldBook lore user messages missing internal revision ID',
       () async {
         SharedPreferences.setMockInitialValues({});
         final settings = SettingsProvider(createBusinessTestPreferences());
