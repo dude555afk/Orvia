@@ -18,9 +18,14 @@ void main() {
         'zipformer-en-20m-2023-02-17',
       )!;
       expect(zipformer.name, 'Zipformer English 20M');
-      expect(zipformer.architecture, SherpaModelArchitecture.streamingZipformer);
-      expect(zipformer.archiveUri.toString(),
-          contains('sherpa-onnx-streaming-zipformer-en-20M-2023-02-17.tar.bz2'));
+      expect(
+        zipformer.architecture,
+        SherpaModelArchitecture.streamingZipformer,
+      );
+      expect(
+        zipformer.archiveUri.toString(),
+        contains('sherpa-onnx-streaming-zipformer-en-20M-2023-02-17.tar.bz2'),
+      );
       expect(zipformer.requiredFiles, [
         'encoder-epoch-99-avg-1.int8.onnx',
         'decoder-epoch-99-avg-1.onnx',
@@ -32,8 +37,7 @@ void main() {
         final model = SherpaModelCatalog.byId(id)!;
         expect(model.architecture, SherpaModelArchitecture.moonshine);
         expect(model.name, contains('English'));
-        expect(model.archiveUri.toString(),
-            contains('sherpa-onnx-$id.tar.bz2'));
+        expect(model.archiveUri.toString(), contains('sherpa-onnx-$id.tar.bz2'));
         expect(model.requiredFiles, [
           'preprocess.onnx',
           'encode.int8.onnx',
@@ -43,10 +47,15 @@ void main() {
         ]);
       }
 
-      expect(SherpaModelCatalog.models.every((model) =>
-          model.archiveUri.host == 'github.com' &&
-          model.archiveUri.path.contains('/k2-fsa/sherpa-onnx/') &&
-          !model.name.contains('Chinese')), isTrue);
+      expect(
+        SherpaModelCatalog.models.every(
+          (model) =>
+              model.archiveUri.host == 'github.com' &&
+              model.archiveUri.path.contains('/k2-fsa/sherpa-onnx/') &&
+              !model.name.contains('Chinese'),
+        ),
+        isTrue,
+      );
     });
   });
 
