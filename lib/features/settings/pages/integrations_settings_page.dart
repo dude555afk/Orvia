@@ -19,17 +19,21 @@ class IntegrationsSettingsPage extends StatelessWidget {
           const ListTile(
             leading: Icon(Lucide.Mail),
             title: Text('Email'),
-            subtitle: Text('Coming soon: connect email accounts, read, search, draft and reply. Sending will require your confirmation.'),
+            subtitle: Text(
+              'Coming soon: connect email accounts, read, search, draft and reply. Sending will require your confirmation.',
+            ),
           ),
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Lucide.Plug),
             title: const Text('MCP integrations'),
-            subtitle: const Text('Configure available external tools and services'),
-            trailing: const Icon(Lucide.ChevronRight),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const McpPage()),
+            subtitle: const Text(
+              'Configure available external tools and services',
             ),
+            trailing: const Icon(Lucide.ChevronRight),
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const McpPage())),
           ),
         ],
       ),
