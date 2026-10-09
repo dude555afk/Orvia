@@ -20,7 +20,7 @@ ChatMessage _message({
 void main() {
   group('MessageGenerationService.collectTrailingMessageIdsForRemoval', () {
     test(
-      '\u5220\u9664\u622A\u65AD\u70B9\u4E4B\u540E\u4E0D\u5C5E\u4E8E\u4FDD\u7559\u5206\u7EC4\u7684\u6D88\u606F',
+      'Removes messages after the truncation point outside retained groups',
       () {
         final messages = <ChatMessage>[
           _message(id: 'u1', role: 'user', groupId: 'u1'),
@@ -42,7 +42,7 @@ void main() {
     );
 
     test(
-      '\u622A\u65AD\u70B9\u5DF2\u7ECF\u5728\u5E95\u90E8\u65F6\u4E0D\u5220\u9664\u6D88\u606F',
+      'Keeps messages when the truncation point is already at the bottom',
       () {
         final messages = <ChatMessage>[
           _message(id: 'u1', role: 'user', groupId: 'u1'),
