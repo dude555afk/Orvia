@@ -67,8 +67,7 @@ abstract class AsrServiceOptions {
           'paraformer-zh-small-2024-03-09' => 'zipformer-en-20m-2023-02-17',
           'sense-voice-multilingual-int8-2025-09-09' =>
             'moonshine-tiny-en-int8',
-          'zipformer-zh-en-mobile-2023-02-20' =>
-            'moonshine-base-en-int8',
+          'zipformer-zh-en-mobile-2023-02-20' => 'moonshine-base-en-int8',
           _ => oldModelId,
         };
         return SherpaOnnxAsrOptions(
