@@ -19,7 +19,10 @@ void main() {
 
   test('default retry labels contain no Chinese characters', () {
     final chineseCharacters = RegExp(r'[\u3400-\u9FFF]');
-    for (final keyword in [...defaults.retryKeywords, ...defaults.stopKeywords]) {
+    for (final keyword in [
+      ...defaults.retryKeywords,
+      ...defaults.stopKeywords,
+    ]) {
       expect(keyword, isNot(matches(chineseCharacters)));
     }
   });
