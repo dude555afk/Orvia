@@ -19,6 +19,7 @@ import 'about_page.dart';
 import 'memory_settings_page.dart';
 import 'tts_services_page.dart';
 import 'tool_schema_settings_page.dart';
+import 'integrations_settings_page.dart';
 import 'log_viewer_page.dart';
 import '../../search/pages/search_services_page.dart';
 import '../../backup/pages/backup_page.dart';
@@ -368,6 +369,25 @@ class SettingsPage extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const NetworkProxyPage()),
+                  );
+                },
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+          header('Integrations'),
+          SectionCard(
+            children: [
+              _iosNavRow(
+                context,
+                icon: Lucide.Link,
+                label: 'Integrations',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const IntegrationsSettingsPage(),
+                    ),
                   );
                 },
               ),
