@@ -25,18 +25,18 @@ void main() {
     test('migrates retired offline presets and clears incompatible paths', () {
       final migrations = <String, String>{
         'paraformer-zh-small-2024-03-09': 'zipformer-en-20m-2023-02-17',
-        'sense-voice-multilingual-int8-2025-09-09':
-            'moonshine-tiny-en-int8',
-        'zipformer-zh-en-mobile-2023-02-20':
-            'moonshine-base-en-int8',
+        'sense-voice-multilingual-int8-2025-09-09': 'moonshine-tiny-en-int8',
+        'zipformer-zh-en-mobile-2023-02-20': 'moonshine-base-en-int8',
       };
       for (final entry in migrations.entries) {
-        final options = AsrServiceOptions.fromJson({
-          'kind': 'sherpa_onnx',
-          'modelId': entry.key,
-          'modelDirectory': '/old-model-files',
-          'language': 'zh',
-        }) as SherpaOnnxAsrOptions;
+        final options =
+            AsrServiceOptions.fromJson({
+                  'kind': 'sherpa_onnx',
+                  'modelId': entry.key,
+                  'modelDirectory': '/old-model-files',
+                  'language': 'zh',
+                })
+                as SherpaOnnxAsrOptions;
         expect(options.modelId, entry.value);
         expect(options.modelDirectory, isEmpty);
         expect(options.language, 'en');
