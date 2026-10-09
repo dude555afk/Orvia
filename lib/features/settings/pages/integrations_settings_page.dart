@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../mcp/pages/mcp_page.dart';
+import 'email_integration_page.dart';
 
 /// Central place for account and service integrations.
 ///
-/// Native email connection isn't implemented yet. Keep it visibly unavailable
-/// rather than presenting a Connect button that cannot authorize an account.
+/// Connected accounts and extension configuration live here.
 class IntegrationsSettingsPage extends StatelessWidget {
   const IntegrationsSettingsPage({super.key});
 
@@ -15,11 +15,13 @@ class IntegrationsSettingsPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Integrations')),
       body: ListView(
         children: [
-          const ListTile(
-            leading: Icon(Icons.mail_outline),
-            title: Text('Email'),
-            subtitle: Text(
-              'Coming soon: connect email accounts, read, search, draft and reply. Sending will require your confirmation.',
+          ListTile(
+            leading: const Icon(Icons.mail_outline),
+            title: const Text('Email'),
+            subtitle: const Text('Connect IMAP/SMTP accounts and manage email tools'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const EmailIntegrationPage()),
             ),
           ),
           const Divider(height: 1),

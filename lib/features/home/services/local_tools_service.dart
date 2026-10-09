@@ -7,6 +7,8 @@ import 'package:math_expressions/math_expressions.dart';
 
 import '../../../core/models/assistant.dart';
 import '../../../core/models/health_data_type.dart';
+import '../../../core/services/email/email_integration_service.dart';
+import '../../../core/services/email/email_tool_definitions.dart';
 
 typedef TextToSpeechStarter = Future<void> Function(String text);
 
@@ -29,6 +31,16 @@ class LocalToolNames {
   static const String remindersCreate = 'reminders_create';
   static const String remindersComplete = 'reminders_complete';
 
+  static const String setupEmail = 'setup_email';
+  static const String checkEmail = 'check_email';
+  static const String readEmail = 'read_email';
+  static const String searchEmail = 'search_email';
+  static const String replyEmail = 'reply_email';
+  static const String composeEmail = 'compose_email';
+
+  static const List<String> emailTools = EmailToolDefinitions.names;
+  static const List<String> emailSendTools = EmailToolDefinitions.sends;
+
   static const List<String> all = [
     timeInfo,
     clipboard,
@@ -45,12 +57,14 @@ class LocalToolNames {
     remindersQuery,
     remindersCreate,
     remindersComplete,
+    ...emailTools,
   ];
 
   static const List<String> requiresUserApproval = [
     calendarCreate,
     remindersCreate,
     remindersComplete,
+    ...emailSendTools,
   ];
 }
 
@@ -405,6 +419,13 @@ class LocalToolsService {
   /// assistant "Local tools" tab.
   static bool isAvailableOnThisPlatform(String name) {
     switch (name) {
+      case LocalToolNames.setupEmail:
+      case LocalToolNames.checkEmail:
+      case LocalToolNames.readEmail:
+      case LocalToolNames.searchEmail:
+      case LocalToolNames.replyEmail:
+      case LocalToolNames.composeEmail:
+        return !kIsWeb;
       case LocalToolNames.phoneControl:
         return DeviceLocalTools.phoneControlSupported;
       case LocalToolNames.screenTime:
@@ -434,6 +455,9 @@ class LocalToolsService {
   };
 
   static Map<String, dynamic> definitionFor(String name) {
+    if (LocalToolNames.emailTools.contains(name)) {
+      return EmailToolDefinitions.forName(name);
+    }
     switch (name) {
       case LocalToolNames.phoneControl:
         return _phoneControlDefinition;
@@ -507,9 +531,15 @@ class LocalToolsService {
     Map<String, dynamic> args,
     Assistant? assistant, {
     TextToSpeechStarter? onSpeakText,
+    bool emailSendApproved = false,
   }) async {
     if (assistant == null || !assistant.localToolIds.contains(name)) {
       return null;
+    }
+    if (LocalToolNames.emailTools.contains(name) && !kIsWeb) {
+      return EmailIntegrationService.instance.handleTool(
+        name, args, sendApproved: emailSendApproved,
+      );
     }
     if (name == LocalToolNames.timeInfo) {
       return jsonEncode(_buildTimeInfoPayload(DateTime.now()));
