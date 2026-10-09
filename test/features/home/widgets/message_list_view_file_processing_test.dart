@@ -25,7 +25,7 @@ void main() {
   });
 
   testWidgets(
-    '\u89E3\u6790\u6587\u4EF6\u6761\u53EA\u51FA\u73B0\u5728\u6B63\u5728\u89E3\u6790\u7684\u90A3\u6761\u52A9\u624B\u6D88\u606F\u4E0A',
+    'File processing indicator appears only on the assistant message being parsed',
     (tester) async {
       final scrollController = scroll_ctrl.ChatAutoFollowScrollController();
       final listController = ListController();
