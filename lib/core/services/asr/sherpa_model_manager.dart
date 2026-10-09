@@ -9,7 +9,7 @@ import 'package:path/path.dart' as p;
 
 import '../../../utils/app_directories.dart';
 
-enum SherpaModelArchitecture { paraformer, senseVoice, streamingZipformer }
+enum SherpaModelArchitecture { paraformer, senseVoice, streamingZipformer, moonshine }
 
 /// A downloadable model published by sherpa-onnx's official `asr-models`
 /// GitHub release.
@@ -24,6 +24,9 @@ final class SherpaModelDefinition {
     required this.archiveRoot,
     required this.requiredFiles,
     this.modelFile,
+    this.preprocessorFile,
+    this.uncachedDecoderFile,
+    this.cachedDecoderFile,
     this.tokensFile = 'tokens.txt',
     this.encoderFile,
     this.decoderFile,
@@ -40,6 +43,9 @@ final class SherpaModelDefinition {
   final List<String> requiredFiles;
 
   final String? modelFile;
+  final String? preprocessorFile;
+  final String? uncachedDecoderFile;
+  final String? cachedDecoderFile;
   final String tokensFile;
   final String? encoderFile;
   final String? decoderFile;
@@ -49,49 +55,16 @@ final class SherpaModelDefinition {
 abstract final class SherpaModelCatalog {
   static final List<SherpaModelDefinition> models = List.unmodifiable([
     SherpaModelDefinition(
-      id: 'paraformer-zh-small-2024-03-09',
-      name: 'Paraformer \u4E2D\u6587\u5C0F\u6A21\u578B',
-      description:
-          '\u4E2D\u6587\u4F18\u5148，\u517C\u987E\u7B80\u5355\u82F1\u6587，\u4E0B\u8F7D\u7EA6 78 MB',
-      architecture: SherpaModelArchitecture.paraformer,
-      archiveUri: Uri.parse(
-        'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
-        'sherpa-onnx-paraformer-zh-small-2024-03-09.tar.bz2',
-      ),
-      downloadBytes: 77920048,
-      archiveRoot: 'sherpa-onnx-paraformer-zh-small-2024-03-09',
-      requiredFiles: ['model.int8.onnx', 'tokens.txt'],
-      modelFile: 'model.int8.onnx',
-    ),
-    SherpaModelDefinition(
-      id: 'sense-voice-multilingual-int8-2025-09-09',
-      name: 'SenseVoice int8 \u591A\u8BED\u6A21\u578B',
-      description:
-          '\u652F\u6301\u4E2D\u6587、\u82F1\u6587、\u7CA4\u8BED、\u65E5\u8BED\u548C\u97E9\u8BED，\u4E0B\u8F7D\u7EA6 166 MB',
-      architecture: SherpaModelArchitecture.senseVoice,
-      archiveUri: Uri.parse(
-        'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
-        'sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2025-09-09.tar.bz2',
-      ),
-      downloadBytes: 165783878,
-      archiveRoot: 'sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2025-09-09',
-      requiredFiles: ['model.int8.onnx', 'tokens.txt'],
-      modelFile: 'model.int8.onnx',
-    ),
-    SherpaModelDefinition(
-      id: 'zipformer-zh-en-mobile-2023-02-20',
-      name: 'Zipformer \u4E2D\u82F1 Mobile',
-      description:
-          '\u4E2D\u82F1\u53CC\u8BED\u6D41\u5F0F\u8BC6\u522B，\u4E0B\u8F7D\u7EA6 347 MB',
+      id: 'zipformer-en-20m-2023-02-17',
+      name: 'Zipformer English 20M',
+      description: 'English-only streaming recognition (about 128 MB download)',
       architecture: SherpaModelArchitecture.streamingZipformer,
       archiveUri: Uri.parse(
         'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
-        'sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20-mobile'
-        '.tar.bz2',
+        'sherpa-onnx-streaming-zipformer-en-20M-2023-02-17.tar.bz2',
       ),
-      downloadBytes: 346965352,
-      archiveRoot:
-          'sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20-mobile',
+      downloadBytes: 128000000,
+      archiveRoot: 'sherpa-onnx-streaming-zipformer-en-20M-2023-02-17',
       requiredFiles: [
         'encoder-epoch-99-avg-1.int8.onnx',
         'decoder-epoch-99-avg-1.onnx',
@@ -101,6 +74,52 @@ abstract final class SherpaModelCatalog {
       encoderFile: 'encoder-epoch-99-avg-1.int8.onnx',
       decoderFile: 'decoder-epoch-99-avg-1.onnx',
       joinerFile: 'joiner-epoch-99-avg-1.int8.onnx',
+    ),
+    SherpaModelDefinition(
+      id: 'moonshine-tiny-en-int8',
+      name: 'Moonshine Tiny English',
+      description: 'Fast, English-only offline transcription (about 103 MB download)',
+      architecture: SherpaModelArchitecture.moonshine,
+      archiveUri: Uri.parse(
+        'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
+        'sherpa-onnx-moonshine-tiny-en-int8.tar.bz2',
+      ),
+      downloadBytes: 103000000,
+      archiveRoot: 'sherpa-onnx-moonshine-tiny-en-int8',
+      requiredFiles: [
+        'preprocess.onnx',
+        'encode.int8.onnx',
+        'uncached_decode.int8.onnx',
+        'cached_decode.int8.onnx',
+        'tokens.txt',
+      ],
+      preprocessorFile: 'preprocess.onnx',
+      encoderFile: 'encode.int8.onnx',
+      uncachedDecoderFile: 'uncached_decode.int8.onnx',
+      cachedDecoderFile: 'cached_decode.int8.onnx',
+    ),
+    SherpaModelDefinition(
+      id: 'moonshine-base-en-int8',
+      name: 'Moonshine Base English',
+      description: 'Higher-accuracy English transcription (about 239 MB download)',
+      architecture: SherpaModelArchitecture.moonshine,
+      archiveUri: Uri.parse(
+        'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
+        'sherpa-onnx-moonshine-base-en-int8.tar.bz2',
+      ),
+      downloadBytes: 239000000,
+      archiveRoot: 'sherpa-onnx-moonshine-base-en-int8',
+      requiredFiles: [
+        'preprocess.onnx',
+        'encode.int8.onnx',
+        'uncached_decode.int8.onnx',
+        'cached_decode.int8.onnx',
+        'tokens.txt',
+      ],
+      preprocessorFile: 'preprocess.onnx',
+      encoderFile: 'encode.int8.onnx',
+      uncachedDecoderFile: 'uncached_decode.int8.onnx',
+      cachedDecoderFile: 'cached_decode.int8.onnx',
     ),
   ]);
 
