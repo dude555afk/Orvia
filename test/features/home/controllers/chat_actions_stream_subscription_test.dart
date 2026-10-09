@@ -7,7 +7,7 @@ import 'package:orvia/features/home/controllers/chat_actions.dart';
 void main() {
   group('ChatActions.resolveStreamErrorContent', () {
     test(
-      '\u96F6\u6B63\u6587\u5931\u8D25\u65F6\u628A\u9519\u8BEF\u4FE1\u606F\u5199\u5165\u52A9\u624B\u6D88\u606F',
+      'On failure without body writes error text into assistant message',
       () {
         expect(
           ChatActions.resolveStreamErrorContent(
@@ -20,7 +20,7 @@ void main() {
     );
 
     test(
-      '\u5DF2\u6709\u90E8\u5206\u56DE\u590D\u65F6\u4FDD\u7559\u56DE\u590D\u6B63\u6587',
+      'Preserves partial assistant response on failure',
       () {
         expect(
           ChatActions.resolveStreamErrorContent(
@@ -94,7 +94,7 @@ void main() {
     );
 
     test(
-      '\u6B63\u5E38\u6D41\u6309\u987A\u5E8F\u5904\u7406 chunk \u5E76\u8C03\u7528 done',
+      'Processes chunks in order and calls done on normal stream',
       () async {
         final controller = async.StreamController<int>();
         final done = async.Completer<void>();
@@ -124,7 +124,7 @@ void main() {
       },
     );
 
-    test('\u7A7A\u6D41\u76F4\u63A5\u8C03\u7528 done', () async {
+    test('Calls done immediately on empty stream', () async {
       final controller = async.StreamController<int>();
       final done = async.Completer<void>();
 
@@ -149,7 +149,7 @@ void main() {
     });
 
     test(
-      'chunk \u5904\u7406\u5F02\u6B65\u5931\u8D25\u65F6\u8FDB\u5165 error \u6536\u5C3E\u4E14\u4E0D\u518D\u8C03\u7528 done',
+      'Async chunk handling failure finalizes error without calling done',
       () async {
         final controller = async.StreamController<int>();
         final errorSeen = async.Completer<Object>();
@@ -187,7 +187,7 @@ void main() {
     );
 
     test(
-      'done \u6536\u5C3E\u5F02\u6B65\u5931\u8D25\u65F6\u8FDB\u5165 error \u6536\u5C3E',
+      'Async done handler failure enters error finalization',
       () async {
         final controller = async.StreamController<int>();
         final errorSeen = async.Completer<Object>();
@@ -243,7 +243,7 @@ void main() {
     );
 
     test(
-      '\u5F02\u6B65 handler \u672A\u5B8C\u6210\u524D\u4E0D\u4F1A\u5E76\u53D1\u5904\u7406\u540E\u7EED chunk',
+      'Does not process subsequent chunks concurrently with pending async handler',
       () async {
         final controller = async.StreamController<int>();
         final firstStarted = async.Completer<void>();
@@ -285,7 +285,7 @@ void main() {
     );
 
     test(
-      '\u5F02\u6B65 handler \u672A\u5B8C\u6210\u65F6\u7F51\u7EDC\u8BA2\u9605\u4FDD\u6301\u8BFB\u53D6\u5E76\u5728\u672C\u5730\u6392\u961F',
+      'Subscription keeps reading and locally queues chunks while handler is pending',
       () async {
         final controller = async.StreamController<int>(sync: true);
         addTearDown(controller.close);

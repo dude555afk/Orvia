@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('LatestWinsCheckpointWriter', () {
     test(
-      '\u5199\u5165\u4E2D\u53EA\u4FDD\u7559\u6700\u65B0 checkpoint',
+      'Keeps only latest checkpoint while writing',
       () async {
         final firstStarted = Completer<void>();
         final releaseFirst = Completer<void>();
@@ -37,7 +37,7 @@ void main() {
     );
 
     test(
-      '\u76F8\u90BB checkpoint \u8D77\u59CB\u65F6\u95F4\u81F3\u5C11\u95F4\u9694 250ms',
+      'Starts successive checkpoints at least 250 milliseconds apart',
       () async {
         var now = DateTime(2026);
         final delays = <Duration>[];
@@ -71,7 +71,7 @@ void main() {
     );
 
     test(
-      'final \u7B49\u5F85\u5728\u9014\u5199\u5E76\u4E22\u5F03\u5DF2\u88AB\u7EC8\u6001\u8986\u76D6\u7684 pending snapshot',
+      'Final waits for in-flight writes and discards superseded pending snapshot',
       () async {
         final firstStarted = Completer<void>();
         final releaseFirst = Completer<void>();
@@ -106,7 +106,7 @@ void main() {
     );
 
     test(
-      'checkpoint \u5931\u8D25\u53EF\u89C2\u5BDF\u4E14\u6210\u529F final \u53EF\u6062\u590D',
+      'Checkpoint failures are observable and successful final can recover',
       () async {
         final errors = <Object>[];
         final writer = LatestWinsCheckpointWriter<int>(
@@ -129,7 +129,7 @@ void main() {
     );
 
     test(
-      '\u5931\u8D25\u7684 checkpoint \u4E0D\u4F1A\u6BD2\u5316\u540E\u7EED\u5199\u5165\u6216 barrier',
+      'Failed checkpoint does not poison subsequent writes or barrier',
       () async {
         final errors = <Object>[];
         var attempt = 0;
@@ -164,7 +164,7 @@ void main() {
     );
 
     test(
-      '\u6CA1\u6709 checkpoint \u65F6 final \u7ACB\u5373\u6267\u884C',
+      'Final runs immediately if no checkpoint exists',
       () async {
         final writer = LatestWinsCheckpointWriter<int>(
           write: (_) async => fail('no checkpoint expected'),
@@ -242,7 +242,7 @@ void main() {
     );
 
     test(
-      '\u88AB\u8986\u76D6\u7684 pending builder \u4ECE\u672A\u6267\u884C',
+      'Superseded pending builder never executes',
       () async {
         final firstStarted = Completer<void>();
         final releaseFirst = Completer<void>();

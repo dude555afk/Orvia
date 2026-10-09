@@ -5,7 +5,7 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 
 void main() {
   testWidgets(
-    '\u6D88\u606F\u753B\u5E03\u94FA\u5230\u7CFB\u7EDF\u72B6\u6001\u680F\u540E\u65B9，\u5E95\u90E8\u8986\u76D6\u5C42\u8D34\u4F4F\u5E95\u90E8',
+    'Message canvas extends behind status bar and bottom overlay sticks to bottom',
     (tester) async {
       const rootKey = Key('root');
       const contentKey = Key('content');
@@ -39,7 +39,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5E95\u90E8\u8986\u76D6\u5C42\u6700\u9AD8\u53EA\u5230\u9876\u680F\u4E0B\u65B9，\u4E0D\u4F1A\u538B\u4F4F\u6807\u9898',
+    'Bottom overlay stops below top bar without covering title',
     (tester) async {
       const overlayKey = Key('overlay');
 
@@ -69,7 +69,7 @@ void main() {
   );
 
   testWidgets(
-    '\u8F93\u5165\u6846\u5C42\u4F4D\u4E8E\u524D\u666F\u906E\u7F69\u4E0A\u65B9',
+    'Composer layer appears above foreground scrim',
     (tester) async {
       var inputTaps = 0;
       var foregroundTaps = 0;
@@ -107,7 +107,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5E95\u90E8\u8986\u76D6\u5C42\u540E\u65B9\u6709\u6E10\u53D8\u906E\u7F69\u9694\u5F00\u6D88\u606F\u5185\u5BB9',
+    'Bottom overlay uses gradient scrim to separate message content',
     (tester) async {
       const fadeKey = Key('chat-input-overlay-bottom-fade');
 
@@ -146,7 +146,7 @@ void main() {
   );
 
   testWidgets(
-    '\u9876\u90E8\u5BFC\u822A\u680F\u540E\u65B9\u6709\u6E10\u53D8\u906E\u7F69\u9694\u5F00\u6D88\u606F\u5185\u5BB9',
+    'Top navigation uses gradient scrim to separate message content',
     (tester) async {
       const fadeKey = Key('chat-input-overlay-top-fade');
 
@@ -187,7 +187,7 @@ void main() {
   );
 
   testWidgets(
-    '\u6EDA\u52A8\u4E2D\u7684\u6D88\u606F\u6301\u7EED\u7ED8\u5236\u5230\u7CFB\u7EDF\u72B6\u6001\u680F\u533A\u57DF',
+    'Scrolling messages continue drawing behind system status bar',
     (tester) async {
       const firstMessageKey = Key('overflow-message');
       final scrollController = ScrollController(initialScrollOffset: 132);
@@ -232,7 +232,7 @@ void main() {
   );
 
   testWidgets(
-    '\u80CC\u666F\u56FE\u6A21\u5F0F\u4E0B\u7528\u80CC\u666F\u8986\u76D6\u9876\u90E8\u4E14\u4E0D\u6E32\u67D3\u7EAF\u8272\u906E\u7F69',
+    'Wallpaper mode covers top without solid-color scrim',
     (tester) async {
       const bottomFadeKey = Key('chat-input-overlay-bottom-fade');
       const bottomBackgroundKey = Key('chat-input-overlay-bottom-background');
@@ -289,7 +289,7 @@ void main() {
   );
 
   testWidgets(
-    '\u952E\u76D8\u5F39\u51FA\u65F6\u80CC\u666F\u4ECD\u6309\u952E\u76D8\u6536\u8D77\u65F6\u7684\u9AD8\u5EA6\u5E03\u5C40',
+    'Background layout keeps full height while keyboard is visible',
     (tester) async {
       const backgroundKey = Key('background');
       const contentKey = Key('content');
