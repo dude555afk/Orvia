@@ -108,7 +108,7 @@ void main() {
   );
 
   testWidgets(
-    'macOS \u6D88\u606F\u5217\u8868\u6EDA\u52A8\u4E0D\u4E3B\u52A8\u6E05\u9664\u6587\u672C\u9009\u533A\u7126\u70B9',
+    'macOS message list scroll preserves text selection focus',
     (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       final scrollController = ScrollController();
@@ -162,7 +162,7 @@ void main() {
   );
 
   testWidgets(
-    'Android \u6D88\u606F\u5217\u8868\u6EDA\u52A8\u4ECD\u7136\u6536\u8D77\u952E\u76D8',
+    'Android message list scroll still hides keyboard',
     (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       final scrollController = ScrollController();
@@ -210,7 +210,7 @@ void main() {
   );
 
   testWidgets(
-    '\u6D88\u606F\u5217\u8868\u5E95\u90E8\u7559\u767D\u4F7F\u7528\u4F20\u5165\u7684\u8F93\u5165\u6846\u8986\u76D6\u9AD8\u5EA6',
+    'Bottom padding uses supplied composer overlay height',
     (tester) async {
       final scrollController = ScrollController();
       final listController = ListController();
@@ -250,7 +250,7 @@ void main() {
   );
 
   testWidgets(
-    '\u6D88\u606F\u5217\u8868\u9876\u90E8\u7559\u767D\u4F7F\u7528\u4F20\u5165\u7684\u5BFC\u822A\u680F\u8986\u76D6\u9AD8\u5EA6',
+    'Top padding uses supplied navigation overlay height',
     (tester) async {
       final scrollController = ScrollController();
       final listController = ListController();
@@ -292,7 +292,7 @@ void main() {
   );
 
   testWidgets(
-    '\u7F6E\u9876\u6D41\u5F0F\u6307\u793A\u5668\u6FC0\u6D3B\u65F6\u4FDD\u7559\u989D\u5916\u5E95\u90E8\u7A7A\u95F4',
+    'Pinned streaming indicator reserves extra bottom space',
     (tester) async {
       final scrollController = ScrollController();
       final listController = ListController();
@@ -333,7 +333,7 @@ void main() {
   );
 
   testWidgets(
-    '\u6D41\u5F0F\u601D\u8003\u66F4\u65B0\u7F3A\u5C11\u8D77\u59CB\u65F6\u95F4\u65F6\u4FDD\u7559\u5DF2\u6709\u8BA1\u65F6\u8D77\u70B9',
+    'Streaming reasoning update without start time preserves timer origin',
     (tester) async {
       final scrollController = ScrollController();
       final listController = ListController();
@@ -418,7 +418,7 @@ void main() {
   );
 
   testWidgets(
-    '\u601D\u8003\u5361\u5185\u90E8\u6EDA\u52A8\u4E0D\u6682\u505C\u6D41\u5F0F\u6B63\u6587\u66F4\u65B0',
+    'Scrolling inside reasoning card does not pause streamed response updates',
     (tester) async {
       final scrollController = ScrollController();
       final listController = ListController();
@@ -513,7 +513,7 @@ void main() {
   );
 
   testWidgets(
-    '\u7528\u6237\u62D6\u52A8\u79BB\u5F00\u5E95\u90E8\u65F6\u6682\u505C\u5E94\u7528\u6D41\u5F0F\u5185\u5BB9\u66F4\u65B0',
+    'Dragging away from bottom pauses applying streamed updates',
     (tester) async {
       final scrollController = ScrollController();
       final listController = ListController();
@@ -617,7 +617,7 @@ void main() {
   );
 
   testWidgets(
-    '\u8D34\u8FD1\u5E95\u90E8\u65F6\u7528\u6237\u6EDA\u52A8\u4ECD\u767B\u8BB0\u610F\u56FE\u5E76\u5728\u677E\u624B\u540E\u6062\u590D\u6D41\u5F0F\u5185\u5BB9',
+    'Near-bottom user scrolling records intent and resumes streaming after release',
     (tester) async {
       var userIntentCalls = 0;
       final scrollController = ScrollController();
@@ -726,7 +726,7 @@ void main() {
   );
 
   testWidgets(
-    '\u6EDA\u8F6E\u6EDA\u52A8\u65F6\u6682\u505C\u5E94\u7528\u6D41\u5F0F\u5185\u5BB9\u66F4\u65B0',
+    'Mouse wheel scrolling pauses applying streamed updates',
     (tester) async {
       final scrollController = ScrollController();
       final listController = ListController();
@@ -826,7 +826,7 @@ void main() {
   );
 
   testWidgets(
-    '\u672A\u5E03\u5C40\u7684\u957F\u6D88\u606F\u6309\u5185\u5BB9\u957F\u5EA6\u4F30\u7B97\u9AD8\u5EA6\u800C\u975E\u9ED8\u8BA4 100px',
+    'Unlaid-out long messages estimate height from length instead of 100 pixels',
     (tester) async {
       final scrollController = ScrollController();
       final listController = ListController();
@@ -904,7 +904,7 @@ void main() {
   );
 
   testWidgets(
-    '\u4F30\u7B97\u9AD8\u5EA6\u8DDF\u968F\u7CFB\u7EDF\u65E0\u969C\u788D\u5B57\u4F53\u7F29\u653E',
+    'Estimated height respects accessibility font scaling',
     (tester) async {
       final listController = ListController();
       final body = List<String>.filled(
@@ -940,7 +940,7 @@ void main() {
   );
 
   testWidgets(
-    '\u6298\u53E0\u7684\u5185\u8054\u601D\u8003\u5757\u4E0D\u8BA1\u5165\u4F30\u7B97\u9AD8\u5EA6',
+    'Collapsed inline reasoning excluded from height estimate',
     (tester) async {
       final listController = ListController();
       final thinking = List<String>.filled(
@@ -967,7 +967,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5C55\u5F00\u601D\u8003\u65F6\u4F30\u7B97\u9AD8\u5EA6\u8BA1\u5165\u601D\u8003\u6B63\u6587',
+    'Expanded reasoning body included in height estimate',
     (tester) async {
       final listController = ListController();
       final thinking = List<String>.filled(
@@ -995,7 +995,7 @@ void main() {
   );
 
   testWidgets(
-    '\u7528\u6237\u6D88\u606F\u91CC\u7684\u5B57\u9762\u91CF think \u6807\u7B7E\u4ECD\u8BA1\u5165\u4F30\u7B97\u9AD8\u5EA6',
+    'Literal think tag in user message counted toward height estimate',
     (tester) async {
       final listController = ListController();
       final thinking = List<String>.filled(
@@ -1022,7 +1022,7 @@ void main() {
   );
 
   testWidgets(
-    '\u4F30\u7B97\u9AD8\u5EA6\u5FFD\u7565 Markdown \u94FE\u63A5\u91CC\u7684\u76EE\u6807\u5730\u5740',
+    'Estimated height ignores Markdown link targets',
     (tester) async {
       final listController = ListController();
       final target = 'https://example.com/${'a' * 4000}';
@@ -1044,7 +1044,7 @@ void main() {
   );
 
   testWidgets(
-    '\u4F30\u7B97\u9AD8\u5EA6\u4E0D\u628A\u8D85\u957F\u4EE3\u7801\u884C\u6309\u6362\u884C\u6298\u7B97',
+    'Long unwrapped code line is not estimated as wrapped',
     (tester) async {
       final listController = ListController();
       final codeLine = 'x' * 4000;
@@ -1066,7 +1066,7 @@ void main() {
   );
 
   testWidgets(
-    '\u4EE3\u7801\u5757\u6362\u884C\u65F6\u4F30\u7B97\u9AD8\u5EA6\u6309\u6362\u884C\u6298\u7B97',
+    'Wrapped code blocks contribute wrapped-line height',
     (tester) async {
       final listController = ListController();
       final codeLine = 'x' * 4000;
@@ -1090,7 +1090,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5C55\u5F00\u7684\u72EC\u7ACB\u601D\u8003\u5185\u5BB9\u8BA1\u5165\u4F30\u7B97\u9AD8\u5EA6',
+    'Expanded standalone reasoning included in height estimate',
     (tester) async {
       final listController = ListController();
       final reasoningText = List.filled(
@@ -1121,7 +1121,7 @@ void main() {
   );
 
   testWidgets(
-    '\u6298\u53E0\u7684\u72EC\u7ACB\u601D\u8003\u5185\u5BB9\u53EA\u6309\u56FA\u5B9A\u5361\u7247\u9AD8\u5EA6\u4F30\u7B97',
+    'Collapsed standalone reasoning uses fixed card height',
     (tester) async {
       final listController = ListController();
       final reasoningText = List.filled(
@@ -1150,7 +1150,7 @@ void main() {
   );
 
   testWidgets(
-    '\u9876\u90E8\u589E\u91CF\u8F7D\u5165\u53D8\u9AD8\u6D88\u606F\u65F6\u4FDD\u6301\u5F53\u524D\u53EF\u89C1\u6D88\u606F\u4F4D\u7F6E',
+    'Prepending taller messages preserves visible scroll position',
     (tester) async {
       final key = GlobalKey<_PrependingMessageListHarnessState>();
       await tester.pumpWidget(_PrependingMessageListHarness(key: key));
@@ -1172,7 +1172,7 @@ void main() {
   );
 
   testWidgets(
-    '\u7B49\u957F\u7A97\u53E3\u5411\u524D\u6ED1\u52A8\u65F6\u4FDD\u6301\u5F53\u524D\u53EF\u89C1\u6D88\u606F\u4F4D\u7F6E',
+    'Sliding equal-size window backward preserves visible scroll position',
     (tester) async {
       final key = GlobalKey<_PrependingMessageListHarnessState>();
       await tester.pumpWidget(_PrependingMessageListHarness(key: key));
@@ -1194,7 +1194,7 @@ void main() {
   );
 
   testWidgets(
-    '\u7F16\u8F91\u53EF\u89C1\u7A97\u53E3\u5185\u7684\u6D88\u606F\u540E\u4FDD\u6301\u539F\u6709\u9605\u8BFB\u951A\u70B9',
+    'Editing visible message preserves reading anchor',
     (tester) async {
       final key = GlobalKey<_PrependingMessageListHarnessState>();
       await tester.pumpWidget(_PrependingMessageListHarness(key: key));
@@ -1223,7 +1223,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5220\u9664\u89C6\u53E3\u4E0A\u65B9\u7684\u6D88\u606F\u540E\u4FDD\u6301\u5F53\u524D\u53EF\u89C1\u6D88\u606F\u4F4D\u7F6E',
+    'Deleting messages above viewport preserves visible position',
     (tester) async {
       final key = GlobalKey<_PrependingMessageListHarnessState>();
       await tester.pumpWidget(_PrependingMessageListHarness(key: key));
@@ -1255,7 +1255,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5220\u9664\u89C6\u53E3\u4E0B\u65B9\u7684\u6D88\u606F\u4E0D\u79FB\u52A8\u5F53\u524D\u53EF\u89C1\u5185\u5BB9',
+    'Deleting messages below viewport preserves visible content',
     (tester) async {
       final key = GlobalKey<_PrependingMessageListHarnessState>();
       await tester.pumpWidget(_PrependingMessageListHarness(key: key));
@@ -1284,7 +1284,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5C55\u5F00\u7684\u957F\u601D\u8003\u5361\u5728\u573A\u65F6\u5220\u9664\u6D88\u606F\u4ECD\u4FDD\u6301\u53EF\u89C1\u4F4D\u7F6E',
+    'Deleting messages preserves position with expanded long reasoning card',
     (tester) async {
       final key = GlobalKey<_PrependingMessageListHarnessState>();
       await tester.pumpWidget(
@@ -1330,7 +1330,7 @@ void main() {
   );
 
   testWidgets(
-    '\u5220\u9664\u52A8\u753B\u5C06\u6D88\u606F\u6DE1\u51FA\u6536\u8D77\u5E76\u62FC\u63A5\u76F8\u90BB\u6D88\u606F',
+    'Delete animation fades and collapses message while joining neighbors',
     (tester) async {
       final key = GlobalKey<_PrependingMessageListHarnessState>();
       await tester.pumpWidget(_PrependingMessageListHarness(key: key));
