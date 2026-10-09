@@ -26,7 +26,7 @@ void main() {
         File(p.join(root.path, AppDatabase.databaseFileName));
 
     test(
-      '\u9996\u6B21\u5B89\u88C5\u521B\u5EFA\u5E26 identity \u7684\u6570\u636E\u5E93\u4E0E receipt',
+      'First installation creates database with identity and receipt',
       () async {
         final receipt = await DatabaseInstallationGate.ensureReady(
           appDataDirectory: directory,
@@ -47,7 +47,7 @@ void main() {
     );
 
     test(
-      '\u6B8B\u7559\u7684 publish \u4E34\u65F6\u6587\u4EF6\u4E0D\u4F1A\u963B\u585E\u9996\u6B21\u5B89\u88C5',
+      'Stale publish temp files do not block first installation',
       () async {
         // Simulate a crash between temp creation and rename during a previous
         // publish attempt, using the legacy fixed temp name. The leftover must
@@ -79,7 +79,7 @@ void main() {
     );
 
     test(
-      'identity \u4E00\u81F4\u7684\u91CD\u590D\u542F\u52A8\u4E0D\u6539 receipt',
+      'Restart with matching identity preserves receipt',
       () async {
         final first = await DatabaseInstallationGate.ensureReady(
           appDataDirectory: directory,
@@ -94,7 +94,7 @@ void main() {
     );
 
     test(
-      '\u5347\u7EA7\u65F6 adoption \u5DF2\u6709\u6709\u6548\u6570\u636E\u5E93\u4E14\u4E0D\u6E05\u7A7A\u6570\u636E',
+      'Upgrade adopts a valid existing database without clearing data',
       () async {
         final repository = ChatDatabaseRepository.open(
           file: databaseFile(directory),
@@ -141,7 +141,7 @@ void main() {
     );
 
     test(
-      '\u5DF2\u6709 receipt \u4F46\u6570\u636E\u5E93\u7F3A\u5931\u65F6\u62D2\u7EDD\u4E14\u4E0D\u521B\u5EFA\u7A7A\u5E93',
+      'Existing receipt with missing database rejects without creating empty database',
       () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
         await databaseFile(directory).delete();
@@ -161,7 +161,7 @@ void main() {
     );
 
     test(
-      '\u635F\u574F\u6570\u636E\u5E93\u5728\u65E0 receipt \u5347\u7EA7\u573A\u666F\u4E5F\u62D2\u7EDD\u4E14\u4E0D\u8986\u76D6',
+      'Corrupt database without receipt is rejected without overwrite during upgrade',
       () async {
         final file = databaseFile(directory);
         await file.writeAsString('not a sqlite database');
@@ -181,7 +181,7 @@ void main() {
     );
 
     test(
-      '\u9AD8\u4E8E\u5F53\u524D schema \u7684\u6570\u636E\u5E93\u62D2\u7EDD down migration',
+      'Database with newer schema rejects downgrade migration',
       () async {
         final file = databaseFile(directory);
         final raw = sqlite.sqlite3.open(file.path);
@@ -202,7 +202,7 @@ void main() {
     );
 
     test(
-      '\u635F\u574F installation receipt \u65F6\u62D2\u7EDD\u6253\u5F00\u6570\u636E\u5E93',
+      'Corrupt installation receipt prevents opening database',
       () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
         final receipt = directory.listSync().whereType<File>().singleWhere(
@@ -220,7 +220,7 @@ void main() {
     );
 
     test(
-      '\u672A\u6388\u6743\u7684\u6570\u636E\u5E93 identity \u66FF\u6362\u88AB\u62D2\u7EDD',
+      'Unauthorized database identity replacement is rejected',
       () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
         final originalReceipt = await DatabaseInstallationGate.read(
@@ -263,7 +263,7 @@ void main() {
     );
 
     test(
-      'identity \u66FF\u6362\u4E0D\u4EE5\u5168\u5E93 FK \u626B\u63CF\u963B\u585E\u542F\u52A8\u95E8',
+      'Identity replacement does not block installation gate on full FK scan',
       () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
         final replacementRoot = await Directory.systemTemp.createTemp(
@@ -302,7 +302,7 @@ void main() {
     );
 
     test(
-      '\u5DF2\u9A8C\u8BC1 restore \u53EF\u8F6E\u6362 database identity \u5E76\u4FDD\u7559 installation',
+      'Verified restore rotates database identity while preserving installation',
       () async {
         final original = await DatabaseInstallationGate.ensureReady(
           appDataDirectory: directory,
@@ -332,7 +332,7 @@ void main() {
     );
 
     test(
-      '\u5E9F\u5F03\u7684 session receipt \u4E0D\u53C2\u4E0E\u542F\u52A8\u5224\u5B9A',
+      'Obsolete session receipt does not affect startup decision',
       () async {
         await DatabaseInstallationGate.ensureReady(appDataDirectory: directory);
         final sessionFile = File(
