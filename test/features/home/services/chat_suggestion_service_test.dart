@@ -323,7 +323,7 @@ void main() {
     });
 
     test(
-      '\u5168\u91CF\u5386\u53F2\u4F7F\u7528\u6301\u4E45\u5316\u622A\u65AD\u70B9\u6392\u9664\u6E05\u4E0A\u4E0B\u6587\u4E4B\u524D\u7684\u6D88\u606F',
+      'Full history uses persisted truncation point to exclude cleared context',
       () {
         final messages = List.generate(
           100,
@@ -343,7 +343,7 @@ void main() {
     );
 
     test(
-      '\u5C40\u90E8\u7A97\u53E3\u7D22\u5F15\u4E0D\u80FD\u7528\u4E8E\u5168\u91CF\u5386\u53F2\u7684\u6E05\u4E0A\u4E0B\u6587\u8FB9\u754C',
+      'Window-relative index cannot truncate full history',
       () {
         final messages = List.generate(
           100,
