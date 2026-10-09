@@ -60,12 +60,26 @@ abstract class AsrServiceOptions {
 
     switch (kind) {
       case AsrServiceKind.sherpaOnnx:
+        final oldModelId = _string(json['modelId']);
+        // Upgrade saved Chinese-focused presets to the English replacements.
+        // Reset the old model directory because its weights are incompatible.
+        final modelId = switch (oldModelId) {
+          'paraformer-zh-small-2024-03-09' =>
+            'zipformer-en-20m-2023-02-17',
+          'sense-voice-multilingual-int8-2025-09-09' =>
+            'moonshine-tiny-en-int8',
+          'zipformer-zh-en-mobile-2023-02-20' =>
+            'moonshine-base-en-int8',
+          _ => oldModelId,
+        };
         return SherpaOnnxAsrOptions(
           id: id,
           name: _string(json['name'], 'Offline Model'),
-          modelId: _string(json['modelId']),
-          modelDirectory: _string(json['modelDirectory']),
-          language: _string(json['language']),
+          modelId: modelId,
+          modelDirectory: modelId == oldModelId
+              ? _string(json['modelDirectory'])
+              : '',
+          language: modelId == oldModelId ? _string(json['language']) : 'en',
           sampleRate: _positiveInt(json['sampleRate'], 16000),
         );
       case AsrServiceKind.system:
