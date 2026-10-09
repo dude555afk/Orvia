@@ -896,7 +896,7 @@ class _NetworkTtsEditorPageState extends State<_NetworkTtsEditorPage> {
   void initState() {
     super.initState();
     final initial = widget.initial;
-    _kind = initial?.kind ?? NetworkTtsKind.openai;
+    _kind = initial?.kind ?? NetworkTtsKind.edgeNeural;
     _nameCtl = TextEditingController(text: initial?.name ?? '');
     _apiKeyCtl = TextEditingController(text: _apiKeyOf(initial));
     _baseCtl = TextEditingController(text: _baseUrlOf(initial));
