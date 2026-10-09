@@ -1660,7 +1660,9 @@ class _ModelRow extends StatelessWidget {
           ),
           const SizedBox(height: 3),
           Text(
-            '${_formatBytes(model.downloadBytes)} · $statusLabel',
+            model.downloadBytes > 0
+                ? '${_formatBytes(model.downloadBytes)} · $statusLabel'
+                : statusLabel,
             style: TextStyle(
               fontSize: 11,
               color: cs.onSurface.withValues(alpha: 0.56),

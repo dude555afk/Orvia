@@ -11,41 +11,49 @@ import 'package:orvia/core/services/asr/sherpa_model_manager.dart';
 
 void main() {
   group('SherpaModelCatalog', () {
-    test('contains the three official downloadable model variants', () {
+    test('contains three English downloadable model variants', () {
       expect(SherpaModelCatalog.models, hasLength(3));
 
-      final paraformer = SherpaModelCatalog.byId(
-        'paraformer-zh-small-2024-03-09',
-      )!;
-      expect(paraformer.downloadBytes, 77920048);
+      final zipformer = SherpaModelCatalog.byId('zipformer-en-20m-2023-02-17')!;
+      expect(zipformer.name, 'Zipformer English 20M');
       expect(
-        paraformer.archiveUri.toString(),
-        'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/'
-        'sherpa-onnx-paraformer-zh-small-2024-03-09.tar.bz2',
+        zipformer.architecture,
+        SherpaModelArchitecture.streamingZipformer,
       );
-      expect(paraformer.requiredFiles, ['model.int8.onnx', 'tokens.txt']);
-
-      final senseVoice = SherpaModelCatalog.byId(
-        'sense-voice-multilingual-int8-2025-09-09',
-      )!;
-      expect(senseVoice.downloadBytes, 165783878);
-      expect(senseVoice.requiredFiles, ['model.int8.onnx', 'tokens.txt']);
-
-      final zipformer = SherpaModelCatalog.byId(
-        'zipformer-zh-en-mobile-2023-02-20',
-      )!;
-      expect(zipformer.downloadBytes, 346965352);
+      expect(
+        zipformer.archiveUri.toString(),
+        contains('sherpa-onnx-streaming-zipformer-en-20M-2023-02-17.tar.bz2'),
+      );
       expect(zipformer.requiredFiles, [
         'encoder-epoch-99-avg-1.int8.onnx',
         'decoder-epoch-99-avg-1.onnx',
         'joiner-epoch-99-avg-1.int8.onnx',
         'tokens.txt',
       ]);
+
+      for (final id in ['moonshine-tiny-en-int8', 'moonshine-base-en-int8']) {
+        final model = SherpaModelCatalog.byId(id)!;
+        expect(model.architecture, SherpaModelArchitecture.moonshine);
+        expect(model.name, contains('English'));
+        expect(
+          model.archiveUri.toString(),
+          contains('sherpa-onnx-$id.tar.bz2'),
+        );
+        expect(model.requiredFiles, [
+          'preprocess.onnx',
+          'encode.int8.onnx',
+          'uncached_decode.int8.onnx',
+          'cached_decode.int8.onnx',
+          'tokens.txt',
+        ]);
+      }
+
       expect(
         SherpaModelCatalog.models.every(
           (model) =>
               model.archiveUri.host == 'github.com' &&
-              model.archiveUri.path.contains('/k2-fsa/sherpa-onnx/'),
+              model.archiveUri.path.contains('/k2-fsa/sherpa-onnx/') &&
+              !model.name.contains('Chinese'),
         ),
         isTrue,
       );

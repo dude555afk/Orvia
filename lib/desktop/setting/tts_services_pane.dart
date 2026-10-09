@@ -904,7 +904,7 @@ Future<TtsServiceOptions?> _showNetworkDialog(
   TtsServiceOptions? initial,
 ) async {
   final l10n = AppLocalizations.of(context)!;
-  NetworkTtsKind kind = initial?.kind ?? NetworkTtsKind.openai;
+  NetworkTtsKind kind = initial?.kind ?? NetworkTtsKind.edgeNeural;
   final nameCtl = TextEditingController(text: initial?.name ?? '');
   // Common fields
   final apiKeyCtl = TextEditingController(
