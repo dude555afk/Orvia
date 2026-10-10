@@ -141,6 +141,56 @@ void main() {
       },
     );
 
+    test('connected mail is automatically discoverable without MCP', () {
+      const assistant = Assistant(id: 'mail', name: 'Mail assistant');
+      final enabled = LocalToolsService.buildToolDefinitions(
+        assistant: assistant,
+        supportsTools: true,
+        emailAwarenessOverride: true,
+      );
+      final disabled = LocalToolsService.buildToolDefinitions(
+        assistant: assistant,
+        supportsTools: true,
+        emailAwarenessOverride: false,
+      );
+      expect(disabled, isEmpty);
+      expect(
+        enabled.map((item) => item['function']['name']),
+        LocalToolNames.emailTools,
+      );
+      expect(
+        LocalToolsService.isToolEnabledForAssistant(
+          LocalToolNames.composeEmail,
+          assistant,
+          emailAwarenessOverride: true,
+        ),
+        isTrue,
+      );
+      expect(
+        LocalToolsService.isToolEnabledForAssistant(
+          LocalToolNames.composeEmail,
+          assistant,
+          emailAwarenessOverride: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('newly discovered mail cannot send without approval', () async {
+      const assistant = Assistant(id: 'mail', name: 'Mail assistant');
+      final result = await LocalToolsService.tryHandleToolCall(
+        LocalToolNames.composeEmail,
+        const <String, dynamic>{
+          'to': 'friend@example.com',
+          'subject': 'Hello',
+          'body': 'Never send this test email.',
+        },
+        assistant,
+        emailAwarenessOverride: true,
+      );
+      expect(jsonDecode(result!)['error'], 'approval_required');
+    });
+
     test('text to speech call starts playback and returns success', () async {
       final spokenTexts = <String>[];
 
