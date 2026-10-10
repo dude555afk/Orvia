@@ -20,12 +20,17 @@ class EmailAwarenessService with WidgetsBindingObserver {
   Timer? _timer;
   bool _initialized = false;
   bool _polling = false;
+  bool _foreground = true;
   bool _enabled = true;
   bool _alerts = false;
   int _accountCount = 0;
   int _pendingCount = 0;
 
   bool get enabled => _enabled;
+
+  void markDelivered() {
+    _pendingCount = 0;
+  }
   bool get alertsEnabled => _alerts;
   int get accountCount => _accountCount;
   int get pendingCount => _pendingCount;
@@ -88,7 +93,7 @@ class EmailAwarenessService with WidgetsBindingObserver {
   /// Polls only while the Flutter app is active. Does not consume new-mail
   /// summaries: the assistant's next check_email call can still report them.
   Future<void> poll() async {
-    if (!active || _polling) return;
+    if (!active || !_foreground || _polling) return;
     _polling = true;
     try {
       final result = await EmailIntegrationService.instance.check(
@@ -108,7 +113,8 @@ class EmailAwarenessService with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
+    _foreground = state == AppLifecycleState.resumed;
+    if (_foreground) {
       unawaited(refreshAccounts().then((_) => poll()).catchError((Object _) {}));
     }
   }
