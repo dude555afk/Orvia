@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../notification_service.dart';
 import 'email_integration_service.dart';
+import 'email_tool_definitions.dart';
 
 /// App-lifetime, foreground-only native mail awareness. Connecting an account
 /// opts into tool discovery; alerts remain separately opt-in. No MCP involved.
@@ -39,7 +40,8 @@ class EmailAwarenessService with WidgetsBindingObserver {
 
   /// A mailbox connection is required before assistants may use mail tools.
   /// Disconnecting every account immediately revokes automatic exposure.
-  bool exposesTool(String toolName) => active;
+  bool exposesTool(String toolName) =>
+      active && EmailToolDefinitions.names.contains(toolName);
 
   Future<void> initialize() async {
     if (kIsWeb || _initialized) return;
