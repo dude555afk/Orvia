@@ -1,132 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
-		<key>CADisableMinimumFrameDurationOnPhone</key>
-		<true/>
-		<key>CFBundleDevelopmentRegion</key>
-		<string>$(DEVELOPMENT_LANGUAGE)</string>
-		<key>CFBundleDisplayName</key>
-		<string>Orvia</string>
-		<key>CFBundleExecutable</key>
-		<string>$(EXECUTABLE_NAME)</string>
-		<key>CFBundleIdentifier</key>
-		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-		<key>CFBundleInfoDictionaryVersion</key>
-		<string>6.0</string>
-		<key>CFBundleLocalizations</key>
-		<array>
-			<string>en</string>
-		</array>
-		<key>CFBundleName</key>
-		<string>orvia</string>
-		<key>CFBundlePackageType</key>
-		<string>APPL</string>
-		<key>CFBundleShortVersionString</key>
-		<string>$(FLUTTER_BUILD_NAME)</string>
-		<key>CFBundleSignature</key>
-		<string>????</string>
-		<key>CFBundleVersion</key>
-		<string>$(FLUTTER_BUILD_NUMBER)</string>
-		<key>CFBundleURLTypes</key>
-		<array>
-			<dict>
-				<key>CFBundleTypeRole</key>
-				<string>Editor</string>
-				<key>CFBundleURLName</key>
-				<string>com.dude555afk.orvia.oauth-return</string>
-				<key>CFBundleURLSchemes</key>
-				<array>
-					<string>orvia</string>
-					<string>com.dude555afk.orvia</string>
-				</array>
-			</dict>
-		</array>
-		<key>LSRequiresIPhoneOS</key>
-		<true/>
-		<key>ITSAppUsesNonExemptEncryption</key>
-		<false/>
-		<key>LSSupportsOpeningDocumentsInPlace</key>
-		<true/>
-		<key>NSHealthShareUsageDescription</key>
-		<string>Orvia needs to read the health data you choose so it can build an activity summary. That summary may be sent to the AI provider you selected to generate answers.</string>
-		<key>NSHealthUpdateUsageDescription</key>
-		<string>Orvia does not write health data. This description is required by HealthKit.</string>
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>Orvia uses location for location and weather tools you request (tool coordinates may be sent to your chosen AI provider), or coarse location to support current background tasks when you enable that option. Keep-alive coordinates are not stored or transmitted.</string>
-		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>When you enable location-assisted execution, Orvia uses coarse location only during current background tasks. These coordinates are not stored or transmitted.</string>
-		<key>NSRemindersFullAccessUsageDescription</key>
-		<string>Orvia needs reminders access so it can query, create, and complete reminders after you confirm. Reminder content may be sent to the AI provider you selected to generate answers.</string>
-		<key>NSRemindersUsageDescription</key>
-		<string>Orvia needs reminders access so it can query, create, and complete reminders after you confirm. Reminder content may be sent to the AI provider you selected to generate answers.</string>
-		<key>NSCalendarsFullAccessUsageDescription</key>
-		<string>Orvia needs calendar access so the AI assistant can query and create events when you enable the calendar tools; data is processed on-device and Orvia does not collect this information.</string>
-		<key>NSCalendarsUsageDescription</key>
-		<string>Orvia needs calendar access so the AI assistant can query and create events when you enable the calendar tools; data is processed on-device and Orvia does not collect this information.</string>
-		<key>NSCameraUsageDescription</key>
-		<string>Orvia uses the camera to capture photos that you can share with AI assistants for analysis. Your photo may be uploaded by your choice.</string>
-		<key>NSMicrophoneUsageDescription</key>
-		<string>Orvia uses the microphone to record audio you choose to submit for transcription; Orvia does not collect this information.</string>
-		<key>NSSpeechRecognitionUsageDescription</key>
-		<string>Orvia uses system speech recognition to turn audio you choose to record into text. Your data is processed by the system; Orvia does not collect this information.</string>
-		<key>NSPhotoLibraryAddUsageDescription</key>
-		<string>Allow saving images to your photo library.Your data will be saved locally.</string>
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Allow access to your photos to pick an avatar.</string>
-		<key>NSSupportsLiveActivities</key>
-		<true/>
-		<key>NSSupportsLiveActivitiesFrequentUpdates</key>
-		<true/>
-		<key>UIApplicationSupportsIndirectInputEvents</key>
-		<true/>
-		<key>UIBackgroundModes</key>
-		<array>
-			<string>audio</string>
-			<string>location</string>
-		</array>
-		<key>UIFileSharingEnabled</key>
-		<true/>
-		<key>UILaunchStoryboardName</key>
-		<string>LaunchScreen</string>
-		<key>UIMainStoryboardFile</key>
-		<string>Main</string>
-		<key>UIStatusBarHidden</key>
-		<false/>
-		<key>UISupportedInterfaceOrientations</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>UISupportedInterfaceOrientations~ipad</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationPortraitUpsideDown</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>io.flutter.embedded_views_preview</key>
-		<true/>
-		<key>OrviaBundledRootfsVersion</key>
-		<string>alpine-3.21.3-r5</string>
-		<key>OrviaShareAppGroup</key>
-		<string>group.com.dude555afk.orvia</string>
-		<key>CFBundleDocumentTypes</key>
-		<array>
-			<dict>
-				<key>CFBundleTypeName</key>
-				<string>Chat attachments</string>
-				<key>CFBundleTypeRole</key>
-				<string>Viewer</string>
-				<key>LSHandlerRank</key>
-				<string>Alternate</string>
-				<key>LSItemContentTypes</key>
-				<array>
-					<string>public.data</string>
-					<string>public.content</string>
-				</array>
-			</dict>
-		</array>
-	</dict>
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Orvia</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+	</array>
+	<key>CFBundleName</key>
+	<string>orvia</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.dude555afk.orvia.oauth-return</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>orvia</string>
+				<string>com.dude555afk.orvia</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Orvia needs to read the health data you choose so it can build an activity summary. That summary may be sent to the AI provider you selected to generate answers.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Orvia does not write health data. This description is required by HealthKit.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Orvia uses location for location and weather tools you request (tool coordinates may be sent to your chosen AI provider), or coarse location to support current background tasks when you enable that option. Keep-alive coordinates are not stored or transmitted.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>When you enable location-assisted execution, Orvia uses coarse location only during current background tasks. These coordinates are not stored or transmitted.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>Orvia needs reminders access so it can query, create, and complete reminders after you confirm. Reminder content may be sent to the AI provider you selected to generate answers.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>Orvia needs reminders access so it can query, create, and complete reminders after you confirm. Reminder content may be sent to the AI provider you selected to generate answers.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Orvia needs calendar access so the AI assistant can query and create events when you enable the calendar tools; data is processed on-device and Orvia does not collect this information.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Orvia needs calendar access so the AI assistant can query and create events when you enable the calendar tools; data is processed on-device and Orvia does not collect this information.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Orvia uses the camera to capture photos that you can share with AI assistants for analysis. Your photo may be uploaded by your choice.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Orvia uses the microphone to record audio you choose to submit for transcription; Orvia does not collect this information.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Orvia uses system speech recognition to turn audio you choose to record into text. Your data is processed by the system; Orvia does not collect this information.</string>
+        <key>NSPhotoLibraryAddUsageDescription</key>
+        <string>Allow saving images to your photo library.Your data will be saved locally.</string>
+        <key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to your photos to pick an avatar.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+    <true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>location</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>OrviaBundledRootfsVersion</key>
+	<string>alpine-3.21.3-r5</string>
+	<key>OrviaShareAppGroup</key>
+	<string>group.com.dude555afk.orvia</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Chat attachments</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
+		</dict>
+	</array>
+</dict>
 </plist>
