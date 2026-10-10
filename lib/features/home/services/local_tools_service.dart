@@ -7,6 +7,7 @@ import 'package:math_expressions/math_expressions.dart';
 
 import '../../../core/models/assistant.dart';
 import '../../../core/models/health_data_type.dart';
+import '../../../core/services/email/email_awareness_service.dart';
 import '../../../core/services/email/email_integration_service.dart';
 import '../../../core/services/email/email_tool_definitions.dart';
 
@@ -415,6 +416,21 @@ class DeviceLocalTools {
 class LocalToolsService {
   const LocalToolsService._();
 
+  /// A connected mailbox is a global opt-in to native mail tools. This keeps
+  /// tool discovery consistent across assistants, without MCP configuration.
+  static bool isToolEnabledForAssistant(
+    String name,
+    Assistant? assistant, {
+    bool? emailAwarenessOverride,
+  }) {
+    if (assistant == null) return false;
+    if (LocalToolNames.emailTools.contains(name)) {
+      return emailAwarenessOverride ??
+          EmailAwarenessService.instance.exposesTool(name);
+    }
+    return assistant.localToolIds.contains(name);
+  }
+
   /// Whether this local tool is offered on the current platform, matching the
   /// assistant "Local tools" tab.
   static bool isAvailableOnThisPlatform(String name) {
@@ -497,6 +513,7 @@ class LocalToolsService {
   static List<Map<String, dynamic>> buildToolDefinitions({
     required Assistant? assistant,
     required bool supportsTools,
+    bool? emailAwarenessOverride,
   }) {
     if (!supportsTools || assistant == null) {
       return const <Map<String, dynamic>>[];
@@ -508,7 +525,13 @@ class LocalToolsService {
 
     final tools = <Map<String, dynamic>>[];
     for (final id in LocalToolNames.all) {
-      if (!assistant.localToolIds.contains(id)) continue;
+      if (!isToolEnabledForAssistant(
+        id,
+        assistant,
+        emailAwarenessOverride: emailAwarenessOverride,
+      )) {
+        continue;
+      }
       if (!isAvailableOnThisPlatform(id)) continue;
       if (id == LocalToolNames.healthSummary) {
         tools.add(
@@ -520,7 +543,18 @@ class LocalToolsService {
           ),
         );
       } else {
-        tools.add(definitionFor(id));
+        final definition = definitionFor(id);
+        if (id == LocalToolNames.checkEmail &&
+            (emailAwarenessOverride ??
+                EmailAwarenessService.instance.exposesTool(id))) {
+          final function = definition['function'] as Map<String, dynamic>;
+          final pending = EmailAwarenessService.instance.pendingCount;
+          function['description'] =
+              '${function['description']} Email awareness is enabled. '
+              '${pending > 0 ? '$pending new messages are awaiting delivery. ' : ''}'
+              'Call this tool when the user asks about inbox updates.';
+        }
+        tools.add(definition);
       }
     }
     return tools;
@@ -532,16 +566,26 @@ class LocalToolsService {
     Assistant? assistant, {
     TextToSpeechStarter? onSpeakText,
     bool emailSendApproved = false,
+    bool? emailAwarenessOverride,
   }) async {
-    if (assistant == null || !assistant.localToolIds.contains(name)) {
+    if (assistant == null ||
+        !isToolEnabledForAssistant(
+          name,
+          assistant,
+          emailAwarenessOverride: emailAwarenessOverride,
+        )) {
       return null;
     }
     if (LocalToolNames.emailTools.contains(name) && !kIsWeb) {
-      return EmailIntegrationService.instance.handleTool(
+      final result = await EmailIntegrationService.instance.handleTool(
         name,
         args,
         sendApproved: emailSendApproved,
       );
+      if (name == LocalToolNames.checkEmail) {
+        EmailAwarenessService.instance.markDelivered();
+      }
+      return result;
     }
     if (name == LocalToolNames.timeInfo) {
       return jsonEncode(_buildTimeInfoPayload(DateTime.now()));

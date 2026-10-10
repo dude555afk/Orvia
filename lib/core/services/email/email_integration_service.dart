@@ -144,6 +144,7 @@ class EmailIntegrationService {
       value: jsonEncode(all.map((e) => e.toJson()).toList()),
     );
     await _storage.delete(key: _cursorKey(address));
+    await _storage.delete(key: _pendingKey(address));
   }
 
   Future<EmailAccount> _resolve(Object? address) async {
@@ -189,9 +190,44 @@ class EmailIntegrationService {
     'unread': !(m.flags?.contains(r'\Seen') ?? false),
   };
 
-  /// Returns previously unsurfaced unread messages, mirroring Kai's
-  /// per-account UID watermark. An omitted account checks all connected inboxes.
-  Future<Map<String, dynamic>> check({Object? account}) async {
+  String _pendingKey(String address) =>
+      'orvia_email_pending_${address.trim().toLowerCase()}';
+
+  Future<List<Map<String, dynamic>>> _readPending(String address) async {
+    final raw = await _storage.read(key: _pendingKey(address));
+    if (raw == null || raw.isEmpty) return <Map<String, dynamic>>[];
+    try {
+      final values = jsonDecode(raw) as List<dynamic>;
+      return values
+          .map((value) => Map<String, dynamic>.from(value as Map))
+          .toList();
+    } catch (_) {
+      return <Map<String, dynamic>>[];
+    }
+  }
+
+  /// Retains new messages until check_email actually delivers them to chat.
+  /// Keys are account + IMAP UID, so repeated foreground polls cannot repeat
+  /// notifications for messages already queued.
+  static List<Map<String, dynamic>> mergePendingSummaries(
+    List<Map<String, dynamic>> queued,
+    List<Map<String, dynamic>> incoming,
+  ) {
+    final byMessage = <String, Map<String, dynamic>>{};
+    for (final item in [...queued, ...incoming]) {
+      final key = '${item['account']}/${item['uid']}';
+      byMessage[key] = item;
+    }
+    final result = byMessage.values.toList();
+    return result.length > 50 ? result.sublist(result.length - 50) : result;
+  }
+
+  /// Checks every connected inbox (or just one). Periodic polling uses
+  /// consume=false; actual assistant delivery uses consume=true.
+  Future<Map<String, dynamic>> check({
+    Object? account,
+    bool consume = true,
+  }) async {
     final requested = (account ?? '').toString().trim();
     final targets = requested.isEmpty
         ? await accounts()
@@ -202,13 +238,28 @@ class EmailIntegrationService {
 
     final messages = <Map<String, dynamic>>[];
     final errors = <String>[];
+    var freshCount = 0;
     for (final cfg in targets) {
       try {
-        final last =
-            int.tryParse(
-              await _storage.read(key: _cursorKey(cfg.address)) ?? '',
-            ) ??
-            0;
+        final queued = await _readPending(cfg.address);
+        final cursor = await _storage.read(key: _cursorKey(cfg.address));
+        // First activation starts from the current mailbox high-water mark.
+        // Old unread mail is searchable, but should not trigger "new" alerts.
+        if (cursor == null) {
+          final highWater = await _withInbox(cfg, (imap) async {
+            final result = await imap.uidSearchMessages(searchCriteria: 'ALL');
+            final ids = result.matchingSequence?.toList() ?? <int>[];
+            return ids.isEmpty ? 0 : ids.reduce((a, b) => a > b ? a : b);
+          });
+          await _storage.write(
+            key: _cursorKey(cfg.address),
+            value: highWater.toString(),
+          );
+          messages.addAll(queued);
+          if (consume) await _storage.delete(key: _pendingKey(cfg.address));
+          continue;
+        }
+        final last = int.tryParse(cursor) ?? 0;
         final news = await _withInbox(cfg, (imap) async {
           final result = await imap.uidSearchMessages(searchCriteria: 'UNSEEN');
           final unseenUids = result.matchingSequence?.toList() ?? <int>[];
@@ -225,21 +276,35 @@ class EmailIntegrationService {
           return fetched.messages;
         });
         news.sort((a, b) => (a.uid ?? 0).compareTo(b.uid ?? 0));
-        messages.addAll(news.map((m) => _summary(m, cfg.address)));
+        final fresh = news.map((m) => _summary(m, cfg.address)).toList();
+        freshCount += fresh.length;
+        final pending = mergePendingSummaries(queued, fresh);
+        messages.addAll(pending);
         if (news.isNotEmpty && news.last.uid != null) {
           await _storage.write(
             key: _cursorKey(cfg.address),
             value: news.last.uid!.toString(),
           );
         }
+        if (consume) {
+          await _storage.delete(key: _pendingKey(cfg.address));
+        } else {
+          await _storage.write(
+            key: _pendingKey(cfg.address),
+            value: jsonEncode(pending),
+          );
+        }
       } catch (_) {
+        // Keep previously queued mail if this account is temporarily offline.
         errors.add('Could not check ${cfg.address}. Verify mail settings.');
+        messages.addAll(await _readPending(cfg.address));
       }
     }
     return {
       'count': messages.length,
+      'new_count': freshCount,
       'messages': messages,
-      'accounts': targets.map((account) => account.address).toList(),
+      'accounts': targets.map((item) => item.address).toList(),
       if (errors.isNotEmpty) 'errors': errors,
       if (messages.isEmpty)
         'hint': 'No new unread mail. Use search_email to find older messages.',
