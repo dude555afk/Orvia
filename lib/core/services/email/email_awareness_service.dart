@@ -36,12 +36,9 @@ class EmailAwarenessService with WidgetsBindingObserver {
   int get pendingCount => _pendingCount;
   bool get active => !kIsWeb && _enabled && _accountCount > 0;
 
-  /// Discover setup instructions even before an account has been connected.
-  bool exposesTool(String toolName) {
-    if (kIsWeb || !_enabled) return false;
-    if (toolName == 'setup_email') return true;
-    return active;
-  }
+  /// A mailbox connection is required before assistants may use mail tools.
+  /// Disconnecting every account immediately revokes automatic exposure.
+  bool exposesTool(String toolName) => active;
 
   Future<void> initialize() async {
     if (kIsWeb || _initialized) return;
