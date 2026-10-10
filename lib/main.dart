@@ -1,4 +1,5 @@
 import 'core/services/scheduled_tasks_service.dart';
+import 'core/services/email/email_awareness_service.dart';
 import 'package:orvia/core/services/sandbox/workspace_channel.dart';
 import 'package:orvia/core/providers/external_mounts_provider.dart';
 import 'package:orvia/core/services/sandbox/environment_dependencies.dart';
@@ -337,6 +338,13 @@ Future<void> main() async {
       // Best-effort trim of archived restore runs after a few cold starts.
       unawaited(_pruneRestoreArchive(appDataDirectory));
       unawaited(ModelCatalogService.instance.maybeAutoRefresh());
+      // Read configured mail-account presence before the first chat request.
+      // Any storage/plugin error must not prevent app startup.
+      try {
+        await EmailAwarenessService.instance.initialize();
+      } catch (error) {
+        debugPrint('[EmailAwareness] startup unavailable: $error');
+      }
       // Enable edge-to-edge to allow content under system bars (Android)
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       // Start app (Flutter log capture is toggleable and off by default)
