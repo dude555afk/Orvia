@@ -1,0 +1,44 @@
+name: Format native email awareness changes
+on:
+  push:
+    branches:
+      - feat/email-awareness-native-20261010
+    paths:
+      - '.github/workflows/format-native-email-awareness.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+      - name: Dart format changed files
+        run: |
+          dart format lib/core/services/email/email_awareness_service.dart \
+            lib/core/services/email/email_integration_service.dart \
+            lib/core/services/notification_service.dart \
+            lib/features/home/services/local_tools_service.dart \
+            lib/features/home/services/tool_handler_service.dart \
+            lib/features/settings/pages/email_integration_page.dart \
+            lib/main.dart \
+            test/email_integration_service_test.dart \
+            test/local_tools_service_test.dart
+      - name: Commit formatting
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A lib test
+          if git diff --cached --quiet; then
+            echo 'Everything was already formatted'
+            exit 0
+          fi
+          git commit -m 'Format native email awareness Dart changes'
+          git push origin HEAD:${GITHUB_REF_NAME}
