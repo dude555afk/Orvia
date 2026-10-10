@@ -1,0 +1,41 @@
+name: Regenerate Orvia platform icons
+
+on:
+  push:
+    branches:
+      - fix/desktop-orvia-logo-20261009
+    paths:
+      - '.github/workflows/regenerate-orvia-icons.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.44.9'
+      - name: Resolve generator dependencies
+        run: flutter pub get
+      - name: Regenerate launcher icons from official Orvia logo
+        run: dart run flutter_launcher_icons -f flutter_launcher_icons.yaml
+      - name: Regenerate platform splash images
+        run: dart run flutter_native_splash:create
+      - name: Commit regenerated platform assets
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A android ios macos windows web
+          if git diff --cached --quiet; then
+            echo 'Icons already current'
+            exit 0
+          fi
+          git commit -m 'Regenerate Orvia platform launcher icons and splash images'
+          git push origin HEAD:${GITHUB_REF_NAME}
