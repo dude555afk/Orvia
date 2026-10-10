@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/services/email/email_awareness_service.dart';
 import '../../../core/services/email/email_integration_service.dart';
 
 /// All email passwords live in secure storage. No login secrets pass through
@@ -22,6 +23,8 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
   bool _advanced = false;
   String? _error;
   List<String> _connected = [];
+  bool _awarenessOn = true;
+  bool _mailAlerts = false;
 
   @override
   void initState() {
@@ -40,8 +43,14 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
   Future<void> _refresh() async {
     try {
       final all = await EmailIntegrationService.instance.accounts();
+      final awareness = EmailAwarenessService.instance;
+      await awareness.refreshAccounts();
       if (mounted) {
-        setState(() => _connected = all.map((a) => a.address).toList());
+        setState(() {
+          _connected = all.map((a) => a.address).toList();
+          _awarenessOn = awareness.enabled;
+          _mailAlerts = awareness.alertsEnabled;
+        });
       }
     } catch (_) {
       if (mounted) {
@@ -92,7 +101,7 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'Email account connected. Enable email tools for an assistant to use it.',
+              'Email connected. Orvia can discover its native email tools while awareness is on.',
             ),
           ),
         );
@@ -160,6 +169,51 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
                 onPressed: _busy ? null : () => _remove(account),
               ),
             ),
+          SwitchListTile(
+            title: const Text('Email awareness'),
+            subtitle: const Text(
+              'Let Orvia assistants discover connected email and check mail '
+              'using native tools. Email contents can reach your selected AI '
+              'provider when a tool is called. Sending always needs approval.',
+            ),
+            value: _awarenessOn,
+            onChanged: _busy
+                ? null
+                : (value) async {
+                    try {
+                      await EmailAwarenessService.instance.setEnabled(value);
+                      await _refresh();
+                    } catch (_) {
+                      if (mounted) {
+                        setState(() => _error = 'Could not update email awareness.');
+                      }
+                    }
+                  },
+          ),
+          SwitchListTile(
+            title: const Text('New mail notifications'),
+            subtitle: const Text(
+              'Check unread mail every five minutes while Orvia is open. '
+              'Only show a private notification count, never email subjects.',
+            ),
+            value: _mailAlerts,
+            onChanged: _busy || !_awarenessOn || _connected.isEmpty
+                ? null
+                : (value) async {
+                    try {
+                      final granted = await EmailAwarenessService.instance
+                          .setAlertsEnabled(value);
+                      if (!granted && mounted) {
+                        setState(() => _error = 'Notification permission required.');
+                      }
+                      await _refresh();
+                    } catch (_) {
+                      if (mounted) {
+                        setState(() => _error = 'Could not update mail alerts.');
+                      }
+                    }
+                  },
+          ),
           const Divider(height: 32),
           const Text(
             'Connect an email account',
@@ -269,9 +323,10 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
           ),
           const SizedBox(height: 16),
           const Text(
-            'After connecting, enable the email tools in an assistant’s Local tools. '
-            'Sending a message always requests approval. Incoming email content '
-            'is untrusted data, not instructions.',
+            'When email awareness is enabled, connected accounts are available '
+            'to your assistants without configuring MCP or individual local tools. '
+            'Automatic mail checks run only while Orvia is open. '
+            'Outgoing messages always need your confirmation.',
           ),
         ],
       ),
