@@ -30,6 +30,9 @@ for rel in filter(None, files):
         continue
     for i, line in enumerate(text.splitlines(), 1):
         low = line.lower()
+        if rel.startswith('lib/') and rel.endswith('.dart'):
+            if 'assets/app_icon' in low or 'assets/icon_mac.png' in low:
+                bad.append(f'legacy in-app brand icon: {rel}:{i}: {line.strip()}')
         if FORBIDDEN in low or OLD_OWNER.lower() in low:
             if 'copyright' in low or 'spdx' in low:
                 continue
