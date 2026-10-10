@@ -62,6 +62,13 @@ class EmailAwarenessService with WidgetsBindingObserver {
     }
   }
 
+  void dispose() {
+    _timer?.cancel();
+    _timer = null;
+    WidgetsBinding.instance.removeObserver(this);
+    _initialized = false;
+  }
+
   Future<void> refreshAccounts() async {
     if (kIsWeb) return;
     _accountCount = (await EmailIntegrationService.instance.accounts()).length;

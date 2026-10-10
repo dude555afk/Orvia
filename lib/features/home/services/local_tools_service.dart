@@ -568,11 +568,12 @@ class LocalToolsService {
     bool emailSendApproved = false,
     bool? emailAwarenessOverride,
   }) async {
-    if (!isToolEnabledForAssistant(
-      name,
-      assistant,
-      emailAwarenessOverride: emailAwarenessOverride,
-    )) {
+    if (assistant == null ||
+        !isToolEnabledForAssistant(
+          name,
+          assistant,
+          emailAwarenessOverride: emailAwarenessOverride,
+        )) {
       return null;
     }
     if (LocalToolNames.emailTools.contains(name) && !kIsWeb) {
