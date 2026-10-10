@@ -247,9 +247,7 @@ class EmailIntegrationService {
         // Old unread mail is searchable, but should not trigger "new" alerts.
         if (cursor == null) {
           final highWater = await _withInbox(cfg, (imap) async {
-            final result = await imap.uidSearchMessages(
-              searchCriteria: 'ALL',
-            );
+            final result = await imap.uidSearchMessages(searchCriteria: 'ALL');
             final ids = result.matchingSequence?.toList() ?? <int>[];
             return ids.isEmpty ? 0 : ids.reduce((a, b) => a > b ? a : b);
           });
@@ -263,9 +261,7 @@ class EmailIntegrationService {
         }
         final last = int.tryParse(cursor) ?? 0;
         final news = await _withInbox(cfg, (imap) async {
-          final result = await imap.uidSearchMessages(
-            searchCriteria: 'UNSEEN',
-          );
+          final result = await imap.uidSearchMessages(searchCriteria: 'UNSEEN');
           final unseenUids = result.matchingSequence?.toList() ?? <int>[];
           final newUids = unseenUids.where((uid) => uid > last).toList()
             ..sort();

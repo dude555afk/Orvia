@@ -185,7 +185,9 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
                       await _refresh();
                     } catch (_) {
                       if (mounted) {
-                        setState(() => _error = 'Could not update email awareness.');
+                        setState(
+                          () => _error = 'Could not update email awareness.',
+                        );
                       }
                     }
                   },
@@ -204,12 +206,16 @@ class _EmailIntegrationPageState extends State<EmailIntegrationPage> {
                       final granted = await EmailAwarenessService.instance
                           .setAlertsEnabled(value);
                       if (!granted && mounted) {
-                        setState(() => _error = 'Notification permission required.');
+                        setState(
+                          () => _error = 'Notification permission required.',
+                        );
                       }
                       await _refresh();
                     } catch (_) {
                       if (mounted) {
-                        setState(() => _error = 'Could not update mail alerts.');
+                        setState(
+                          () => _error = 'Could not update mail alerts.',
+                        );
                       }
                     }
                   },

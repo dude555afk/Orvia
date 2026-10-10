@@ -31,6 +31,7 @@ class EmailAwarenessService with WidgetsBindingObserver {
   void markDelivered() {
     _pendingCount = 0;
   }
+
   bool get alertsEnabled => _alerts;
   int get accountCount => _accountCount;
   int get pendingCount => _pendingCount;
@@ -112,7 +113,9 @@ class EmailAwarenessService with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _foreground = state == AppLifecycleState.resumed;
     if (_foreground) {
-      unawaited(refreshAccounts().then((_) => poll()).catchError((Object _) {}));
+      unawaited(
+        refreshAccounts().then((_) => poll()).catchError((Object _) {}),
+      );
     }
   }
 }
