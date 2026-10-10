@@ -182,10 +182,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icons/
-    - assets/app_icon.png
     - docs/orvia-logo.png
-    - assets/app_icon.ico
-    - assets/icon_mac.png
     - assets/mermaid.min.js
     - assets/html/mark.html
     - assets/skills/skill-creator/

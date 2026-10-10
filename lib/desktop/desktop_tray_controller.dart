@@ -90,9 +90,9 @@ class DesktopTrayController with TrayListener, WindowListener {
     final platform = defaultTargetPlatform;
     try {
       if (platform == TargetPlatform.windows) {
-        await trayManager.setIcon('assets/app_icon.ico');
+        await trayManager.setIcon('assets/icons/orvia.ico');
       } else if (platform == TargetPlatform.macOS) {
-        await trayManager.setIcon('assets/icon_mac.png', isTemplate: true);
+        await trayManager.setIcon('assets/icons/orvia.png', isTemplate: false);
       } else {
         await trayManager.setIcon('assets/icons/orvia.png');
       }
