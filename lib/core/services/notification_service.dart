@@ -171,6 +171,44 @@ class NotificationService {
     );
   }
 
+  /// Only called when the user opted into mail alerts. Do not show sender,
+  /// subject or message bodies on the lock screen.
+  static Future<void> showIncomingEmailCount(int count) async {
+    if (count < 1 || (!Platform.isAndroid && !Platform.isIOS)) return;
+    await ensureInitialized();
+    const channel = AndroidNotificationChannel(
+      'orvia_email_awareness_v1',
+      'Email awareness',
+      description: 'Optional new-email notifications',
+      importance: Importance.defaultImportance,
+    );
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (android != null) await android.createNotificationChannel(channel);
+    await _plugin.show(
+      481002,
+      'New email in Orvia',
+      count == 1 ? '1 new unread email' : '$count new unread emails',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'orvia_email_awareness_v1',
+          'Email awareness',
+          channelDescription: 'Optional new-email notifications',
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority,
+          visibility: NotificationVisibility.private,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentSound: false,
+          threadIdentifier: 'orvia.email',
+        ),
+      ),
+    );
+  }
+
   static void _handleNotificationResponse(NotificationResponse response) {
     final runId = scheduledRunIdFromPayload(response.payload);
     if (runId != null) {

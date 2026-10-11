@@ -30,6 +30,24 @@ void main() {
     }
   });
 
+  test('foreground checks preserve and deduplicate pending mail', () {
+    final existing = <Map<String, dynamic>>[
+      {'account': 'a@example.com', 'uid': 21, 'subject': 'Old'},
+    ];
+    final incoming = <Map<String, dynamic>>[
+      {'account': 'a@example.com', 'uid': 21, 'subject': 'Updated'},
+      {'account': 'a@example.com', 'uid': 22, 'subject': 'New'},
+    ];
+    final merged = EmailIntegrationService.mergePendingSummaries(
+      existing,
+      incoming,
+    );
+    expect(merged.length, 2);
+    expect(merged.first['subject'], 'Updated');
+    expect(merged.last['uid'], 22);
+    expect(existing.length, 1);
+  });
+
   test('email provider presets and credential validation', () {
     final gmail = EmailAccount.preset('person@gmail.com');
     expect(gmail?.imap, 'imap.gmail.com');
