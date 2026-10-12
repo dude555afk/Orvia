@@ -70,7 +70,9 @@ void main() {
 
     await first.setConversationMcpServers(draft.id, ['github', 'search']);
     expect(
-      harness.preferences.getStringList('conversation_default_mcp_server_ids_v1'),
+      harness.preferences.getStringList(
+        'conversation_default_mcp_server_ids_v1',
+      ),
       ['github', 'search'],
     );
 
@@ -94,7 +96,9 @@ void main() {
     expect(first.getConversationMcpServers(draft.id), ['github']);
     await first.setConversationMcpServers(draft.id, const <String>[]);
     expect(
-      harness.preferences.getStringList('conversation_default_mcp_server_ids_v1'),
+      harness.preferences.getStringList(
+        'conversation_default_mcp_server_ids_v1',
+      ),
       isEmpty,
     );
 
