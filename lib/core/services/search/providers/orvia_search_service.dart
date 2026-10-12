@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -63,14 +62,16 @@ class OrviaSearchService extends SearchService<OrviaOptions> {
     // Keep this off DioHttpClient so the built-in token is not written to request logs.
     final httpClient = client ?? http.Client();
     try {
-      final language = _languageQueryValue(PlatformDispatcher.instance.locale);
       final uri = Uri.https('search.psycheas.top', '/v1/search', {
         'q': query,
         'count': '${commonOptions.resultSize}',
-        if (language != null) 'language': language,
+        'language': 'en-US',
       });
       final response = await httpClient
-          .get(uri, headers: {'Authorization': 'Bearer $_token'})
+          .get(uri, headers: {
+            'Authorization': 'Bearer $_token',
+            'Accept-Language': 'en-US,en;q=0.9',
+          })
           .timeout(Duration(milliseconds: commonOptions.timeout));
       if (response.statusCode != 200) {
         throw Exception('API request failed: ${response.statusCode}');
@@ -93,15 +94,4 @@ class OrviaSearchService extends SearchService<OrviaOptions> {
     }
   }
 
-  static String? _languageQueryValue(Locale locale) {
-    final language = locale.languageCode.trim();
-    if (language.isEmpty) return null;
-    final country = locale.countryCode?.trim();
-    if (country != null && country.isNotEmpty) {
-      return '$language-$country';
-    }
-    if (language == 'zh') return 'zh-CN';
-    if (language == 'en') return 'en-US';
-    return language;
-  }
 }
