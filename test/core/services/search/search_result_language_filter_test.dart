@@ -5,7 +5,7 @@ import 'package:orvia/core/services/search/search_service.dart';
 void main() {
   test('removes Chinese search results and provider answers', () {
     final original = SearchResult(
-      answer: '中文回答',
+      answer: '\u4e2d\u6587\u56de\u7b54',
       items: [
         SearchResultItem(
           title: 'Flutter docs',
@@ -13,14 +13,14 @@ void main() {
           text: 'Build apps with Flutter.',
         ),
         SearchResultItem(
-          title: '电影频道 Movie',
+          title: '\u7535\u5f71\u9891\u9053 Movie',
           url: 'https://example.com/movie',
           text: 'Movie listing',
         ),
         SearchResultItem(
           title: 'More videos',
           url: 'https://example.com/videos',
-          text: '剧情简介 Chinese-language description',
+          text: '\u5267\u60c5\u7b80\u4ecb Chinese-language description',
         ),
       ],
     );
