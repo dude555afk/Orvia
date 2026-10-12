@@ -153,6 +153,13 @@ class _ConversationMcpSheet extends StatelessWidget {
                           final enabledTools = tools
                               .where((t) => t.enabled)
                               .length;
+                          final serverStatusText = switch (mcp.statusFor(s.id)) {
+                            McpStatus.connected =>
+                              l10n.mcpConversationSheetConnected,
+                            McpStatus.connecting =>
+                              l10n.mcpPageStatusConnecting,
+                            _ => l10n.mcpPageStatusDisconnected,
+                          };
                           final isSelected = selected.contains(s.id);
                           final bg = isSelected
                               ? cs.primary.withValues(
@@ -246,16 +253,7 @@ class _ConversationMcpSheet extends StatelessWidget {
                                               spacing: 6,
                                               runSpacing: 6,
                                               children: [
-                                                tag(
-                                                  switch (mcp.statusFor(s.id)) {
-                                                    McpStatus.connected =>
-                                                      l10n.mcpConversationSheetConnected,
-                                                    McpStatus.connecting =>
-                                                      l10n.mcpPageStatusConnecting,
-                                                    _ =>
-                                                      l10n.mcpPageStatusDisconnected,
-                                                  },
-                                                ),
+                                                tag(serverStatusText),
                                                 tag(
                                                   l10n.mcpConversationSheetToolsCount(
                                                     enabledTools,
