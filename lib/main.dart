@@ -698,11 +698,10 @@ class MyApp extends StatelessWidget {
           },
         ),
         ChangeNotifierProvider(
-          create: (_) =>
-              ChatService(
-                existingRepository: databaseLease.chatRepository,
-                businessPreferences: businessPreferences,
-              ),
+          create: (_) => ChatService(
+            existingRepository: databaseLease.chatRepository,
+            businessPreferences: businessPreferences,
+          ),
         ),
         ChangeNotifierProvider(create: (_) => McpToolService()),
         ChangeNotifierProvider(create: (_) => ToolApprovalService()),
