@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import 'search_service.dart';
+import 'search_result_language_filter.dart';
 import '../../providers/settings_provider.dart';
 
 class SearchToolService {
@@ -86,10 +87,12 @@ Cite: append [cite:id] immediately after each statement a result supports, using
       final service = SearchService.getService(services[selectedIndex]);
 
       // Execute search
-      final result = await service.search(
-        query: query,
-        commonOptions: settings.searchCommonOptions,
-        serviceOptions: services[selectedIndex],
+      final result = filterChineseSearchResults(
+        await service.search(
+          query: query,
+          commonOptions: settings.searchCommonOptions,
+          serviceOptions: services[selectedIndex],
+        ),
       );
 
       // Add unique IDs to each result item
