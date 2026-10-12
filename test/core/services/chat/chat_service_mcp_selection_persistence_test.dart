@@ -45,10 +45,7 @@ void main() {
     root = await Directory.systemTemp.createTemp('orvia-mcp-defaults-');
     oldPaths = PathProviderPlatform.instance;
     PathProviderPlatform.instance = _TestPaths(root.path);
-    SandboxPathResolver.debugSetDirs(
-      docsDir: root.path,
-      supportDir: root.path,
-    );
+    SandboxPathResolver.debugSetDirs(docsDir: root.path, supportDir: root.path);
     harness = await BusinessTestHarness.create();
   });
 
