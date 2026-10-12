@@ -40,6 +40,16 @@ class _ConversationMcpSheet extends StatelessWidget {
     // Connection status must not masquerade as a disabled chat selection.
     final servers = mcp.servers.where((s) => s.enabled).toList();
 
+    String connectionLabel(McpStatus status) {
+      if (status == McpStatus.connected) {
+        return l10n.mcpConversationSheetConnected;
+      }
+      if (status == McpStatus.connecting) {
+        return l10n.mcpPageStatusConnecting;
+      }
+      return l10n.mcpPageStatusDisconnected;
+    }
+
     Widget tag(String text) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
@@ -153,13 +163,6 @@ class _ConversationMcpSheet extends StatelessWidget {
                           final enabledTools = tools
                               .where((t) => t.enabled)
                               .length;
-                          final serverStatusText = switch (mcp.statusFor(s.id)) {
-                            McpStatus.connected =>
-                              l10n.mcpConversationSheetConnected,
-                            McpStatus.connecting =>
-                              l10n.mcpPageStatusConnecting,
-                            _ => l10n.mcpPageStatusDisconnected,
-                          };
                           final isSelected = selected.contains(s.id);
                           final bg = isSelected
                               ? cs.primary.withValues(
@@ -253,7 +256,11 @@ class _ConversationMcpSheet extends StatelessWidget {
                                               spacing: 6,
                                               runSpacing: 6,
                                               children: [
-                                                tag(serverStatusText),
+                                                tag(
+                                                  connectionLabel(
+                                                    mcp.statusFor(s.id),
+                                                  ),
+                                                ),
                                                 tag(
                                                   l10n.mcpConversationSheetToolsCount(
                                                     enabledTools,
