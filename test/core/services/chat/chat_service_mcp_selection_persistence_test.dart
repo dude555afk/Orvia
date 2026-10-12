@@ -69,22 +69,18 @@ void main() {
     expect(first.getConversationMcpServers(draft.id), isEmpty);
 
     await first.setConversationMcpServers(draft.id, ['github', 'search']);
-    expect(
-      harness.preferences.getStringList(
-        'conversation_default_mcp_server_ids_v1',
-      ),
-      ['github', 'search'],
+    final saved = harness.preferences.getStringList(
+      'conversation_default_mcp_server_ids_v1',
     );
+    expect(saved, ['github', 'search']);
 
     await first.close();
     services.remove(first);
 
     final restarted = makeService();
     final nextDraft = await restarted.createDraftConversation(title: 'New');
-    expect(restarted.getConversationMcpServers(nextDraft.id), [
-      'github',
-      'search',
-    ]);
+    final selected = restarted.getConversationMcpServers(nextDraft.id);
+    expect(selected, ['github', 'search']);
   });
 
   test('explicitly clearing selection stays cleared on restart', () async {
@@ -95,12 +91,10 @@ void main() {
     final draft = await first.createDraftConversation(title: 'New draft');
     expect(first.getConversationMcpServers(draft.id), ['github']);
     await first.setConversationMcpServers(draft.id, const <String>[]);
-    expect(
-      harness.preferences.getStringList(
-        'conversation_default_mcp_server_ids_v1',
-      ),
-      isEmpty,
+    final saved = harness.preferences.getStringList(
+      'conversation_default_mcp_server_ids_v1',
     );
+    expect(saved, isEmpty);
 
     await first.close();
     services.remove(first);
