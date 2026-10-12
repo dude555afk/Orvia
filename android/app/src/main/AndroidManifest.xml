@@ -46,7 +46,8 @@
         android:fullBackupContent="false"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher">
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.update.fileprovider"
