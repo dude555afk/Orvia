@@ -68,10 +68,13 @@ class OrviaSearchService extends SearchService<OrviaOptions> {
         'language': 'en-US',
       });
       final response = await httpClient
-          .get(uri, headers: {
-            'Authorization': 'Bearer $_token',
-            'Accept-Language': 'en-US,en;q=0.9',
-          })
+          .get(
+            uri,
+            headers: {
+              'Authorization': 'Bearer $_token',
+              'Accept-Language': 'en-US,en;q=0.9',
+            },
+          )
           .timeout(Duration(milliseconds: commonOptions.timeout));
       if (response.statusCode != 200) {
         throw Exception('API request failed: ${response.statusCode}');
@@ -93,5 +96,4 @@ class OrviaSearchService extends SearchService<OrviaOptions> {
       if (ownsClient) httpClient.close();
     }
   }
-
 }
