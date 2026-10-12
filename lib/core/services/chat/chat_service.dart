@@ -76,6 +76,8 @@ class ChatService extends ChangeNotifier {
        // Public injection name intentionally omits the private-field prefix.
        // ignore: prefer_initializing_formals
        _existingRepository = existingRepository,
+       // Public injection name intentionally omits the private-field prefix.
+       // ignore: prefer_initializing_formals
        _businessPreferences = businessPreferences,
        _assetContentHash = assetContentHash ?? _hashAssetFile;
 
