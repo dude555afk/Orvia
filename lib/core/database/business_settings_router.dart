@@ -146,6 +146,7 @@ final class BusinessKeyRegistry {
     'log_max_size_mb_v1',
     'app_launch_count_v1',
     'mcp_request_timeout_ms_v1',
+    'conversation_default_mcp_server_ids_v1',
     'learning_mode_enabled_v1',
     'learning_mode_prompt_v1',
     'mobile_assistant_edit_tab_order_v1',
