@@ -36,9 +36,9 @@ class _ConversationMcpSheet extends StatelessWidget {
     final chat = context.watch<ChatService>();
 
     final selected = chat.getConversationMcpServers(conversationId).toSet();
-    final servers = mcp.servers
-        .where((s) => mcp.statusFor(s.id) == McpStatus.connected)
-        .toList();
+    // Keep enabled servers visible while they reconnect after app restart.
+    // Connection status must not masquerade as a disabled chat selection.
+    final servers = mcp.servers.where((s) => s.enabled).toList();
 
     Widget tag(String text) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -247,7 +247,14 @@ class _ConversationMcpSheet extends StatelessWidget {
                                               runSpacing: 6,
                                               children: [
                                                 tag(
-                                                  l10n.mcpConversationSheetConnected,
+                                                  switch (mcp.statusFor(s.id)) {
+                                                    McpStatus.connected =>
+                                                      l10n.mcpConversationSheetConnected,
+                                                    McpStatus.connecting =>
+                                                      l10n.mcpPageStatusConnecting,
+                                                    _ =>
+                                                      l10n.mcpPageStatusDisconnected,
+                                                  },
                                                 ),
                                                 tag(
                                                   l10n.mcpConversationSheetToolsCount(
