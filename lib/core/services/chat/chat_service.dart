@@ -12,6 +12,7 @@ import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
 import '../../database/app_database.dart';
 import '../../database/business_data.dart';
+import '../../database/business_preferences.dart';
 import '../../database/business_repository.dart';
 import '../../database/chat_database_gateway.dart';
 import '../../database/chat_database_repository.dart';
@@ -69,11 +70,13 @@ class ChatService extends ChangeNotifier {
   ChatService({
     ChatDatabaseGateway? databaseGateway,
     ChatDatabaseRepository? existingRepository,
+    BusinessPreferences? businessPreferences,
     AssetContentHash? assetContentHash,
   }) : _databaseGateway = databaseGateway ?? ChatDatabaseGateway.instance,
        // Public injection name intentionally omits the private-field prefix.
        // ignore: prefer_initializing_formals
        _existingRepository = existingRepository,
+       _businessPreferences = businessPreferences,
        _assetContentHash = assetContentHash ?? _hashAssetFile;
 
   static const int defaultInitialMessageMin = 2;
@@ -96,6 +99,7 @@ class ChatService extends ChangeNotifier {
   late File _databaseFile;
   final ChatDatabaseGateway _databaseGateway;
   final ChatDatabaseRepository? _existingRepository;
+  final BusinessPreferences? _businessPreferences;
   final AssetContentHash _assetContentHash;
   ChatDatabaseLease? _databaseLease;
   Future<void>? _assetReferenceMaintenanceFuture;
@@ -194,6 +198,24 @@ class ChatService extends ChangeNotifier {
     if (orderIds != null) {
       _messageOrderIds[conversationId] = List<String>.of(orderIds);
     }
+  }
+
+  // Persist the last user-selected MCPs even when a draft never sends a message.
+  static const String _defaultMcpSelectionKey =
+      'conversation_default_mcp_server_ids_v1';
+
+  Future<List<String>> _mcpIdsForNewConversation() async {
+    final preferences = _businessPreferences;
+    if (preferences == null) return const <String>[];
+    await preferences.load();
+    return preferences.getStringList(_defaultMcpSelectionKey) ??
+        const <String>[];
+  }
+
+  Future<void> _rememberMcpSelection(List<String> ids) async {
+    final preferences = _businessPreferences;
+    if (preferences == null) return;
+    await preferences.setStringList(_defaultMcpSelectionKey, ids);
   }
 
   // Localized default title for new conversations; set by UI on startup.
@@ -1912,6 +1934,9 @@ class ChatService extends ChangeNotifier {
     final conversation = Conversation(
       title: title ?? _defaultConversationTitle,
       assistantId: assistantId,
+      mcpServerIds: activate
+          ? await _mcpIdsForNewConversation()
+          : const <String>[],
       extras: _extrasForNewConversation(assistantId),
     );
 
@@ -1953,6 +1978,7 @@ class ChatService extends ChangeNotifier {
     final conversation = Conversation(
       title: title ?? _defaultConversationTitle,
       assistantId: assistantId,
+      mcpServerIds: await _mcpIdsForNewConversation(),
       extras: _extrasForNewConversation(assistantId),
     );
     _draftConversations[conversation.id] = conversation;
@@ -2692,6 +2718,7 @@ class ChatService extends ChangeNotifier {
       draft.updatedAt = DateTime.now();
       _bumpContextRevision(conversationId);
       notifyListeners();
+      await _rememberMcpSelection(serverIds);
       return;
     }
     final c = _conversationsCache[conversationId];
@@ -2702,6 +2729,7 @@ class ChatService extends ChangeNotifier {
     _bumpConversationListRevision();
     _bumpContextRevision(conversationId);
     notifyListeners();
+    await _rememberMcpSelection(serverIds);
   }
 
   Future<void> toggleConversationMcpServer(
