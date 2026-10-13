@@ -124,6 +124,35 @@ class _McpServerEditSheetState extends State<_McpServerEditSheet>
     super.dispose();
   }
 
+  /// Enabling an existing MCP is a preference, not an unsaved form edit.
+  /// Commit it as soon as the user flips the switch so closing the sheet
+  /// cannot silently discard the change.
+  Future<void> _onEnabledChanged(bool enabled) async {
+    if (!isEdit) {
+      setState(() => _enabled = enabled);
+      return;
+    }
+
+    final provider = context.read<McpProvider>();
+    final current = provider.getById(widget.serverId!);
+    if (current == null) return;
+    setState(() => _enabled = enabled);
+    try {
+      await provider.updateServerMetadata(current.copyWith(enabled: enabled));
+    } catch (_) {
+      if (!mounted) return;
+      setState(
+        () => _enabled =
+            provider.getById(widget.serverId!)?.enabled ?? current.enabled,
+      );
+      showAppSnackBar(
+        context,
+        message: 'Could not save MCP enabled state. Please try again.',
+        type: NotificationType.error,
+      );
+    }
+  }
+
   // Match provider sheet switch row style
   Widget _switchRow({
     required String label,
@@ -200,7 +229,7 @@ class _McpServerEditSheetState extends State<_McpServerEditSheet>
             _switchRow(
               label: l10n.mcpServerEditSheetEnabledLabel,
               value: _enabled,
-              onChanged: (v) => setState(() => _enabled = v),
+              onChanged: _onEnabledChanged,
             ),
           ],
         ),
