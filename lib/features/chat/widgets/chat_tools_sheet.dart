@@ -410,9 +410,19 @@ class _McpGroup extends StatelessWidget {
         .where((server) => selected.contains(server.id))
         .length;
 
-    Future<void> setSelected(String id, bool value) => context
-        .read<AssistantProvider>()
-        .setMcpServerEnabledForAssistant(assistantId, id, value);
+    Future<void> setSelected(String id, bool value) {
+      return context.read<AssistantProvider>().setMcpServerEnabledForAssistant(
+        assistantId,
+        id,
+        value,
+      );
+    }
+
+    String toolsLabel(McpServerConfig server) =>
+        l10n.assistantEditMcpToolsCountTag(
+          server.tools.where((tool) => tool.enabled).length.toString(),
+          server.tools.length.toString(),
+        );
 
     return _ToolsGroup(
       key: ChatToolsSheet.mcpGroupKey,
@@ -428,10 +438,7 @@ class _McpGroup extends StatelessWidget {
             label: server.name,
             selected: selected.contains(server.id),
             detail: server.enabled
-                ? l10n.assistantEditMcpToolsCountTag(
-                    server.tools.where((tool) => tool.enabled).length.toString(),
-                    server.tools.length.toString(),
-                  )
+                ? toolsLabel(server)
                 : l10n.mcpPageStatusDisabled,
             onTap: () => unawaited(
               setSelected(server.id, !selected.contains(server.id)),
