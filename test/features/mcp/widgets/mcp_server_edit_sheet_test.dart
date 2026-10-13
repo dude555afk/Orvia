@@ -41,6 +41,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.widget<IosSwitch>(find.byType(IosSwitch).first).value, isTrue);
       expect(provider.getById('guest')!.enabled, isTrue);
+
+      final reopenedProvider = McpProvider(preferences: provider.preferences);
+      await reopenedProvider.loaded;
+      expect(reopenedProvider.getById('guest')!.enabled, isTrue);
+      reopenedProvider.dispose();
       await tester.pumpWidget(const SizedBox.shrink());
     },
     variant: TargetPlatformVariant.only(TargetPlatform.android),
