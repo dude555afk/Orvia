@@ -1,6 +1,8 @@
 package com.dude555afk.orvia
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.graphics.BitmapFactory
 import android.content.ActivityNotFoundException
 import android.net.Uri
 import android.content.Intent
@@ -40,8 +42,34 @@ class MainActivity : FlutterActivity() {
 
     override fun onPostResume() {
         super.onPostResume()
+        refreshRecentTaskBranding()
         applyEdgeToEdgeSystemBars(window)
         highRefreshRate.resume()
+    }
+
+    /** Refresh the task icon after upgrading an older app version.
+     * Samsung's Recents UI can retain an older task description across updates.
+     */
+    @Suppress("DEPRECATION")
+    private fun refreshRecentTaskBranding() {
+        val color = 0xFF06132B.toInt()
+        val description = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+                ActivityManager.TaskDescription.Builder()
+                    .setLabel("Orvia")
+                    .setIcon(R.mipmap.ic_launcher)
+                    .setPrimaryColor(color)
+                    .build()
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ->
+                ActivityManager.TaskDescription("Orvia", R.mipmap.ic_launcher, color)
+            else ->
+                ActivityManager.TaskDescription(
+                    "Orvia",
+                    BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher),
+                    color,
+                )
+        }
+        setTaskDescription(description)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
