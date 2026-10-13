@@ -14,16 +14,13 @@ final class TtsSpeechTextCleaner {
     var text = _removeFencedCode(input);
 
     // Preserve short display names, but never narrate executable inline code.
-    text = text.replaceAllMapped(
-      RegExp(r'(`+)([^`\r\n]*?)\1'),
-      (match) {
-        final label = (match.group(2) ?? '').trim();
-        if (RegExp(r'^[A-Za-z][A-Za-z0-9 ._+#/-]{0,60}$').hasMatch(label)) {
-          return label;
-        }
-        return ' ';
-      },
-    );
+    text = text.replaceAllMapped(RegExp(r'(`+)([^`\r\n]*?)\1'), (match) {
+      final label = (match.group(2) ?? '').trim();
+      if (RegExp(r'^[A-Za-z][A-Za-z0-9 ._+#/-]{0,60}$').hasMatch(label)) {
+        return label;
+      }
+      return ' ';
+    });
     text = markdownRemoveCode(text);
 
     // Citation payloads are metadata, never words to narrate.
