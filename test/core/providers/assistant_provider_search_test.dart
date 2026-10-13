@@ -87,8 +87,16 @@ void main() {
         );
 
         await Future.wait([
-          provider.setMcpServerEnabledForAssistant('assistant-a', 'github', true),
-          provider.setMcpServerEnabledForAssistant('assistant-a', 'search', true),
+          provider.setMcpServerEnabledForAssistant(
+            'assistant-a',
+            'github',
+            true,
+          ),
+          provider.setMcpServerEnabledForAssistant(
+            'assistant-a',
+            'search',
+            true,
+          ),
         ]);
 
         final selected = provider.getById('assistant-a')!.mcpServerIds.toSet();
