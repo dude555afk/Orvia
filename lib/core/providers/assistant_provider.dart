@@ -473,7 +473,9 @@ class AssistantProvider extends ChangeNotifier {
     if (index < 0) return;
     final current = _assistants[index];
     final selected = current.mcpServerIds.toSet();
-    final changed = enabled ? selected.add(serverId) : selected.remove(serverId);
+    final changed = enabled
+        ? selected.add(serverId)
+        : selected.remove(serverId);
     if (!changed) return;
     _assistants[index] = current.copyWith(
       mcpServerIds: selected.toList(growable: false),
