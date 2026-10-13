@@ -11,6 +11,7 @@ import 'package:orvia/core/providers/settings_provider.dart';
 import 'package:orvia/core/providers/workspace_provider.dart';
 import 'package:orvia/core/services/workspace/workspace_runtime.dart';
 import 'package:orvia/features/mcp/widgets/mcp_server_edit_sheet.dart';
+import 'package:orvia/shared/widgets/ios_switch.dart';
 import 'package:orvia/desktop/setting/mcp_edit_dialog.dart';
 import 'package:orvia/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,30 @@ import '../../../support/business_test_harness.dart';
 import '../../../support/fake_workspace_runtime.dart';
 
 void main() {
+  testWidgets(
+    'toggling an existing server persists without tapping Save',
+    (tester) async {
+      final provider = await _openEditor(tester, []);
+      final toggle = find.byType(IosSwitch).first;
+      expect(tester.widget<IosSwitch>(toggle).value, isFalse);
+
+      await tester.tap(toggle);
+      await tester.pumpAndSettle();
+      expect(provider.getById('guest')!.enabled, isTrue);
+
+      // Closing the sheet without submitting the other fields must not undo
+      // the separately saved enable preference.
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      expect(tester.widget<IosSwitch>(find.byType(IosSwitch).first).value, isTrue);
+      expect(provider.getById('guest')!.enabled, isTrue);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
   for (final brightness in Brightness.values) {
     testWidgets(
       'select, save, reopen and unbind a workspace (${brightness.name})',
