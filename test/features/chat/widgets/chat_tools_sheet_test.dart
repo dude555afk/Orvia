@@ -361,7 +361,14 @@ void main() {
   testWidgets('selected MCP remains switched on while disconnected', (
     tester,
   ) async {
-    await assistants.setMcpServerEnabledForAssistant(assistantId, 's1', true);
+    // SQLite persistence uses real async I/O, outside the widget fake clock.
+    await tester.runAsync(
+      () => assistants.setMcpServerEnabledForAssistant(
+        assistantId,
+        's1',
+        true,
+      ),
+    );
     mcp.fakeStatus = McpStatus.error;
     await pumpSheet(tester, servers: [_server('s1', 'Alpha')]);
     final row = find.byKey(ChatToolsSheet.mcpServerKey('s1'));
@@ -384,15 +391,18 @@ void main() {
       find.descendant(of: row, matching: find.byType(IosSwitch)),
     );
     await tester.pumpAndSettle();
-    expect(assistants.getById(assistantId)!.mcpServerIds, ['s1']);
-
-    // AssistantProvider notifies only after persisting, so the row would still
-    // be reading the pre-toggle selection without real async time.
+    // Let the asynchronous preference write complete outside fake async.
     await tester.runAsync(
       () => Future<void>.delayed(const Duration(milliseconds: 100)),
     );
     await tester.pumpAndSettle();
+    expect(assistants.getById(assistantId)!.mcpServerIds, ['s1']);
+    await tester.pumpAndSettle();
     await tester.tap(row);
+    await tester.pumpAndSettle();
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
     await tester.pumpAndSettle();
     expect(assistants.getById(assistantId)!.mcpServerIds, isEmpty);
   });
