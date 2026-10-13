@@ -22,7 +22,78 @@ final class TtsSpeechTextCleaner {
       ),
       ' ',
     );
-    text = text.replaceAll(RegExp(r'^\s*\[\^[^\]]+\]:.*$', multiLine: true), '');
+    text = text.replaceAll(
+      RegExp(r'^\s*\[\^[^\]]+\]:.*
+    text = text.replaceAll(RegExp(r'\[\^[^\]]+\]'), ' ');
+    text = text.replaceAll(RegExp(r'\[\d+\]'), ' ');
+    text = text.replaceAll(
+      RegExp(r'\b(?:cite|citation)\s*:\s*[a-f0-9]{24,}\b',
+          caseSensitive: false),
+      ' ',
+    );
+
+    // Keep link labels, but do not read out the destination or image syntax.
+    text = text.replaceAll(RegExp(r'!\[[^\]]*\]\([^\r\n)]*\)'), ' ');
+    text = text.replaceAllMapped(
+      RegExp(r'\[([^\]\r\n]+)\]\([^\r\n)]*\)'),
+      (match) => match.group(1) ?? '',
+    );
+    text = text.replaceAll(RegExp(r'<(?:https?://|www\.)[^>\s]+>'), ' ');
+    text = text.replaceAll(
+      RegExp(r'(?:https?://|www\.)[^\s<>)\]]+', caseSensitive: false),
+      ' ',
+    );
+    text = text.replaceAll(
+      RegExp(r'<\/?[a-z][a-z0-9]*(?:\s[^<>]*)?>', caseSensitive: false),
+      ' ',
+    );
+
+    text = text.replaceAll(
+      RegExp(
+        r'^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)*\|?\s*$',
+        multiLine: true,
+      ),
+      ' ',
+    );
+    text = text.replaceAll(RegExp(r'^\s*[-*_]{3,}\s*$', multiLine: true), ' ');
+    text = text.replaceAll(RegExp(r'^\s{0,3}#{1,6}\s+', multiLine: true), '');
+    text = text.replaceAll(RegExp(r'^\s{0,3}>+\s*', multiLine: true), '');
+    text = text.replaceAll(
+      RegExp(r'^\s{0,3}(?:[-*+]|\d+[.)])\s+', multiLine: true),
+      '',
+    );
+    text = text.replaceAll(RegExp(r'^\s*\[[ xX]\]\s*', multiLine: true), '');
+    text = text.replaceAll('**', '');
+    text = text.replaceAll('~~', '');
+    text = text.replaceAllMapped(
+      RegExp(r'\*([^\s*](?:[^\r\n]*?[^\s*])?)\*'),
+      (match) => match.group(1) ?? '',
+    );
+    text = text.replaceAllMapped(
+      RegExp(r'(?<!\w)_([^\s_](?:[^\r\n]*?[^\s_])?)_(?!\w)'),
+      (match) => match.group(1) ?? '',
+    );
+    text = text.replaceAll(String.fromCharCode(0x60), '');
+    text = text.replaceAll('|', ', ');
+    text = text.replaceAll(RegExp(r'[✅☑✔✓]'), ' yes ');
+    text = text.replaceAll(RegExp(r'[❌✗✘]'), ' no ');
+    return text.replaceAll(RegExp(r'\s+'), ' ').trim();
+  }
+
+  static String _removeFencedCode(String input) {
+    final lexer = MarkdownLineLexer();
+    final lines = <String>[];
+    for (final line in input.split('\n')) {
+      final prefix = _fenceContainerPrefix.firstMatch(line);
+      final unwrapped = line.substring(prefix?.end ?? 0);
+      lines.add(lexer.consumeFence(unwrapped) ? '' : line);
+    }
+    return lines.join('\n');
+  }
+}
+, multiLine: true),
+      '',
+    );
     text = text.replaceAll(RegExp(r'\[\^[^\]]+\]'), ' ');
     text = text.replaceAll(RegExp(r'\[\d+\]'), ' ');
     text = text.replaceAll(
