@@ -48,7 +48,9 @@ void main() {
 
     test('preserves identifiers, equations, and Bengali', () {
       expect(
-        TtsSpeechTextCleaner.clean('foo_bar is fine. 2 * 3 = 6. STT and বাংলা.'),
+        TtsSpeechTextCleaner.clean(
+          'foo_bar is fine. 2 * 3 = 6. STT and বাংলা.',
+        ),
         'foo_bar is fine. 2 * 3 = 6. STT and বাংলা.',
       );
       expect(TtsSpeechTextCleaner.clean('   '), isEmpty);
