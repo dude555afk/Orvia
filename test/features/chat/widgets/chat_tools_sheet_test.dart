@@ -81,12 +81,13 @@ class _FakeMcpProvider extends McpProvider {
   _FakeMcpProvider({required super.preferences});
 
   List<McpServerConfig> fakeServers = const <McpServerConfig>[];
+  McpStatus fakeStatus = McpStatus.connected;
 
   @override
   List<McpServerConfig> get servers => fakeServers;
 
   @override
-  McpStatus statusFor(String id) => McpStatus.connected;
+  McpStatus statusFor(String id) => fakeStatus;
 
   @override
   List<McpServerConfig> get connectedServers => fakeServers;
@@ -355,6 +356,26 @@ void main() {
   testWidgets('hides the MCP group when nothing is connected', (tester) async {
     await pumpSheet(tester);
     expect(find.byKey(ChatToolsSheet.mcpGroupKey), findsNothing);
+  });
+
+  testWidgets('selected MCP remains switched on while disconnected', (
+    tester,
+  ) async {
+    await assistants.setMcpServerEnabledForAssistant(
+      assistantId,
+      's1',
+      true,
+    );
+    mcp.fakeStatus = McpStatus.error;
+    await pumpSheet(tester, servers: [_server('s1', 'Alpha')]);
+    final row = find.byKey(ChatToolsSheet.mcpServerKey('s1'));
+    expect(row, findsOneWidget);
+    expect(
+      tester.widget<IosSwitch>(
+        find.descendant(of: row, matching: find.byType(IosSwitch)),
+      ).value,
+      isTrue,
+    );
   });
 
   testWidgets('MCP servers toggle the assistant selection', (tester) async {
