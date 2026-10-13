@@ -460,6 +460,31 @@ class AssistantProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Update the latest MCP selection, not a stale Assistant snapshot captured
+  /// when the tools sheet was built. Rapid switch taps must compose instead
+  /// of replacing each other with an older list.
+  Future<void> setMcpServerEnabledForAssistant(
+    String assistantId,
+    String serverId,
+    bool enabled,
+  ) async {
+    await loaded;
+    final index = _assistants.indexWhere((a) => a.id == assistantId);
+    if (index < 0) return;
+    final current = _assistants[index];
+    final selected = current.mcpServerIds.toSet();
+    final changed = enabled
+        ? selected.add(serverId)
+        : selected.remove(serverId);
+    if (!changed) return;
+    _assistants[index] = current.copyWith(
+      mcpServerIds: selected.toList(growable: false),
+    );
+    // Paint the new switch state right away, even while SQLite is writing.
+    notifyListeners();
+    await _persist();
+  }
+
   Future<void> setSearchEnabledForCurrentAssistant(bool enabled) async {
     final a = currentAssistant;
     if (a == null || a.searchEnabled == enabled) return;

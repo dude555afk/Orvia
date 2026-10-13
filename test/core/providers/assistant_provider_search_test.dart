@@ -76,6 +76,39 @@ void main() {
       },
     );
 
+    test(
+      'concurrent MCP toggles persist without overwriting each other',
+      () async {
+        final provider = await _createLoadedAssistantProvider(
+          session: session,
+          assistants: const [
+            {'id': 'assistant-a', 'name': 'A'},
+          ],
+        );
+
+        await Future.wait([
+          provider.setMcpServerEnabledForAssistant(
+            'assistant-a',
+            'github',
+            true,
+          ),
+          provider.setMcpServerEnabledForAssistant(
+            'assistant-a',
+            'search',
+            true,
+          ),
+        ]);
+
+        final selected = provider.getById('assistant-a')!.mcpServerIds.toSet();
+        expect(selected, {'github', 'search'});
+
+        final restarted = AssistantProvider(preferences: session.preferences);
+        await restarted.loaded;
+        final restored = restarted.getById('assistant-a')!.mcpServerIds.toSet();
+        expect(restored, {'github', 'search'});
+      },
+    );
+
     test('updates only the current assistant search value', () async {
       final provider = await _createLoadedAssistantProvider(
         session: session,

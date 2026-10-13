@@ -13,9 +13,8 @@ class _McpTab extends StatelessWidget {
     final assistant = ap.getById(assistantId)!;
 
     final selected = assistant.mcpServerIds.toSet();
-    final servers = mcp.servers
-        .where((server) => mcp.statusFor(server.id) == McpStatus.connected)
-        .toList();
+    // Include configured servers even when a fresh launch is reconnecting.
+    final servers = mcp.servers.toList();
 
     Future<void> updateSelected(Set<String> ids) {
       return context.read<AssistantProvider>().updateAssistant(
@@ -134,15 +133,11 @@ class _McpTab extends StatelessWidget {
                       server.tools.length.toString(),
                     ),
                   ),
-                  onChanged: (enabled) async {
-                    final ids = selected.toSet();
-                    if (enabled) {
-                      ids.add(server.id);
-                    } else {
-                      ids.remove(server.id);
-                    }
-                    await updateSelected(ids);
-                  },
+                  onChanged: (enabled) => ap.setMcpServerEnabledForAssistant(
+                    assistantId,
+                    server.id,
+                    enabled,
+                  ),
                 ),
               ],
           ],
