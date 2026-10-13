@@ -361,21 +361,15 @@ void main() {
   testWidgets('selected MCP remains switched on while disconnected', (
     tester,
   ) async {
-    await assistants.setMcpServerEnabledForAssistant(
-      assistantId,
-      's1',
-      true,
-    );
+    await assistants.setMcpServerEnabledForAssistant(assistantId, 's1', true);
     mcp.fakeStatus = McpStatus.error;
     await pumpSheet(tester, servers: [_server('s1', 'Alpha')]);
     final row = find.byKey(ChatToolsSheet.mcpServerKey('s1'));
     expect(row, findsOneWidget);
-    expect(
-      tester.widget<IosSwitch>(
-        find.descendant(of: row, matching: find.byType(IosSwitch)),
-      ).value,
-      isTrue,
+    final switchWidget = tester.widget<IosSwitch>(
+      find.descendant(of: row, matching: find.byType(IosSwitch)),
     );
+    expect(switchWidget.value, isTrue);
   });
 
   testWidgets('MCP servers toggle the assistant selection', (tester) async {
