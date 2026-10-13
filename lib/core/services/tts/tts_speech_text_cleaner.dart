@@ -18,9 +18,10 @@ final class TtsSpeechTextCleaner {
       RegExp(r'(`+)([^`\r\n]*?)\1'),
       (match) {
         final label = (match.group(2) ?? '').trim();
-        return RegExp(r'^[A-Za-z][A-Za-z0-9 ._+#/-]{0,60}$').hasMatch(label)
-            ? label
-            : ' ';
+        if (RegExp(r'^[A-Za-z][A-Za-z0-9 ._+#/-]{0,60}$').hasMatch(label)) {
+          return label;
+        }
+        return ' ';
       },
     );
     text = markdownRemoveCode(text);
