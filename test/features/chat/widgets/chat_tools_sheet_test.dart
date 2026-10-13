@@ -363,11 +363,7 @@ void main() {
   ) async {
     // SQLite persistence uses real async I/O, outside the widget fake clock.
     await tester.runAsync(
-      () => assistants.setMcpServerEnabledForAssistant(
-        assistantId,
-        's1',
-        true,
-      ),
+      () => assistants.setMcpServerEnabledForAssistant(assistantId, 's1', true),
     );
     mcp.fakeStatus = McpStatus.error;
     await pumpSheet(tester, servers: [_server('s1', 'Alpha')]);
