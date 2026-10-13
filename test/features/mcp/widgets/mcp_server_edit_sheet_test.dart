@@ -39,7 +39,10 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
-      expect(tester.widget<IosSwitch>(find.byType(IosSwitch).first).value, isTrue);
+      expect(
+        tester.widget<IosSwitch>(find.byType(IosSwitch).first).value,
+        isTrue,
+      );
       expect(provider.getById('guest')!.enabled, isTrue);
 
       final reopenedProvider = McpProvider(preferences: provider.preferences);
