@@ -4,7 +4,8 @@ import 'package:orvia/core/services/tts/tts_speech_text_cleaner.dart';
 void main() {
   group('TtsSpeechTextCleaner', () {
     test('keeps meaning without reading Markdown and citation syntax', () {
-      const input = '# STT options\n'
+      const input =
+          '# STT options\n'
           '- **Local speech** works. citeturn0search2\n'
           '- ✅ [Sherpa](https://example.org/model) is available.\n'
           '> It also works for বাংলা. 【turn1search3】';
@@ -21,7 +22,8 @@ void main() {
     });
 
     test('skips fenced code, but keeps inline names', () {
-      const source = 'Use `Edge TTS` for speech.\n'
+      const source =
+          'Use `Edge TTS` for speech.\n'
           '~~~dart\nprint("do not narrate this code");\n~~~\n'
           'Normal explanation continues.';
       expect(
@@ -31,7 +33,8 @@ void main() {
     });
 
     test('skips reference identifiers, images and table dividers', () {
-      const source = 'Model | Works\n'
+      const source =
+          'Model | Works\n'
           '|---|:---:|\n'
           'Whisper | ✅\n'
           '![Preview](https://assets.example.org/p.png)\n'

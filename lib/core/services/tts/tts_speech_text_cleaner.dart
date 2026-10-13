@@ -29,8 +29,10 @@ final class TtsSpeechTextCleaner {
     text = text.replaceAll(RegExp(r'\[\^[^\]]+\]'), ' ');
     text = text.replaceAll(RegExp(r'\[\d+\]'), ' ');
     text = text.replaceAll(
-      RegExp(r'\b(?:cite|citation)\s*:\s*[a-f0-9]{24,}\b',
-          caseSensitive: false),
+      RegExp(
+        r'\b(?:cite|citation)\s*:\s*[a-f0-9]{24,}\b',
+        caseSensitive: false,
+      ),
       ' ',
     );
 
