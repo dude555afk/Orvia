@@ -399,10 +399,10 @@ class _McpGroup extends StatelessWidget {
       (provider) => provider.getById(assistantId),
     );
     if (assistant == null) return const SizedBox.shrink();
-    final servers = mcp.servers
-        .where((server) => mcp.statusFor(server.id) == McpStatus.connected)
-        .toList(growable: false);
-    // Nothing connected means nothing to choose from — skip the empty block.
+    // Show configured servers while reconnecting, not only connected ones.
+    // Hiding them on startup makes saved selections look switched off.
+    final servers = mcp.servers.toList(growable: false);
+    // Only hide the group when no MCP servers have been configured.
     if (servers.isEmpty) return const SizedBox.shrink();
 
     final selected = assistant.mcpServerIds.toSet();
@@ -410,21 +410,9 @@ class _McpGroup extends StatelessWidget {
         .where((server) => selected.contains(server.id))
         .length;
 
-    Future<void> setIds(Iterable<String> ids) {
-      return context.read<AssistantProvider>().updateAssistant(
-        assistant.copyWith(mcpServerIds: ids.toList(growable: false)),
-      );
-    }
-
-    Future<void> setSelected(String id, bool value) {
-      final next = assistant.mcpServerIds.toSet();
-      if (value) {
-        next.add(id);
-      } else {
-        next.remove(id);
-      }
-      return setIds(next);
-    }
+    Future<void> setSelected(String id, bool value) => context
+        .read<AssistantProvider>()
+        .setMcpServerEnabledForAssistant(assistantId, id, value);
 
     return _ToolsGroup(
       key: ChatToolsSheet.mcpGroupKey,
@@ -439,10 +427,12 @@ class _McpGroup extends StatelessWidget {
             icon: Lucide.Hammer,
             label: server.name,
             selected: selected.contains(server.id),
-            detail: l10n.assistantEditMcpToolsCountTag(
-              server.tools.where((tool) => tool.enabled).length.toString(),
-              server.tools.length.toString(),
-            ),
+            detail: server.enabled
+                ? l10n.assistantEditMcpToolsCountTag(
+                    server.tools.where((tool) => tool.enabled).length.toString(),
+                    server.tools.length.toString(),
+                  )
+                : l10n.mcpPageStatusDisabled,
             onTap: () => unawaited(
               setSelected(server.id, !selected.contains(server.id)),
             ),
