@@ -35,7 +35,8 @@ void main() {
 
       // Closing the sheet without submitting the other fields must not undo
       // the separately saved enable preference.
-      await tester.pageBack();
+      // This is a modal bottom sheet, not a page with a back button.
+      await tester.tapAt(const Offset(12, 12));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
