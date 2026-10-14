@@ -30,8 +30,10 @@ jobs:
           node-version: '22'
           cache: npm
           cache-dependency-path: native-v2/lastchat/web-ui/package-lock.json
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Check preinstalled Android SDK
+        run: |
+          test -d "$ANDROID_HOME"
+          echo "Using Android SDK at $ANDROID_HOME"
       - name: Apply isolated Orvia preview identity
         working-directory: native-v2/lastchat
         shell: bash
