@@ -10,16 +10,12 @@ class _McpTab extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final mcp = context.watch<McpProvider>();
     final ap = context.watch<AssistantProvider>();
-    final assistant = ap.getById(assistantId)!;
-
-    final selected = assistant.mcpServerIds.toSet();
+    final selected = ap.stickyMcpServerIds.toSet();
     // Include configured servers even when a fresh launch is reconnecting.
     final servers = mcp.servers.toList();
 
     Future<void> updateSelected(Set<String> ids) {
-      return context.read<AssistantProvider>().updateAssistant(
-        assistant.copyWith(mcpServerIds: ids.toList(growable: false)),
-      );
+      return context.read<AssistantProvider>().setStickyMcpServerIds(ids);
     }
 
     Widget tag(String text) {
