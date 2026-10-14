@@ -118,6 +118,10 @@ void main() {
     final reopened = makeService();
     final fresh = await reopened.createDraftConversation();
     expect(reopened.getConversationMcpServers(fresh.id), ['github', 'search']);
+    // An older conversation with a saved empty list still inherits enabled
+    // global tools, instead of silently showing them as off.
+    await reopened.setConversationMcpServers(fresh.id, const <String>[]);
+    expect(reopened.getConversationMcpServers(fresh.id), ['github', 'search']);
 
     await harness.preferences.setStringList(
       'mcp_sticky_selection_v1',
