@@ -1,0 +1,27 @@
+name: Temporary sticky MCP formatter
+on:
+  push:
+    branches: [fix/mcp-sticky-global-selection-20261014]
+permissions:
+  contents: write
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+      - name: Format modified MCP sheet
+        run: |
+          set -euo pipefail
+          dart format lib/features/mcp/widgets/mcp_conversation_sheet.dart
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib/features/mcp/widgets/mcp_conversation_sheet.dart
+          if ! git diff --cached --quiet; then
+            git commit -m "style(mcp): format conversation MCP sheet"
+            git push origin HEAD:fix/mcp-sticky-global-selection-20261014
+          fi
