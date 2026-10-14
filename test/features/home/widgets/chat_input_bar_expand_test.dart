@@ -20,9 +20,14 @@ void main() {
     TextEditingController controller, {
     ChatInputSubmissionResult sendResult = ChatInputSubmissionResult.rejected,
     bool showBar = true,
+    VoidCallback? onMore,
+    bool? adaptiveEnabled,
   }) async {
     final settings = SettingsProvider(createBusinessTestPreferences());
     await settings.loaded;
+    if (adaptiveEnabled != null) {
+      await settings.setAdaptiveComposerOnMobile(adaptiveEnabled);
+    }
     final expandedEvents = <bool>[];
     await tester.pumpWidget(
       MultiProvider(
@@ -50,6 +55,7 @@ void main() {
                           key: barKey,
                           controller: controller,
                           focusNode: FocusNode(),
+                          onMore: onMore,
                           onExpandedChanged: expandedEvents.add,
                           onSend: (_) async => sendResult,
                         )
@@ -68,6 +74,53 @@ void main() {
 
   double barHeight(WidgetTester tester) =>
       tester.getSize(find.byKey(barKey)).height;
+
+  testWidgets('mobile composer grows on typing and shrinks when cleared', (
+    tester,
+  ) async {
+    final controller = TextEditingController();
+    addTearDown(controller.dispose);
+    var openCount = 0;
+    await pumpBar(
+      tester,
+      controller,
+      onMore: () => openCount++,
+    );
+    final compact = find.byKey(const ValueKey('adaptive-composer-more'));
+    final input = find.byType(TextField);
+    expect(compact, findsOneWidget);
+    final smallHeight = barHeight(tester);
+    await tester.tap(compact);
+    expect(openCount, 1);
+
+    await tester.enterText(input, 'A message');
+    await tester.pumpAndSettle();
+    expect(compact, findsNothing);
+    expect(barHeight(tester), greaterThan(smallHeight));
+
+    await tester.enterText(input, '');
+    await tester.pumpAndSettle();
+    expect(compact, findsOneWidget);
+    expect((barHeight(tester) - smallHeight).abs(), lessThan(1));
+    expect(find.byType(TextField), findsOneWidget);
+  });
+
+  testWidgets('classic mobile composer remains available from settings', (
+    tester,
+  ) async {
+    final controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await pumpBar(
+      tester,
+      controller,
+      onMore: () {},
+      adaptiveEnabled: false,
+    );
+    expect(
+      find.byKey(const ValueKey('adaptive-composer-more')),
+      findsNothing,
+    );
+  });
 
   testWidgets('offers expansion only once the text wraps past two lines', (
     tester,
