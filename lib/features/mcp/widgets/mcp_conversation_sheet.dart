@@ -42,10 +42,7 @@ class _ConversationMcpSheet extends StatelessWidget {
     Future<void> updateSelected(Iterable<String> ids) async {
       final next = ids.toSet().toList(growable: false);
       await context.read<AssistantProvider>().setStickyMcpServerIds(next);
-      await chat.setConversationMcpServers(
-        conversationId,
-        next,
-      );
+      await chat.setConversationMcpServers(conversationId, next);
     }
 
     Future<void> toggleSelected(String id, bool enabled) async {
