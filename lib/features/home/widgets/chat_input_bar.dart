@@ -2769,6 +2769,20 @@ class _ChatInputBarState extends State<ChatInputBar>
     final bool isMobileLayout =
         MediaQuery.sizeOf(context).width < AppBreakpoints.tablet;
     final expandedLayout = _expandedLayout;
+    // Keep one live TextField throughout the compact-to-expanded transition.
+    // This avoids losing the caret, draft state, or paste/IME composition.
+    final compactComposer =
+        isMobileLayout &&
+        settings.adaptiveComposerOnMobile &&
+        widget.showMoreButton &&
+        widget.onMore != null &&
+        !expandedLayout &&
+        !hasText &&
+        !hasImages &&
+        !hasDocs &&
+        !widget.loading &&
+        !widget.hasQueuedInput &&
+        !_ownsVoiceSession;
     if (!expandedLayout) _scheduleExpandCheck();
     _hostDrawer = InteractiveDrawer.maybeControllerOf(context);
 
@@ -2949,11 +2963,19 @@ class _ChatInputBarState extends State<ChatInputBar>
                                         ? StackFit.expand
                                         : StackFit.loose,
                                     children: [
-                                      Padding(
+                                      AnimatedPadding(
+                                        duration: const Duration(
+                                          milliseconds: 210,
+                                        ),
+                                        curve: Curves.easeOutCubic,
                                         padding: EdgeInsetsDirectional.fromSTEB(
-                                          AppSpacing.md,
+                                          compactComposer
+                                              ? 48
+                                              : AppSpacing.md,
                                           AppSpacing.xxs,
-                                          expandedLayout || _canExpand
+                                          compactComposer
+                                              ? 48
+                                              : expandedLayout || _canExpand
                                               ? _expandButtonExtent +
                                                     AppSpacing.xs
                                               : AppSpacing.md,
@@ -3118,6 +3140,59 @@ class _ChatInputBarState extends State<ChatInputBar>
                                           ),
                                         ),
                                       ),
+                                      if (compactComposer) ...[
+                                        PositionedDirectional(
+                                          start: 6,
+                                          top: 1,
+                                          child: KeyedSubtree(
+                                            key: const ValueKey(
+                                              'adaptive-composer-more',
+                                            ),
+                                            child: _CompactIconButton(
+                                              tooltip:
+                                                  AppLocalizations.of(context)!
+                                                      .chatInputBarMoreTooltip,
+                                              icon: Lucide.Plus,
+                                              active: widget.moreOpen,
+                                              onTap: _composerLocked
+                                                  ? null
+                                                  : widget.onMore,
+                                            ),
+                                          ),
+                                        ),
+                                        PositionedDirectional(
+                                          end: 6,
+                                          top: 1,
+                                          child: KeyedSubtree(
+                                            key: const ValueKey(
+                                              'adaptive-composer-trailing',
+                                            ),
+                                            child: showVoiceInput
+                                                ? _CompactIconButton(
+                                                    tooltip:
+                                                        AppLocalizations.of(
+                                                          context,
+                                                        )!
+                                                            .chatInputBarVoiceInputTooltip,
+                                                    icon: Lucide.Mic,
+                                                    onTap: _composerLocked
+                                                        ? null
+                                                        : () => unawaited(
+                                                              _startVoiceInput(),
+                                                            ),
+                                                  )
+                                                : _CompactSendButton(
+                                                    enabled: false,
+                                                    loading: false,
+                                                    onSend: _handleSend,
+                                                    color: theme
+                                                        .colorScheme
+                                                        .primary,
+                                                    icon: Lucide.ArrowUp,
+                                                  ),
+                                          ),
+                                        ),
+                                      ],
                                       if (expandedLayout || _canExpand)
                                         PositionedDirectional(
                                           top: 2,
@@ -3143,8 +3218,18 @@ class _ChatInputBarState extends State<ChatInputBar>
                                     ],
                                   ),
                                 ),
-                                // Bottom buttons row (no divider)
-                                Padding(
+                                // The normal action row glides in as soon as
+                                // content is typed; an empty mobile composer
+                                // stays a compact single-row pill.
+                                AnimatedSize(
+                                  duration: const Duration(
+                                    milliseconds: 230,
+                                  ),
+                                  curve: Curves.easeOutCubic,
+                                  alignment: Alignment.topCenter,
+                                  child: compactComposer
+                                      ? const SizedBox.shrink()
+                                      : Padding(
                                   padding: const EdgeInsets.fromLTRB(
                                     AppSpacing.xs,
                                     0,
@@ -3288,6 +3373,7 @@ class _ChatInputBarState extends State<ChatInputBar>
                                             ],
                                           ),
                                   ),
+                                ),
                                 ),
                               ],
                             ),
