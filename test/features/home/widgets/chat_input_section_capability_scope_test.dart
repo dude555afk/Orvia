@@ -205,10 +205,11 @@ void main() {
     expect(bar().reasoningActive, isFalse);
   });
 
-  testWidgets('the assistant\'s own model still disables what it cannot do', (
+  testWidgets('unsupported models never turn off saved MCP switches', (
     tester,
   ) async {
     final assistants = await loadAssistantWithMcp(tester);
+    await assistants.loaded;
 
     await pumpComposer(
       tester,
@@ -216,7 +217,10 @@ void main() {
       isConversationOverride: false,
     );
 
-    expect(assistants.currentAssistant?.mcpServerIds, isEmpty);
+    expect(assistants.currentAssistant?.mcpServerIds, ['server-1']);
+    final reloaded = AssistantProvider(preferences: preferences);
+    await reloaded.loaded;
+    expect(reloaded.currentAssistant?.mcpServerIds, ['server-1']);
   });
 
   Future<void> pumpTabletComposer(
