@@ -75,7 +75,8 @@ class TtsServicesPage extends StatelessWidget {
                   .toUpperCase();
           return CustomScrollView(
             slivers: [
-              if (tts.edgeVoiceFallbackActive)
+              if (tts.edgeVoiceFallbackActive &&
+                  sp.selectedTtsService is EdgeNeuralTtsOptions)
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
