@@ -204,23 +204,39 @@ void main() {
     expect(bar().reasoningActive, isFalse);
   });
 
-  testWidgets('unsupported models never turn off saved MCP switches', (
-    tester,
-  ) async {
-    final assistants = await loadAssistantWithMcp(tester);
-    await assistants.loaded;
-
-    await pumpComposer(
-      tester,
-      assistants: assistants,
-      isConversationOverride: false,
+  test('unsupported model choices never turn off saved MCP switches',
+      () async {
+    // Capability resolution is pure. Exercise model changes using the real
+    // SQLite clock instead of awaiting a database write inside testWidgets'
+    // fake clock (which can deadlock and pollute subsequent widget tests).
+    final harness = await createBusinessTestHarness(
+      initial: {
+        'assistants_v1': jsonEncode([
+          {
+            'id': 'assistant-1',
+            'name': 'Assistant',
+            'mcpServerIds': ['server-1'],
+          },
+        ]),
+        'current_assistant_id_v1': 'assistant-1',
+      },
     );
-
+    final assistants = AssistantProvider(preferences: harness.preferences);
+    await assistants.loaded;
     expect(assistants.currentAssistant?.mcpServerIds, ['server-1']);
-    // The widget test checks capability changes without constructing another
-    // SQLite-backed provider under the fake widget clock. Provider cold-reload
-    // behavior is covered by assistant_provider_search_test.dart.
-    expect(preferences.getStringList('mcp_sticky_selection_v1'), ['server-1']);
+    expect(harness.preferences.getStringList('mcp_sticky_selection_v1'), [
+      'server-1',
+    ]);
+
+    await assistants.updateAssistant(
+      assistants.currentAssistant!.copyWith(
+        modelId: 'no-tools-model',
+      ),
+    );
+    expect(assistants.currentAssistant?.mcpServerIds, ['server-1']);
+    expect(harness.preferences.getStringList('mcp_sticky_selection_v1'), [
+      'server-1',
+    ]);
   });
 
   Future<void> pumpTabletComposer(
