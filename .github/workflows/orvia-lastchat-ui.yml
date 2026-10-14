@@ -1,0 +1,69 @@
+name: Orvia 2.0 LastChat UI APK
+
+on:
+  push:
+    branches: [feature/orvia-2-native]
+    paths:
+      - '.github/workflows/orvia-lastchat-ui.yml'
+      - '.gitmodules'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Orvia and pinned LastChat UI
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: native-v2/lastchat/web-ui/package-lock.json
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Apply isolated Orvia preview identity
+        working-directory: native-v2/lastchat
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("app/build.gradle.kts")
+          gradle = p.read_text()
+          gradle = gradle.replace('applicationId = "lastchat.rikkafork.cocolal"', 'applicationId = "com.dude555afk.orvia.nativev2"')
+          # A UI-only debug preview does not need release-only Firebase setup.
+          gradle = gradle.replace("    alias(libs.plugins.google.services)\n", "")
+          gradle = gradle.replace("    alias(libs.plugins.firebase.crashlytics)\n", "")
+          p.write_text(gradle)
+          manifest = Path("app/src/main/AndroidManifest.xml")
+          data = manifest.read_text()
+          data = data.replace('android:label="@string/app_name"', 'android:label="Orvia Native Preview"')
+          data = data.replace('android:icon="@mipmap/ic_launcher_lastchat"', 'android:icon="@drawable/orvia_logo"')
+          manifest.write_text(data)
+          PY
+          mkdir -p app/src/main/res/drawable-nodpi
+          cp ../../docs/orvia-logo.png app/src/main/res/drawable-nodpi/orvia_logo.png
+      - name: Install web UI dependencies
+        working-directory: native-v2/lastchat/web-ui
+        run: npm ci
+      - name: Build UI-only native APK
+        working-directory: native-v2/lastchat
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleDevDebug --no-daemon --stacktrace -Plastchat.abi.splits=false
+      - name: Upload preview APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: orvia-2-lastchat-ui-debug
+          path: native-v2/lastchat/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
