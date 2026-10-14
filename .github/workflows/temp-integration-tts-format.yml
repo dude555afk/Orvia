@@ -1,0 +1,30 @@
+name: Temporary integration TTS formatter
+
+on:
+  push:
+    branches: [integration/composer-mcp-tts-20261014]
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+      - name: Format TTS test
+        run: |
+          set -euo pipefail
+          dart format test/core/services/tts/network_tts_test.dart
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add test/core/services/tts/network_tts_test.dart
+          if ! git diff --cached --quiet; then
+            git commit -m "style(tts): apply Dart formatter to Edge regression tests"
+            git push origin HEAD:integration/composer-mcp-tts-20261014
+          fi
