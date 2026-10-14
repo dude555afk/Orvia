@@ -104,10 +104,10 @@ void main() {
   });
 
   test('new chats use global sticky MCP choices after restart', () async {
-    await harness.preferences.setStringList(
-      'mcp_sticky_selection_v1',
-      ['github', 'search'],
-    );
+    await harness.preferences.setStringList('mcp_sticky_selection_v1', [
+      'github',
+      'search',
+    ]);
     final first = makeService();
     final initial = await first.createDraftConversation();
     expect(first.getConversationMcpServers(initial.id), ['github', 'search']);

@@ -113,11 +113,12 @@ class AssistantProvider extends ChangeNotifier {
     final priorChatSelection =
         preferences.getStringList('conversation_default_mcp_server_ids_v1') ??
         const <String>[];
-    _stickyMcpServerIds = (storedSelection ??
-            (priorAssistantSelection.isNotEmpty
-                ? priorAssistantSelection
-                : priorChatSelection))
-        .toSet();
+    _stickyMcpServerIds =
+        (storedSelection ??
+                (priorAssistantSelection.isNotEmpty
+                    ? priorAssistantSelection
+                    : priorChatSelection))
+            .toSet();
     final repaired = _syncStickyMcpSelection();
     if (storedSelection == null) {
       await preferences.setStringList(
