@@ -108,8 +108,15 @@ class AssistantProvider extends ChangeNotifier {
     // Migrate existing installs from their current assistant once, without
     // opting the user in to any previously unselected MCP servers.
     final storedSelection = preferences.getStringList(_stickyMcpSelectionKey);
+    final priorAssistantSelection =
+        currentAssistant?.mcpServerIds ?? const <String>[];
+    final priorChatSelection =
+        preferences.getStringList('conversation_default_mcp_server_ids_v1') ??
+        const <String>[];
     _stickyMcpServerIds = (storedSelection ??
-            (currentAssistant?.mcpServerIds ?? const <String>[]))
+            (priorAssistantSelection.isNotEmpty
+                ? priorAssistantSelection
+                : priorChatSelection))
         .toSet();
     final repaired = _syncStickyMcpSelection();
     if (storedSelection == null) {
