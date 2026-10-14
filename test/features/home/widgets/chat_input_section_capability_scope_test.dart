@@ -217,10 +217,13 @@ void main() {
     );
 
     expect(assistants.currentAssistant?.mcpServerIds, ['server-1']);
-    final reloaded = AssistantProvider(preferences: preferences);
-    // Startup reads and any migration writes must use the real test clock.
-    await tester.runAsync(() => reloaded.loaded);
-    expect(reloaded.currentAssistant?.mcpServerIds, ['server-1']);
+    // The widget test checks capability changes without constructing another
+    // SQLite-backed provider under the fake widget clock. Provider cold-reload
+    // behavior is covered by assistant_provider_search_test.dart.
+    expect(
+      preferences.getStringList('mcp_sticky_selection_v1'),
+      ['server-1'],
+    );
   });
 
   Future<void> pumpTabletComposer(
