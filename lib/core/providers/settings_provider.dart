@@ -263,6 +263,8 @@ class SettingsProvider extends ChangeNotifier {
       'display_new_chat_after_delete_v1';
   static const String _displayEnterToSendOnMobileKey =
       'display_enter_to_send_on_mobile_v1';
+  static const String _displayAdaptiveComposerMobileKey =
+      'display_adaptive_composer_mobile_v1';
   static const String _displayLongPasteAsFileKey =
       'display_long_paste_as_file_v1';
   static const String _displayLongPasteAsFileThresholdKey =
@@ -1067,6 +1069,8 @@ class SettingsProvider extends ChangeNotifier {
     } else {
       _enterToSendOnMobile = enterToSendPref;
     }
+    _adaptiveComposerOnMobile =
+        prefs.getBool(_displayAdaptiveComposerMobileKey) ?? true;
     _longPasteAsFile = prefs.getBool(_displayLongPasteAsFileKey) ?? true;
     _longPasteAsFileThreshold =
         (prefs.getInt(_displayLongPasteAsFileThresholdKey) ??
@@ -4767,6 +4771,18 @@ Requirements:
     notifyListeners();
     final prefs = _preferences;
     await prefs.setBool(_displayNewChatAfterDeleteKey, v);
+  }
+
+  // The compact mobile composer grows into a two-row layout on input.
+  // A preference lets users keep Orvia's classic layout if they prefer it.
+  bool _adaptiveComposerOnMobile = true;
+  bool get adaptiveComposerOnMobile => _adaptiveComposerOnMobile;
+
+  Future<void> setAdaptiveComposerOnMobile(bool enabled) async {
+    if (_adaptiveComposerOnMobile == enabled) return;
+    _adaptiveComposerOnMobile = enabled;
+    notifyListeners();
+    await _preferences.setBool(_displayAdaptiveComposerMobileKey, enabled);
   }
 
   // Display: enter key sends message on mobile (iOS defaults true, Android defaults false)

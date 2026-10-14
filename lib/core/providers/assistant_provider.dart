@@ -17,14 +17,19 @@ import '../../utils/app_directories.dart';
 class AssistantProvider extends ChangeNotifier {
   static const String _assistantsKey = 'assistants_v1';
   static const String _currentAssistantKey = 'current_assistant_id_v1';
+  // A user's MCP choices are app-wide, not temporary per-assistant defaults.
+  static const String _stickyMcpSelectionKey = 'mcp_sticky_selection_v1';
 
   final BusinessPreferences preferences;
   final List<Assistant> _assistants = <Assistant>[];
   String? _currentAssistantId;
+  Set<String> _stickyMcpServerIds = <String>{};
   final ChatService? chatService;
 
   List<Assistant> get assistants => List.unmodifiable(_assistants);
   String? get currentAssistantId => _currentAssistantId;
+  List<String> get stickyMcpServerIds =>
+      List<String>.unmodifiable(_stickyMcpServerIds);
   Assistant? get currentAssistant {
     final idx = _assistants.indexWhere((a) => a.id == _currentAssistantId);
     if (idx != -1) return _assistants[idx];
@@ -98,7 +103,47 @@ class AssistantProvider extends ChangeNotifier {
     } else {
       _currentAssistantId = null;
     }
+
+    // Restore explicit user selection independent of the active assistant.
+    // Migrate existing installs from their current assistant once, without
+    // opting the user in to any previously unselected MCP servers.
+    final storedSelection = preferences.getStringList(_stickyMcpSelectionKey);
+    final priorAssistantSelection =
+        currentAssistant?.mcpServerIds ?? const <String>[];
+    final priorChatSelection =
+        preferences.getStringList('conversation_default_mcp_server_ids_v1') ??
+        const <String>[];
+    _stickyMcpServerIds =
+        (storedSelection ??
+                (priorAssistantSelection.isNotEmpty
+                    ? priorAssistantSelection
+                    : priorChatSelection))
+            .toSet();
+    final repaired = _syncStickyMcpSelection();
+    if (storedSelection == null) {
+      await preferences.setStringList(
+        _stickyMcpSelectionKey,
+        _stickyMcpServerIds.toList(growable: false),
+      );
+    }
+    if (repaired) await _persist();
     notifyListeners();
+  }
+
+  bool _syncStickyMcpSelection() {
+    var updated = false;
+    for (var i = 0; i < _assistants.length; i++) {
+      final existing = _assistants[i].mcpServerIds.toSet();
+      if (existing.length == _stickyMcpServerIds.length &&
+          existing.containsAll(_stickyMcpServerIds)) {
+        continue;
+      }
+      _assistants[i] = _assistants[i].copyWith(
+        mcpServerIds: _stickyMcpServerIds.toList(growable: false),
+      );
+      updated = true;
+    }
+    return updated;
   }
 
   List<Assistant> _decodeAssistants(String raw) {
@@ -117,6 +162,7 @@ class AssistantProvider extends ChangeNotifier {
     id: const Uuid().v4(),
     name: l10n.assistantProviderDefaultAssistantName,
     systemPrompt: '',
+    mcpServerIds: _stickyMcpServerIds.toList(growable: false),
     temperature: null,
     topP: null,
     limitContextMessages: false,
@@ -137,6 +183,7 @@ class AssistantProvider extends ChangeNotifier {
         systemPrompt: l10n.assistantProviderSampleAssistantSystemPrompt(
           '{model_name}',
         ),
+        mcpServerIds: _stickyMcpServerIds.toList(growable: false),
         temperature: null,
         topP: null,
         limitContextMessages: false,
@@ -303,6 +350,7 @@ class AssistantProvider extends ChangeNotifier {
   }
 
   Future<String> addAssistant({String? name, dynamic context}) async {
+    await loaded;
     final a = Assistant(
       id: const Uuid().v4(),
       name:
@@ -313,6 +361,7 @@ class AssistantProvider extends ChangeNotifier {
       temperature: null,
       topP: null,
       limitContextMessages: false,
+      mcpServerIds: _stickyMcpServerIds.toList(growable: false),
     );
     _assistants.add(a);
     await _persist();
@@ -345,7 +394,7 @@ class AssistantProvider extends ChangeNotifier {
       name: _buildCopyName(source, l10n),
       avatar: avatarCopy,
       background: backgroundCopy,
-      mcpServerIds: List<String>.of(source.mcpServerIds),
+      mcpServerIds: _stickyMcpServerIds.toList(growable: false),
       localToolIds: List<String>.of(source.localToolIds),
       defaultWorkspaceId: source.defaultWorkspaceId,
       skillIds: source.skillIds == null
@@ -455,33 +504,51 @@ class AssistantProvider extends ChangeNotifier {
       // On any failure, fall back to the provided value unchanged.
     }
 
-    _assistants[idx] = next;
+    // An edit using a stale Assistant snapshot must not clear sticky MCPs.
+    _assistants[idx] = next.copyWith(
+      mcpServerIds: _stickyMcpServerIds.toList(growable: false),
+    );
     await _persist();
     notifyListeners();
   }
 
-  /// Update the latest MCP selection, not a stale Assistant snapshot captured
-  /// when the tools sheet was built. Rapid switch taps must compose instead
-  /// of replacing each other with an older list.
+  /// MCP activation is an explicit app-wide user choice. An unavailable or
+  /// disconnected server remains selected so it can reconnect on next launch.
   Future<void> setMcpServerEnabledForAssistant(
     String assistantId,
     String serverId,
     bool enabled,
   ) async {
     await loaded;
-    final index = _assistants.indexWhere((a) => a.id == assistantId);
-    if (index < 0) return;
-    final current = _assistants[index];
-    final selected = current.mcpServerIds.toSet();
+    if (!_assistants.any((assistant) => assistant.id == assistantId)) return;
+    final selected = _stickyMcpServerIds.toSet();
     final changed = enabled
         ? selected.add(serverId)
         : selected.remove(serverId);
     if (!changed) return;
-    _assistants[index] = current.copyWith(
-      mcpServerIds: selected.toList(growable: false),
-    );
-    // Paint the new switch state right away, even while SQLite is writing.
+    await _setStickyMcpServerIds(selected);
+  }
+
+  /// Used by Select All / Select None in the assistant MCP settings.
+  Future<void> setStickyMcpServerIds(Iterable<String> ids) async {
+    await loaded;
+    await _setStickyMcpServerIds(ids.toSet());
+  }
+
+  Future<void> _setStickyMcpServerIds(Set<String> selected) async {
+    selected.removeWhere((id) => id.trim().isEmpty);
+    if (selected.length == _stickyMcpServerIds.length &&
+        selected.containsAll(_stickyMcpServerIds)) {
+      return;
+    }
+    _stickyMcpServerIds = selected;
+    _syncStickyMcpSelection();
     notifyListeners();
+    // Persist both the app-wide source of truth and the assistant cache.
+    await preferences.setStringList(
+      _stickyMcpSelectionKey,
+      selected.toList(growable: false),
+    );
     await _persist();
   }
 
