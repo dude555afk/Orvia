@@ -2706,6 +2706,12 @@ class ChatService extends ChangeNotifier {
   // Conversation-scoped MCP servers selection
   List<String> getConversationMcpServers(String conversationId) {
     if (!_initialized) return const <String>[];
+    // The explicit sticky choice takes priority over old per-chat snapshots.
+    // Switching chats must not silently deactivate enabled MCPs.
+    final sticky = _businessPreferences?.getStringList(
+      'mcp_sticky_selection_v1',
+    );
+    if (sticky != null) return sticky;
     final c =
         _conversationsCache[conversationId] ??
         _draftConversations[conversationId];
