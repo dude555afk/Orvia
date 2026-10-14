@@ -169,8 +169,12 @@ class ChatInputSection extends StatelessWidget {
             budgetTokens: selectedReasoning.budgetTokens,
           );
 
-    // Unsupported models cannot call MCP tools, but saved MCP switches must
-    // not be modified when the user changes models.
+    // Enforce model capabilities: disable MCP selection if model doesn't
+    // support tools. Skipped while the conversation overrides the model —
+    // these writes land on the assistant and would leak across conversations.
+    if (!chatModelIsConversationOverride) {
+      _enforceModelCapabilities(context, settings, ap, a, pk, mid);
+    }
 
     final isDesktop = _isDesktopPlatform(context);
     final hasWorldBooks =
@@ -343,6 +347,27 @@ class ChatInputSection extends StatelessWidget {
     return platform == TargetPlatform.macOS ||
         platform == TargetPlatform.windows ||
         platform == TargetPlatform.linux;
+  }
+
+  void _enforceModelCapabilities(
+    BuildContext context,
+    SettingsProvider settings,
+    AssistantProvider ap,
+    Assistant? a,
+    String? pk,
+    String? mid,
+  ) {
+    if (pk == null || mid == null) return;
+
+    final supportsTools = isToolModel(pk, mid);
+    if (!supportsTools && (a?.mcpServerIds.isNotEmpty ?? false)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final aa = ap.currentAssistant;
+        if (aa != null && aa.mcpServerIds.isNotEmpty) {
+          ap.updateAssistant(aa.copyWith(mcpServerIds: const <String>[]));
+        }
+      });
+    }
   }
 
   ReasoningRequest _selectedReasoning(

@@ -2092,16 +2092,6 @@ class BehaviorStartupSettingsPage extends StatelessWidget {
               _iosDivider(context),
               _iosSwitchRow(
                 context,
-                icon: Lucide.MessageSquare,
-                label: 'Adaptive composer (mobile)',
-                value: sp.adaptiveComposerOnMobile,
-                onChanged: (v) => context
-                    .read<SettingsProvider>()
-                    .setAdaptiveComposerOnMobile(v),
-              ),
-              _iosDivider(context),
-              _iosSwitchRow(
-                context,
                 icon: Lucide.Clipboard,
                 label: l10n.displaySettingsPageLongPasteAsFileTitle,
                 value: sp.longPasteAsFile,

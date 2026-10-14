@@ -49,9 +49,10 @@ void main() {
       );
       await preferences.setString('current_assistant_id_v1', 'assistant-1');
       provider = AssistantProvider(preferences: preferences);
-      // The sticky MCP migration persists its first-launch preference during
-      // initialization. Finish that SQLite write on the real test clock.
-      await provider.loaded;
+      for (var i = 0; i < 100; i++) {
+        if (provider.currentAssistant != null) break;
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
     });
     return provider;
   }
@@ -204,36 +205,18 @@ void main() {
     expect(bar().reasoningActive, isFalse);
   });
 
-  test('unsupported model choices never turn off saved MCP switches', () async {
-    // Capability resolution is pure. Exercise model changes using the real
-    // SQLite clock instead of awaiting a database write inside testWidgets'
-    // fake clock (which can deadlock and pollute subsequent widget tests).
-    final harness = await createBusinessTestHarness(
-      initial: {
-        'assistants_v1': jsonEncode([
-          {
-            'id': 'assistant-1',
-            'name': 'Assistant',
-            'mcpServerIds': ['server-1'],
-          },
-        ]),
-        'current_assistant_id_v1': 'assistant-1',
-      },
-    );
-    final assistants = AssistantProvider(preferences: harness.preferences);
-    await assistants.loaded;
-    expect(assistants.currentAssistant?.mcpServerIds, ['server-1']);
-    expect(harness.preferences.getStringList('mcp_sticky_selection_v1'), [
-      'server-1',
-    ]);
+  testWidgets('the assistant\'s own model still disables what it cannot do', (
+    tester,
+  ) async {
+    final assistants = await loadAssistantWithMcp(tester);
 
-    await assistants.updateAssistant(
-      assistants.currentAssistant!.copyWith(chatModelId: 'no-tools-model'),
+    await pumpComposer(
+      tester,
+      assistants: assistants,
+      isConversationOverride: false,
     );
-    expect(assistants.currentAssistant?.mcpServerIds, ['server-1']);
-    expect(harness.preferences.getStringList('mcp_sticky_selection_v1'), [
-      'server-1',
-    ]);
+
+    expect(assistants.currentAssistant?.mcpServerIds, isEmpty);
   });
 
   Future<void> pumpTabletComposer(

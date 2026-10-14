@@ -210,10 +210,7 @@ class ChatService extends ChangeNotifier {
     final preferences = _businessPreferences;
     if (preferences == null) return const <String>[];
     await preferences.load();
-    // Explicit app-wide MCP choices must survive switching or opening chats.
-    // Keep the legacy conversation default for existing installations.
-    return preferences.getStringList('mcp_sticky_selection_v1') ??
-        preferences.getStringList(_defaultMcpSelectionKey) ??
+    return preferences.getStringList(_defaultMcpSelectionKey) ??
         const <String>[];
   }
 
@@ -2706,12 +2703,6 @@ class ChatService extends ChangeNotifier {
   // Conversation-scoped MCP servers selection
   List<String> getConversationMcpServers(String conversationId) {
     if (!_initialized) return const <String>[];
-    // The explicit sticky choice takes priority over old per-chat snapshots.
-    // Switching chats must not silently deactivate enabled MCPs.
-    final sticky = _businessPreferences?.getStringList(
-      'mcp_sticky_selection_v1',
-    );
-    if (sticky != null) return sticky;
     final c =
         _conversationsCache[conversationId] ??
         _draftConversations[conversationId];

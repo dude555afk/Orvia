@@ -103,34 +103,6 @@ void main() {
     expect(restarted.getConversationMcpServers(newDraft.id), isEmpty);
   });
 
-  test('new chats use global sticky MCP choices after restart', () async {
-    await harness.preferences.setStringList('mcp_sticky_selection_v1', [
-      'github',
-      'search',
-    ]);
-    final first = makeService();
-    final initial = await first.createDraftConversation();
-    expect(first.getConversationMcpServers(initial.id), ['github', 'search']);
-
-    await first.close();
-    services.remove(first);
-
-    final reopened = makeService();
-    final fresh = await reopened.createDraftConversation();
-    expect(reopened.getConversationMcpServers(fresh.id), ['github', 'search']);
-    // An older conversation with a saved empty list still inherits enabled
-    // global tools, instead of silently showing them as off.
-    await reopened.setConversationMcpServers(fresh.id, const <String>[]);
-    expect(reopened.getConversationMcpServers(fresh.id), ['github', 'search']);
-
-    await harness.preferences.setStringList(
-      'mcp_sticky_selection_v1',
-      const <String>[],
-    );
-    final cleared = await reopened.createDraftConversation();
-    expect(reopened.getConversationMcpServers(cleared.id), isEmpty);
-  });
-
   test('background conversations do not inherit active chat MCPs', () async {
     final chat = makeService();
     final draft = await chat.createDraftConversation();

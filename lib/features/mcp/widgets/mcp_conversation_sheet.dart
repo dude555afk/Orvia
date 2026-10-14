@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../icons/lucide_adapter.dart';
 import '../../../core/providers/mcp_provider.dart';
-import '../../../core/providers/assistant_provider.dart';
 import '../../../core/services/chat/chat_service.dart';
 import '../../../theme/design_tokens.dart';
 import '../../../l10n/app_localizations.dart';
@@ -37,29 +36,6 @@ class _ConversationMcpSheet extends StatelessWidget {
     final chat = context.watch<ChatService>();
 
     final selected = chat.getConversationMcpServers(conversationId).toSet();
-
-    // Both controls edit one durable user selection, not temporary chat state.
-    Future<void> updateSelected(Iterable<String> ids) async {
-      final next = ids.toSet().toList(growable: false);
-      await context.read<AssistantProvider>().setStickyMcpServerIds(next);
-      await chat.setConversationMcpServers(conversationId, next);
-    }
-
-    Future<void> toggleSelected(String id, bool enabled) async {
-      final assistants = context.read<AssistantProvider>();
-      final assistant = assistants.currentAssistant;
-      if (assistant == null) return;
-      await assistants.setMcpServerEnabledForAssistant(
-        assistant.id,
-        id,
-        enabled,
-      );
-      await chat.setConversationMcpServers(
-        conversationId,
-        assistants.stickyMcpServerIds,
-      );
-    }
-
     // Keep enabled servers visible while they reconnect after app restart.
     // Connection status must not masquerade as a disabled chat selection.
     final servers = mcp.servers.where((s) => s.enabled).toList();
@@ -142,7 +118,9 @@ class _ConversationMcpSheet extends StatelessWidget {
                         final ids = servers
                             .map((e) => e.id)
                             .toList(growable: false);
-                        await updateSelected(ids);
+                        await context
+                            .read<ChatService>()
+                            .setConversationMcpServers(conversationId, ids);
                       },
                       icon: Icon(Lucide.Check, size: 16, color: cs.primary),
                       label: Text(l10n.mcpConversationSheetSelectAll),
@@ -150,7 +128,12 @@ class _ConversationMcpSheet extends StatelessWidget {
                     const SizedBox(width: 4),
                     TextButton.icon(
                       onPressed: () async {
-                        await updateSelected(const <String>[]);
+                        await context
+                            .read<ChatService>()
+                            .setConversationMcpServers(
+                              conversationId,
+                              const <String>[],
+                            );
                       },
                       icon: Icon(Lucide.X, size: 16, color: cs.primary),
                       label: Text(l10n.mcpConversationSheetClearAll),
@@ -205,7 +188,13 @@ class _ConversationMcpSheet extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               onTap: () {
-                                toggleSelected(s.id, !isSelected);
+                                context
+                                    .read<ChatService>()
+                                    .toggleConversationMcpServer(
+                                      conversationId,
+                                      s.id,
+                                      !isSelected,
+                                    );
                               },
                               child: Ink(
                                 decoration: BoxDecoration(
@@ -302,7 +291,13 @@ class _ConversationMcpSheet extends StatelessWidget {
                                       IosSwitch(
                                         value: isSelected,
                                         onChanged: (v) {
-                                          toggleSelected(s.id, v);
+                                          context
+                                              .read<ChatService>()
+                                              .toggleConversationMcpServer(
+                                                conversationId,
+                                                s.id,
+                                                v,
+                                              );
                                         },
                                       ),
                                     ],

@@ -938,30 +938,7 @@ class NetworkTtsService {
     final voice = opt.voice.trim().isEmpty
         ? 'en-US-AriaNeural'
         : opt.voice.trim();
-    // The keyless Edge websocket can transiently fail during handshake.
-    // Retry once with a new connection without permanently disabling TTS.
-    Uint8List audio;
-    for (var attempt = 0; ; attempt++) {
-      try {
-        audio = await (synthesizer ?? _synthesizeEdgeNeural)(
-          text,
-          voice,
-        ).timeout(const Duration(seconds: 35));
-        break;
-      } catch (error) {
-        final description = error.toString().toLowerCase();
-        final transient =
-            error is TimeoutException ||
-            error is SocketException ||
-            error is WebSocketException ||
-            description.contains('connection_failed') ||
-            description.contains('connection reset') ||
-            description.contains('handshake');
-        if (attempt > 0 || !transient) rethrow;
-        if (await (cancelled?.call() ?? false)) throw _Cancelled();
-        await Future<void>.delayed(const Duration(milliseconds: 350));
-      }
-    }
+    final audio = await (synthesizer ?? _synthesizeEdgeNeural)(text, voice);
     if (await (cancelled?.call() ?? false)) throw _Cancelled();
     if (audio.isEmpty) {
       throw const FormatException('Edge Neural returned empty audio.');

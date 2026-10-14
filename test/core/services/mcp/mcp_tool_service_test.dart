@@ -48,7 +48,11 @@ void main() {
 
       await assistants.loaded;
       final assistantId = await assistants.addAssistant(name: 'Test');
-      await assistants.setStickyMcpServerIds(const ['alpha-id', 'beta-id']);
+      await assistants.updateAssistant(
+        assistants
+            .getById(assistantId)!
+            .copyWith(mcpServerIds: const ['alpha-id', 'beta-id']),
+      );
 
       final tools = service.listAvailableToolsForAssistant(
         provider,
@@ -126,7 +130,11 @@ void main() {
 
       await assistants.loaded;
       final assistantId = await assistants.addAssistant(name: 'Test');
-      await assistants.setStickyMcpServerIds(const ['alpha-id', 'beta-id']);
+      await assistants.updateAssistant(
+        assistants
+            .getById(assistantId)!
+            .copyWith(mcpServerIds: const ['alpha-id', 'beta-id']),
+      );
       final snapshot = service.captureRoutesForAssistant(
         provider,
         assistants,
@@ -183,7 +191,11 @@ void main() {
       );
       expect(provider.calls, hasLength(1));
 
-      await assistants.setStickyMcpServerIds(const ['beta-id']);
+      await assistants.updateAssistant(
+        assistants
+            .getById(assistantId)!
+            .copyWith(mcpServerIds: const ['beta-id']),
+      );
       expect(
         await service.callToolTextForAssistant(
           provider,
@@ -196,7 +208,11 @@ void main() {
       );
       expect(provider.calls, hasLength(1));
 
-      await assistants.setStickyMcpServerIds(const ['alpha-id', 'beta-id']);
+      await assistants.updateAssistant(
+        assistants
+            .getById(assistantId)!
+            .copyWith(mcpServerIds: const ['alpha-id', 'beta-id']),
+      );
       provider.serversForTest[0] = provider.serversForTest[0].copyWith(
         tools: [McpToolConfig(enabled: false, name: 'shared')],
       );
@@ -240,7 +256,11 @@ void main() {
 
     await assistants.loaded;
     final assistantId = await assistants.addAssistant(name: 'Test');
-    await assistants.setStickyMcpServerIds(const ['server-id']);
+    await assistants.updateAssistant(
+      assistants
+          .getById(assistantId)!
+          .copyWith(mcpServerIds: const ['server-id']),
+    );
 
     final output = await service.callToolTextForAssistant(
       provider,
@@ -279,7 +299,11 @@ void main() {
 
       await assistants.loaded;
       final assistantId = await assistants.addAssistant(name: 'Test');
-      await assistants.setStickyMcpServerIds(const ['srv-id']);
+      await assistants.updateAssistant(
+        assistants
+            .getById(assistantId)!
+            .copyWith(mcpServerIds: const ['srv-id']),
+      );
 
       const reservedNames = {'memory_read'};
       final tools = service.listAvailableToolsForAssistant(
@@ -326,7 +350,11 @@ void main() {
 
       await assistants.loaded;
       final assistantId = await assistants.addAssistant(name: 'Test');
-      await assistants.setStickyMcpServerIds(const ['srv-id']);
+      await assistants.updateAssistant(
+        assistants
+            .getById(assistantId)!
+            .copyWith(mcpServerIds: const ['srv-id'], localToolIds: const []),
+      );
       expect(assistants.getById(assistantId)!.localToolIds, isEmpty);
 
       const reservedNames = {'calculate'};
@@ -375,7 +403,11 @@ void main() {
 
       await assistants.loaded;
       final assistantId = await assistants.addAssistant(name: 'Test');
-      await assistants.setStickyMcpServerIds(const ['alpha-id', 'beta-id']);
+      await assistants.updateAssistant(
+        assistants
+            .getById(assistantId)!
+            .copyWith(mcpServerIds: const ['alpha-id', 'beta-id']),
+      );
 
       const reservedNames = {'memory_read', 'calculate'};
       final tools = service.listAvailableToolsForAssistant(
@@ -449,7 +481,11 @@ void main() {
 
       await assistants.loaded;
       final assistantId = await assistants.addAssistant(name: 'Test');
-      await assistants.setStickyMcpServerIds(const ['alpha-id']);
+      await assistants.updateAssistant(
+        assistants
+            .getById(assistantId)!
+            .copyWith(mcpServerIds: const ['alpha-id']),
+      );
 
       final tools = service.listAvailableToolsForAssistant(
         provider,
@@ -522,7 +558,11 @@ void main() {
 
       await assistants.loaded;
       final assistantId = await assistants.addAssistant(name: 'Test');
-      await assistants.setStickyMcpServerIds(const ['srv-id']);
+      await assistants.updateAssistant(
+        assistants
+            .getById(assistantId)!
+            .copyWith(mcpServerIds: const ['srv-id']),
+      );
 
       const reservedNames = {'memory_read'};
       final snapshot = service.captureRoutesForAssistant(
@@ -589,7 +629,11 @@ void main() {
 
     await assistants.loaded;
     final assistantId = await assistants.addAssistant(name: 'Test');
-    await assistants.setStickyMcpServerIds(const ['server-id']);
+    await assistants.updateAssistant(
+      assistants
+          .getById(assistantId)!
+          .copyWith(mcpServerIds: const ['server-id']),
+    );
 
     final result = await service.callToolForAssistant(
       provider,
@@ -657,7 +701,11 @@ void main() {
 
     await assistants.loaded;
     final assistantId = await assistants.addAssistant(name: 'Test');
-    await assistants.setStickyMcpServerIds(const ['server-id']);
+    await assistants.updateAssistant(
+      assistants
+          .getById(assistantId)!
+          .copyWith(mcpServerIds: const ['server-id']),
+    );
 
     final result = await service.callToolForAssistant(
       provider,
