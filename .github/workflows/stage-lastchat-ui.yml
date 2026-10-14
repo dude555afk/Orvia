@@ -1,5 +1,9 @@
 name: Stage LastChat UI source
 on:
+  push:
+    branches: [feature/orvia-2-native]
+    paths:
+      - '.github/workflows/stage-lastchat-ui.yml'
   workflow_dispatch:
 
 permissions:
@@ -19,6 +23,7 @@ jobs:
           mkdir -p staging
           cp -R lastchat/app/src/main/java/me/rerere/rikkahub/ui staging/
           cp -R lastchat/ui-core staging/ui-core
+          cp -R lastchat/app/src/main/res staging/resources
       - uses: actions/upload-artifact@v4
         with:
           name: lastchat-ui-source
