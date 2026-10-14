@@ -278,6 +278,48 @@ void main() {
       );
     });
 
+    test('transient Edge connection failure retries once', () async {
+      final edge = EdgeNeuralTtsOptions(
+        enabled: true,
+        name: 'Edge',
+        voice: 'en-US-AriaNeural',
+      );
+      var attempts = 0;
+      final result = await NetworkTtsService.synthesize(
+        options: edge,
+        text: 'Hello',
+        edgeTtsSynthesizer: (_, _) async {
+          attempts++;
+          if (attempts == 1) throw StateError('connection_failed');
+          return Uint8List.fromList(<int>[1, 2, 3]);
+        },
+      );
+      expect(attempts, 2);
+      expect(result.bytes, <int>[1, 2, 3]);
+    });
+
+    test('persistent Edge connection failure surfaces after two tries',
+        () async {
+      final edge = EdgeNeuralTtsOptions(
+        enabled: true,
+        name: 'Edge',
+        voice: 'en-US-AriaNeural',
+      );
+      var attempts = 0;
+      await expectLater(
+        NetworkTtsService.synthesize(
+          options: edge,
+          text: 'Hello',
+          edgeTtsSynthesizer: (_, _) async {
+            attempts++;
+            throw StateError('connection_failed');
+          },
+        ),
+        throwsA(isA<StateError>()),
+      );
+      expect(attempts, 2);
+    });
+
     test('Azure sends escaped SSML and returns MP3 audio', () async {
       late HttpRequest captured;
       late String requestBody;
