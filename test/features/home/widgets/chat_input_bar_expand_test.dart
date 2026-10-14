@@ -81,11 +81,7 @@ void main() {
     final controller = TextEditingController();
     addTearDown(controller.dispose);
     var openCount = 0;
-    await pumpBar(
-      tester,
-      controller,
-      onMore: () => openCount++,
-    );
+    await pumpBar(tester, controller, onMore: () => openCount++);
     final compact = find.byKey(const ValueKey('adaptive-composer-more'));
     final input = find.byType(TextField);
     expect(compact, findsOneWidget);
@@ -110,16 +106,8 @@ void main() {
   ) async {
     final controller = TextEditingController();
     addTearDown(controller.dispose);
-    await pumpBar(
-      tester,
-      controller,
-      onMore: () {},
-      adaptiveEnabled: false,
-    );
-    expect(
-      find.byKey(const ValueKey('adaptive-composer-more')),
-      findsNothing,
-    );
+    await pumpBar(tester, controller, onMore: () {}, adaptiveEnabled: false);
+    expect(find.byKey(const ValueKey('adaptive-composer-more')), findsNothing);
   });
 
   testWidgets('offers expansion only once the text wraps past two lines', (

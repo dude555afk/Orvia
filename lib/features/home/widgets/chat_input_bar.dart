@@ -2969,9 +2969,7 @@ class _ChatInputBarState extends State<ChatInputBar>
                                         ),
                                         curve: Curves.easeOutCubic,
                                         padding: EdgeInsetsDirectional.fromSTEB(
-                                          compactComposer
-                                              ? 48
-                                              : AppSpacing.md,
+                                          compactComposer ? 48 : AppSpacing.md,
                                           AppSpacing.xxs,
                                           compactComposer
                                               ? 48
@@ -3149,9 +3147,9 @@ class _ChatInputBarState extends State<ChatInputBar>
                                               'adaptive-composer-more',
                                             ),
                                             child: _CompactIconButton(
-                                              tooltip:
-                                                  AppLocalizations.of(context)!
-                                                      .chatInputBarMoreTooltip,
+                                              tooltip: AppLocalizations.of(
+                                                context,
+                                              )!.chatInputBarMoreTooltip,
                                               icon: Lucide.Plus,
                                               active: widget.moreOpen,
                                               onTap: _composerLocked
@@ -3169,17 +3167,15 @@ class _ChatInputBarState extends State<ChatInputBar>
                                             ),
                                             child: showVoiceInput
                                                 ? _CompactIconButton(
-                                                    tooltip:
-                                                        AppLocalizations.of(
-                                                          context,
-                                                        )!
-                                                            .chatInputBarVoiceInputTooltip,
+                                                    tooltip: AppLocalizations.of(
+                                                      context,
+                                                    )!.chatInputBarVoiceInputTooltip,
                                                     icon: Lucide.Mic,
                                                     onTap: _composerLocked
                                                         ? null
                                                         : () => unawaited(
-                                                              _startVoiceInput(),
-                                                            ),
+                                                            _startVoiceInput(),
+                                                          ),
                                                   )
                                                 : _CompactSendButton(
                                                     enabled: false,
@@ -3222,158 +3218,177 @@ class _ChatInputBarState extends State<ChatInputBar>
                                 // content is typed; an empty mobile composer
                                 // stays a compact single-row pill.
                                 AnimatedSize(
-                                  duration: const Duration(
-                                    milliseconds: 230,
-                                  ),
+                                  duration: const Duration(milliseconds: 230),
                                   curve: Curves.easeOutCubic,
                                   alignment: Alignment.topCenter,
                                   child: compactComposer
                                       ? const SizedBox.shrink()
                                       : Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    AppSpacing.xs,
-                                    0,
-                                    AppSpacing.xs,
-                                    AppSpacing.xs,
-                                  ),
-                                  child: AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 260),
-                                    switchInCurve: Curves.easeOutCubic,
-                                    switchOutCurve: Curves.easeInCubic,
-                                    transitionBuilder: (child, anim) =>
-                                        FadeTransition(
-                                          opacity: anim,
-                                          child: SlideTransition(
-                                            position: Tween<Offset>(
-                                              begin: const Offset(0, 0.35),
-                                              end: Offset.zero,
-                                            ).animate(anim),
-                                            child: child,
+                                          padding: const EdgeInsets.fromLTRB(
+                                            AppSpacing.xs,
+                                            0,
+                                            AppSpacing.xs,
+                                            AppSpacing.xs,
+                                          ),
+                                          child: AnimatedSwitcher(
+                                            duration: const Duration(
+                                              milliseconds: 260,
+                                            ),
+                                            switchInCurve: Curves.easeOutCubic,
+                                            switchOutCurve: Curves.easeInCubic,
+                                            transitionBuilder: (child, anim) =>
+                                                FadeTransition(
+                                                  opacity: anim,
+                                                  child: SlideTransition(
+                                                    position: Tween<Offset>(
+                                                      begin: const Offset(
+                                                        0,
+                                                        0.35,
+                                                      ),
+                                                      end: Offset.zero,
+                                                    ).animate(anim),
+                                                    child: child,
+                                                  ),
+                                                ),
+                                            child: _ownsVoiceSession
+                                                ? _buildVoiceRecordingRow(
+                                                    context,
+                                                    theme,
+                                                  )
+                                                : Row(
+                                                    key: const ValueKey(
+                                                      'actions',
+                                                    ),
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      // Responsive left action bar that overflows into a + menu on desktop
+                                                      Expanded(
+                                                        child:
+                                                            _buildResponsiveLeftActions(
+                                                              context,
+                                                            ),
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          if (widget
+                                                              .showMoreButton) ...[
+                                                            _CompactIconButton(
+                                                              tooltip:
+                                                                  AppLocalizations.of(
+                                                                    context,
+                                                                  )!.chatInputBarMoreTooltip,
+                                                              icon: Lucide.Plus,
+                                                              active: widget
+                                                                  .moreOpen,
+                                                              onTap:
+                                                                  _composerLocked
+                                                                  ? null
+                                                                  : widget
+                                                                        .onMore,
+                                                              childBuilder: (c) => AnimatedSwitcher(
+                                                                duration:
+                                                                    const Duration(
+                                                                      milliseconds:
+                                                                          200,
+                                                                    ),
+                                                                transitionBuilder:
+                                                                    (
+                                                                      child,
+                                                                      anim,
+                                                                    ) => RotationTransition(
+                                                                      turns: Tween<double>(
+                                                                        begin:
+                                                                            0.85,
+                                                                        end: 1,
+                                                                      ).animate(anim),
+                                                                      child: FadeTransition(
+                                                                        opacity:
+                                                                            anim,
+                                                                        child:
+                                                                            child,
+                                                                      ),
+                                                                    ),
+                                                                child: Icon(
+                                                                  widget.moreOpen
+                                                                      ? Lucide.X
+                                                                      : Lucide
+                                                                            .Plus,
+                                                                  key: ValueKey(
+                                                                    widget.moreOpen
+                                                                        ? 'close'
+                                                                        : 'add',
+                                                                  ),
+                                                                  size: 20,
+                                                                  color: c,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 8,
+                                                            ),
+                                                          ],
+                                                          if (showVoiceInput) ...[
+                                                            _CompactIconButton(
+                                                              tooltip:
+                                                                  AppLocalizations.of(
+                                                                    context,
+                                                                  )!.chatInputBarVoiceInputTooltip,
+                                                              icon: Lucide.Mic,
+                                                              onTap:
+                                                                  _composerLocked ||
+                                                                      widget
+                                                                          .loading
+                                                                  ? null
+                                                                  : () => unawaited(
+                                                                      _startVoiceInput(),
+                                                                    ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 8,
+                                                            ),
+                                                          ],
+                                                          if (!isMobileLayout &&
+                                                              (widget
+                                                                      .conversationId
+                                                                      ?.isNotEmpty ??
+                                                                  false))
+                                                            _ContextUsageInputControl(
+                                                              onTap:
+                                                                  _composerLocked
+                                                                  ? null
+                                                                  : widget
+                                                                        .onOpenContextUsage,
+                                                            ),
+                                                          _CompactSendButton(
+                                                            enabled:
+                                                                (hasText ||
+                                                                    hasImages ||
+                                                                    hasDocs) &&
+                                                                !_hasUnreadyImages &&
+                                                                !widget.loading,
+                                                            loading:
+                                                                widget.loading,
+                                                            onSend: _handleSend,
+                                                            onStop:
+                                                                widget.loading
+                                                                ? widget.onStop
+                                                                : null,
+                                                            color: theme
+                                                                .colorScheme
+                                                                .primary,
+                                                            icon:
+                                                                Lucide.ArrowUp,
+                                                            tooltip: widget
+                                                                .sendButtonTooltip,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
                                           ),
                                         ),
-                                    child: _ownsVoiceSession
-                                        ? _buildVoiceRecordingRow(
-                                            context,
-                                            theme,
-                                          )
-                                        : Row(
-                                            key: const ValueKey('actions'),
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              // Responsive left action bar that overflows into a + menu on desktop
-                                              Expanded(
-                                                child:
-                                                    _buildResponsiveLeftActions(
-                                                      context,
-                                                    ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  if (widget
-                                                      .showMoreButton) ...[
-                                                    _CompactIconButton(
-                                                      tooltip: AppLocalizations.of(
-                                                        context,
-                                                      )!.chatInputBarMoreTooltip,
-                                                      icon: Lucide.Plus,
-                                                      active: widget.moreOpen,
-                                                      onTap: _composerLocked
-                                                          ? null
-                                                          : widget.onMore,
-                                                      childBuilder: (c) => AnimatedSwitcher(
-                                                        duration:
-                                                            const Duration(
-                                                              milliseconds: 200,
-                                                            ),
-                                                        transitionBuilder:
-                                                            (
-                                                              child,
-                                                              anim,
-                                                            ) => RotationTransition(
-                                                              turns:
-                                                                  Tween<double>(
-                                                                    begin: 0.85,
-                                                                    end: 1,
-                                                                  ).animate(
-                                                                    anim,
-                                                                  ),
-                                                              child:
-                                                                  FadeTransition(
-                                                                    opacity:
-                                                                        anim,
-                                                                    child:
-                                                                        child,
-                                                                  ),
-                                                            ),
-                                                        child: Icon(
-                                                          widget.moreOpen
-                                                              ? Lucide.X
-                                                              : Lucide.Plus,
-                                                          key: ValueKey(
-                                                            widget.moreOpen
-                                                                ? 'close'
-                                                                : 'add',
-                                                          ),
-                                                          size: 20,
-                                                          color: c,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                  ],
-                                                  if (showVoiceInput) ...[
-                                                    _CompactIconButton(
-                                                      tooltip: AppLocalizations.of(
-                                                        context,
-                                                      )!.chatInputBarVoiceInputTooltip,
-                                                      icon: Lucide.Mic,
-                                                      onTap:
-                                                          _composerLocked ||
-                                                              widget.loading
-                                                          ? null
-                                                          : () => unawaited(
-                                                              _startVoiceInput(),
-                                                            ),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                  ],
-                                                  if (!isMobileLayout &&
-                                                      (widget
-                                                              .conversationId
-                                                              ?.isNotEmpty ??
-                                                          false))
-                                                    _ContextUsageInputControl(
-                                                      onTap: _composerLocked
-                                                          ? null
-                                                          : widget
-                                                                .onOpenContextUsage,
-                                                    ),
-                                                  _CompactSendButton(
-                                                    enabled:
-                                                        (hasText ||
-                                                            hasImages ||
-                                                            hasDocs) &&
-                                                        !_hasUnreadyImages &&
-                                                        !widget.loading,
-                                                    loading: widget.loading,
-                                                    onSend: _handleSend,
-                                                    onStop: widget.loading
-                                                        ? widget.onStop
-                                                        : null,
-                                                    color: theme
-                                                        .colorScheme
-                                                        .primary,
-                                                    icon: Lucide.ArrowUp,
-                                                    tooltip: widget
-                                                        .sendButtonTooltip,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                  ),
-                                ),
                                 ),
                               ],
                             ),
