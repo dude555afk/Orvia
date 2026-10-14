@@ -49,10 +49,9 @@ void main() {
       );
       await preferences.setString('current_assistant_id_v1', 'assistant-1');
       provider = AssistantProvider(preferences: preferences);
-      for (var i = 0; i < 100; i++) {
-        if (provider.currentAssistant != null) break;
-        await Future<void>.delayed(const Duration(milliseconds: 10));
-      }
+      // The sticky MCP migration persists its first-launch preference during
+      // initialization. Finish that SQLite write on the real test clock.
+      await provider.loaded;
     });
     return provider;
   }
@@ -205,10 +204,11 @@ void main() {
     expect(bar().reasoningActive, isFalse);
   });
 
-  testWidgets('the assistant\'s own model still disables what it cannot do', (
+  testWidgets('unsupported models never turn off saved MCP switches', (
     tester,
   ) async {
     final assistants = await loadAssistantWithMcp(tester);
+    await assistants.loaded;
 
     await pumpComposer(
       tester,
@@ -216,7 +216,10 @@ void main() {
       isConversationOverride: false,
     );
 
-    expect(assistants.currentAssistant?.mcpServerIds, isEmpty);
+    expect(assistants.currentAssistant?.mcpServerIds, ['server-1']);
+    final reloaded = AssistantProvider(preferences: preferences);
+    await reloaded.loaded;
+    expect(reloaded.currentAssistant?.mcpServerIds, ['server-1']);
   });
 
   Future<void> pumpTabletComposer(
