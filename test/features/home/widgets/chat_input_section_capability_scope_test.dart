@@ -220,10 +220,7 @@ void main() {
     // The widget test checks capability changes without constructing another
     // SQLite-backed provider under the fake widget clock. Provider cold-reload
     // behavior is covered by assistant_provider_search_test.dart.
-    expect(
-      preferences.getStringList('mcp_sticky_selection_v1'),
-      ['server-1'],
-    );
+    expect(preferences.getStringList('mcp_sticky_selection_v1'), ['server-1']);
   });
 
   Future<void> pumpTabletComposer(
