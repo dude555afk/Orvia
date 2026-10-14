@@ -278,6 +278,50 @@ void main() {
       );
     });
 
+    test('Edge Neural retries a transient connection_failed once', () async {
+      final edge = EdgeNeuralTtsOptions(
+        enabled: true,
+        name: 'Edge',
+        voice: 'en-US-AriaNeural',
+      );
+      var calls = 0;
+      final result = await NetworkTtsService.synthesize(
+        options: edge,
+        text: 'Retry me',
+        edgeTtsSynthesizer: (text, voice) async {
+          calls++;
+          if (calls == 1) {
+            throw StateError('EdgeTtsException(connection_failed)');
+          }
+          return Uint8List.fromList(<int>[0x49, 0x44, 0x33]);
+        },
+      );
+      expect(calls, 2);
+      expect(result.mime, 'audio/mpeg');
+      expect(result.bytes, <int>[0x49, 0x44, 0x33]);
+    });
+
+    test('Edge Neural does not retry a non-network synthesis error', () async {
+      final edge = EdgeNeuralTtsOptions(
+        enabled: true,
+        name: 'Edge',
+        voice: 'en-US-AriaNeural',
+      );
+      var calls = 0;
+      await expectLater(
+        NetworkTtsService.synthesize(
+          options: edge,
+          text: 'Invalid',
+          edgeTtsSynthesizer: (_, _) async {
+            calls++;
+            throw const FormatException('invalid audio request');
+          },
+        ),
+        throwsA(isA<FormatException>()),
+      );
+      expect(calls, 1);
+    });
+
     test('Azure sends escaped SSML and returns MP3 audio', () async {
       late HttpRequest captured;
       late String requestBody;
