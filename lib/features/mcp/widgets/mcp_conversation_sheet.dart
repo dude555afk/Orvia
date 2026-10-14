@@ -48,6 +48,21 @@ class _ConversationMcpSheet extends StatelessWidget {
       );
     }
 
+    Future<void> toggleSelected(String id, bool enabled) async {
+      final assistants = context.read<AssistantProvider>();
+      final assistant = assistants.currentAssistant;
+      if (assistant == null) return;
+      await assistants.setMcpServerEnabledForAssistant(
+        assistant.id,
+        id,
+        enabled,
+      );
+      await context.read<ChatService>().setConversationMcpServers(
+        conversationId,
+        assistants.stickyMcpServerIds,
+      );
+    }
+
     // Keep enabled servers visible while they reconnect after app restart.
     // Connection status must not masquerade as a disabled chat selection.
     final servers = mcp.servers.where((s) => s.enabled).toList();
@@ -193,13 +208,7 @@ class _ConversationMcpSheet extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               onTap: () {
-                                final ids = selected.toSet();
-                                          if (!isSelected) {
-                                            ids.add(s.id);
-                                          } else {
-                                            ids.remove(s.id);
-                                          }
-                                          updateSelected(ids);
+                                toggleSelected(s.id, !isSelected);
                               },
                               child: Ink(
                                 decoration: BoxDecoration(
@@ -296,13 +305,7 @@ class _ConversationMcpSheet extends StatelessWidget {
                                       IosSwitch(
                                         value: isSelected,
                                         onChanged: (v) {
-                                          final ids = selected.toSet();
-                                          if (v) {
-                                            ids.add(s.id);
-                                          } else {
-                                            ids.remove(s.id);
-                                          }
-                                          updateSelected(ids);
+                                          toggleSelected(s.id, v);
                                         },
                                       ),
                                     ],
