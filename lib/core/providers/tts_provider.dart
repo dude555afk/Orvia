@@ -74,6 +74,7 @@ class TtsProvider extends ChangeNotifier {
   bool _usingNetwork = false;
   bool _ignoreTtsStopCallbacks = false;
   bool _networkSeekInterruptedChunk = false;
+  DateTime? _edgeDeniedUntil;
   String? _error;
   String? _lastReplayContent;
   TtsServiceOptions? _lastReplayNetworkService;
@@ -123,6 +124,10 @@ class TtsProvider extends ChangeNotifier {
   bool get isSpeaking => _isSpeaking || _previewPlaying;
   bool get isPaused => _isPaused;
   bool get usingNetwork => _usingNetwork;
+  bool get edgeVoiceFallbackActive =>
+      io.Platform.isAndroid &&
+      _edgeDeniedUntil != null &&
+      DateTime.now().isBefore(_edgeDeniedUntil!);
   String? get error => _error;
   double get speechRate => _speechRate;
   double get pitch => _pitch;
@@ -445,6 +450,15 @@ class TtsProvider extends ChangeNotifier {
   }) async {
     if (!_initialized) return;
     final selected = await _getSelectedNetworkService();
+    // Respect the selected Edge service, but avoid repeating a known-denied
+    // WebSocket handshake for every sentence while its access is blocked.
+    if (selected is EdgeNeuralTtsOptions && edgeVoiceFallbackActive) {
+      return _speakQueued(
+        text,
+        flush: flush,
+        waitForCompletion: waitForCompletion,
+      );
+    }
     if (selected != null && selected.enabled) {
       return _speakQueued(
         text,
@@ -470,7 +484,14 @@ class TtsProvider extends ChangeNotifier {
     String text, {
     bool flush = true,
   }) async {
-    await _speakQueued(text, networkService: service, flush: flush);
+    await _speakQueued(
+      text,
+      networkService:
+          service is EdgeNeuralTtsOptions && edgeVoiceFallbackActive
+          ? null
+          : service,
+      flush: flush,
+    );
   }
 
   Future<void> _speakQueued(
@@ -724,6 +745,18 @@ class TtsProvider extends ChangeNotifier {
       }
       return null;
     } catch (e) {
+      if (io.Platform.isAndroid && isEdgeTtsAccessDenied(service, e)) {
+        _edgeDeniedUntil = DateTime.now().add(const Duration(minutes: 15));
+        notifyListeners();
+        try {
+          await speakSystem(content);
+          return 'Microsoft Edge TTS rejected the connection (HTTP 403). '
+              'Preview played using the Android system voice instead.';
+        } catch (fallbackError) {
+          return 'Microsoft Edge TTS rejected the connection (HTTP 403), '
+              'and Android voice playback also failed: $fallbackError';
+        }
+      }
       return e.toString();
     }
   }
@@ -775,8 +808,67 @@ class TtsProvider extends ChangeNotifier {
       }
     } catch (e) {
       if (session != _sessionId) return;
+      if (io.Platform.isAndroid && isEdgeTtsAccessDenied(service, e)) {
+        // Edge Read Aloud can permanently deny non-Edge WebSocket upgrades.
+        // Do not retry a 403. Keep the user's selection unchanged and speak
+        // only the unplayed text with Android's installed TTS engine.
+        _edgeDeniedUntil = DateTime.now().add(const Duration(minutes: 15));
+        notifyListeners();
+        try {
+          await _fallBackToSystemVoice(session);
+        } catch (fallbackError) {
+          if (session != _sessionId) return;
+          _error = 'Edge TTS denied access (403), and the Android system '
+              'voice also failed: $fallbackError';
+          _finishPlayback(status: TtsPlaybackStatus.error, error: _error);
+        }
+        return;
+      }
       _error = e.toString();
       _finishPlayback(status: TtsPlaybackStatus.error, error: _error);
+    }
+  }
+
+  Future<void> _fallBackToSystemVoice(int session) async {
+    if (session != _sessionId || _chunks.isEmpty) return;
+    final remaining = _chunks
+        .skip(_currentChunkIndex)
+        .map((chunk) => chunk.text)
+        .join(' ')
+        .trim();
+    if (remaining.isEmpty) {
+      _finishPlayback(status: TtsPlaybackStatus.ended);
+      return;
+    }
+    _usingNetwork = false;
+    _lastReplayNetworkService = null;
+    _networkCache.clear();
+    _resolvedNetworkChunks.clear();
+    _chunks
+      ..clear()
+      ..addAll(
+        TtsTextChunker.split(remaining, maxChunkLength: _systemChunkMaxLength),
+      );
+    _timeline = TtsPlaybackTimeline(_chunks);
+    _currentChunkIndex = 0;
+    _currentChunkTextOffset = 0;
+    _currentChunkPosition = Duration.zero;
+    _currentChunkDuration = null;
+    _pendingNetworkSeekOffset = Duration.zero;
+    _networkSeekInterruptedChunk = false;
+    _error = null;
+    _playbackState = TtsPlaybackState(
+      status: _isPaused
+          ? TtsPlaybackStatus.paused
+          : TtsPlaybackStatus.buffering,
+      speed: _playbackState.speed,
+      totalChunks: _chunks.length,
+      duration: _timeline.estimatedDuration,
+      usingNetwork: false,
+    );
+    notifyListeners();
+    if (!_isPaused) {
+      await _speakCurrentSystemChunk(session);
     }
   }
 
