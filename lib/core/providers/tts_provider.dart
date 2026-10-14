@@ -775,6 +775,32 @@ class TtsProvider extends ChangeNotifier {
       }
     } catch (e) {
       if (session != _sessionId) return;
+      if (service is EdgeNeuralTtsOptions &&
+          isEdgeTtsConnectivityError(e)) {
+        // A keyless Edge service outage must not leave the chat silent.
+        // Keep the selected service setting untouched; only this playback
+        // session switches to the device's installed speech engine.
+        _usingNetwork = false;
+        _lastReplayNetworkService = null;
+        _networkCache.clear();
+        _updatePlaybackState(
+          status: TtsPlaybackStatus.buffering,
+          clearError: true,
+        );
+        try {
+          await _ensureBound();
+          if (session != _sessionId) return;
+          await _speakCurrentSystemChunk(session);
+          return;
+        } catch (fallbackError) {
+          if (session != _sessionId) return;
+          _error =
+              'Edge TTS connection failed and device speech is unavailable: '
+              '$fallbackError';
+          _finishPlayback(status: TtsPlaybackStatus.error, error: _error);
+          return;
+        }
+      }
       _error = e.toString();
       _finishPlayback(status: TtsPlaybackStatus.error, error: _error);
     }
