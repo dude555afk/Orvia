@@ -1,0 +1,30 @@
+name: Temporary adaptive composer formatter
+
+on:
+  push:
+    branches: [feat/adaptive-compact-composer-20261014]
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+      - name: Format composer files and commit
+        run: |
+          set -euo pipefail
+          dart format lib/core/providers/settings_provider.dart lib/features/home/widgets/chat_input_bar.dart lib/features/settings/pages/display_settings_page.dart test/features/home/widgets/chat_input_bar_expand_test.dart
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib/core/providers/settings_provider.dart lib/features/home/widgets/chat_input_bar.dart lib/features/settings/pages/display_settings_page.dart test/features/home/widgets/chat_input_bar_expand_test.dart
+          if ! git diff --cached --quiet; then
+            git commit -m "style(composer): apply Dart formatter"
+            git push origin HEAD:feat/adaptive-compact-composer-20261014
+          fi
