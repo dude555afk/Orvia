@@ -9,12 +9,12 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-import '../../shared/widgets/markdown_line_lexer.dart';
 import '../database/business_preferences.dart';
 import '../services/tts/network_tts.dart';
 import '../services/mobile_background.dart';
 import '../services/tts/tts_playback_models.dart';
 import '../services/tts/tts_text_chunker.dart';
+import '../services/tts/tts_speech_text_cleaner.dart';
 
 String ttsAudioFileExtensionForMime(String? mime) {
   switch ((mime ?? '').toLowerCase()) {
@@ -480,7 +480,7 @@ class TtsProvider extends ChangeNotifier {
     bool reuseResolvedNetworkAudio = false,
     bool waitForCompletion = true,
   }) async {
-    final content = _stripMarkdown(text).trim();
+    final content = TtsSpeechTextCleaner.clean(text).trim();
     if (content.isEmpty) return;
     if (flush) await _stopPlaybackEngines();
     _lastReplayContent = content;
@@ -709,7 +709,7 @@ class TtsProvider extends ChangeNotifier {
     TtsServiceOptions service,
     String text,
   ) async {
-    final content = _stripMarkdown(text).trim();
+    final content = TtsSpeechTextCleaner.clean(text).trim();
     if (content.isEmpty) return null;
     try {
       final res = await NetworkTtsService.synthesize(
@@ -1134,20 +1134,6 @@ class TtsProvider extends ChangeNotifier {
     final country = l.countryCode;
     if (country != null && country.isNotEmpty) return '$lang-$country';
     return lang;
-  }
-
-  static String _stripMarkdown(String input) {
-    var s = markdownRemoveCode(input);
-    s = s.replaceAllMapped(
-      RegExp(r'\[([^\]]+)\]\([^\)]+\)'),
-      (m) => m.group(1) ?? '',
-    );
-    s = s.replaceAll(RegExp(r'!\[[^\]]*\]\([^\)]*\)'), ' ');
-    s = s.replaceAll(RegExp(r'^[#>\-\*\+]+\s*', multiLine: true), '');
-    s = s.replaceAll(RegExp(r'[*_~]{1,3}'), '');
-    s = s.replaceAll('|', ' ');
-    s = s.replaceAll(RegExp(r'\s+'), ' ');
-    return s;
   }
 
   Future<void> _playAudioBytes(Uint8List bytes, {String? mime}) async {
