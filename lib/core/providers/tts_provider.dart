@@ -877,9 +877,10 @@ class TtsProvider extends ChangeNotifier {
     int session,
     int startIndex,
   ) {
-    final end = (startIndex + _networkPrefetchCount)
-        .clamp(0, _chunks.length)
-        .toInt();
+    // Edge is an unofficial WebSocket: do not launch several simultaneous
+    // denied handshakes (which can surface as unhandled prefetch errors).
+    final count = service is EdgeNeuralTtsOptions ? 1 : _networkPrefetchCount;
+    final end = (startIndex + count).clamp(0, _chunks.length).toInt();
     for (var i = startIndex; i < end; i++) {
       _networkResultFor(service, session, i);
     }
