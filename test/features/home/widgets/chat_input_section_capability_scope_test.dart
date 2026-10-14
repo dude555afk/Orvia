@@ -230,7 +230,7 @@ void main() {
 
     await assistants.updateAssistant(
       assistants.currentAssistant!.copyWith(
-        modelId: 'no-tools-model',
+        chatModelId: 'no-tools-model',
       ),
     );
     expect(assistants.currentAssistant?.mcpServerIds, ['server-1']);
