@@ -1,0 +1,25 @@
+name: Stage LastChat UI source
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: Cocolalilal/LastChat
+          ref: b8a2cb52311ea31719f9c20d44f35c5ee8e52f98
+          path: lastchat
+      - name: Package UI source for Orvia native migration
+        run: |
+          mkdir -p staging
+          cp -R lastchat/app/src/main/java/me/rerere/rikkahub/ui staging/
+          cp -R lastchat/ui-core staging/ui-core
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lastchat-ui-source
+          path: staging/
