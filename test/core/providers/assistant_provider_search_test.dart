@@ -109,6 +109,96 @@ void main() {
       },
     );
 
+    test('MCP switches stay on across assistant changes and cold reload', () async {
+      final provider = await _createLoadedAssistantProvider(
+        session: session,
+        assistants: const [
+          {'id': 'assistant-a', 'name': 'A'},
+          {'id': 'assistant-b', 'name': 'B'},
+        ],
+      );
+      await provider.loaded;
+
+      await provider.setMcpServerEnabledForAssistant(
+        'assistant-a',
+        'github',
+        true,
+      );
+      expect(provider.getById('assistant-b')!.mcpServerIds, ['github']);
+      await provider.setCurrentAssistant('assistant-b');
+
+      final reloaded = AssistantProvider(preferences: session.preferences);
+      await reloaded.loaded;
+      expect(reloaded.stickyMcpServerIds, ['github']);
+      expect(reloaded.getById('assistant-a')!.mcpServerIds, ['github']);
+      expect(reloaded.getById('assistant-b')!.mcpServerIds, ['github']);
+
+      final newId = await reloaded.addAssistant(name: 'New');
+      expect(reloaded.getById(newId)!.mcpServerIds, ['github']);
+
+      await reloaded.setMcpServerEnabledForAssistant(
+        'assistant-b',
+        'github',
+        false,
+      );
+      final afterDisabled = AssistantProvider(
+        preferences: session.preferences,
+      );
+      await afterDisabled.loaded;
+      expect(afterDisabled.stickyMcpServerIds, isEmpty);
+      expect(
+        afterDisabled.assistants.every((a) => a.mcpServerIds.isEmpty),
+        isTrue,
+      );
+    });
+
+    test('editing from a stale assistant snapshot never switches MCP off',
+        () async {
+      final provider = await _createLoadedAssistantProvider(
+        session: session,
+        assistants: const [
+          {'id': 'assistant-a', 'name': 'A'},
+          {'id': 'assistant-b', 'name': 'B'},
+        ],
+      );
+      await provider.loaded;
+      final stale = provider.getById('assistant-b')!;
+      await provider.setMcpServerEnabledForAssistant(
+        'assistant-a',
+        'github',
+        true,
+      );
+      await provider.updateAssistant(stale.copyWith(name: 'Updated'));
+      expect(provider.getById('assistant-b')!.mcpServerIds, ['github']);
+
+      await provider.setStickyMcpServerIds(['github', 'search']);
+      final reloaded = AssistantProvider(preferences: session.preferences);
+      await reloaded.loaded;
+      expect(reloaded.stickyMcpServerIds.toSet(), {'github', 'search'});
+
+      await reloaded.setStickyMcpServerIds(const <String>[]);
+      final disabled = AssistantProvider(preferences: session.preferences);
+      await disabled.loaded;
+      expect(disabled.stickyMcpServerIds, isEmpty);
+    });
+
+    test('migrates saved chat MCP selection when assistant has none', () async {
+      await session.preferences.setStringList(
+        'conversation_default_mcp_server_ids_v1',
+        ['github', 'search'],
+      );
+      final provider = await _createLoadedAssistantProvider(
+        session: session,
+        assistants: const [
+          {'id': 'assistant-a', 'name': 'A'},
+        ],
+      );
+      await provider.loaded;
+      expect(provider.stickyMcpServerIds.toSet(), {'github', 'search'});
+      expect(provider.getById('assistant-a')!.mcpServerIds.toSet(),
+          {'github', 'search'});
+    });
+
     test('updates only the current assistant search value', () async {
       final provider = await _createLoadedAssistantProvider(
         session: session,
