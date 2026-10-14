@@ -751,14 +751,17 @@ class _ChatInputBarState extends State<ChatInputBar>
       if (!mounted || _expandedLayout) return;
       final editable = _findRenderEditable();
       if (editable == null || !editable.hasSize) return;
-      // Judge the text at the width it has while the button is shown. The
-      // button narrows the field, and a long unbreakable word can then wrap
-      // onto fewer lines, so measuring the current width would let the
-      // button toggle itself on and off every frame.
-      final buttonWidth = _canExpand
-          ? editable.size.width
-          : editable.size.width -
-                (_expandButtonExtent + AppSpacing.xs - AppSpacing.md);
+      // Measure at a constant *target* width. AnimatedPadding changes the
+      // actual editable width while the compact pill unfolds, and measuring
+      // that intermediate size made the Expand button flicker mid-transition.
+      final area = _textAreaKey.currentContext?.findRenderObject();
+      if (area is! RenderBox || !area.hasSize) return;
+      final buttonWidth =
+          (area.size.width -
+                  AppSpacing.md -
+                  _expandButtonExtent -
+                  AppSpacing.xs)
+              .clamp(1.0, double.infinity);
       final canExpand =
           editable.getMaxIntrinsicHeight(buttonWidth) >
           editable.preferredLineHeight * 2.5;
