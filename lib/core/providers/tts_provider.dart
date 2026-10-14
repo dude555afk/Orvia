@@ -486,8 +486,7 @@ class TtsProvider extends ChangeNotifier {
   }) async {
     await _speakQueued(
       text,
-      networkService:
-          service is EdgeNeuralTtsOptions && edgeVoiceFallbackActive
+      networkService: service is EdgeNeuralTtsOptions && edgeVoiceFallbackActive
           ? null
           : service,
       flush: flush,
@@ -818,7 +817,8 @@ class TtsProvider extends ChangeNotifier {
           await _fallBackToSystemVoice(session);
         } catch (fallbackError) {
           if (session != _sessionId) return;
-          _error = 'Edge TTS denied access (403), and the Android system '
+          _error =
+              'Edge TTS denied access (403), and the Android system '
               'voice also failed: $fallbackError';
           _finishPlayback(status: TtsPlaybackStatus.error, error: _error);
         }

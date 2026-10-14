@@ -69,8 +69,7 @@ bool isValidAzureTtsEndpoint(String value) {
 bool isEdgeTtsAccessDenied(TtsServiceOptions service, Object error) {
   if (service is! EdgeNeuralTtsOptions) return false;
   final message = error.toString().toLowerCase();
-  return RegExp(r'\b403\b').hasMatch(message) ||
-      message.contains('forbidden');
+  return RegExp(r'\b403\b').hasMatch(message) || message.contains('forbidden');
 }
 
 /// Migrates retired MiMo TTS model ids. `mimo-v2-tts` is no longer served.
