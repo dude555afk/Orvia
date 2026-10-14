@@ -204,8 +204,7 @@ void main() {
     expect(bar().reasoningActive, isFalse);
   });
 
-  test('unsupported model choices never turn off saved MCP switches',
-      () async {
+  test('unsupported model choices never turn off saved MCP switches', () async {
     // Capability resolution is pure. Exercise model changes using the real
     // SQLite clock instead of awaiting a database write inside testWidgets'
     // fake clock (which can deadlock and pollute subsequent widget tests).
@@ -229,9 +228,7 @@ void main() {
     ]);
 
     await assistants.updateAssistant(
-      assistants.currentAssistant!.copyWith(
-        chatModelId: 'no-tools-model',
-      ),
+      assistants.currentAssistant!.copyWith(chatModelId: 'no-tools-model'),
     );
     expect(assistants.currentAssistant?.mcpServerIds, ['server-1']);
     expect(harness.preferences.getStringList('mcp_sticky_selection_v1'), [
