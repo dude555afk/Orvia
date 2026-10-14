@@ -210,7 +210,10 @@ class ChatService extends ChangeNotifier {
     final preferences = _businessPreferences;
     if (preferences == null) return const <String>[];
     await preferences.load();
-    return preferences.getStringList(_defaultMcpSelectionKey) ??
+    // Explicit app-wide MCP choices must survive switching or opening chats.
+    // Keep the legacy conversation default for existing installations.
+    return preferences.getStringList('mcp_sticky_selection_v1') ??
+        preferences.getStringList(_defaultMcpSelectionKey) ??
         const <String>[];
   }
 
