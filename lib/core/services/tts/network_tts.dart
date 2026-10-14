@@ -62,7 +62,6 @@ bool isValidAzureTtsEndpoint(String value) {
       (uri.scheme == 'http' || uri.scheme == 'https');
 }
 
-/// Migrates retired MiMo TTS model ids. `mimo-v2-tts` is no longer served.
 /// Edge Read Aloud is not a supported public API. The service can deny
 /// WebSocket upgrades with HTTP 403 even when networking is otherwise healthy.
 /// This only selects an Android device-voice fallback for explicit denial; it
@@ -74,6 +73,7 @@ bool isEdgeTtsAccessDenied(TtsServiceOptions service, Object error) {
       message.contains('forbidden');
 }
 
+/// Migrates retired MiMo TTS model ids. `mimo-v2-tts` is no longer served.
 String migrateMimoTtsModel(String? raw) {
   final model = (raw ?? '').trim();
   if (model.isEmpty || model == 'mimo-v2-tts') return 'mimo-v2.5-tts';
