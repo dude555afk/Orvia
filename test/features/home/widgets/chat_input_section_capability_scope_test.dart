@@ -64,6 +64,9 @@ void main() {
     bool supportsReasoning = false,
   }) async {
     final settings = settingsOverride ?? SettingsProvider(preferences);
+    // Settings can persist defaults during initialization. Complete those
+    // SQLite writes on real time before the widget fake clock is running.
+    await tester.runAsync(() => settings.loaded);
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -228,6 +231,7 @@ void main() {
     required String modelId,
   }) async {
     final settings = SettingsProvider(preferences);
+    await tester.runAsync(() => settings.loaded);
     await tester.pumpWidget(
       MultiProvider(
         providers: [
