@@ -218,7 +218,8 @@ void main() {
 
     expect(assistants.currentAssistant?.mcpServerIds, ['server-1']);
     final reloaded = AssistantProvider(preferences: preferences);
-    await reloaded.loaded;
+    // Startup reads and any migration writes must use the real test clock.
+    await tester.runAsync(() => reloaded.loaded);
     expect(reloaded.currentAssistant?.mcpServerIds, ['server-1']);
   });
 
