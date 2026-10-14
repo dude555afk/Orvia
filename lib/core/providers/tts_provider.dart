@@ -775,8 +775,7 @@ class TtsProvider extends ChangeNotifier {
       }
     } catch (e) {
       if (session != _sessionId) return;
-      if (service is EdgeNeuralTtsOptions &&
-          isEdgeTtsConnectivityError(e)) {
+      if (service is EdgeNeuralTtsOptions && isEdgeTtsConnectivityError(e)) {
         // A keyless Edge service outage must not leave the chat silent.
         // Keep the selected service setting untouched; only this playback
         // session switches to the device's installed speech engine.
