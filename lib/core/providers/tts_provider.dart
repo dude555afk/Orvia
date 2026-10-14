@@ -724,8 +724,7 @@ class TtsProvider extends ChangeNotifier {
       }
       return null;
     } catch (e) {
-      if (service is EdgeNeuralTtsOptions &&
-          isEdgeTtsConnectivityError(e)) {
+      if (service is EdgeNeuralTtsOptions && isEdgeTtsConnectivityError(e)) {
         return 'Edge TTS could not connect. Check your connection or try '
             'again later. Chat playback can fall back to your device voice.';
       }
