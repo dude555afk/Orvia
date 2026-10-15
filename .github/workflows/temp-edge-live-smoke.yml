@@ -1,0 +1,19 @@
+name: Temporary Edge neural audio smoke
+on:
+  push:
+    branches: [fix/edge-native-voice-updater-ui-20261015]
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+      - run: flutter pub get
+      - name: Verify genuine Microsoft Edge neural audio
+        run: dart run tool/edge_tts_smoke.dart
