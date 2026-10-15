@@ -119,11 +119,7 @@ class EdgeModernClient {
                 'X-Timestamp:$stamp\r\n'
                 'Path:ssml\r\n\r\n'
                 "<speak version='1.0' xml:lang='en-US'>"
-                "<voice name='" +
-            _xml(voice) +
-            "'>" +
-            _xml(text) +
-            "</voice></speak>",
+        "<voice name='${_xml(voice)}'>${_xml(text)}</voice></speak>",
       );
       final audio = BytesBuilder(copy: false);
       var finished = false;
