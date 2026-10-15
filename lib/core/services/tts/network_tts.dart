@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flutter_edge_tts/flutter_edge_tts.dart';
+import 'edge_modern_client.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
@@ -60,16 +60,6 @@ bool isValidAzureTtsEndpoint(String value) {
       uri.hasAuthority &&
       uri.host.isNotEmpty &&
       (uri.scheme == 'http' || uri.scheme == 'https');
-}
-
-/// Edge Read Aloud is not a supported public API. The service can deny
-/// WebSocket upgrades with HTTP 403 even when networking is otherwise healthy.
-/// This only selects an Android device-voice fallback for explicit denial; it
-/// does not pretend retrying can fix a server-side access decision.
-bool isEdgeTtsAccessDenied(TtsServiceOptions service, Object error) {
-  if (service is! EdgeNeuralTtsOptions) return false;
-  final message = error.toString().toLowerCase();
-  return RegExp(r'\b403\b').hasMatch(message) || message.contains('forbidden');
 }
 
 /// Migrates retired MiMo TTS model ids. `mimo-v2-tts` is no longer served.
@@ -959,30 +949,7 @@ class NetworkTtsService {
   static Future<Uint8List> _synthesizeEdgeNeural(
     String text,
     String voice,
-  ) async {
-    final tts = FlutterEdgeTts(
-      voice: voice,
-      outputFormat: EdgeTtsOutputFormat.audio24Khz96KbitrateMonoMp3,
-    );
-    try {
-      // The unofficial Edge service can stall; return an actionable error
-      // instead of leaving playback permanently buffering.
-      final result = await tts
-          .synthesize(text)
-          .timeout(
-            const Duration(seconds: 30),
-            onTimeout: () => throw TimeoutException(
-              'Edge TTS request timed out. Check the connection or try again.',
-            ),
-          );
-      return Uint8List.fromList(result.audioBytes);
-    } finally {
-      // Cleanup should never hide the synthesis exception.
-      try {
-        await tts.close().timeout(const Duration(seconds: 5));
-      } catch (_) {}
-    }
-  }
+  ) => EdgeModernClient.synthesize(text, voice);
 
   static Future<NetworkTtsResult> _openAiSpeech(
     OpenAiTtsOptions opt,
