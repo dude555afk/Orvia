@@ -16,7 +16,8 @@ class EdgeModernClient {
   static const _modern =
       'wss://api.msedgeservices.com/tts/cognitiveservices/websocket/v1';
   static const _origin = 'chrome-extension://jdiccldimpdaibmpdkjnbmckianbfold';
-  static const _ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+  static const _ua =
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
       'AppleWebKit/537.36 (KHTML, like Gecko) '
       'Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0';
 
@@ -114,11 +115,15 @@ class EdgeModernClient {
       );
       socket.add(
         'X-RequestId:$requestId\r\n'
-        'Content-Type:application/ssml+xml\r\n'
-        'X-Timestamp:$stamp\r\n'
-        'Path:ssml\r\n\r\n'
-        "<speak version='1.0' xml:lang='en-US'>"
-        "<voice name='" + _xml(voice) + "'>" + _xml(text) + "</voice></speak>",
+                'Content-Type:application/ssml+xml\r\n'
+                'X-Timestamp:$stamp\r\n'
+                'Path:ssml\r\n\r\n'
+                "<speak version='1.0' xml:lang='en-US'>"
+                "<voice name='" +
+            _xml(voice) +
+            "'>" +
+            _xml(text) +
+            "</voice></speak>",
       );
       final audio = BytesBuilder(copy: false);
       var finished = false;

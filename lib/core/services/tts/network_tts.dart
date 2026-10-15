@@ -946,10 +946,8 @@ class NetworkTtsService {
     return NetworkTtsResult(bytes: audio, mime: 'audio/mpeg');
   }
 
-  static Future<Uint8List> _synthesizeEdgeNeural(
-    String text,
-    String voice,
-  ) => EdgeModernClient.synthesize(text, voice);
+  static Future<Uint8List> _synthesizeEdgeNeural(String text, String voice) =>
+      EdgeModernClient.synthesize(text, voice);
 
   static Future<NetworkTtsResult> _openAiSpeech(
     OpenAiTtsOptions opt,

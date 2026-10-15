@@ -262,8 +262,10 @@ void main() {
       final newUri = EdgeModernClient.endpoint(modern: true, token: token);
       expect(oldUri.host, 'speech.platform.bing.com');
       expect(newUri.host, 'api.msedgeservices.com');
-      expect(oldUri.queryParameters['Sec-MS-GEC-Version'],
-          EdgeV2Token.protocolVersion);
+      expect(
+        oldUri.queryParameters['Sec-MS-GEC-Version'],
+        EdgeV2Token.protocolVersion,
+      );
       expect(newUri.queryParameters['Sec-MS-GEC'], token);
     });
   });

@@ -854,9 +854,9 @@ class _OrviaUpdateCard extends StatelessWidget {
         await context.read<UpdateProvider>().downloadAndInstallAvailable();
       } catch (error) {
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Update failed: $error')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Update failed: $error')));
       }
     }
 
@@ -864,9 +864,7 @@ class _OrviaUpdateCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: cs.surfaceContainerLow,
         borderRadius: BorderRadius.circular(26),
-        border: Border.all(
-          color: cs.outlineVariant.withValues(alpha: 0.42),
-        ),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.42)),
       ),
       padding: const EdgeInsets.all(18),
       child: Column(
@@ -942,13 +940,13 @@ class _OrviaUpdateCard extends StatelessWidget {
                             ),
                             builder: (context, value, _) =>
                                 LinearProgressIndicator(
-                                  value: updates.downloading &&
-                                          progress == null
+                                  value: updates.downloading && progress == null
                                       ? null
                                       : value,
                                   minHeight: 7,
-                                  backgroundColor:
-                                      cs.primary.withValues(alpha: 0.12),
+                                  backgroundColor: cs.primary.withValues(
+                                    alpha: 0.12,
+                                  ),
                                 ),
                           ),
                         ),
