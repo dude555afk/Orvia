@@ -323,6 +323,6 @@ class EdgeV2Token {
     ticks *= 10000000;
     final bytes = ascii.encode(ticks.toStringAsFixed(0) + clientKey);
     final digest = _saltHash(bytes);
-    return _hex(_cs64(bytes, digest)) + '-' + _hex(digest);
+    return '${_hex(_cs64(bytes, digest))}-${_hex(digest)}';
   }
 }
