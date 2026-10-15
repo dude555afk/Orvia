@@ -1,0 +1,27 @@
+name: Temporary Edge 35 formatter
+on:
+  push:
+    branches: [fix/edge-native-voice-updater-ui-20261015]
+permissions:
+  contents: write
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+      - name: Format Edge and update card
+        run: |
+          set -euo pipefail
+          dart format lib/core/services/tts/edge_modern_client.dart lib/core/services/tts/edge_v2_token.dart lib/core/providers/tts_provider.dart lib/core/services/tts/network_tts.dart lib/features/settings/pages/about_page.dart lib/features/settings/pages/tts_services_page.dart test/core/services/tts/network_tts_test.dart
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib/core/services/tts/edge_modern_client.dart lib/core/services/tts/edge_v2_token.dart lib/core/providers/tts_provider.dart lib/core/services/tts/network_tts.dart lib/features/settings/pages/about_page.dart lib/features/settings/pages/tts_services_page.dart test/core/services/tts/network_tts_test.dart
+          if ! git diff --cached --quiet; then
+            git commit -m "style(edge): apply Dart formatter to neural TTS and update card"
+            git push origin HEAD:fix/edge-native-voice-updater-ui-20261015
+          fi
