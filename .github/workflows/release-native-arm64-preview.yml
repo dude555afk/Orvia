@@ -1,0 +1,89 @@
+name: Publish Optimized Orvia Native ARM64 Preview
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/release-native-arm64-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: orvia-native-arm64-preview-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify pinned successful optimized build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          RUN=38683346396
+          EXPECTED_SHA=7941d09eb6ebb2445b939dd117245a7f518cbf0a
+          test "$(gh run view "$RUN" -R "$GITHUB_REPOSITORY" --json headSha --jq .headSha)" = "$EXPECTED_SHA"
+          test "$(gh run view "$RUN" -R "$GITHUB_REPOSITORY" --json conclusion --jq .conclusion)" = "success"
+      - name: Download, verify and name ARM64 APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          gh run download 38683346396 -R "$GITHUB_REPOSITORY" \
+            --name orvia-v2-native-arm64-optimized --dir dist
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          candidates = list(Path("dist").rglob("*.apk"))
+          assert len(candidates) == 1, candidates
+          apk = candidates[0]
+          with ZipFile(apk) as archive:
+              assert archive.testzip() is None
+              abis = {n.split("/")[1] for n in archive.namelist()
+                      if n.startswith("lib/") and n.endswith(".so")}
+              assert abis == {"arm64-v8a"}, abis
+          size = apk.stat().st_size
+          assert size < 160 * 1024 * 1024, size
+          print(f"Verified ARM64 APK: {size / 1024 / 1024:.2f} MiB")
+          apk.rename("Orvia-2-Native-ARM64-Preview.apk")
+          PY
+      - name: Prepare release notes
+        run: |
+          cat > release-notes.md <<'EOF'
+          ## Orvia 2.0 Native UI Preview 2 (ARM64 optimized)
+
+          - Uses the LastChat Kotlin / Jetpack Compose app source as a pinned submodule.
+          - Android ARM64 only; excludes other CPU architectures.
+          - R8 code shrinking and Android resource shrinking enabled.
+          - Independent package ID: com.dude555afk.orvia.nativev2.dev.
+          - Debug signing fallback used for this preview build.
+
+          **Preview only:** No Orvia chat/data migration, and no device UI
+          regression verification. Not an in-place update for the existing
+          Flutter Orvia app. The earlier native preview may need to be
+          uninstalled first due to temporary signing keys. Back up test
+          data before uninstalling. Required upstream AGPL notices remain.
+          EOF
+      - name: Publish GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG=v2.0.0-native-ui-preview.2
+          if gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Already published; refusing to replace release"
+            exit 1
+          fi
+          gh release create "$TAG" Orvia-2-Native-ARM64-Preview.apk \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "Orvia 2.0 Native UI Preview 2 (ARM64)" \
+            --prerelease \
+            --notes-file release-notes.md
