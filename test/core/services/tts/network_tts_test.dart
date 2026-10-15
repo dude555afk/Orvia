@@ -246,6 +246,38 @@ void main() {
   });
 
   group('NetworkTtsService', () {
+    test('HTTP 403 triggers Android fallback only for Edge voices', () {
+      final edge = EdgeNeuralTtsOptions(
+        enabled: true,
+        name: 'Edge',
+        voice: 'en-US-AriaNeural',
+      );
+      final openai = OpenAiTtsOptions(
+        enabled: true,
+        name: 'Other',
+        apiKey: 'key',
+        baseUrl: 'https://api.openai.com/v1',
+        model: 'gpt-4o-mini-tts',
+        voice: 'alloy',
+      );
+      expect(
+        isEdgeTtsAccessDenied(
+          edge,
+          StateError(
+            'EdgeTtsException(connection_failed): '
+            'websocket_upgrade_failed: HTTP 403 Forbidden',
+          ),
+        ),
+        isTrue,
+      );
+      expect(isEdgeTtsAccessDenied(edge, Exception('HTTP 500')), isFalse);
+      expect(isEdgeTtsAccessDenied(edge, Exception('Timed out')), isFalse);
+      expect(
+        isEdgeTtsAccessDenied(openai, Exception('HTTP 403 Forbidden')),
+        isFalse,
+      );
+    });
+
     test('keyless Edge synthesis uses chosen voice and MP3 payload', () async {
       final edge = EdgeNeuralTtsOptions(
         enabled: true,
