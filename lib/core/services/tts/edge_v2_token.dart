@@ -86,6 +86,7 @@ class EdgeV2Token {
     0x766A0ABB,
     0x81C2C92E,
     0x92722C85,
+    0xA2BFE8A1,
     0xA81A664B,
     0xC24B8B70,
     0xC76C51A3,
