@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:orvia/core/services/tts/network_tts.dart';
+import 'package:orvia/core/services/tts/edge_v2_token.dart';
+import 'package:orvia/core/services/tts/edge_modern_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -242,6 +244,27 @@ void main() {
 
       expect(networkTtsMaxCharsPerRequest(groq), 200);
       expect(networkTtsMaxCharsPerRequest(openAi), 220);
+    });
+  });
+
+  group('Edge v2 protocol', () {
+    test('produces upstream captured v2 handshake token', () {
+      expect(
+        EdgeV2Token.generate(unixSeconds: 1791888000),
+        '492D7694A183A45E-'
+        '56E821F95D4579C5B7C7E33DC7303FF379EC36D510213555BBBB9EB17EF15876',
+      );
+    });
+
+    test('new and legacy endpoints use v2 auth for Edge voices', () {
+      final token = EdgeV2Token.generate(unixSeconds: 1791888000);
+      final oldUri = EdgeModernClient.endpoint(modern: false, token: token);
+      final newUri = EdgeModernClient.endpoint(modern: true, token: token);
+      expect(oldUri.host, 'speech.platform.bing.com');
+      expect(newUri.host, 'api.msedgeservices.com');
+      expect(oldUri.queryParameters['Sec-MS-GEC-Version'],
+          EdgeV2Token.protocolVersion);
+      expect(newUri.queryParameters['Sec-MS-GEC'], token);
     });
   });
 
