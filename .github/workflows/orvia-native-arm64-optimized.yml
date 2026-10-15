@@ -1,0 +1,101 @@
+name: Orvia Native ARM64 Optimized APK
+
+on:
+  push:
+    branches:
+      - fix/native-v2-arm64-optimized-20261015
+    paths:
+      - .github/workflows/orvia-native-arm64-optimized.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - name: Checkout Orvia and pinned LastChat
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: native-v2/lastchat/web-ui/package-lock.json
+      - name: Use preinstalled Android SDK
+        run: test -d "$ANDROID_HOME"
+      - name: Prepare ARM64-only, shrunk, Orvia-branded preview
+        working-directory: native-v2/lastchat
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          gradle_path = Path("app/build.gradle.kts")
+          data = gradle_path.read_text()
+          changes = {
+              'applicationId = "lastchat.rikkafork.cocolal"': 'applicationId = "com.dude555afk.orvia.nativev2"',
+              'abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")': 'abiFilters += listOf("arm64-v8a")',
+              'versionCode = 41': 'versionCode = 42',
+              '    alias(libs.plugins.google.services)\n': '',
+              '    alias(libs.plugins.firebase.crashlytics)\n': '',
+          }
+          for old, new in changes.items():
+              assert old in data, f"Expected upstream source not found: {old.strip()}"
+              data = data.replace(old, new, 1)
+          gradle_path.write_text(data)
+          manifest_path = Path("app/src/main/AndroidManifest.xml")
+          manifest = manifest_path.read_text()
+          for old, new in {
+              'android:label="@string/app_name"': 'android:label="Orvia Native Preview"',
+              'android:icon="@mipmap/ic_launcher_lastchat"': 'android:icon="@drawable/orvia_logo"',
+          }.items():
+              assert old in manifest, old
+              manifest = manifest.replace(old, new, 1)
+          manifest_path.write_text(manifest)
+          PY
+          mkdir -p app/src/main/res/drawable-nodpi
+          cp ../../docs/orvia-logo.png app/src/main/res/drawable-nodpi/orvia_logo.png
+      - name: Install web UI dependencies
+        working-directory: native-v2/lastchat/web-ui
+        run: npm ci
+      - name: Build optimized ARM64 development release
+        working-directory: native-v2/lastchat
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleDevRelease --no-daemon --stacktrace -Plastchat.abi.splits=false -Plastchat.release.minify=true
+      - name: Verify ABI, APK integrity, and size
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          apk_files = list(Path("native-v2/lastchat/app/build/outputs/apk/dev/release").glob("*.apk"))
+          assert len(apk_files) == 1, f"Expected one APK, found {apk_files}"
+          apk = apk_files[0]
+          with ZipFile(apk) as f:
+              assert f.testzip() is None, "Corrupt APK archive"
+              names = f.namelist()
+              abis = {name.split("/")[1] for name in names if name.startswith("lib/") and name.endswith(".so")}
+              assert abis == {"arm64-v8a"}, f"Unexpected native architectures: {abis}"
+              assert "classes.dex" in names
+          size_mib = apk.stat().st_size / (1024*1024)
+          print(f"APK {apk.name}: {size_mib:.2f} MiB. ABIs: {abis}")
+          # Avoid publishing another giant binary as a purported size optimization.
+          assert size_mib < 160, f"Optimized APK still too big ({size_mib:.2f} MiB)"
+          PY
+      - name: Upload optimized ARM64 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: orvia-v2-native-arm64-optimized
+          path: native-v2/lastchat/app/build/outputs/apk/dev/release/*.apk
+          if-no-files-found: error
