@@ -75,22 +75,6 @@ class TtsServicesPage extends StatelessWidget {
                   .toUpperCase();
           return CustomScrollView(
             slivers: [
-              if (tts.edgeVoiceFallbackActive &&
-                  sp.selectedTtsService is EdgeNeuralTtsOptions)
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                    child: Text(
-                      'Microsoft Edge TTS refused the connection (HTTP 403). '
-                      'Orvia is using your Android system voice instead. '
-                      'The Edge connection will be checked again later.',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: cs.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                ),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                 sliver: SliverMainAxisGroup(
