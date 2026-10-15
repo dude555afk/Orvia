@@ -173,7 +173,7 @@ class EdgeV2Token {
   }
 
   static List<int> _saltInitial(List<int> firstSeven) {
-    final w = List<int>.filled(14, 0);
+    final w = List<int>.filled(14, 0, growable: true);
     w.add((firstSeven[0] << 16) | (firstSeven[1] << 8) | firstSeven[2]);
     w.add(
       (firstSeven[3] << 24) |
