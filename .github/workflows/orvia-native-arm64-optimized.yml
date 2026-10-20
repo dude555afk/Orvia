@@ -3,7 +3,7 @@ name: Orvia Native ARM64 Optimized APK
 on:
   push:
     branches:
-      - fix/native-v2-arm64-optimized-20261015
+      - feature/orvia-native-v2-isolated-20261015
     paths:
       - .github/workflows/orvia-native-arm64-optimized.yml
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
           changes = {
               'applicationId = "lastchat.rikkafork.cocolal"': 'applicationId = "com.dude555afk.orvia.nativev2"',
               'abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")': 'abiFilters += listOf("arm64-v8a")',
-              'versionCode = 41': 'versionCode = 42',
+              'versionCode = 41': 'versionCode = 43',
               '    alias(libs.plugins.google.services)\n': '',
               '    alias(libs.plugins.firebase.crashlytics)\n': '',
           }
@@ -65,6 +65,42 @@ jobs:
           PY
           mkdir -p app/src/main/res/drawable-nodpi
           cp ../../docs/orvia-logo.png app/src/main/res/drawable-nodpi/orvia_logo.png
+      - name: Remove high-risk unused capabilities from UI-only preview
+        working-directory: native-v2/lastchat
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+
+          path = Path("app/src/main/AndroidManifest.xml")
+          ET.register_namespace("android", "http://schemas.android.com/apk/res/android")
+          ET.register_namespace("tools", "http://schemas.android.com/tools")
+          tree = ET.parse(path)
+          root = tree.getroot()
+          android_ns = "{http://schemas.android.com/apk/res/android}"
+          app = root.find("application")
+          assert app is not None
+
+          # The upstream notification listener can read the user's
+          # notifications after it is enabled. The UI preview does not
+          # implement/test that capability and must not declare it.
+          removed = 0
+          for service in list(app.findall("service")):
+              if service.get(android_ns + "permission") == "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE":
+                  app.remove(service)
+                  removed += 1
+          assert removed == 1, f"Expected one notification listener, removed {removed}"
+
+          # This preview is installed manually and does not need the ability
+          # to install other APKs. Keep its permissions least-privilege.
+          for permission in list(root.findall("uses-permission")):
+              if permission.get(android_ns + "name") == "android.permission.REQUEST_INSTALL_PACKAGES":
+                  root.remove(permission)
+          tree.write(path, encoding="unicode", xml_declaration=True)
+          print("Removed notification listener and APK installer permission")
+          PY
       - name: Install web UI dependencies
         working-directory: native-v2/lastchat/web-ui
         run: npm ci
@@ -93,6 +129,20 @@ jobs:
           # Avoid publishing another giant binary as a purported size optimization.
           assert size_mib < 160, f"Optimized APK still too big ({size_mib:.2f} MiB)"
           PY
+      - name: Audit FINAL packaged Android permissions
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="$(find native-v2/lastchat/app/build/outputs/apk/dev/release -name '*.apk' -type f -print -quit)"
+          test -s "$APK"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -type f -name aapt | sort -V | tail -1)"
+          test -x "$AAPT"
+          "$AAPT" dump xmltree "$APK" AndroidManifest.xml > /tmp/orvia-native-manifest.txt
+          if grep -E 'android.permission.(BIND_NOTIFICATION_LISTENER_SERVICE|BIND_ACCESSIBILITY_SERVICE|READ_SMS|RECEIVE_SMS|REQUEST_INSTALL_PACKAGES)|android.service.notification.NotificationListenerService' /tmp/orvia-native-manifest.txt; then
+            echo "Sensitive capability unexpectedly present in packaged APK"
+            exit 1
+          fi
+          echo "PASS: no notification listener, accessibility binding, SMS interception, or APK installer permission"
       - name: Upload optimized ARM64 APK
         uses: actions/upload-artifact@v4
         with:
