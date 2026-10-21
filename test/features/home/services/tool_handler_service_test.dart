@@ -369,11 +369,7 @@ void main() {
       await assistants.loaded;
       await settings.loaded;
       final assistantId = await assistants.addAssistant(name: 'Test');
-      await assistants.updateAssistant(
-        assistants
-            .getById(assistantId)!
-            .copyWith(mcpServerIds: const ['srv-id']),
-      );
+      await assistants.setStickyMcpServerIds(const ['srv-id']);
 
       await tester.pumpWidget(
         MultiProvider(
