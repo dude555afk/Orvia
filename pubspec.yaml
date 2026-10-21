@@ -154,6 +154,12 @@ dev_dependencies:
   fake_async: ^1.3.3
 
 dependency_overrides:
+  # shared_preferences_android 2.5.0 uses JNI-backed Pigeon methods that can
+  # throw NoSuchMethodError in minified Android release builds. Keep the
+  # compatible 2.4.28 BasicMessageChannel implementation until upstream fixes
+  # and release-mode device verification pass.
+  shared_preferences_android: 2.4.28
+
   # Prevent the location from being accessed continuously on Windows
   permission_handler_windows:
     path: ./dependencies/flutter-permission-handler/permission_handler_windows
