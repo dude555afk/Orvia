@@ -174,10 +174,17 @@ jobs:
           arch: x86_64
           profile: pixel_2
           disable-animations: true
-          emulator-options: -no-window -no-audio -no-boot-anim
+          emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect
           script: |
             set -euo pipefail
             PACKAGE="com.dude555afk.orvia.nativev2.dev"
+            adb start-server
+            adb wait-for-device
+            for attempt in $(seq 1 60); do
+              [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ] && break
+              sleep 2
+            done
+            adb devices -l
             adb logcat -c
             adb install -r "$GITHUB_WORKSPACE/orvia-native-smoke.apk"
             adb shell am force-stop "$PACKAGE"
