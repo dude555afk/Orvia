@@ -46,8 +46,6 @@ jobs:
               'applicationId = "lastchat.rikkafork.cocolal"': 'applicationId = "com.dude555afk.orvia.nativev2"',
               'abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")': 'abiFilters += listOf("arm64-v8a")',
               'versionCode = 41': 'versionCode = 43',
-              '    alias(libs.plugins.google.services)\n': '',
-              '    alias(libs.plugins.firebase.crashlytics)\n': '',
           }
           for old, new in changes.items():
               assert old in data, f"Expected upstream source not found: {old.strip()}"
@@ -65,6 +63,36 @@ jobs:
           PY
           mkdir -p app/src/main/res/drawable-nodpi
           cp ../../docs/orvia-logo.png app/src/main/res/drawable-nodpi/orvia_logo.png
+
+          # Keep Firebase SDK initialization valid in this isolated preview even
+          # though no production Firebase project credentials are available.
+          # Remote Config network fetches are expected to fail harmlessly.
+          cat > app/google-services.json <<'JSON'
+          {
+            "project_info": {
+              "project_number": "123456789000",
+              "project_id": "orvia-native-preview",
+              "storage_bucket": "orvia-native-preview.appspot.com"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:123456789000:android:abcdef0123456789",
+                  "android_client_info": {
+                    "package_name": "com.dude555afk.orvia.nativev2.dev"
+                  }
+                },
+                "api_key": [
+                  { "current_key": "AIzaSyDUMMY_PREVIEW_ONLY_NO_REAL_FIREBASE_KEY" }
+                ],
+                "services": {
+                  "appinvite_service": { "other_platform_oauth_client": [] }
+                }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          JSON
       - name: Remove high-risk unused capabilities from UI-only preview
         working-directory: native-v2/lastchat
         shell: bash
@@ -104,6 +132,67 @@ jobs:
       - name: Install web UI dependencies
         working-directory: native-v2/lastchat/web-ui
         run: npm ci
+      - name: Build x86_64 smoke-test APK with release shrinking
+        working-directory: native-v2/lastchat
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("app/build.gradle.kts")
+          data = p.read_text()
+          old = 'abiFilters += listOf("arm64-v8a")'
+          assert old in data, "Expected ARM64 ABI filter not found"
+          p.write_text(data.replace(old, 'abiFilters += listOf("x86_64")', 1))
+          PY
+          ./gradlew :app:assembleDevRelease --no-daemon --stacktrace -Plastchat.abi.splits=false -Plastchat.release.minify=true
+          APK="$(find app/build/outputs/apk/dev/release -name '*.apk' -type f -print -quit)"
+          test -s "$APK"
+          cp "$APK" "$GITHUB_WORKSPACE/orvia-native-smoke.apk"
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          p = __import__("pathlib").Path(__import__("os").environ["GITHUB_WORKSPACE"]) / "orvia-native-smoke.apk"
+          with ZipFile(p) as z:
+              abis = {n.split("/")[1] for n in z.namelist() if n.startswith("lib/") and n.endswith(".so")}
+              assert abis == {"x86_64"}, f"Smoke APK must contain x86_64 only, found {abis}"
+          print("Prepared x86_64 release APK for emulator launch test")
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("app/build.gradle.kts")
+          data = p.read_text()
+          old = 'abiFilters += listOf("x86_64")'
+          assert old in data, "Expected temporary x86_64 ABI filter not found"
+          p.write_text(data.replace(old, 'abiFilters += listOf("arm64-v8a")', 1))
+          PY
+          rm -rf app/build/outputs/apk/dev/release
+      - name: Launch preview on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          emulator-options: -no-window -no-audio -no-boot-anim
+          script: |
+            set -euo pipefail
+            PACKAGE="com.dude555afk.orvia.nativev2.dev"
+            adb logcat -c
+            adb install -r "$GITHUB_WORKSPACE/orvia-native-smoke.apk"
+            adb shell am force-stop "$PACKAGE"
+            adb shell am start -W -n "$PACKAGE/me.rerere.rikkahub.RouteActivity"
+            sleep 12
+            if ! adb shell pidof "$PACKAGE" >/dev/null; then
+              echo "App process exited after launch; recent Android runtime logs:"
+              adb logcat -d -t 4000 -s AndroidRuntime:E System.err:E
+              exit 1
+            fi
+            if adb logcat -d -t 4000 -s AndroidRuntime:E | grep -E "FATAL EXCEPTION|Fatal signal"; then
+              echo "Crash detected after launching preview"
+              exit 1
+            fi
+            echo "PASS: Orvia/LastChat preview process remained alive after startup"
       - name: Build optimized ARM64 development release
         working-directory: native-v2/lastchat
         run: |
