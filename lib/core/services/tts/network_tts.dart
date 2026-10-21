@@ -7,6 +7,29 @@ import 'edge_modern_client.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
+/// Unofficial Edge TTS network failures can be transient. A retry helps
+/// brief connection drops; callers should still provide an offline fallback.
+bool isEdgeTtsConnectivityError(Object error) {
+  if (error is TimeoutException ||
+      error is SocketException ||
+      error is WebSocketException ||
+      error is HandshakeException) {
+    return true;
+  }
+  final message = error.toString().toLowerCase();
+  return message.contains('connection_failed') ||
+      message.contains('connection reset') ||
+      message.contains('connection refused') ||
+      message.contains('connection closed') ||
+      message.contains('network is unreachable') ||
+      message.contains('websocket') ||
+      message.contains('handshake') ||
+      message.contains('timed out') ||
+      message.contains('503') ||
+      message.contains('502') ||
+      message.contains('429');
+}
+
 enum NetworkTtsKind {
   edgeNeural,
   openai,
@@ -938,7 +961,24 @@ class NetworkTtsService {
     final voice = opt.voice.trim().isEmpty
         ? 'en-US-AriaNeural'
         : opt.voice.trim();
-    final audio = await (synthesizer ?? _synthesizeEdgeNeural)(text, voice);
+    // Edge's unofficial endpoint occasionally drops the WebSocket before
+    // returning audio. Retry only transient connection errors, never malformed
+    // text, invalid voices, or requests that have already been cancelled.
+    final synthesize = synthesizer ?? _synthesizeEdgeNeural;
+    late Uint8List audio;
+    for (var attempt = 0; ; attempt++) {
+      try {
+        audio = await synthesize(
+          text,
+          voice,
+        ).timeout(const Duration(seconds: 30));
+        break;
+      } catch (error) {
+        if (attempt >= 1 || !isEdgeTtsConnectivityError(error)) rethrow;
+        if (await (cancelled?.call() ?? false)) throw _Cancelled();
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      }
+    }
     if (await (cancelled?.call() ?? false)) throw _Cancelled();
     if (audio.isEmpty) {
       throw const FormatException('Edge Neural returned empty audio.');
