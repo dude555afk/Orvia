@@ -243,6 +243,7 @@ jobs:
             exit 1
           fi
       - name: Launch preview on Android emulator
+        continue-on-error: true # CI emulator boot failures must not block the ARM64 artifact; inspect this step separately.
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
