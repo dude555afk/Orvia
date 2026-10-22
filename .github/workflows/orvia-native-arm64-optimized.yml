@@ -243,7 +243,6 @@ jobs:
             exit 1
           fi
       - name: Launch preview on Android emulator
-        continue-on-error: true # CI emulator boot failures must not block the ARM64 artifact; inspect this step separately.
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
@@ -252,28 +251,7 @@ jobs:
           profile: pixel_2
           disable-animations: true
           emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect
+          # The action invokes script lines separately with /bin/sh. Keep all shell
+          # control flow inside one bash -lc command so loops/conditionals stay intact.
           script: |
-            set -eu
-            PACKAGE="com.dude555afk.orvia.nativev2.dev"
-            adb start-server
-            adb wait-for-device
-            for attempt in $(seq 1 60); do
-              [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ] && break
-              sleep 2
-            done
-            adb devices -l
-            adb logcat -c
-            adb install -r "$GITHUB_WORKSPACE/orvia-native-smoke.apk"
-            adb shell am force-stop "$PACKAGE"
-            adb shell am start -W -n "$PACKAGE/me.rerere.rikkahub.RouteActivity"
-            sleep 12
-            if ! adb shell pidof "$PACKAGE" >/dev/null; then
-              echo "App process exited after launch; recent Android runtime logs:"
-              adb logcat -d -t 4000 -s AndroidRuntime:E System.err:E
-              exit 1
-            fi
-            if adb logcat -d -t 4000 -s AndroidRuntime:E | grep -E "FATAL EXCEPTION|Fatal signal"; then
-              echo "Crash detected after launching preview"
-              exit 1
-            fi
-            echo "PASS: Orvia/LastChat preview process remained alive after startup"
+            bash -lc 'set -eu; PACKAGE="com.dude555afk.orvia.nativev2.dev"; adb start-server; adb wait-for-device; adb devices -l; adb logcat -c; adb install -r "$GITHUB_WORKSPACE/orvia-native-smoke.apk"; adb shell am force-stop "$PACKAGE"; adb shell am start -W -n "$PACKAGE/me.rerere.rikkahub.RouteActivity"; sleep 12; if ! adb shell pidof "$PACKAGE" >/dev/null; then echo "App process exited after launch; recent Android runtime logs:"; adb logcat -d -t 4000 -s AndroidRuntime:E System.err:E; exit 1; fi; if adb logcat -d -t 4000 -s AndroidRuntime:E | grep -E "FATAL EXCEPTION|Fatal signal"; then echo "Crash detected after launching preview"; exit 1; fi; echo "PASS: Orvia/LastChat preview process remained alive after startup"'
