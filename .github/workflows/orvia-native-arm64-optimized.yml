@@ -253,7 +253,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect
           script: |
-            set -euo pipefail
+            set -eu
             PACKAGE="com.dude555afk.orvia.nativev2.dev"
             adb start-server
             adb wait-for-device
