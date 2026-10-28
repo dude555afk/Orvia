@@ -199,8 +199,8 @@ if old_guided_paste not in text:
     raise SystemExit("Could not locate guided provider key page; refusing to patch the wrong setup flow.")
 text = text.replace(old_guided_paste, new_guided_paste, 1)
 text = text.replace(
-    "    loading: Boolean = false,\\n    onContinue: () -> Unit,",
-    "    loading: Boolean = false,\\n    allowEmptyApiKey: Boolean = false,\\n    onContinue: () -> Unit,",
+    "    loading: Boolean = false,\n    onContinue: () -> Unit,",
+    "    loading: Boolean = false,\n    allowEmptyApiKey: Boolean = false,\n    onContinue: () -> Unit,",
     1,
 )
 text = text.replace(
@@ -229,7 +229,7 @@ new_auth = '''private fun Map<String, String>.withAuthAndJson(apiKey: String): M
 if old_auth not in text:
     raise SystemExit("Could not locate OpenAI auth header builder; refusing an unsafe patch.")
 text = text.replace(old_auth, new_auth, 1)
-text = text.replace('        "aihubmix.com" -> this + ("APP-Code" to "DKHA9468")\\n', "")
+text = text.replace('        "aihubmix.com" -> this + ("APP-Code" to "DKHA9468")\n', "")
 auth_source.write_text(text, encoding="utf-8")
 
 # Add native Settings links for features that exist in this source tree.
