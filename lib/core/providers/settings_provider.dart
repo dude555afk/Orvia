@@ -1471,7 +1471,8 @@ class SettingsProvider extends ChangeNotifier {
       providerConfigsChanged = true;
     } else {
       final kiloModels = List<String>.from(kiloConfig.models);
-      final priorOpenRouterFreeIndex = kiloModels.indexOf('openrouter/free');
+      final priorOpenRouterFreeIndex =
+          kiloModels.indexOf('openrouter/free');
       if (priorOpenRouterFreeIndex >= 0) {
         kiloModels[priorOpenRouterFreeIndex] = 'kilo-auto/free';
         providerConfigsChanged = true;
@@ -1480,14 +1481,18 @@ class SettingsProvider extends ChangeNotifier {
         providerConfigsChanged = true;
       }
 
-      final kiloOverrides = Map<String, dynamic>.from(kiloConfig.modelOverrides);
+      final kiloOverrides = Map<String, dynamic>.from(
+        kiloConfig.modelOverrides,
+      );
       final priorOverride = kiloOverrides.remove('openrouter/free');
       if (priorOverride != null) {
         kiloOverrides.putIfAbsent('kilo-auto/free', () => priorOverride);
         providerConfigsChanged = true;
       }
       if (!kiloOverrides.containsKey('kilo-auto/free')) {
-        kiloOverrides['kilo-auto/free'] = const {'name': 'Kilo Auto Free'};
+        kiloOverrides['kilo-auto/free'] = const {
+          'name': 'Kilo Auto Free',
+        };
         providerConfigsChanged = true;
       }
       if (providerConfigsChanged) {
