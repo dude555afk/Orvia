@@ -6375,7 +6375,6 @@ class ProviderConfig {
   static String _apiKeyFromJson(Map<String, dynamic> json) {
     final stored = json['apiKey'] as String? ?? '';
     if (stored.isNotEmpty) return stored;
-    final id = json['id'] as String? ?? json['name'] as String? ?? '';
     return '';
   }
 
