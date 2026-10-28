@@ -169,8 +169,13 @@ for source in APP.glob("**/*.kt"):
     if any(part in {"build", "generated", "test", "androidTest", "iosTest"} for part in source.parts):
         continue
     text = source.read_text(encoding="utf-8")
+    # Some earlier preview patches accidentally renamed internal Compose symbols.
+    # Restore upstream implementation identifiers only; this does not affect visible branding.
+    text = text.replace("LocalOrviaBlur", "LocalLastChatBlur")
+    text = text.replace("OrviaBlur", "LastChatBlur")
+    text = text.replace("OrviaMenuButton", "LastChatMenuButton")
     updated = kotlin_literal.sub(rebrand_literal, text)
-    if updated != text:
+    if updated != source.read_text(encoding="utf-8"):
         source.write_text(updated, encoding="utf-8")
 
 
