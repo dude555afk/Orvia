@@ -93,6 +93,7 @@ class SettingsProvider extends ChangeNotifier {
   static const String _themeModeKey = 'theme_mode_v1';
   static const String _providerConfigsKey = 'provider_configs_v1';
   static const String _kiloDefaultAppliedKey = 'kilo_default_applied_v2';
+  static const String _providerPresetCleanupAppliedKey = 'provider_preset_cleanup_applied_v1';
   static const String _pinnedModelsKey = 'pinned_models_v1';
   static const String _selectedModelKey = 'selected_model_v1';
   static const String _perChatModelEnabledKey = 'per_chat_model_enabled_v1';
@@ -1452,10 +1453,15 @@ class SettingsProvider extends ChangeNotifier {
     final retiredProviderIds = retiredProviderKeys
         .map((key) => key.toLowerCase())
         .toSet();
-    for (final key in _providerConfigs.keys.toList(growable: false)) {
-      if (retiredProviderIds.contains(key.trim().toLowerCase())) {
-        await removeProviderConfig(key);
+    final hasCleanedRetiredPresets =
+        prefs.getBool(_providerPresetCleanupAppliedKey) ?? false;
+    if (!hasCleanedRetiredPresets) {
+      for (final key in _providerConfigs.keys.toList(growable: false)) {
+        if (retiredProviderIds.contains(key.trim().toLowerCase())) {
+          await removeProviderConfig(key);
+        }
       }
+      await prefs.setBool(_providerPresetCleanupAppliedKey, true);
     }
 
     var providerConfigsChanged = false;
@@ -1510,7 +1516,6 @@ class SettingsProvider extends ChangeNotifier {
     if (!hasAppliedKiloDefault ||
         selectedProvider == null ||
         _currentModelId == null ||
-        retiredProviderIds.contains(selectedProvider) ||
         (selectedProvider == 'kilo' && _currentModelId == 'openrouter/free')) {
       _currentModelProvider = 'Kilo';
       _currentModelId = 'kilo-auto/free';
