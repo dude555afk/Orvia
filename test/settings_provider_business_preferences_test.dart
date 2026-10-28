@@ -104,7 +104,7 @@ void main() {
         'Claude',
         'Grok',
         'ByteDance',
-        '\u9682\u60F3AI\u4E2D\u8F6C\u7AD9',
+        '\u968f\u60F3AI\u4E2D\u8F6C\u7AD9',
         'MaruCode',
       ];
       const migratedOrder = <String>[
@@ -134,7 +134,7 @@ void main() {
         'Aliyun',
         'Zhipu AI',
         'ByteDance',
-        '\u9682\u60F3AI\u4E2D\u8F6C\u7AD9',
+        '\u968f\u60F3AI\u4E2D\u8F6C\u7AD9',
         'MaruCode',
       ]) {
         expect(settings.providersOrder, isNot(contains(retired)));
