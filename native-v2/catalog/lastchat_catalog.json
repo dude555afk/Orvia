@@ -135,40 +135,6 @@
       "description": "Linkup search and scrape API.",
       "icon": "icons/linkup.svg",
       "preset": true
-    },
-    {
-      "id": "zhipu",
-      "name": "Zhipu",
-      "aliases": [
-        "智谱",
-        "zhipu ai",
-        "glm"
-      ],
-      "description": "Zhipu search API.",
-      "icon": "icons/zhipu.svg",
-      "preset": true
-    },
-    {
-      "id": "metaso",
-      "name": "Metaso",
-      "aliases": [
-        "秘塔",
-        "metaso ai"
-      ],
-      "description": "Metaso AI search API.",
-      "icon": "icons/metaso.svg",
-      "preset": true
-    },
-    {
-      "id": "bocha",
-      "name": "Bocha",
-      "aliases": [
-        "博查",
-        "bocha ai"
-      ],
-      "description": "Bocha AI search API.",
-      "icon": "icons/bocha.svg",
-      "preset": true
     }
   ],
   "tts_providers": [
@@ -253,15 +219,15 @@
     },
     {
       "id": "qwen",
-      "name": "Qwen",
+      "name": "Qwen TTS (International)",
       "aliases": [
         "qwen tts",
         "dashscope",
         "cosyvoice"
       ],
-      "description": "Qwen / CosyVoice text-to-speech from Alibaba Cloud.",
+      "description": "Qwen / CosyVoice text-to-speech using the international endpoint.",
       "type": "qwen",
-      "base_url": "https://dashscope.aliyuncs.com/api/v1",
+      "base_url": "https://dashscope-intl.aliyuncs.com/api/v1",
       "default_model": "qwen3-tts-flash",
       "default_voice": "Cherry",
       "icon": "icons/qwen.svg",
@@ -523,10 +489,10 @@
     },
     {
       "id": "5e729975-9794-4013-af7e-63a548cf3356",
-      "name": "Alibaba Qwen",
-      "description": "Qwen models from Alibaba Cloud.",
+      "name": "Qwen (International)",
+      "description": "Qwen models through Alibaba Cloud's international endpoint.",
       "type": "openai",
-      "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
       "chat_completions_path": "/chat/completions",
       "use_response_api": false,
       "balance_option": {},
@@ -549,41 +515,6 @@
       }
     },
     {
-      "id": "e4fce9f0-b4d2-453f-90b6-e1c5b615269c",
-      "name": "Zhipu AI",
-      "description": "GLM models with vision, tools, and reasoning.",
-      "type": "openai",
-      "base_url": "https://open.bigmodel.cn/api/paas/v4",
-      "chat_completions_path": "/chat/completions",
-      "use_response_api": false,
-      "balance_option": {},
-      "icon": "icons/zhipu.svg",
-      "preset": true,
-      "stream_options_mode": "disabled",
-      "image_response_modalities_mode": "auto",
-      "reasoning_content_replay_mode": "auto"
-    },
-    {
-      "id": "b38e1192-5b47-4d2a-a163-f622a2eaf717",
-      "name": "SiliconFlow",
-      "description": "OpenAI-compatible hosted open models from SiliconFlow.",
-      "type": "openai",
-      "base_url": "https://api.siliconflow.cn/v1",
-      "icon": "icons/siliconflow.svg",
-      "preset": true,
-      "setup_models": [
-        "deepseek-ai/DeepSeek-V3",
-        "deepseek-ai/DeepSeek-R1",
-        "Qwen/Qwen2.5-72B-Instruct",
-        "meta-llama/Meta-Llama-3.1-8B-Instruct"
-      ],
-      "setup_defaults": {
-        "chat": "deepseek-ai/DeepSeek-V3",
-        "title": "meta-llama/Meta-Llama-3.1-8B-Instruct",
-        "summarizer": "meta-llama/Meta-Llama-3.1-8B-Instruct"
-      }
-    },
-    {
       "id": "c5e85cbb-8e28-454c-96d0-0585750d081c",
       "name": "AiHubMix",
       "description": "OpenAI-compatible gateway supported by LastChat request headers.",
@@ -591,36 +522,6 @@
       "base_url": "https://aihubmix.com/v1",
       "icon": "icons/aihubmix.svg",
       "preset": true
-    },
-    {
-      "id": "d2eb13cb-8c0a-4885-9e74-f4b56c8d5b24",
-      "name": "Volcengine Ark",
-      "description": "Doubao and other models through Volcengine Ark.",
-      "type": "openai",
-      "base_url": "https://ark.cn-beijing.volces.com/api/v3",
-      "chat_completions_path": "/chat/completions",
-      "use_response_api": false,
-      "balance_option": {},
-      "icon": "icons/volcengine.svg",
-      "preset": true,
-      "stream_options_mode": "auto",
-      "image_response_modalities_mode": "auto",
-      "reasoning_content_replay_mode": "auto"
-    },
-    {
-      "id": "ce456892-f6bb-4598-bbb5-2658fe0d2955",
-      "name": "InternLM",
-      "description": "InternLM chat models through an OpenAI-compatible endpoint.",
-      "type": "openai",
-      "base_url": "https://chat.intern-ai.org.cn/api/v1",
-      "chat_completions_path": "/chat/completions",
-      "use_response_api": false,
-      "balance_option": {},
-      "icon": "icons/internlm.svg",
-      "preset": true,
-      "stream_options_mode": "auto",
-      "image_response_modalities_mode": "auto",
-      "reasoning_content_replay_mode": "auto"
     },
     {
       "id": "bf741ca1-57d6-4444-93ff-18305c43d9b4",
@@ -988,33 +889,6 @@
       "preset": true
     },
     {
-      "id": "64a4b12c-c820-4e12-b91c-2df5a3c10b42",
-      "name": "Moonshot AI",
-      "description": "Provider of Kimi models with long-context windows and strong Chinese processing.",
-      "type": "openai",
-      "base_url": "https://api.moonshot.cn/v1",
-      "icon": "icons/moonshot.svg",
-      "preset": true
-    },
-    {
-      "id": "5f96b27d-fa0a-4299-a864-12185c7f8f90",
-      "name": "Tencent Hunyuan",
-      "description": "Tencent's large language and multimodal models with enterprise capabilities.",
-      "type": "openai",
-      "base_url": "https://api.hunyuan.cloud.tencent.com/v1",
-      "icon": "icons/tencent.svg",
-      "preset": true
-    },
-    {
-      "id": "97ac2c5d-012b-4fa8-b210-9c2e42b29105",
-      "name": "Baidu Qianfan",
-      "description": "Baidu's ERNIE models and enterprise AI platform.",
-      "type": "openai",
-      "base_url": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop",
-      "icon": "icons/baidu.svg",
-      "preset": true
-    },
-    {
       "id": "c0f2a934-d98c-4f7f-ba0a-25be1c2a129d",
       "name": "Novita AI",
       "description": "High-performance inference API providing popular open weights models.",
@@ -1032,15 +906,6 @@
         "title": "meta-llama/llama-3.1-8b-instruct",
         "summarizer": "meta-llama/llama-3.1-8b-instruct"
       }
-    },
-    {
-      "id": "e57b98d2-ca4b-4b2a-89a1-fc02a98f7e2a",
-      "name": "iFlyTek Spark",
-      "description": "Cognitive intelligence LLM by iFlyTek with strong voice and multilingual capabilities.",
-      "type": "openai",
-      "base_url": "https://spark-api-open.xf-yun.com/v1",
-      "icon": "icons/spark.svg",
-      "preset": true
     },
     {
       "id": "0242de05-d6e3-40a7-8f3b-1b9416fcec9d",
@@ -1077,17 +942,6 @@
       "setup_recommended": false
     },
     {
-      "id": "5a8c27de-c5e0-4434-8efa-932d0613dd9c",
-      "name": "Baichuan AI",
-      "description": "Chinese AI company offering advanced large language models with strong Chinese and reasoning capabilities.",
-      "type": "openai",
-      "base_url": "https://api.baichuan-ai.com/v1",
-      "icon": "icons/baichuan.svg",
-      "preset": true,
-      "signup_url": "https://platform.baichuan-ai.com/",
-      "api_key_url": "https://platform.baichuan-ai.com/console/apikey"
-    },
-    {
       "id": "c1f92a0e-c1d4-45aa-9b24-78fdbe4a3196",
       "name": "Upstage AI",
       "description": "Enterprise-focused AI provider from South Korea offering Solar LLM and document layout analysis.",
@@ -1113,102 +967,6 @@
         "meta-llama-3.1-8b-instruct",
         "mistral-7b-instruct"
       ]
-    },
-    {
-      "id": "4f741ca1-57d6-4444-93ff-18305c43d9b8",
-      "name": "01.AI",
-      "description": "Chinese AI startup offering Yi series models with strong multilingual capability and high performance.",
-      "type": "openai",
-      "base_url": "https://api.01.ai/v1",
-      "icon": "icons/yi.svg",
-      "preset": true,
-      "signup_url": "https://platform.lingyiwanwu.com/",
-      "api_key_url": "https://platform.lingyiwanwu.com/apikey",
-      "setup_models": [
-        "yi-lightning",
-        "yi-large",
-        "yi-medium",
-        "yi-vision"
-      ]
-    },
-    {
-      "id": "a8fd729a-1fb4-45b9-a9c0-fd11c34a2e5e",
-      "name": "SenseTime",
-      "description": "SenseTime's SenseNova large language models and multimodal solutions.",
-      "type": "openai",
-      "base_url": "https://api.sensenova.cn/v1",
-      "icon": "icons/sensenova.svg",
-      "preset": true,
-      "signup_url": "https://platform.sensenova.cn/",
-      "api_key_url": "https://platform.sensenova.cn/",
-      "setup_models": [
-        "SenseChat-V6.5",
-        "SenseChat-V6",
-        "SenseChat-5"
-      ]
-    },
-    {
-      "id": "b42deb05-d6e3-40a7-8f3b-1b9416fcec9f",
-      "name": "Gitee AI",
-      "description": "AI model developer platform by Gitee offering OpenAI-compatible serverless Generative APIs.",
-      "type": "openai",
-      "base_url": "https://ai.gitee.com/v1",
-      "icon": "icons/giteeai.svg",
-      "preset": true,
-      "signup_url": "https://ai.gitee.com/",
-      "api_key_url": "https://ai.gitee.com/",
-      "setup_models": [
-        "Qwen/Qwen2.5-72B-Instruct",
-        "DeepSeek-V3",
-        "DeepSeek-R1",
-        "GLM-4-Flash"
-      ],
-      "setup_defaults": {
-        "chat": "Qwen/Qwen2.5-72B-Instruct",
-        "title": "Qwen/Qwen2.5-72B-Instruct"
-      }
-    },
-    {
-      "id": "c5f8a9e0-cb41-45bd-89d2-e6fdbe4c2d3b",
-      "name": "StepFun",
-      "description": "Chinese AI startup StepFun offering step series LLMs and multimodal models with long context windows.",
-      "type": "openai",
-      "base_url": "https://api.stepfun.com/v1",
-      "icon": "icons/stepfun.svg",
-      "preset": true,
-      "signup_url": "https://platform.stepfun.com/",
-      "api_key_url": "https://platform.stepfun.com/",
-      "setup_models": [
-        "step-3.5-flash",
-        "step-2-16k",
-        "step-1-200k",
-        "step-1.5v-mini"
-      ],
-      "setup_defaults": {
-        "chat": "step-3.5-flash",
-        "title": "step-3.5-flash"
-      }
-    },
-    {
-      "id": "e360f2a9-d98c-4f7f-ba0a-25be1c2a129d",
-      "name": "360 Zhinao",
-      "description": "360 Zhinao large language models developed by Qihoo 360, featuring strong reasoning and tool capabilities.",
-      "type": "openai",
-      "base_url": "https://api.360.cn/v1",
-      "icon": "icons/ai360.svg",
-      "preset": true,
-      "signup_url": "https://ai.360.cn/",
-      "api_key_url": "https://ai.360.cn/",
-      "setup_models": [
-        "360gpt2-o1",
-        "360gpt2-pro",
-        "360gpt-pro",
-        "360gpt-turbo"
-      ],
-      "setup_defaults": {
-        "chat": "360gpt2-o1",
-        "title": "360gpt-turbo"
-      }
     },
     {
       "id": "2995fc1d-78ad-4a67-9c6a-fd2b4a5d3c90",
@@ -7800,11 +7558,6 @@
       "icon": "icons/fireworks.svg"
     },
     {
-      "id": "siliconflow",
-      "name": "SiliconFlow",
-      "icon": "icons/siliconflow.svg"
-    },
-    {
       "id": "aihubmix",
       "name": "AiHubMix",
       "icon": "icons/aihubmix.svg"
@@ -7813,26 +7566,6 @@
       "id": "novita",
       "name": "Novita AI",
       "icon": "icons/novita.svg"
-    },
-    {
-      "id": "dashscope",
-      "name": "DashScope",
-      "icon": "icons/dashscope.svg"
-    },
-    {
-      "id": "volcengine",
-      "name": "Volcengine",
-      "icon": "icons/volcengine.svg"
-    },
-    {
-      "id": "mimo",
-      "name": "MiMo",
-      "icon": "icons/mimo.svg"
-    },
-    {
-      "id": "step",
-      "name": "Step",
-      "icon": "icons/step.svg"
     }
   ]
 }
