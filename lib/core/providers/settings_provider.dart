@@ -92,7 +92,7 @@ class SettingsProvider extends ChangeNotifier {
   };
   static const String _themeModeKey = 'theme_mode_v1';
   static const String _providerConfigsKey = 'provider_configs_v1';
-  static const String _kiloDefaultAppliedKey = 'kilo_default_applied_v1';
+  static const String _kiloDefaultAppliedKey = 'kilo_default_applied_v2';
   static const String _pinnedModelsKey = 'pinned_models_v1';
   static const String _selectedModelKey = 'selected_model_v1';
   static const String _perChatModelEnabledKey = 'per_chat_model_enabled_v1';
@@ -1463,11 +1463,33 @@ class SettingsProvider extends ChangeNotifier {
     if (kiloConfig == null) {
       ensureProviderConfig('Kilo', defaultName: 'Kilo');
       providerConfigsChanged = true;
-    } else if (kiloConfig.models.isEmpty) {
-      _providerConfigs['Kilo'] = kiloConfig.copyWith(
-        models: const ['openrouter/free'],
-      );
-      providerConfigsChanged = true;
+    } else {
+      final kiloModels = List<String>.from(kiloConfig.models);
+      final priorOpenRouterFreeIndex = kiloModels.indexOf('openrouter/free');
+      if (priorOpenRouterFreeIndex >= 0) {
+        kiloModels[priorOpenRouterFreeIndex] = 'kilo-auto/free';
+        providerConfigsChanged = true;
+      } else if (!kiloModels.contains('kilo-auto/free')) {
+        kiloModels.insert(0, 'kilo-auto/free');
+        providerConfigsChanged = true;
+      }
+
+      final kiloOverrides = Map<String, dynamic>.from(kiloConfig.modelOverrides);
+      final priorOverride = kiloOverrides.remove('openrouter/free');
+      if (priorOverride != null) {
+        kiloOverrides.putIfAbsent('kilo-auto/free', () => priorOverride);
+        providerConfigsChanged = true;
+      }
+      if (!kiloOverrides.containsKey('kilo-auto/free')) {
+        kiloOverrides['kilo-auto/free'] = const {'name': 'Kilo Auto Free'};
+        providerConfigsChanged = true;
+      }
+      if (providerConfigsChanged) {
+        _providerConfigs['Kilo'] = kiloConfig.copyWith(
+          models: kiloModels,
+          modelOverrides: kiloOverrides,
+        );
+      }
     }
     if (providerConfigsChanged) {
       await prefs.setString(
@@ -1488,10 +1510,11 @@ class SettingsProvider extends ChangeNotifier {
     if (!hasAppliedKiloDefault ||
         selectedProvider == null ||
         _currentModelId == null ||
-        retiredProviderIds.contains(selectedProvider)) {
+        retiredProviderIds.contains(selectedProvider) ||
+        (selectedProvider == 'kilo' && _currentModelId == 'openrouter/free')) {
       _currentModelProvider = 'Kilo';
-      _currentModelId = 'openrouter/free';
-      await prefs.setString(_selectedModelKey, 'Kilo::openrouter/free');
+      _currentModelId = 'kilo-auto/free';
+      await prefs.setString(_selectedModelKey, 'Kilo::kilo-auto/free');
     }
     if (!hasAppliedKiloDefault) {
       await prefs.setBool(_kiloDefaultAppliedKey, true);
@@ -6540,8 +6563,10 @@ class ProviderConfig {
             providerType: ProviderKind.openai,
             chatPath: '/chat/completions',
             useResponseApi: false,
-            models: const ['openrouter/free'],
-            modelOverrides: const {},
+            models: const ['kilo-auto/free'],
+            modelOverrides: const {
+              'kilo-auto/free': {'name': 'Kilo Auto Free'},
+            },
             proxyEnabled: false,
             proxyHost: '',
             proxyPort: '8080',
