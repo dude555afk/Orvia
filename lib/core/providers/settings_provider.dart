@@ -93,7 +93,8 @@ class SettingsProvider extends ChangeNotifier {
   static const String _themeModeKey = 'theme_mode_v1';
   static const String _providerConfigsKey = 'provider_configs_v1';
   static const String _kiloDefaultAppliedKey = 'kilo_default_applied_v2';
-  static const String _providerPresetCleanupAppliedKey = 'provider_preset_cleanup_applied_v1';
+  static const String _providerPresetCleanupAppliedKey =
+      'provider_preset_cleanup_applied_v1';
   static const String _pinnedModelsKey = 'pinned_models_v1';
   static const String _selectedModelKey = 'selected_model_v1';
   static const String _perChatModelEnabledKey = 'per_chat_model_enabled_v1';
