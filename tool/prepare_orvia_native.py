@@ -436,11 +436,34 @@ if old_app_class.is_file():
 elif not new_app_class.is_file():
     raise SystemExit("Could not find the Android Application class to rebrand.")
 
+# Keep implementation references compatible but give Android an Orvia-owned entry-point namespace.
+base_source = new_app_class.read_text(encoding="utf-8")
+base_source, opened_class = re.subn(
+    r"(?m)^class OrviaApp : Application\(\), SingletonImageLoader\.Factory \{$",
+    "open class OrviaApp : Application(), SingletonImageLoader.Factory {",
+    base_source,
+    count=1,
+)
+if opened_class != 1:
+    raise SystemExit("Could not make Orvia's native application implementation extensible.")
+new_app_class.write_text(base_source, encoding="utf-8")
+
+wrapper = APP / "app/src/main/java/com/dude555afk/orvia/nativev2/OrviaApp.kt"
+wrapper.parent.mkdir(parents=True, exist_ok=True)
+wrapper.write_text("""package com.dude555afk.orvia.nativev2
+
+/**
+ * Orvia-owned Android entry point. The implementation remains in its compatibility
+ * package while Android and installer surfaces expose Orvia's own namespace.
+ */
+class OrviaApp : me.rerere.rikkahub.OrviaApp()
+""", encoding="utf-8")
+
 manifest = APP / "app/src/main/AndroidManifest.xml"
 manifest_text = manifest.read_text(encoding="utf-8")
 manifest_text, app_class_replacements = re.subn(
-    r'android:name="\.LastChatApp"',
-    'android:name=".OrviaApp"',
+    r'android:name="\\.LastChatApp"',
+    'android:name="com.dude555afk.orvia.nativev2.OrviaApp"',
     manifest_text,
     count=1,
 )

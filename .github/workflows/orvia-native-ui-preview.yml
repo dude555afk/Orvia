@@ -81,7 +81,11 @@ jobs:
           grep -F "package: name='com.dude555afk.orvia.nativev2.dev'" <<< "$BADGING"
           grep -F "application-label:'Orvia'" <<< "$BADGING"
           MANIFEST_DUMP="$("$AAPT" dump xmltree "$APK" AndroidManifest.xml)"
-          grep -F "OrviaApp" <<< "$MANIFEST_DUMP"
+          grep -F "com.dude555afk.orvia.nativev2.OrviaApp" <<< "$MANIFEST_DUMP"
+          if grep -F "me.rerere.rikkahub.OrviaApp" <<< "$MANIFEST_DUMP"; then
+            echo "ERROR: upstream package namespace is still used as the Android entry point."
+            exit 1
+          fi
           if grep -F "LastChatApp" <<< "$MANIFEST_DUMP"; then
             echo "ERROR: upstream LastChat Application class is still in the APK manifest."
             exit 1
