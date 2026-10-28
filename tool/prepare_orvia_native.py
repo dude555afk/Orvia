@@ -165,11 +165,72 @@ def rebrand_literal(match: re.Match[str]) -> str:
     value = value.replace("LastChat", "Orvia")
     value = value.replace("lastchat://", "orvia://")
     return value
-for source in APP.glob("app/src/main/java/**/*.kt"):
+for source in APP.glob("**/*.kt"):
+    if any(part in {"build", "generated", "test", "androidTest", "iosTest"} for part in source.parts):
+        continue
     text = source.read_text(encoding="utf-8")
     updated = kotlin_literal.sub(rebrand_literal, text)
     if updated != text:
         source.write_text(updated, encoding="utf-8")
+
+
+# Kilo's anonymous free models must be usable without submitting an API key.
+# Other provider setup flows still require a non-empty key.
+onboarding = APP / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt"
+text = onboarding.read_text(encoding="utf-8")
+old_guided_paste = '''                SetupPage.GuidedPasteKey -> PasteKeyPage(
+                    text = "Paste your API key here and\\nwe’ll handle the rest.",
+                    apiKey = apiKey,
+                    onApiKeyChange = { apiKey = it },
+                    loading = guidedModelsLoading,
+'''
+new_guided_paste = '''                SetupPage.GuidedPasteKey -> PasteKeyPage(
+                    text = if (selectedGuidedProvider?.baseUrl == "https://ai-gateway.kilo.ai/api/v1") {
+                        "Kilo free models do not require an API key. Tap continue to connect."
+                    } else {
+                        "Paste your API key here and\\nwe’ll handle the rest."
+                    },
+                    apiKey = apiKey,
+                    onApiKeyChange = { apiKey = it },
+                    loading = guidedModelsLoading,
+                    allowEmptyApiKey = selectedGuidedProvider?.baseUrl == "https://ai-gateway.kilo.ai/api/v1",
+'''
+if old_guided_paste not in text:
+    raise SystemExit("Could not locate guided provider key page; refusing to patch the wrong setup flow.")
+text = text.replace(old_guided_paste, new_guided_paste, 1)
+text = text.replace(
+    "    loading: Boolean = false,\\n    onContinue: () -> Unit,",
+    "    loading: Boolean = false,\\n    allowEmptyApiKey: Boolean = false,\\n    onContinue: () -> Unit,",
+    1,
+)
+text = text.replace(
+    "                enabled = apiKey.isNotBlank() && !loading,",
+    "                enabled = (allowEmptyApiKey || apiKey.isNotBlank()) && !loading,",
+    1,
+)
+onboarding.write_text(text, encoding="utf-8")
+
+# OpenAI-compatible providers should omit Authorization entirely for an empty key.
+# This is required by Kilo anonymous access; sending 'Bearer ' is not keyless auth.
+auth_source = APP / "ai/src/main/java/me/rerere/ai/provider/providers/openai/ChatCompletionsAPI.kt"
+text = auth_source.read_text(encoding="utf-8")
+old_auth = '''private fun Map<String, String>.withAuthAndJson(apiKey: String): Map<String, String> {
+    return this + mapOf(
+        "Authorization" to "Bearer $apiKey",
+        "Content-Type" to "application/json"
+    )
+}'''
+new_auth = '''private fun Map<String, String>.withAuthAndJson(apiKey: String): Map<String, String> {
+    val authHeader = apiKey.takeIf { it.isNotBlank() }
+        ?.let { mapOf("Authorization" to "Bearer $it") }
+        ?: emptyMap()
+    return this + authHeader + ("Content-Type" to "application/json")
+}'''
+if old_auth not in text:
+    raise SystemExit("Could not locate OpenAI auth header builder; refusing an unsafe patch.")
+text = text.replace(old_auth, new_auth, 1)
+text = text.replace('        "aihubmix.com" -> this + ("APP-Code" to "DKHA9468")\\n', "")
+auth_source.write_text(text, encoding="utf-8")
 
 # Add native Settings links for features that exist in this source tree.
 settings_page = APP / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingPage.kt"
