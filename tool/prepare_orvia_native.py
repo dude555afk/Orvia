@@ -21,6 +21,8 @@ if not LOGO.is_file() or not CATALOG.is_file():
 gradle_path = APP / "app/build.gradle.kts"
 gradle = gradle_path.read_text(encoding="utf-8")
 gradle = gradle.replace('applicationId = "lastchat.rikkafork.cocolal"', 'applicationId = "com.dude555afk.orvia.nativev2"')
+if 'applicationId = "com.dude555afk.orvia.nativev2"' not in gradle:
+    raise SystemExit("Could not set the Orvia application ID; refusing to build with upstream identity.")
 # This preview targets the user's Android phone; omit unrelated ARMv7/x86_64 native payloads.
 gradle = gradle.replace(
     'abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")',
@@ -416,3 +418,46 @@ replace_source_text(
 )
 
 print("Applied Orvia branding, Orvia-owned catalog, and native Settings links.")
+
+# Make Android's application component itself Orvia-branded, not just the launcher label.
+# The installer/Play Protect UI can display this component identity for sideloaded builds.
+for kotlin_file in APP.rglob("*.kt"):
+    source = kotlin_file.read_text(encoding="utf-8")
+    renamed = re.sub(r"\\bLastChatApp\\b", "OrviaApp", source)
+    if renamed != source:
+        kotlin_file.write_text(renamed, encoding="utf-8")
+
+old_app_class = APP / "app/src/main/java/me/rerere/rikkahub/LastChatApp.kt"
+new_app_class = APP / "app/src/main/java/me/rerere/rikkahub/OrviaApp.kt"
+if old_app_class.is_file():
+    if new_app_class.exists():
+        raise SystemExit("OrviaApp.kt already exists; refusing to overwrite it.")
+    old_app_class.rename(new_app_class)
+elif not new_app_class.is_file():
+    raise SystemExit("Could not find the Android Application class to rebrand.")
+
+manifest = APP / "app/src/main/AndroidManifest.xml"
+manifest_text = manifest.read_text(encoding="utf-8")
+manifest_text, app_class_replacements = re.subn(
+    r'android:name="\\.LastChatApp"',
+    'android:name=".OrviaApp"',
+    manifest_text,
+    count=1,
+)
+if app_class_replacements != 1:
+    raise SystemExit("Could not safely rebrand the Android Application class in the manifest.")
+# This permission is unused by the app and lets an app request permission to install APKs.
+manifest_text, install_perm_replacements = re.subn(
+    r'^\\s*<uses-permission android:name="android\\.permission\\.REQUEST_INSTALL_PACKAGES" />\\s*\\n',
+    "",
+    manifest_text,
+    count=1,
+    flags=re.M,
+)
+if install_perm_replacements != 1:
+    raise SystemExit("Expected install-packages permission was not found; audit the manifest manually.")
+if "LastChatApp" in manifest_text or "REQUEST_INSTALL_PACKAGES" in manifest_text:
+    raise SystemExit("Upstream application identity or install-packages permission remains in manifest.")
+manifest.write_text(manifest_text, encoding="utf-8")
+
+print("Verified Orvia Application identity and removed unused package-install permission.")
