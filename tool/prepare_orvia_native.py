@@ -386,13 +386,13 @@ replace_source_text(
 )
 replace_source_text(
     "app/src/main/java/me/rerere/rikkahub/utils/ContextUtil.kt",
-    '"LastChat_\${System.currentTimeMillis()}.png"',
-    '"Orvia_\${System.currentTimeMillis()}.png"',
+    '"LastChat_${System.currentTimeMillis()}.png"',
+    '"Orvia_${System.currentTimeMillis()}.png"',
 )
 replace_source_text(
     "app/src/main/java/me/rerere/rikkahub/utils/ChatUtil.kt",
-    '"LastChat_\${System.currentTimeMillis()}.png"',
-    '"Orvia_\${System.currentTimeMillis()}.png"',
+    '"LastChat_${System.currentTimeMillis()}.png"',
+    '"Orvia_${System.currentTimeMillis()}.png"',
 )
 replace_source_text(
     "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesModels.kt",
