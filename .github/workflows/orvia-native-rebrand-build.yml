@@ -1,0 +1,64 @@
+name: Build Orvia Native Rebrand Preview
+
+on:
+  push:
+    branches:
+      - feature/orvia-lastchat-ui-settings-20261028
+    paths:
+      - '.github/workflows/orvia-native-rebrand-build.yml'
+      - 'tool/prepare_orvia_native.py'
+      - 'native-v2/catalog/lastchat_catalog.json'
+      - 'docs/orvia-logo.png'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Orvia and pinned LastChat source
+        uses: actions/checkout@v4
+        with:
+          ref: feature/orvia-lastchat-ui-settings-20261028
+          submodules: true
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: native-v2/lastchat/web-ui/package-lock.json
+
+      - name: Check preinstalled Android SDK
+        run: |
+          test -d "$ANDROID_HOME"
+          echo "Using Android SDK at $ANDROID_HOME"
+
+      - name: Apply Orvia branding and Settings configuration
+        run: python3 tool/prepare_orvia_native.py
+
+      - name: Install bundled web UI dependencies
+        working-directory: native-v2/lastchat/web-ui
+        run: npm ci
+
+      - name: Build native Orvia preview APK
+        working-directory: native-v2/lastchat
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleDevDebug --no-daemon --stacktrace -Plastchat.abi.splits=false
+
+      - name: Upload native Orvia preview APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: orvia-native-rebrand-preview
+          path: native-v2/lastchat/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
+          retention-days: 14
