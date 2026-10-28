@@ -370,7 +370,7 @@
       "signup_url": "https://openrouter.ai/sign-up",
       "api_key_url": "https://openrouter.ai/settings/keys",
       "setup_recommended": true,
-      "setup_order": 0,
+      "setup_order": 1,
       "setup_description": "OpenRouter's free-model router. Requires an OpenRouter API key; free model availability can vary.",
       "setup_models": [
         "openrouter/free",
