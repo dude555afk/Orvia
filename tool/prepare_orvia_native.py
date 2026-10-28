@@ -68,7 +68,7 @@ for line in (
 ):
     text = text.replace(line, "")
 text, removed = re.subn(
-    r"        // Init remote config\\n        get<FirebaseRemoteConfig>\\(\\)\\.apply \\{\\n.*?\\n        \\}\\n\\n",
+    r"        // Init remote config\n        get<FirebaseRemoteConfig>\(\)\.apply \{\n.*?\n        \}\n\n",
     "",
     text,
     count=1,
@@ -77,8 +77,8 @@ text, removed = re.subn(
 if removed != 1:
     raise SystemExit("Could not safely remove the Firebase Remote Config startup block.")
 text = text.replace(
-    "                runCatching { get<FirebaseCrashlytics>().recordException(throwable) }\\n",
-    "                // Crash is recorded locally in Logcat; no remote crash reporting.\\n",
+    "                runCatching { get<FirebaseCrashlytics>().recordException(throwable) }\n",
+    "                // Crash is recorded locally in Logcat; no remote crash reporting.\n",
 )
 app_lifecycle.write_text(text, encoding="utf-8")
 
