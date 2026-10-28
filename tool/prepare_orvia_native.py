@@ -462,7 +462,7 @@ class OrviaApp : me.rerere.rikkahub.OrviaApp()
 manifest = APP / "app/src/main/AndroidManifest.xml"
 manifest_text = manifest.read_text(encoding="utf-8")
 manifest_text, app_class_replacements = re.subn(
-    r'android:name="\\.LastChatApp"',
+    r'android:name="\.LastChatApp"',
     'android:name="com.dude555afk.orvia.nativev2.OrviaApp"',
     manifest_text,
     count=1,
