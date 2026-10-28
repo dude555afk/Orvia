@@ -1452,16 +1452,21 @@ class SettingsProvider extends ChangeNotifier {
     final retiredProviderIds = retiredProviderKeys
         .map((key) => key.toLowerCase())
         .toSet();
-    var providerConfigsChanged = false;
     for (final key in _providerConfigs.keys.toList(growable: false)) {
       if (retiredProviderIds.contains(key.trim().toLowerCase())) {
-        _providerConfigs.remove(key);
-        providerConfigsChanged = true;
+        await removeProviderConfig(key);
       }
     }
 
-    if (!_providerConfigs.containsKey('Kilo')) {
+    var providerConfigsChanged = false;
+    final kiloConfig = _providerConfigs['Kilo'];
+    if (kiloConfig == null) {
       ensureProviderConfig('Kilo', defaultName: 'Kilo');
+      providerConfigsChanged = true;
+    } else if (kiloConfig.models.isEmpty) {
+      _providerConfigs['Kilo'] = kiloConfig.copyWith(
+        models: const ['openrouter/free'],
+      );
       providerConfigsChanged = true;
     }
     if (providerConfigsChanged) {
