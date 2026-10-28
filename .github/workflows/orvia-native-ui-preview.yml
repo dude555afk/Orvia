@@ -18,7 +18,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - name: Checkout Orvia and pinned LastChat source
         uses: actions/checkout@v4
@@ -56,26 +56,45 @@ jobs:
         working-directory: native-v2/lastchat/web-ui
         run: npm ci
 
-      - name: Build native preview APK
+      # A debug APK disables R8 and ships unused bytecode from the full upstream
+      # app, which is not representative of an installable phone preview.
+      # Build the arm64-only release variant with code/resource shrinking enabled.
+      - name: Build optimized native preview APK
         working-directory: native-v2/lastchat
         run: |
           chmod +x gradlew
-          ./gradlew :app:assembleDevDebug --no-daemon --stacktrace -Plastchat.abi.splits=false
+          ./gradlew :app:assembleDevRelease --no-daemon --stacktrace --max-workers=2 \
+            -Plastchat.abi.splits=false \
+            -Plastchat.release.minify=true
 
-      - name: Verify generated APK
+      - name: Verify APK and report largest payloads
         shell: bash
         run: |
           set -euo pipefail
-          APK="$(find native-v2/lastchat/app/build/outputs/apk -type f -name '*.apk' | sort | head -n 1)"
+          APK="$(find native-v2/lastchat/app/build/outputs/apk/dev/release -type f -name '*.apk' | sort | head -n 1)"
           test -n "$APK"
           unzip -t "$APK"
           echo "APK_PATH=$APK" >> "$GITHUB_ENV"
           echo "Built APK: $APK ($(du -h "$APK" | cut -f1))"
+          python3 - "$APK" <<'PY'
+          import sys, zipfile
+          from pathlib import Path
+          apk = Path(sys.argv[1])
+          with zipfile.ZipFile(apk) as zf:
+              items = sorted(
+                  ((info.file_size, info.filename) for info in zf.infolist() if not info.is_dir()),
+                  reverse=True,
+              )
+          print("Largest packaged entries:")
+          for size, name in items[:20]:
+              print(f"{size / (1024 * 1024):7.2f} MiB  {name}")
+          print(f"Total uncompressed payload: {sum(s for s, _ in items) / (1024 * 1024):.2f} MiB")
+          PY
 
-      - name: Upload Orvia Native Preview APK
+      - name: Upload optimized Orvia Native Preview APK
         uses: actions/upload-artifact@v4
         with:
-          name: orvia-native-ui-preview
-          path: native-v2/lastchat/app/build/outputs/apk/**/*.apk
+          name: orvia-native-ui-preview-optimized
+          path: native-v2/lastchat/app/build/outputs/apk/dev/release/*.apk
           if-no-files-found: error
           retention-days: 14
