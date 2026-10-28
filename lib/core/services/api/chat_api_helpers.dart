@@ -100,8 +100,12 @@ Map<String, String> customHeaders(
   );
   // Anonymous gateways reject an empty "Bearer " header; omit it entirely.
   for (final key in merged.keys.toList(growable: false)) {
-    if (key.toLowerCase() == 'authorization' &&
-        RegExp(r'^Bearer\s*
+    final value = merged[key]?.trim().toLowerCase() ?? '';
+    if (key.toLowerCase() == 'authorization' && value == 'bearer') {
+      merged.remove(key);
+    }
+  }
+  return merged;
 }
 
 Map<String, dynamic> customBody(
