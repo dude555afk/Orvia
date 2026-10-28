@@ -160,34 +160,19 @@ for strings in APP.glob("app/src/**/res/values*/strings.xml"):
         return head + body + tail
     strings.write_text(string_tag.sub(replace_string, text), encoding="utf-8")
 
-# Change displayed copy inside Kotlin string literals only; internal class/package names stay intact.
-kotlin_literal = re.compile(r'"(?:\\.|[^"\\])*"')
-def rebrand_literal(match: re.Match[str]) -> str:
-    value = match.group(0)
-    value = value.replace("https://github.com/Cocolalilal/LastChat", "https://github.com/dude555afk/Orvia")
-    value = value.replace("https://github.com/cocolalilal/LastChat", "https://github.com/dude555afk/Orvia")
-    value = value.replace("https://buymeacoffee.com/cocolalilal", "https://github.com/dude555afk/Orvia")
-    value = value.replace("LastChat", "Orvia")
-    value = value.replace("lastchat://", "orvia://")
-    return value
-for source in APP.glob("**/*.kt"):
-    if any(part in {"build", "generated", "test", "androidTest", "iosTest"} for part in source.parts):
-        continue
-    text = source.read_text(encoding="utf-8")
-    # Some earlier preview patches accidentally renamed internal Compose symbols.
-    # Restore upstream implementation identifiers only; this does not affect visible branding.
-    text = text.replace("LocalOrviaBlur", "LocalLastChatBlur")
-    text = text.replace("OrviaBlur", "LastChatBlur")
-    text = text.replace("OrviaMenuButton", "LastChatMenuButton")
-    updated = kotlin_literal.sub(rebrand_literal, text)
-    if updated != source.read_text(encoding="utf-8"):
-        source.write_text(updated, encoding="utf-8")
-
+# Do not rewrite Kotlin source globally: raw strings and identifiers can look like UI copy.
+# Brand only known user-facing onboarding copy below; resource strings and About links are handled
+# by targeted patches. Internal LastChat class names are intentionally preserved.
 
 # Kilo's anonymous free models must be usable without submitting an API key.
 # Other provider setup flows still require a non-empty key.
 onboarding = APP / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt"
 text = onboarding.read_text(encoding="utf-8")
+# These are the visible onboarding sentences, not class/package identifiers.
+text = text.replace("return to LastChat", "return to Orvia")
+text = text.replace("up on LastChat!", "up on Orvia!")
+text = text.replace("through LastChat:", "through Orvia:")
+text = text.replace("using LastChat", "using Orvia")
 old_guided_paste = '''                SetupPage.GuidedPasteKey -> PasteKeyPage(
                     text = "Paste your API key here and\\nwe’ll handle the rest.",
                     apiKey = apiKey,
