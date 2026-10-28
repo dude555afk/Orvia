@@ -21,6 +21,11 @@ if not LOGO.is_file() or not CATALOG.is_file():
 gradle_path = APP / "app/build.gradle.kts"
 gradle = gradle_path.read_text(encoding="utf-8")
 gradle = gradle.replace('applicationId = "lastchat.rikkafork.cocolal"', 'applicationId = "com.dude555afk.orvia.nativev2"')
+# This preview targets the user's Android phone; omit unrelated ARMv7/x86_64 native payloads.
+gradle = gradle.replace(
+    'abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")',
+    'abiFilters += listOf("arm64-v8a")',
+)
 gradle = gradle.replace('val apkName = "LastChat_"', 'val apkName = "Orvia_"')
 gradle = gradle.replace("    alias(libs.plugins.google.services)\n", "")
 gradle = gradle.replace("    alias(libs.plugins.firebase.crashlytics)\n", "")
