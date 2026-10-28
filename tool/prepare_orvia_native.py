@@ -125,6 +125,8 @@ for flavor in ("stable", "dev"):
 resource_overrides = {
     "setting_page_assistant": "Assistants &amp; Memory",
     "setting_page_assistant_desc": "Manage assistants, memory, and world knowledge",
+    "setting_page_display_setting": "Appearance &amp; Preferences",
+    "setting_page_display_setting_desc": "Theme, typography, layout, and interface options",
     "setting_page_mcp": "MCP &amp; Tools",
     "setting_page_mcp_desc": "Connect tools and services through MCP",
     "setting_page_model_and_services": "AI Models &amp; Services",
@@ -132,9 +134,12 @@ resource_overrides = {
     "setting_page_providers_desc": "Manage API endpoints and model access",
     "setting_page_data_backup": "Backup &amp; Restore",
     "setting_page_data_backup_desc": "Export, back up, and restore Orvia data",
-    "setting_page_tts_service": "Text-to-Speech",
+    "setting_page_tts_service": "Voice &amp; Speech",
     "setting_page_stt_service": "Speech Recognition",
-    "setting_page_search_service": "Web Search",
+    "setting_page_search_service": "Search &amp; Web",
+    "assistant_page_name": "Assistant Name",
+    "assistant_page_default_assistant": "Default Assistant",
+    "assistant_deleted": "Assistant %s deleted",
     "setting_page_about": "About Orvia",
     "setting_page_share_text": "Orvia - Open Source AI Assistant\\n\\nGitHub: https://github.com/dude555afk/Orvia",
     "workspace_env_notification_title": "Orvia Workspace Setup",
@@ -331,6 +336,12 @@ res = APP / "app/src/main/res"
 (res / "drawable").mkdir(parents=True, exist_ok=True)
 shutil.copyfile(LOGO, res / "drawable-nodpi/orvia_logo.png")
 shutil.copyfile(LOGO, res / "drawable/orvia_setup_icon.png")
+# About uses ui-core's shared Compose resource generated from this foreground asset.
+# Replace that source too, otherwise the About screen would still show LastChat artwork.
+foreground_logo = APP / "app/src/main/res/mipmap-xxxhdpi/ic_launcher_lastchat_foreground.png"
+if not foreground_logo.is_file():
+    raise SystemExit("LastChat foreground icon asset is missing; refusing to leave upstream branding visible.")
+shutil.copyfile(LOGO, foreground_logo)
 manifest = APP / "app/src/main/AndroidManifest.xml"
 text = manifest.read_text(encoding="utf-8")
 text = text.replace('android:icon="@mipmap/ic_launcher_lastchat"', 'android:icon="@drawable/orvia_logo"')
