@@ -31,6 +31,8 @@ void main() {
     String? queuedPreviewText,
     VoidCallback? onCancelQueuedInput,
     String? conversationId,
+    String? chatModelProviderKey,
+    String? chatModelId,
     String? sendButtonTooltip,
     ThemeData? theme,
     bool backgroundImageActive = false,
@@ -66,8 +68,9 @@ void main() {
         supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: ChatInputBar(
-            chatModelProviderKey: chatModel.providerKey,
-            chatModelId: chatModel.modelId,
+            chatModelProviderKey:
+                chatModelProviderKey ?? chatModel.providerKey,
+            chatModelId: chatModelId ?? chatModel.modelId,
             controller: controller,
             focusNode: focusNode,
             mediaController: mediaController,
@@ -281,6 +284,8 @@ void main() {
           controller: controller,
           focusNode: focusNode,
           settingsProvider: settings,
+          chatModelProviderKey: 'OpenAITest',
+          chatModelId: 'gpt-image-2',
           conversationId: 'conversation-a',
           onSend: (_) async => ChatInputSubmissionResult.rejected,
         ),
@@ -298,6 +303,8 @@ void main() {
           controller: controller,
           focusNode: focusNode,
           settingsProvider: settings,
+          chatModelProviderKey: 'OpenAITest',
+          chatModelId: 'gpt-image-2',
           conversationId: 'conversation-b',
           onSend: (_) async => ChatInputSubmissionResult.rejected,
         ),
