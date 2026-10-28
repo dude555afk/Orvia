@@ -1,0 +1,81 @@
+name: Orvia Native UI Preview
+
+on:
+  push:
+    branches:
+      - feature/orvia-lastchat-ui-settings-20261028
+    paths:
+      - '.github/workflows/orvia-native-ui-preview.yml'
+      - 'tool/prepare_orvia_native.py'
+      - 'native-v2/catalog/**'
+      - 'docs/orvia-logo.png'
+      - '.gitmodules'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout Orvia and pinned LastChat source
+        uses: actions/checkout@v4
+        with:
+          ref: feature/orvia-lastchat-ui-settings-20261028
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: native-v2/lastchat/web-ui/package-lock.json
+
+      - name: Verify pinned source and Orvia catalog
+        run: |
+          test -f native-v2/lastchat/app/build.gradle.kts
+          test -f native-v2/lastchat/gradlew
+          test -f native-v2/catalog/lastchat_catalog.json
+          test -f docs/orvia-logo.png
+          python3 -m json.tool native-v2/catalog/lastchat_catalog.json >/dev/null
+          git submodule status
+
+      - name: Apply Orvia identity and settings
+        run: python3 tool/prepare_orvia_native.py
+
+      - name: Install bundled web UI dependencies
+        working-directory: native-v2/lastchat/web-ui
+        run: npm ci
+
+      - name: Build native preview APK
+        working-directory: native-v2/lastchat
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleDevDebug --no-daemon --stacktrace -Plastchat.abi.splits=false
+
+      - name: Verify generated APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="$(find native-v2/lastchat/app/build/outputs/apk -type f -name '*.apk' | sort | head -n 1)"
+          test -n "$APK"
+          unzip -t "$APK"
+          echo "APK_PATH=$APK" >> "$GITHUB_ENV"
+          echo "Built APK: $APK ($(du -h "$APK" | cut -f1))"
+
+      - name: Upload Orvia Native Preview APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: orvia-native-ui-preview
+          path: native-v2/lastchat/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
+          retention-days: 14
