@@ -24,6 +24,10 @@ gradle = gradle.replace('applicationId = "lastchat.rikkafork.cocolal"', 'applica
 gradle = gradle.replace('val apkName = "LastChat_"', 'val apkName = "Orvia_"')
 gradle = gradle.replace("    alias(libs.plugins.google.services)\n", "")
 gradle = gradle.replace("    alias(libs.plugins.firebase.crashlytics)\n", "")
+gradle = gradle.replace(
+    '    // Firebase (Analytics removed for privacy - only crash reporting and remote config)\n    implementation(platform(libs.firebase.bom))\n    implementation(libs.firebase.crashlytics)\n    implementation(libs.firebase.config)\n',
+    '',
+)
 gradle_path.write_text(gradle, encoding="utf-8")
 
 # Use Orvia's checked-in catalog in the bundle and future refreshes, not LastChat's live catalog.
@@ -35,6 +39,77 @@ data = data.replace(
     "https://raw.githubusercontent.com/dude555afk/Orvia/feature/orvia-lastchat-ui-settings-20261028/native-v2/catalog/lastchat_catalog.json",
 )
 catalog_source.write_text(data, encoding="utf-8")
+
+# Remove Firebase crash reporting, Remote Config and the remotely supplied
+# SiliconFlow free-model key. Orvia's preview must not silently send crash
+# reports or fetch a hidden provider key from the upstream project's Firebase.
+app_module = APP / "app/src/main/java/me/rerere/rikkahub/di/AppModule.kt"
+text = app_module.read_text(encoding="utf-8")
+text = text.replace("import com.google.firebase.Firebase\n", "")
+text = text.replace("import com.google.firebase.crashlytics.crashlytics\n", "")
+text = text.replace("import com.google.firebase.remoteconfig.remoteConfig\n", "")
+text = text.replace('''    single {
+        Firebase.crashlytics
+    }
+
+    single {
+        Firebase.remoteConfig
+    }
+
+''', "")
+app_module.write_text(text, encoding="utf-8")
+
+app_lifecycle = APP / "app/src/main/java/me/rerere/rikkahub/LastChatApp.kt"
+text = app_lifecycle.read_text(encoding="utf-8")
+for line in (
+    "import com.google.firebase.crashlytics.FirebaseCrashlytics\n",
+    "import com.google.firebase.remoteconfig.FirebaseRemoteConfig\n",
+    "import com.google.firebase.remoteconfig.remoteConfigSettings\n",
+):
+    text = text.replace(line, "")
+text, removed = re.subn(
+    r"        // Init remote config\\n        get<FirebaseRemoteConfig>\\(\\)\\.apply \\{\\n.*?\\n        \\}\\n\\n",
+    "",
+    text,
+    count=1,
+    flags=re.S,
+)
+if removed != 1:
+    raise SystemExit("Could not safely remove the Firebase Remote Config startup block.")
+text = text.replace(
+    "                runCatching { get<FirebaseCrashlytics>().recordException(throwable) }\\n",
+    "                // Crash is recorded locally in Logcat; no remote crash reporting.\\n",
+)
+app_lifecycle.write_text(text, encoding="utf-8")
+
+# The interceptor previously fetched a base64-encoded SiliconFlow API key from
+# Firebase Remote Config and inserted it into user requests. Preserve normal
+# networking, but never inject upstream-owned credentials into Orvia traffic.
+interceptor = APP / "app/src/main/java/me/rerere/rikkahub/data/ai/AIRequestInterceptor.kt"
+interceptor.write_text("""package me.rerere.rikkahub.data.ai
+
+import okhttp3.Interceptor
+import okhttp3.Response
+
+class AIRequestInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        return chain.proceed(chain.request())
+    }
+}
+""", encoding="utf-8")
+
+data_source = APP / "app/src/main/java/me/rerere/rikkahub/di/DataSourceModule.kt"
+text = data_source.read_text(encoding="utf-8")
+text = text.replace("AIRequestInterceptor(remoteConfig = get())", "AIRequestInterceptor()")
+data_source.write_text(text, encoding="utf-8")
+
+# Remove source resources that carried the Firebase remote API-key payload.
+for obsolete in (
+    APP / "app/src/main/res/xml/remote_config_defaults.xml",
+    APP / "app/google-services.json",
+):
+    if obsolete.exists():
+        obsolete.unlink()
 
 # App label, including dev flavor, is Orvia.
 for flavor in ("stable", "dev"):
