@@ -68,8 +68,7 @@ void main() {
         supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: ChatInputBar(
-            chatModelProviderKey:
-                chatModelProviderKey ?? chatModel.providerKey,
+            chatModelProviderKey: chatModelProviderKey ?? chatModel.providerKey,
             chatModelId: chatModelId ?? chatModel.modelId,
             controller: controller,
             focusNode: focusNode,
