@@ -55,7 +55,8 @@ void main() {
       await settings.loaded;
 
       expect(settings.providersOrder, isNot(contains('Kimi')));
-      expect(settings.providersOrder.take(3), ['OpenAI', 'Zhipu AI', 'Grok']);
+      expect(settings.providersOrder, isNot(contains('Zhipu AI')));
+      expect(settings.providersOrder.take(3), ['OpenAI', 'Grok', 'Gemini']);
     });
 
     test('latest model ids infer only their documented capabilities', () {
