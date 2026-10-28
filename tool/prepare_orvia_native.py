@@ -198,16 +198,37 @@ new_guided_paste = '''                SetupPage.GuidedPasteKey -> PasteKeyPage(
 if old_guided_paste not in text:
     raise SystemExit("Could not locate guided provider key page; refusing to patch the wrong setup flow.")
 text = text.replace(old_guided_paste, new_guided_paste, 1)
-text = text.replace(
-    "    loading: Boolean = false,\n    onContinue: () -> Unit,",
-    "    loading: Boolean = false,\n    allowEmptyApiKey: Boolean = false,\n    onContinue: () -> Unit,",
-    1,
-)
-text = text.replace(
-    "                enabled = apiKey.isNotBlank() && !loading,",
-    "                enabled = (allowEmptyApiKey || apiKey.isNotBlank()) && !loading,",
-    1,
-)
+paste_signature = """private fun PasteKeyPage(
+    text: String,
+    apiKey: String,
+    onApiKeyChange: (String) -> Unit,
+    loading: Boolean = false,
+    onContinue: () -> Unit,
+)"""
+paste_signature_orvia = """private fun PasteKeyPage(
+    text: String,
+    apiKey: String,
+    onApiKeyChange: (String) -> Unit,
+    loading: Boolean = false,
+    allowEmptyApiKey: Boolean = false,
+    onContinue: () -> Unit,
+)"""
+if paste_signature in text:
+    text = text.replace(paste_signature, paste_signature_orvia, 1)
+elif paste_signature_orvia not in text:
+    raise SystemExit("PasteKeyPage signature not found.")
+paste_start = text.index("private fun PasteKeyPage(")
+paste_end = text.index("\n}\n", paste_start) + 3
+paste_page = text[paste_start:paste_end]
+if "enabled = apiKey.isNotBlank() && !loading," in paste_page:
+    paste_page = paste_page.replace(
+        "enabled = apiKey.isNotBlank() && !loading,",
+        "enabled = (allowEmptyApiKey || apiKey.isNotBlank()) && !loading,",
+        1,
+    )
+elif "enabled = (allowEmptyApiKey || apiKey.isNotBlank()) && !loading," not in paste_page:
+    raise SystemExit("PasteKeyPage submit gate not found.")
+text = text[:paste_start] + paste_page + text[paste_end:]
 onboarding.write_text(text, encoding="utf-8")
 
 # OpenAI-compatible providers should omit Authorization entirely for an empty key.
