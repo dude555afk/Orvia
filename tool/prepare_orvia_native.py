@@ -330,7 +330,7 @@ shutil.copyfile(LOGO, foreground_logo)
 manifest = APP / "app/src/main/AndroidManifest.xml"
 text = manifest.read_text(encoding="utf-8")
 text = text.replace('android:icon="@mipmap/ic_launcher_lastchat"', 'android:icon="@drawable/orvia_logo"')
-text = re.sub(r'android:scheme="lastchat"', 'android:scheme="orvia"', text)
+# Keep the legacy URI scheme for internal shortcut and OAuth callbacks.
 manifest.write_text(text, encoding="utf-8")
 onboarding = APP / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt"
 text = onboarding.read_text(encoding="utf-8").replace("R.drawable.lastchat_setup_icon", "R.drawable.orvia_setup_icon")
@@ -339,5 +339,75 @@ about = APP / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingAbou
 text = about.read_text(encoding="utf-8")
 text = text.replace('Uri.parse("https://github.com/Cocolalilal/LastChat")', 'Uri.parse("https://github.com/dude555afk/Orvia")')
 about.write_text(text, encoding="utf-8")
+
+
+
+# Rebrand additional hardcoded native UI, notifications, and exported-file labels.
+def replace_source_text(relative_path: str, old: str, new: str) -> None:
+    path = APP / relative_path
+    if not path.is_file():
+        raise SystemExit(f"Expected source file missing: {relative_path}")
+    data = path.read_text(encoding="utf-8")
+    if old not in data:
+        if new in data:
+            return  # Idempotent rerun.
+        raise SystemExit(f"Expected branding text not found in {relative_path}: {old}")
+    path.write_text(data.replace(old, new), encoding="utf-8")
+
+replace_source_text(
+    "app/src/main/java/me/rerere/rikkahub/ui/activity/TextSelectionVM.kt",
+    "Ask LastChat",
+    "Ask Orvia",
+)
+replace_source_text(
+    "local-llm/src/main/java/me/rerere/locallm/LocalModelDownloadService.kt",
+    '.setContentTitle("LastChat")',
+    '.setContentTitle("Orvia")',
+)
+replace_source_text(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/AssistantVM.kt",
+    "app called LastChat",
+    "app called Orvia",
+)
+replace_source_text(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/chat/Export.kt",
+    'private const val EXPORT_BRAND = "LastChat"',
+    'private const val EXPORT_BRAND = "Orvia"',
+)
+replace_source_text(
+    "app/src/main/java/me/rerere/rikkahub/data/sync/WebdavSync.kt",
+    '"LastChat_backup_$timestamp.zip"',
+    '"Orvia_backup_$timestamp.zip"',
+)
+replace_source_text(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/backup/BackupPage.kt",
+    '"LastChat_backup_$timestamp.zip"',
+    '"Orvia_backup_$timestamp.zip"',
+)
+replace_source_text(
+    "app/src/main/java/me/rerere/rikkahub/utils/ContextUtil.kt",
+    '"LastChat_\${System.currentTimeMillis()}.png"',
+    '"Orvia_\${System.currentTimeMillis()}.png"',
+)
+replace_source_text(
+    "app/src/main/java/me/rerere/rikkahub/utils/ChatUtil.kt",
+    '"LastChat_\${System.currentTimeMillis()}.png"',
+    '"Orvia_\${System.currentTimeMillis()}.png"',
+)
+replace_source_text(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesModels.kt",
+    'path: String = "lastchat_backups"',
+    'path: String = "orvia_backups"',
+)
+replace_source_text(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    "selected LastChat TTS provider",
+    "selected Orvia TTS provider",
+)
+replace_source_text(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    "LastChat's selected image generation model",
+    "Orvia's selected image generation model",
+)
 
 print("Applied Orvia branding, Orvia-owned catalog, and native Settings links.")
