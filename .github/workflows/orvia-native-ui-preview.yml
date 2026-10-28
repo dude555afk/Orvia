@@ -77,7 +77,7 @@ jobs:
           AAPT="$(command -v aapt || find "${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}/build-tools" -type f -name aapt 2>/dev/null | sort -V | tail -n 1)"
           test -n "$AAPT"
           BADGING="$("$AAPT" dump badging "$APK")"
-          printf '%s\\n' "$BADGING"
+          printf '%s\n' "$BADGING"
           grep -F "package: name='com.dude555afk.orvia.nativev2.dev'" <<< "$BADGING"
           grep -F "application-label:'Orvia'" <<< "$BADGING"
           MANIFEST_DUMP="$("$AAPT" dump xmltree "$APK" AndroidManifest.xml)"

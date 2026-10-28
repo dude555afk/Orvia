@@ -423,7 +423,7 @@ print("Applied Orvia branding, Orvia-owned catalog, and native Settings links.")
 # The installer/Play Protect UI can display this component identity for sideloaded builds.
 for kotlin_file in APP.rglob("*.kt"):
     source = kotlin_file.read_text(encoding="utf-8")
-    renamed = re.sub(r"\\bLastChatApp\\b", "OrviaApp", source)
+    renamed = re.sub(r"\bLastChatApp\b", "OrviaApp", source)
     if renamed != source:
         kotlin_file.write_text(renamed, encoding="utf-8")
 
@@ -439,7 +439,7 @@ elif not new_app_class.is_file():
 manifest = APP / "app/src/main/AndroidManifest.xml"
 manifest_text = manifest.read_text(encoding="utf-8")
 manifest_text, app_class_replacements = re.subn(
-    r'android:name="\\.LastChatApp"',
+    r'android:name="\.LastChatApp"',
     'android:name=".OrviaApp"',
     manifest_text,
     count=1,
@@ -448,7 +448,7 @@ if app_class_replacements != 1:
     raise SystemExit("Could not safely rebrand the Android Application class in the manifest.")
 # This permission is unused by the app and lets an app request permission to install APKs.
 manifest_text, install_perm_replacements = re.subn(
-    r'^\\s*<uses-permission android:name="android\\.permission\\.REQUEST_INSTALL_PACKAGES" />\\s*\\n',
+    r'^\s*<uses-permission android:name="android\.permission\.REQUEST_INSTALL_PACKAGES" />\s*\n',
     "",
     manifest_text,
     count=1,
