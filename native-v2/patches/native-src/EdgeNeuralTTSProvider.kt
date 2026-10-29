@@ -120,12 +120,16 @@ internal class EdgeNeuralTTSProvider(
                 socket?.close(1000, "turn complete")
                 return
             }
-            if (message.contains("Path:response") && (
+            if (message.contains("Path:response")) {
+                val statusCode = Regex("\"statusCode\"\\s*:\\s*(\\d+)")
+                    .find(message)?.groupValues?.getOrNull(1)?.toIntOrNull()
+                if (
                     message.contains("Forbidden", ignoreCase = true) ||
                     message.contains("Invalid", ignoreCase = true) ||
-                    message.contains("statusCode") && !message.contains("\"statusCode\":200")
-                )) {
-                finishOrFail(IOException("Edge TTS rejected the request. Check the service protocol and device clock."))
+                    (statusCode != null && statusCode !in 200..299)
+                ) {
+                    finishOrFail(IOException("Edge TTS rejected the request (status " + (statusCode?.toString() ?: "unknown") + "). Check the service protocol and device clock."))
+                }
                 return
             }
             val index = indexOf(bytes, audioMarker)
