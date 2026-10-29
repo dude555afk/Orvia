@@ -31,7 +31,7 @@ The app's lowercase package/deep-link namespaces are intentionally retained in t
 | Speech recognition | Inherited source contains speech/STT infrastructure | Must compare providers and test end-to-end |
 | Email integration | Native IMAP/SMTP service, settings page, assistant tools and approval before sending are overlaid | Implemented in source; needs provider-by-provider integration tests before being called reliable |
 | Android integrations and background work | Native base already includes sharing, shortcuts, notification tools, scheduled messages and background work. The restart branch now ports Orvia's accessibility-driven phone-control service and assistant tool, with a Settings toggle and approval required for every tool call | Source port is in CI; still needs install/emulator and physical-device permission/action tests |
-| Location, screen-time and calendar tools | These exist in Orvia's Flutter Android layer, but are not yet ported to native assistant tools | Still missing from native preview; required before full Orvia parity |
+| Location, screen-time and calendar tools | Ported into a native `orvia_device_tools` assistant tool for current location, usage summaries, event queries and event creation; runtime Calendar/Location permissions are requested from assistant settings, and Usage Access opens Android settings when missing | Source port is now in CI; permission denial, recurring events, provider quirks and writes still need automated/emulator/physical-device testing |
 | Linux/PRoot workspace | Native workspace, rootfs, terminal and file handling modules exist in the Orvia repository | Build/runtime behavior and parity still need device testing |
 | Themes, fonts, wallpaper and UI customization | Inherited theme and font settings are present; branding identifiers are being cleaned up | Must test persistence and verify no upstream branding remains on visible surfaces |
 | Local chats/settings and portable backups | Native database and backup functionality exists in the inherited client | **No migration from the installed Flutter Orvia app is implemented** |
@@ -42,8 +42,8 @@ The app's lowercase package/deep-link namespaces are intentionally retained in t
 1. Build and inspect the new APK, including a recursive visible-string scan and launcher/About imagery.
 2. Run native unit tests and the emulator launch smoke test; add a test for splash skip, timing, and repeat behavior.
 3. Compare every Orvia screen and capability with the Flutter implementation, including provider/settings behavior and error states.
-4. Add integration tests for Edge TTS playback and IMAP/SMTP read/search/send approval. Never send a real email in automated CI.
-5. Test on a physical ARM64 Android device for keyboard/IME behavior, permissions, lifecycle, background work, and crashes.
+4. Add integration tests for Edge TTS playback, IMAP/SMTP read/search/send approval, phone-control snapshot validation, location permission denial, screen-time Usage Access, and calendar read/create. Never send a real email or trigger real device gestures in automated CI.
+5. Test on a physical ARM64 Android device for keyboard/IME behavior, accessibility opt-in, permission denial/grant flows, lifecycle, background work, calendar providers, and crashes.
 6. Implement or explicitly scope out data migration, then document backup/restore compatibility.
 7. Only after those checks pass, consider a stable signing/update path. Do not merge this preview into stable by accident.
 
