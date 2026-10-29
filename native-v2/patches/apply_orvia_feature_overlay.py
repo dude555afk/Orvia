@@ -729,41 +729,57 @@ install_native_source(
     "app/src/main/res/xml/orvia_phone_control_service.xml",
 )
 
-replace_once(
-    "app/src/main/AndroidManifest.xml",
-    "  <application\n",
-    """  <queries>
-    <intent>
-      <action android:name="android.intent.action.MAIN" />
-      <category android:name="android.intent.category.LAUNCHER" />
-    </intent>
-  </queries>
+# The workflow normalizes this XML before running the overlay, so use the
+# XML tree rather than whitespace-sensitive text replacements.
+import xml.etree.ElementTree as ET
+manifest_path = ROOT / "app/src/main/AndroidManifest.xml"
+ET.register_namespace("android", "http://schemas.android.com/apk/res/android")
+ET.register_namespace("tools", "http://schemas.android.com/tools")
+manifest_tree = ET.parse(manifest_path)
+manifest_root = manifest_tree.getroot()
+android_attr = "{http://schemas.android.com/apk/res/android}"
+application = manifest_root.find("application")
+assert application is not None, "Android manifest has no application element"
 
-  <application
-""",
+queries = manifest_root.find("queries")
+if queries is None:
+    queries = ET.Element("queries")
+    manifest_root.insert(list(manifest_root).index(application), queries)
+has_launcher_query = any(
+    intent.find("action") is not None
+    and intent.find("action").get(android_attr + "name") == "android.intent.action.MAIN"
+    and intent.find("category") is not None
+    and intent.find("category").get(android_attr + "name") == "android.intent.category.LAUNCHER"
+    for intent in queries.findall("intent")
 )
-replace_once(
-    "app/src/main/AndroidManifest.xml",
-    """    <service
-        android:name=".service.AssistantNotificationListener"
-""",
-    """    <service
-        android:name="me.rerere.rikkahub.service.orvia.OrviaPhoneControlService"
-        android:label="@string/orvia_phone_control_service_label"
-        android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-        android:exported="true">
-      <intent-filter>
-        <action android:name="android.accessibilityservice.AccessibilityService" />
-      </intent-filter>
-      <meta-data
-          android:name="android.accessibilityservice"
-          android:resource="@xml/orvia_phone_control_service" />
-    </service>
+if not has_launcher_query:
+    intent = ET.SubElement(queries, "intent")
+    ET.SubElement(intent, "action", {android_attr + "name": "android.intent.action.MAIN"})
+    ET.SubElement(intent, "category", {android_attr + "name": "android.intent.category.LAUNCHER"})
 
-    <service
-        android:name=".service.AssistantNotificationListener"
-""",
+service_name = "me.rerere.rikkahub.service.orvia.OrviaPhoneControlService"
+existing_service = next(
+    (service for service in application.findall("service")
+     if service.get(android_attr + "name") == service_name),
+    None,
 )
+if existing_service is None:
+    service = ET.SubElement(application, "service", {
+        android_attr + "name": service_name,
+        android_attr + "label": "@string/orvia_phone_control_service_label",
+        android_attr + "permission": "android.permission.BIND_ACCESSIBILITY_SERVICE",
+        android_attr + "exported": "true",
+    })
+    intent_filter = ET.SubElement(service, "intent-filter")
+    ET.SubElement(intent_filter, "action", {
+        android_attr + "name": "android.accessibilityservice.AccessibilityService"
+    })
+    ET.SubElement(service, "meta-data", {
+        android_attr + "name": "android.accessibilityservice",
+        android_attr + "resource": "@xml/orvia_phone_control_service",
+    })
+manifest_tree.write(manifest_path, encoding="unicode", xml_declaration=True)
+
 replace_once(
     "app/src/main/res/values/strings.xml",
     "</resources>",
