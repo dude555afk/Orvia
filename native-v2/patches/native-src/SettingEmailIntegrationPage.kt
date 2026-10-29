@@ -148,7 +148,7 @@ fun SettingEmailIntegrationPage() {
                                         imapPort = imapPort.toIntOrNull() ?: defaults.imapPort,
                                         smtpHost = smtpHost.ifBlank { defaults.smtpHost },
                                         smtpPort = smtpPort.toIntOrNull() ?: defaults.smtpPort,
-                                        smtpStartTls = smtpStartTls,
+                                        smtpStartTls = smtpStartTls || defaults.smtpStartTls,
                                     )
                                     service.connect(account)
                                     password = ""
