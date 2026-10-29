@@ -268,8 +268,76 @@ replace_in_file(
         ("Fetch latest LastChat Catalog", "Fetch latest Orvia Catalog"),
         ("Updating the LastChat Catalog...", "Updating the Orvia Catalog..."),
         ("LastChat Catalog updated", "Orvia Catalog updated"),
+        ("Failed to update LastChat Catalog: %1$s", "Failed to update Orvia Catalog: %1$s"),
+        ("JSON (LastChat)", "JSON (Orvia)"),
+        ("LastChat (Full)", "Orvia (Full)"),
+        ("Settings &gt; Apps &gt; LastChat", "Settings &gt; Apps &gt; Orvia"),
+        ("LastChat uses Google", "Orvia uses Google"),
+        ("Keep LastChat open", "Keep Orvia open"),
     ],
 )
+
+# Remove China-focused TTS providers from catalog and fallback selections.
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/components/TTSProviderPresets.kt",
+    """fun ModelCatalogSnapshot.toTTSProviderPresets(): List<TTSProviderPreset> {
+    return ttsProviders
+        .filter { it.preset }
+        .map { it.toTTSProviderPreset() }
+}""",
+    """private val ORVIA_HIDDEN_TTS_PROVIDER_NAMES = setOf("minimax", "qwen", "dashscope")
+
+fun ModelCatalogSnapshot.toTTSProviderPresets(): List<TTSProviderPreset> {
+    return ttsProviders
+        .filter { it.preset }
+        .filterNot { it.name.trim().lowercase() in ORVIA_HIDDEN_TTS_PROVIDER_NAMES }
+        .map { it.toTTSProviderPreset() }
+}""",
+)
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/components/TTSProviderPresets.kt",
+    """    TTSProviderPreset(
+        name = "OpenRouter",
+        description = "OpenRouter TTS (OpenAI-compatible audio/speech)",
+        type = TTSProviderSetting.OpenAI::class,
+        baseUrl = "https://openrouter.ai/api/v1",
+        customIconUri = "icons/openrouter.svg".toCatalogIconUrl(),
+    ),
+)
+
+fun ModelCatalogSnapshot.toTTSProviderPresets()""",
+    """    TTSProviderPreset(
+        name = "OpenRouter",
+        description = "OpenRouter TTS (OpenAI-compatible audio/speech)",
+        type = TTSProviderSetting.OpenAI::class,
+        baseUrl = "https://openrouter.ai/api/v1",
+        customIconUri = "icons/openrouter.svg".toCatalogIconUrl(),
+    ),
+).filterNot { it.name.equals("MiniMax", ignoreCase = true) || it.name.equals("Qwen", ignoreCase = true) }
+
+fun ModelCatalogSnapshot.toTTSProviderPresets()""",
+)
+
+# Strip Chinese-locale resources from this native preview; other locales fall
+# back to the English resource set rather than shipping untranslated Chinese.
+import shutil
+for relative in (
+    "app/src/main/res/values-b+zh+Hans",
+    "app/src/main/res/values-zh-rTW",
+    "search/src/main/res/values-b+zh+Hans",
+    "search/src/main/res/values-zh-rTW",
+):
+    locale_dir = ROOT / relative
+    if locale_dir.exists():
+        shutil.rmtree(locale_dir)
+
+# Fail loudly rather than publishing an app with visible LastChat branding.
+import re
+english_strings = (ROOT / "app/src/main/res/values/strings.xml").read_text(encoding="utf-8")
+visible_values = re.findall(r"<string\b[^>]*>(.*?)</string>", english_strings, flags=re.DOTALL)
+leftovers = [value for value in visible_values if "LastChat" in value]
+assert not leftovers, f"Visible LastChat strings remain: {leftovers[:5]}"
 
 # The Kilo anonymous route must not receive "Authorization: Bearer " when no
 # key is configured. Keep normal Authorization headers for keyed providers.
@@ -339,6 +407,13 @@ assert 'Kilo Free Gateway' in onboarding_vm and 'kilo-auto/free' in onboarding_v
 assert 'allowBlankKey = selectedGuidedProvider?.name == "Kilo Free Gateway"' in onboarding_page
 assert 'R.drawable.orvia_logo' in onboarding_page
 assert 'https://github.com/dude555afk/Orvia' in (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingAboutPage.kt").read_text(encoding="utf-8")
+tts_presets = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/components/TTSProviderPresets.kt").read_text(encoding="utf-8")
+assert 'ORVIA_HIDDEN_TTS_PROVIDER_NAMES' in tts_presets
+assert 'it.name.equals("MiniMax", ignoreCase = true)' in tts_presets
+assert not any((ROOT / relative).exists() for relative in (
+    "app/src/main/res/values-b+zh+Hans", "app/src/main/res/values-zh-rTW",
+    "search/src/main/res/values-b+zh+Hans", "search/src/main/res/values-zh-rTW",
+))
 assert "Orvia Native Preview" in (ROOT / "app/src/dev/res/values/strings.xml").read_text(encoding="utf-8")
 assert 'if (key.isNotBlank()) put("Authorization", "Bearer $key")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/OpenAIProvider.kt").read_text(encoding="utf-8")
 assert 'if (apiKey.isNotBlank()) put("Authorization", "Bearer $apiKey")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/openai/ChatCompletionsAPI.kt").read_text(encoding="utf-8")
