@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/orvia-native-v2-isolated-20261015
+      - feature/orvia-rebrand-parity-restart-20261029
     paths:
       - .github/workflows/orvia-native-arm64-optimized.yml
       - native-v2/patches/apply_orvia_feature_overlay.py
@@ -58,7 +59,7 @@ jobs:
           manifest_path = Path("app/src/main/AndroidManifest.xml")
           manifest = manifest_path.read_text()
           for old, new in {
-              'android:label="@string/app_name"': 'android:label="Orvia Native Preview"',
+              'android:label="@string/app_name"': 'android:label="Orvia"',
               'android:icon="@mipmap/ic_launcher_lastchat"': 'android:icon="@drawable/orvia_logo"',
           }.items():
               assert old in manifest, old
