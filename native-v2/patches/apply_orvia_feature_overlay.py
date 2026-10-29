@@ -661,6 +661,117 @@ replace_once(
 ''',
 )
 
+
+# Install Orvia's orbital splash and remove the upstream launcher identity from the
+# About screen. The overlay remains deterministic and fails fast if upstream drifts.
+install_native_source(
+    "native-v2/patches/native-src/OrviaOrbitalSplash.kt",
+    "app/src/main/java/me/rerere/rikkahub/ui/components/OrviaOrbitalSplash.kt",
+)
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/RouteActivity.kt",
+    "import androidx.compose.runtime.mutableStateOf\n",
+    "import androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/RouteActivity.kt",
+    "import me.rerere.rikkahub.ui.components.ui.AppToasterHost\n",
+    "import me.rerere.rikkahub.ui.components.ui.AppToasterHost\nimport me.rerere.rikkahub.ui.components.OrviaOrbitalSplash\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/RouteActivity.kt",
+    "                RikkahubTheme {\n                    val startScreen = initialChatScreen\n",
+    """                RikkahubTheme {
+                    var showOrviaIntro by remember {
+                        mutableStateOf(
+                            savedInstanceState == null &&
+                                intent.action == Intent.ACTION_MAIN &&
+                                intent.categories?.contains(Intent.CATEGORY_LAUNCHER) == true
+                        )
+                    }
+                    val startScreen = initialChatScreen
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/RouteActivity.kt",
+    """                        LaunchedEffect(intentWebServerSettings) {
+                            if (intentWebServerSettings) {
+                                navStack.navigate(Screen.SettingWeb)
+                            }
+                        }
+                    }
+                }
+""",
+    """                        LaunchedEffect(intentWebServerSettings) {
+                            if (intentWebServerSettings) {
+                                navStack.navigate(Screen.SettingWeb)
+                            }
+                        }
+                    }
+                    if (showOrviaIntro) {
+                        OrviaOrbitalSplash(onDismiss = { showOrviaIntro = false })
+                    }
+                }
+""",
+)
+
+# About used the upstream launcher's foreground asset. Draw the Orvia emblem
+# directly instead so the old icon never flashes on the About screen.
+replace_once(
+    "ui-core/src/commonMain/kotlin/me/rerere/rikkahub/ui/components/settings/LastChatAboutContent.kt",
+    "import androidx.compose.foundation.Image\n",
+    "import androidx.compose.foundation.Canvas\n",
+)
+replace_once(
+    "ui-core/src/commonMain/kotlin/me/rerere/rikkahub/ui/components/settings/LastChatAboutContent.kt",
+    "import androidx.compose.ui.graphics.graphicsLayer\n",
+    "import androidx.compose.ui.graphics.graphicsLayer\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.geometry.Offset\nimport androidx.compose.ui.geometry.Size\nimport androidx.compose.ui.graphics.drawscope.Stroke\nimport androidx.compose.ui.graphics.drawscope.rotate\n",
+)
+replace_once(
+    "ui-core/src/commonMain/kotlin/me/rerere/rikkahub/ui/components/settings/LastChatAboutContent.kt",
+    "import me.rerere.rikkahub.ui.core.generated.resources.Res\nimport me.rerere.rikkahub.ui.core.generated.resources.ic_launcher_lastchat_foreground\nimport org.jetbrains.compose.resources.painterResource\n",
+    "",
+)
+replace_once(
+    "ui-core/src/commonMain/kotlin/me/rerere/rikkahub/ui/components/settings/LastChatAboutContent.kt",
+    """        Image(
+            painter = painterResource(Res.drawable.ic_launcher_lastchat_foreground),
+            contentDescription = null,
+            modifier = Modifier.size(240.dp),
+        )
+""",
+    """        Canvas(Modifier.size(200.dp)) {
+            val c = center
+            val radius = size.minDimension * 0.31f
+            val cyan = Color(0xFF65E3FF)
+            val violet = Color(0xFF9D8CFF)
+            val mint = Color(0xFF83E8D0)
+            listOf(-52f, 52f, 90f).forEachIndexed { index, angle ->
+                rotate(degrees = angle, pivot = c) {
+                    drawOval(
+                        color = listOf(cyan, violet, mint)[index].copy(alpha = 0.76f),
+                        topLeft = Offset(c.x - radius, c.y - radius * 0.38f),
+                        size = Size(radius * 2f, radius * 0.76f),
+                        style = Stroke(width = 1.8.dp.toPx()),
+                    )
+                }
+            }
+            drawCircle(
+                brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                    colors = listOf(cyan.copy(alpha = 0.42f), Color.Transparent),
+                    center = c,
+                    radius = radius * 1.55f,
+                ),
+                radius = radius * 1.55f,
+                center = c,
+            )
+            drawCircle(color = Color.White, radius = 9.dp.toPx(), center = c)
+            drawCircle(color = cyan, radius = 4.dp.toPx(), center = c)
+        }
+""",
+)
+
 email_overlay = Path("native-v2/patches/apply_orvia_email_overlay.py")
 exec(compile(email_overlay.read_text(encoding="utf-8"), str(email_overlay), "exec"))
 
