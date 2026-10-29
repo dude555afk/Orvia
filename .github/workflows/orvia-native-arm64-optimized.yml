@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/orvia-native-v2-isolated-20261015
+      - feature/orvia-lastchat-kilo-provider
     paths:
       - .github/workflows/orvia-native-arm64-optimized.yml
   workflow_dispatch:
@@ -129,6 +130,8 @@ jobs:
           tree.write(path, encoding="unicode", xml_declaration=True)
           print("Removed notification listener and APK installer permission")
           PY
+      - name: Apply Orvia provider and anonymous Kilo integration
+        run: python3 native-v2/patches/patch_lastchat.py --root native-v2/lastchat
       - name: Install web UI dependencies
         working-directory: native-v2/lastchat/web-ui
         run: npm ci
