@@ -1,25 +1,36 @@
 # Orvia 2.0 Android-native preview
 
-Isolated **Jetpack Compose** prototype for the future Orvia Android client.
-Current Orvia Flutter application remains in place and untouched.
+This work stays isolated from the stable Flutter application. The current preview
+workflow builds the pinned LastChat Kotlin/Jetpack Compose source in
+`native-v2/lastchat`; the older `native-v2/app` skeleton is not the source used
+for the current APK.
 
-## Current milestone
-- Native Kotlin/Compose Android app skeleton
-- Orvia-branded dark Material 3 palette and floating composer
-- Local-only prototype message list; sending does **not** invoke an AI model
-- Separate application ID so this preview does not replace the installed Orvia app
+## Current preview build
 
-## Not yet implemented
-Real model streaming, settings, accounts, persistence, LastChat feature integration, MCP, TTS, chat migration and release workflows.
+- Separate preview application ID: `com.dude555afk.orvia.nativev2.dev`.
+- Orvia branding and ARM64-only release packaging with R8/resource shrinking.
+- CI checks the packaged APK's ABI, archive integrity, size and sensitive
+  permissions, then installs and launches an x86_64 smoke-test build in an
+  Android emulator.
+- `native-v2/patches/apply_orvia_feature_overlay.py` applies asserted
+  Orvia-specific changes to the pinned LastChat checkout during CI only. The
+  upstream LastChat repository/submodule is not edited.
+- The overlay adds the anonymous Kilo gateway preset at
+  `https://ai-gateway.kilo.ai/api/v1`, seeds `kilo-auto/free`, and omits the
+  Authorization header when the configured API key is blank.
 
-## Build
-This folder is an independent Gradle Android project. Open `native-v2/` in Android Studio (JDK 17, Android SDK 35), use Gradle 8.11.1 or newer, and run `:app:assembleDebug`.
-A Gradle wrapper is not yet committed and no build has been verified.
+## Still not migration-complete
 
-## Migration gates
-1. Audit LastChat and Orvia screens, features, permissions, license obligations, and data formats.
-2. Preserve existing branding and required third-party notices.
-3. Validate real feature parity and user-data migration on test devices.
-4. Keep this app separate until regression checks and signed update-path verification pass.
+The native preview is not a replacement for installed Flutter Orvia yet.
+Orvia-only features such as its secure IMAP/SMTP email integration and Edge TTS
+must be ported and tested before feature parity can be claimed. Existing chats,
+settings, credentials and other user data are not migrated. Device testing on a
+real phone and a stable signing/update path are also outstanding.
 
-License: AGPL-3.0, consistent with the repository root. This prototype does not contain transplanted LastChat source.
+## Release safety
+
+- Keep the stable Flutter branch untouched until feature parity and regression
+  checks pass.
+- Preview builds use a separate package ID and temporary/debug signing; they
+  are not in-place updates for the installed Flutter app.
+- Preserve the upstream LastChat AGPL-3.0 license and required attribution.
