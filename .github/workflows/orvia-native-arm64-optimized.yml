@@ -221,11 +221,23 @@ jobs:
           AAPT="$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -type f -name aapt | sort -V | tail -1)"
           test -x "$AAPT"
           "$AAPT" dump xmltree "$APK" AndroidManifest.xml > /tmp/orvia-native-manifest.txt
-          if grep -E 'android.permission.(BIND_NOTIFICATION_LISTENER_SERVICE|BIND_ACCESSIBILITY_SERVICE|READ_SMS|RECEIVE_SMS|REQUEST_INSTALL_PACKAGES)|android.service.notification.NotificationListenerService' /tmp/orvia-native-manifest.txt; then
-            echo "Sensitive capability unexpectedly present in packaged APK"
+          if grep -E 'android.permission.(READ_SMS|RECEIVE_SMS|REQUEST_INSTALL_PACKAGES)' /tmp/orvia-native-manifest.txt; then
+            echo "SMS interception or APK-installer capability unexpectedly present in packaged APK"
             exit 1
           fi
-          echo "PASS: no notification listener, accessibility binding, SMS interception, or APK installer permission"
+          # These integrations are intentional, opt-in Orvia features. The
+          # notification listener requires Android's explicit Notification
+          # Access toggle; phone control requires explicit Accessibility enablement.
+          if ! grep -q 'android.permission.BIND_NOTIFICATION_LISTENER_SERVICE' /tmp/orvia-native-manifest.txt; then
+            echo "Expected user-enabled notification tools are missing"
+            exit 1
+          fi
+          if ! grep -q 'android.permission.BIND_ACCESSIBILITY_SERVICE' /tmp/orvia-native-manifest.txt ||
+             ! grep -q 'OrviaPhoneControlService' /tmp/orvia-native-manifest.txt; then
+            echo "Expected opt-in Orvia phone control service is missing"
+            exit 1
+          fi
+          echo "PASS: opt-in notification and phone-control services are present; SMS and APK-installer capabilities are absent"
       - name: Upload optimized ARM64 APK
         uses: actions/upload-artifact@v4
         with:
@@ -269,4 +281,4 @@ jobs:
           # The action invokes script lines separately with /bin/sh. Keep all shell
           # control flow inside one bash -lc command so loops/conditionals stay intact.
           script: |
-            bash -lc 'set -eu; PACKAGE="com.dude555afk.orvia.nativev2.dev"; adb start-server; adb wait-for-device; adb devices -l; adb logcat -c; adb install -r "$GITHUB_WORKSPACE/orvia-native-smoke.apk"; adb shell am force-stop "$PACKAGE"; adb shell am start -W -n "$PACKAGE/me.rerere.rikkahub.RouteActivity"; sleep 12; if ! adb shell pidof "$PACKAGE" >/dev/null; then echo "App process exited after launch; recent Android runtime logs:"; adb logcat -d -t 4000 -s AndroidRuntime:E System.err:E; exit 1; fi; if adb logcat -d -t 4000 -s AndroidRuntime:E | grep -E "FATAL EXCEPTION|Fatal signal"; then echo "Crash detected after launching preview"; exit 1; fi; echo "PASS: Orvia/LastChat preview process remained alive after startup"'
+            bash -lc 'set -eu; PACKAGE="com.dude555afk.orvia.nativev2.dev"; adb start-server; adb wait-for-device; adb devices -l; adb logcat -c; adb install -r "$GITHUB_WORKSPACE/orvia-native-smoke.apk"; adb shell am force-stop "$PACKAGE"; adb shell am start -W -n "$PACKAGE/me.rerere.rikkahub.RouteActivity"; sleep 12; if ! adb shell pidof "$PACKAGE" >/dev/null; then echo "App process exited after launch; recent Android runtime logs:"; adb logcat -d -t 4000 -s AndroidRuntime:E System.err:E; exit 1; fi; if adb logcat -d -t 4000 -s AndroidRuntime:E | grep -E "FATAL EXCEPTION|Fatal signal"; then echo "Crash detected after launching preview"; exit 1; fi; echo "PASS: Orvia native preview process remained alive after startup"'
