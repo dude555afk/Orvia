@@ -661,5 +661,8 @@ replace_once(
 ''',
 )
 
+email_overlay = Path("native-v2/patches/apply_orvia_email_overlay.py")
+exec(compile(email_overlay.read_text(encoding="utf-8"), str(email_overlay), "exec"))
+
 print("PASS: Orvia Kilo route plus native Edge neural TTS settings, token provider, playback dispatch, and token test are installed.")
 
