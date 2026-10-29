@@ -256,7 +256,7 @@ replace_once(
 )
 replace_once(
     "app/src/main/res/values/strings.xml",
-    '    <string name="assistant_page_local_tools_image_generation_title">',
+    '    <string name="assistant_page_local_tools_image_generation_title" translatable="false">',
     '    <string name="assistant_page_local_tools_email_title">Email</string>\n    <string name="assistant_page_local_tools_email_desc">Read and search inboxes; outgoing messages require approval.</string>\n    <string name="assistant_page_local_tools_image_generation_title">',
 )
 
