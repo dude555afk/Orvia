@@ -591,7 +591,7 @@ replace_once(
     "tts/src/main/java/me/rerere/tts/provider/TTSVoiceResolution.kt",
     "        is TTSProviderSetting.SystemTTS -> copy(\n",
     '''        is TTSProviderSetting.EdgeNeural -> copy(
-            voice = providerVoiceId ?: voice,
+            voice = providerVoiceId ?: this.voice,
         )
 
         is TTSProviderSetting.SystemTTS -> copy(
