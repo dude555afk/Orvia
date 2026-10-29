@@ -306,6 +306,8 @@ replace_once(
     ),
 )
 
+private val ORVIA_HIDDEN_TTS_PROVIDER_NAMES = setOf("minimax", "qwen", "dashscope")
+
 fun ModelCatalogSnapshot.toTTSProviderPresets()""",
     """    TTSProviderPreset(
         name = "OpenRouter",
@@ -315,6 +317,8 @@ fun ModelCatalogSnapshot.toTTSProviderPresets()""",
         customIconUri = "icons/openrouter.svg".toCatalogIconUrl(),
     ),
 ).filterNot { it.name.equals("MiniMax", ignoreCase = true) || it.name.equals("Qwen", ignoreCase = true) }
+
+private val ORVIA_HIDDEN_TTS_PROVIDER_NAMES = setOf("minimax", "qwen", "dashscope")
 
 fun ModelCatalogSnapshot.toTTSProviderPresets()""",
 )
