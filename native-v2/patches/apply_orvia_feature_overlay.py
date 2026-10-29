@@ -1107,6 +1107,131 @@ replace_once(
 """,
 )
 
+
+# Wire the second device-tool option after the phone-control tool was added.
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    """        if (options.contains(LocalToolOption.OrviaPhoneControl)) {
+            tools.add(orviaPhoneControlTool)
+        }
+""",
+    """        if (options.contains(LocalToolOption.OrviaPhoneControl)) {
+            tools.add(orviaPhoneControlTool)
+        }
+        if (options.contains(LocalToolOption.OrviaDeviceTools)) {
+            tools.add(orviaDeviceToolsTool)
+        }
+""",
+)
+
+# Make native device data tools discoverable beside the existing local tools.
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/detail/AssistantLocalToolSubPage.kt",
+    "import android.content.Intent\n",
+    "import android.Manifest\nimport android.content.Intent\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/detail/AssistantLocalToolSubPage.kt",
+    """    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+""",
+    """    val orviaDevicePermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {}
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/detail/AssistantLocalToolSubPage.kt",
+    """        LocalToolCard(
+            title = stringResource(R.string.orvia_phone_control_title),
+""",
+    """        LocalToolCard(
+            title = stringResource(R.string.orvia_device_tools_title),
+            description = stringResource(R.string.orvia_device_tools_desc),
+            isEnabled = assistant.localTools.contains(LocalToolOption.OrviaDeviceTools),
+            onToggle = { enabled ->
+                val updated = if (enabled) {
+                    assistant.localTools + LocalToolOption.OrviaDeviceTools
+                } else {
+                    assistant.localTools - LocalToolOption.OrviaDeviceTools
+                }
+                onUpdate(assistant.copy(localTools = updated))
+                if (enabled) {
+                    orviaDevicePermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.READ_CALENDAR,
+                            Manifest.permission.WRITE_CALENDAR,
+                        )
+                    )
+                }
+            },
+        )
+
+        LocalToolCard(
+            title = stringResource(R.string.orvia_phone_control_title),
+""",
+)
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/detail/AssistantToolsSubPage.kt",
+    "import android.content.Intent\n",
+    "import android.Manifest\nimport android.content.Intent\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/detail/AssistantToolsSubPage.kt",
+    "    fun requestNotificationAccess() {\n",
+    """    val orviaDevicePermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {}
+
+    fun requestNotificationAccess() {
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/detail/AssistantToolsSubPage.kt",
+    """            SettingGroupItem(
+                title = stringResource(R.string.orvia_phone_control_title),
+""",
+    """            SettingGroupItem(
+                title = stringResource(R.string.orvia_device_tools_title),
+                subtitle = stringResource(R.string.orvia_device_tools_desc),
+                trailing = {
+                    HapticSwitch(
+                        checked = assistant.localTools.contains(LocalToolOption.OrviaDeviceTools),
+                        onCheckedChange = { enabled ->
+                            val updated = if (enabled) {
+                                assistant.localTools + LocalToolOption.OrviaDeviceTools
+                            } else {
+                                assistant.localTools - LocalToolOption.OrviaDeviceTools
+                            }
+                            onUpdate(assistant.copy(localTools = updated))
+                            if (enabled) {
+                                orviaDevicePermissionLauncher.launch(
+                                    arrayOf(
+                                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                                        Manifest.permission.READ_CALENDAR,
+                                        Manifest.permission.WRITE_CALENDAR,
+                                    )
+                                )
+                            }
+                        },
+                    )
+                },
+            )
+
+            SettingGroupItem(
+                title = stringResource(R.string.orvia_phone_control_title),
+""",
+)
+
 email_overlay = Path("native-v2/patches/apply_orvia_email_overlay.py")
 exec(compile(email_overlay.read_text(encoding="utf-8"), str(email_overlay), "exec"))
 
