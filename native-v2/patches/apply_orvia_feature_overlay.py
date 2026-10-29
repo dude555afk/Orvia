@@ -251,6 +251,7 @@ replace_in_file(
     "app/src/main/res/values/strings.xml",
     [
         ("LastChat - Open Source AI Assistant", "Orvia - Private AI Assistant"),
+        ("Website: https://rikka-ai.com/", "Source: https://github.com/dude555afk/Orvia"),
         ("LastChat Workspace Setup", "Orvia Workspace Setup"),
         ("LastChat will auto-detect", "Orvia will auto-detect"),
         ("Use LastChat on your network", "Use Orvia on your network"),
@@ -321,6 +322,24 @@ fun ModelCatalogSnapshot.toTTSProviderPresets()""",
 private val ORVIA_HIDDEN_TTS_PROVIDER_NAMES = setOf("minimax", "qwen", "dashscope")
 
 fun ModelCatalogSnapshot.toTTSProviderPresets()""",
+)
+
+# The About screen uses a Compose Multiplatform-generated shared icon.
+# Point its resource generation at the same Orvia logo as the launcher.
+replace_once(
+    "ui-core/build.gradle.kts",
+    'from(rootProject.file("app/src/main/res/mipmap-xxxhdpi/ic_launcher_lastchat_foreground.png")) {',
+    'from(rootProject.file("app/src/main/res/drawable-nodpi/orvia_logo.png")) {',
+)
+replace_once(
+    "ui-core/src/commonMain/kotlin/me/rerere/rikkahub/ui/components/settings/LastChatAboutContent.kt",
+    "import me.rerere.rikkahub.ui.core.generated.resources.ic_launcher_lastchat_foreground",
+    "import me.rerere.rikkahub.ui.core.generated.resources.orvia_logo",
+)
+replace_once(
+    "ui-core/src/commonMain/kotlin/me/rerere/rikkahub/ui/components/settings/LastChatAboutContent.kt",
+    "painterResource(Res.drawable.ic_launcher_lastchat_foreground)",
+    "painterResource(Res.drawable.orvia_logo)",
 )
 
 # Strip Chinese-locale resources from this native preview; other locales fall
@@ -411,6 +430,9 @@ assert 'Kilo Free Gateway' in onboarding_vm and 'kilo-auto/free' in onboarding_v
 assert 'allowBlankKey = selectedGuidedProvider?.name == "Kilo Free Gateway"' in onboarding_page
 assert 'R.drawable.orvia_logo' in onboarding_page
 assert 'https://github.com/dude555afk/Orvia' in (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingAboutPage.kt").read_text(encoding="utf-8")
+assert 'orvia_logo.png' in (ROOT / "ui-core/build.gradle.kts").read_text(encoding="utf-8")
+about_component = (ROOT / "ui-core/src/commonMain/kotlin/me/rerere/rikkahub/ui/components/settings/LastChatAboutContent.kt").read_text(encoding="utf-8")
+assert 'Res.drawable.orvia_logo' in about_component
 tts_presets = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/components/TTSProviderPresets.kt").read_text(encoding="utf-8")
 assert 'ORVIA_HIDDEN_TTS_PROVIDER_NAMES' in tts_presets
 assert 'it.name.equals("MiniMax", ignoreCase = true)' in tts_presets
