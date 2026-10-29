@@ -716,6 +716,259 @@ replace_once(
 """,
 )
 
+
+# Port Orvia's accessibility-driven phone control into the native preview.
+# This is explicitly opt-in at Android Settings and every AI tool invocation
+# requires user approval before reading or controlling the device.
+install_native_source(
+    "native-v2/patches/native-src/OrviaPhoneControlService.kt",
+    "app/src/main/java/me/rerere/rikkahub/service/orvia/OrviaPhoneControlService.kt",
+)
+install_native_source(
+    "native-v2/patches/native-src/orvia_phone_control_service.xml",
+    "app/src/main/res/xml/orvia_phone_control_service.xml",
+)
+
+replace_once(
+    "app/src/main/AndroidManifest.xml",
+    "  <application\n",
+    """  <queries>
+    <intent>
+      <action android:name="android.intent.action.MAIN" />
+      <category android:name="android.intent.category.LAUNCHER" />
+    </intent>
+  </queries>
+
+  <application
+""",
+)
+replace_once(
+    "app/src/main/AndroidManifest.xml",
+    """    <service
+        android:name=".service.AssistantNotificationListener"
+""",
+    """    <service
+        android:name="me.rerere.rikkahub.service.orvia.OrviaPhoneControlService"
+        android:label="@string/orvia_phone_control_service_label"
+        android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+        android:exported="true">
+      <intent-filter>
+        <action android:name="android.accessibilityservice.AccessibilityService" />
+      </intent-filter>
+      <meta-data
+          android:name="android.accessibilityservice"
+          android:resource="@xml/orvia_phone_control_service" />
+    </service>
+
+    <service
+        android:name=".service.AssistantNotificationListener"
+""",
+)
+replace_once(
+    "app/src/main/res/values/strings.xml",
+    "</resources>",
+    """    <string name="orvia_phone_control_title">Orvia phone control</string>
+    <string name="orvia_phone_control_desc">Read the visible screen and control apps after you enable Orvia in Android Accessibility settings. Every assistant action requires your approval.</string>
+    <string name="orvia_phone_control_service_label">Orvia phone control</string>
+    <string name="orvia_phone_control_service_description">Allows Orvia to read visible app content and perform explicitly approved taps, gestures, and navigation actions.</string>
+</resources>""",
+)
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    "import kotlinx.serialization.json.JsonDecoder\n",
+    "import kotlinx.coroutines.suspendCancellableCoroutine\nimport kotlinx.serialization.json.Json\nimport kotlinx.serialization.json.JsonDecoder\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    "import kotlin.uuid.Uuid\n",
+    "import kotlin.coroutines.resume\nimport me.rerere.rikkahub.service.orvia.OrviaPhoneControlService\nimport kotlin.uuid.Uuid\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    '    @SerialName("image_generation")\n    data object ImageGeneration : LocalToolOption()\n',
+    '    @SerialName("image_generation")\n    data object ImageGeneration : LocalToolOption()\n\n    @Serializable\n    @SerialName("orvia_phone_control")\n    data object OrviaPhoneControl : LocalToolOption()\n',
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    "    LocalToolOption.ImageGeneration -> listOf(\n",
+    """    LocalToolOption.OrviaPhoneControl -> listOf(
+        LocalToolDefinitionPreview(
+            name = "orvia_phone_control",
+            description = "Read the visible screen or perform an explicitly approved Android UI action. Requires Orvia phone control to be enabled in Android Accessibility settings.",
+            schema = InputSchema.Obj(
+                properties = buildJsonObject {
+                    put("action", buildJsonObject {
+                        put("type", "string")
+                        put("description", "One of read_screen, list_apps, open_app, tap, long_press, set_text, scroll, swipe, back, home, recents, notifications, quick_settings")
+                    })
+                    put("snapshot_id", buildJsonObject { put("type", "string") })
+                    put("node_id", buildJsonObject { put("type", "string") })
+                    put("package_name", buildJsonObject { put("type", "string") })
+                    put("text", buildJsonObject { put("type", "string") })
+                    put("direction", buildJsonObject { put("type", "string") })
+                    put("x", buildJsonObject { put("type", "number") })
+                    put("y", buildJsonObject { put("type", "number") })
+                    put("end_x", buildJsonObject { put("type", "number") })
+                    put("end_y", buildJsonObject { put("type", "number") })
+                    put("duration_ms", buildJsonObject { put("type", "integer") })
+                },
+                required = listOf("action"),
+            ),
+        ),
+    )
+    LocalToolOption.ImageGeneration -> listOf(
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    "    private fun prepareTtsText(text: String): String {\n",
+    """    private val orviaPhoneControlActions = setOf(
+        "read_screen", "list_apps", "open_app", "quick_settings",
+        "back", "home", "recents", "notifications",
+        "tap", "long_press", "set_text", "scroll", "swipe",
+    )
+
+    private val orviaPhoneControlTool by lazy {
+        Tool(
+            name = "orvia_phone_control",
+            description = "Read the visible Android screen and interact with apps. This can expose personal on-screen information or change device state, so each call requires user approval and Android Accessibility access.",
+            parameters = {
+                InputSchema.Obj(
+                    properties = buildJsonObject {
+                        put("action", buildJsonObject {
+                            put("type", "string")
+                            put("description", "One of read_screen, list_apps, open_app, tap, long_press, set_text, scroll, swipe, back, home, recents, notifications, quick_settings")
+                        })
+                        put("snapshot_id", buildJsonObject { put("type", "string") })
+                        put("node_id", buildJsonObject { put("type", "string") })
+                        put("package_name", buildJsonObject { put("type", "string") })
+                        put("text", buildJsonObject { put("type", "string") })
+                        put("direction", buildJsonObject { put("type", "string") })
+                        put("x", buildJsonObject { put("type", "number") })
+                        put("y", buildJsonObject { put("type", "number") })
+                        put("end_x", buildJsonObject { put("type", "number") })
+                        put("end_y", buildJsonObject { put("type", "number") })
+                        put("duration_ms", buildJsonObject { put("type", "integer") })
+                    },
+                    required = listOf("action"),
+                )
+            },
+            systemPrompt = { _, _ ->
+                "Use phone control only for the user's explicit request. Read the screen before interacting, carry forward the returned snapshot_id, and verify the result by reading the screen again. Do not submit payments, send messages, delete data, or change credentials/security settings unless the user explicitly asks for that specific action."
+            },
+            approvalMode = ToolApprovalMode.RequiresApproval,
+            execute = { request ->
+                val action = request.jsonObject["action"]?.jsonPrimitive?.contentOrNull.orEmpty()
+                if (action !in orviaPhoneControlActions) {
+                    buildJsonObject {
+                        put("success", false)
+                        put("error", "invalid_action")
+                        put("message", "Unsupported phone control action.")
+                    }
+                } else {
+                    val response = suspendCancellableCoroutine<String> { continuation ->
+                        OrviaPhoneControlService.execute(request.toString()) { payload ->
+                            if (continuation.isActive) continuation.resume(payload)
+                        }
+                    }
+                    runCatching { Json.parseToJsonElement(response) }.getOrElse { failure ->
+                        buildJsonObject {
+                            put("success", false)
+                            put("error", "invalid_response")
+                            put("message", failure.message ?: "Phone control returned an invalid response.")
+                        }
+                    }
+                }
+            },
+        )
+    }
+
+    private fun prepareTtsText(text: String): String {
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    """        if (options.contains(LocalToolOption.Notifications)) {
+            tools.addAll(getNotificationTools(assistantId, conversationId))
+        }
+""",
+    """        if (options.contains(LocalToolOption.Notifications)) {
+            tools.addAll(getNotificationTools(assistantId, conversationId))
+        }
+        if (options.contains(LocalToolOption.OrviaPhoneControl)) {
+            tools.add(orviaPhoneControlTool)
+        }
+""",
+)
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/detail/AssistantLocalToolSubPage.kt",
+    "package me.rerere.rikkahub.ui.pages.assistant.detail\n",
+    "package me.rerere.rikkahub.ui.pages.assistant.detail\n\nimport android.content.Intent\nimport android.provider.Settings\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/detail/AssistantLocalToolSubPage.kt",
+    """        LocalToolCard(
+            title = stringResource(R.string.assistant_page_local_tools_linux_workspace_title),
+""",
+    """        LocalToolCard(
+            title = stringResource(R.string.orvia_phone_control_title),
+            description = stringResource(R.string.orvia_phone_control_desc),
+            isEnabled = assistant.localTools.contains(LocalToolOption.OrviaPhoneControl),
+            onToggle = { enabled ->
+                val newLocalTools = if (enabled) {
+                    assistant.localTools + LocalToolOption.OrviaPhoneControl
+                } else {
+                    assistant.localTools - LocalToolOption.OrviaPhoneControl
+                }
+                onUpdate(assistant.copy(localTools = newLocalTools))
+                if (enabled) {
+                    context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                }
+            },
+        )
+
+        LocalToolCard(
+            title = stringResource(R.string.assistant_page_local_tools_linux_workspace_title),
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/detail/AssistantToolsSubPage.kt",
+    "package me.rerere.rikkahub.ui.pages.assistant.detail\n",
+    "package me.rerere.rikkahub.ui.pages.assistant.detail\n\nimport android.content.Intent\nimport android.provider.Settings\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/detail/AssistantToolsSubPage.kt",
+    """            SettingGroupItem(
+                title = stringResource(R.string.assistant_page_local_tools_linux_workspace_title),
+""",
+    """            SettingGroupItem(
+                title = stringResource(R.string.orvia_phone_control_title),
+                subtitle = stringResource(R.string.orvia_phone_control_desc),
+                trailing = {
+                    HapticSwitch(
+                        checked = assistant.localTools.contains(LocalToolOption.OrviaPhoneControl),
+                        onCheckedChange = { enabled ->
+                            val newLocalTools = if (enabled) {
+                                assistant.localTools + LocalToolOption.OrviaPhoneControl
+                            } else {
+                                assistant.localTools - LocalToolOption.OrviaPhoneControl
+                            }
+                            onUpdate(assistant.copy(localTools = newLocalTools))
+                            if (enabled) {
+                                context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                            }
+                        },
+                    )
+                },
+            )
+
+            SettingGroupItem(
+                title = stringResource(R.string.assistant_page_local_tools_linux_workspace_title),
+""",
+)
+
 email_overlay = Path("native-v2/patches/apply_orvia_email_overlay.py")
 exec(compile(email_overlay.read_text(encoding="utf-8"), str(email_overlay), "exec"))
 
