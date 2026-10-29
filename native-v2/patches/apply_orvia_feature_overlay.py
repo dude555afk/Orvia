@@ -21,6 +21,42 @@ def replace_once(relative_path: str, old: str, new: str, expected: int = 1) -> N
     path.write_text(source.replace(old, new, expected), encoding="utf-8")
 
 
+# Keep China-focused model vendors out of the provider picker. This mirrors
+# the existing Orvia provider cleanup while retaining multi-provider gateways
+# such as OpenRouter, AiHubMix, and Kilo.
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/components/ProviderPresets.kt",
+    """fun ModelCatalogSnapshot.toProviderPresets(): List<ProviderPreset> {
+    return providers
+        .filter { it.preset }
+        .map { it.toProviderPreset(this) }
+}""",
+    """private val ORVIA_HIDDEN_CATALOG_PROVIDER_NAMES = setOf(
+    "deepseek",
+    "alibaba qwen",
+    "zhipu ai",
+    "siliconflow",
+    "volcengine ark",
+    "internlm",
+    "tencent hunyuan",
+    "moonshot ai",
+    "baidu qianfan",
+    "iflytek spark",
+    "baichuan ai",
+    "sensetime",
+    "gitee ai",
+    "stepfun",
+    "360 zhinao",
+)
+
+fun ModelCatalogSnapshot.toProviderPresets(): List<ProviderPreset> {
+    return providers
+        .filter { it.preset }
+        .filterNot { it.name.trim().lowercase() in ORVIA_HIDDEN_CATALOG_PROVIDER_NAMES }
+        .map { it.toProviderPreset(this) }
+}""",
+)
+
 # Make the anonymous Kilo gateway discoverable even when the remote model
 # catalog is available and therefore the LastChat fallback list is not used.
 replace_once(
@@ -295,6 +331,7 @@ presets = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/compone
 provider_list = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingProviderPage.kt").read_text(encoding="utf-8")
 assert 'https://ai-gateway.kilo.ai/api/v1' in presets
 assert 'kilo-auto/free' in presets
+assert 'ORVIA_HIDDEN_CATALOG_PROVIDER_NAMES' in presets
 assert 'ORVIA_PROVIDER_PRESETS' in provider_list
 onboarding_vm = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingVM.kt").read_text(encoding="utf-8")
 onboarding_page = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt").read_text(encoding="utf-8")
