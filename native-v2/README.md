@@ -19,9 +19,14 @@ for the current APK.
   `https://ai-gateway.kilo.ai/api/v1`, seeds `kilo-auto/free` without requiring
   an API key, and omits Authorization entirely for blank-key requests.
 - China-focused chat-provider presets retired by Orvia's provider cleanup are
-  hidden from the native provider picker. The About/onboarding surfaces and
-  app name use Orvia branding; the upstream LastChat source remains pinned and
-  unmodified.
+  hidden from the native provider picker.
+- The build overlay rebrands visible `LastChat`/font-family identifiers to Orvia,
+  replaces the inherited About-page image with an orbital mark, and shows a
+  lightweight, skippable orbital intro only on a cold launcher start.
+- The inherited source checkout remains pinned and is modified only during CI;
+  required third-party license and attribution notices are preserved.
+- See [FEATURE_PARITY.md](FEATURE_PARITY.md) for the feature matrix, unverified
+  inherited functionality, migration blockers and release gates.
 
 ## Still not migration-complete
 
