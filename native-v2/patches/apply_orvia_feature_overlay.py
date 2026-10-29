@@ -721,6 +721,10 @@ replace_once(
 # This is explicitly opt-in at Android Settings and every AI tool invocation
 # requires user approval before reading or controlling the device.
 install_native_source(
+    "native-v2/patches/native-src/OrviaDeviceTools.kt",
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/OrviaDeviceTools.kt",
+)
+install_native_source(
     "native-v2/patches/native-src/OrviaPhoneControlService.kt",
     "app/src/main/java/me/rerere/rikkahub/service/orvia/OrviaPhoneControlService.kt",
 )
@@ -778,6 +782,30 @@ if existing_service is None:
         android_attr + "name": "android.accessibilityservice",
         android_attr + "resource": "@xml/orvia_phone_control_service",
     })
+# Add runtime/special permission declarations for Orvia's device-local tools.
+required_permissions = (
+    ("android.permission.READ_CALENDAR", False),
+    ("android.permission.WRITE_CALENDAR", False),
+    ("android.permission.PACKAGE_USAGE_STATS", True),
+)
+for permission_name, protected in required_permissions:
+    exists = any(
+        item.tag == "uses-permission" and item.get(android_attr + "name") == permission_name
+        for item in manifest_root
+    )
+    if exists:
+        continue
+    attributes = {android_attr + "name": permission_name}
+    if protected:
+        attributes["{http://schemas.android.com/tools}ignore"] = "ProtectedPermissions"
+    permission_element = ET.Element("uses-permission", attributes)
+    anchors = [
+        i for i, item in enumerate(list(manifest_root))
+        if item.tag in ("uses-feature", "queries", "application")
+    ]
+    insert_at = min(anchors) if anchors else len(manifest_root)
+    manifest_root.insert(insert_at, permission_element)
+
 manifest_tree.write(manifest_path, encoding="unicode", xml_declaration=True)
 
 replace_once(
@@ -787,6 +815,8 @@ replace_once(
     <string name="orvia_phone_control_desc">Read the visible screen and control apps after you enable Orvia in Android Accessibility settings. Every assistant action requires your approval.</string>
     <string name="orvia_phone_control_service_label">Orvia phone control</string>
     <string name="orvia_phone_control_service_description">Allows Orvia to read visible app content and perform explicitly approved taps, gestures, and navigation actions.</string>
+    <string name="orvia_device_tools_title">Orvia device tools</string>
+    <string name="orvia_device_tools_desc">Access current location, screen-time summaries, and calendar events. Requires your Android permissions; every assistant request requires approval.</string>
 </resources>""",
 )
 
