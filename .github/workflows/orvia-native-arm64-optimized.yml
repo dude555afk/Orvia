@@ -98,7 +98,7 @@ jobs:
             "configuration_version": "1"
           }
           JSON
-      - name: Remove high-risk unused capabilities from UI-only preview
+      - name: Remove unused APK installer permission while preserving opt-in Orvia integrations
         working-directory: native-v2/lastchat
         shell: bash
         run: |
@@ -113,28 +113,30 @@ jobs:
           tree = ET.parse(path)
           root = tree.getroot()
           android_ns = "{http://schemas.android.com/apk/res/android}"
-          app = root.find("application")
-          assert app is not None
 
-          # The upstream notification listener can read the user's
-          # notifications after it is enabled. The UI preview does not
-          # implement/test that capability and must not declare it.
-          removed = 0
-          for service in list(app.findall("service")):
-              if service.get(android_ns + "permission") == "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE":
-                  app.remove(service)
-                  removed += 1
-          assert removed == 1, f"Expected one notification listener, removed {removed}"
+          # Retain the opt-in notification listener. Orvia's local tools expose
+          # get_notifications, so deleting this service would silently remove a
+          # real user-facing capability. Android still requires explicit user
+          # enablement in Notification Access settings.
+          notification_listener = [
+              service for service in root.find("application").findall("service")
+              if service.get(android_ns + "permission")
+              == "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+          ]
+          assert len(notification_listener) == 1, (
+              f"Expected one opt-in notification listener, found {len(notification_listener)}"
+          )
 
           # This preview is installed manually and does not need the ability
-          # to install other APKs. Keep its permissions least-privilege.
+          # to install other APKs. Keep that unrelated permission removed.
+          removed_installer = 0
           for permission in list(root.findall("uses-permission")):
               if permission.get(android_ns + "name") == "android.permission.REQUEST_INSTALL_PACKAGES":
                   root.remove(permission)
+                  removed_installer += 1
           tree.write(path, encoding="unicode", xml_declaration=True)
-          print("Removed notification listener and APK installer permission")
+          print("Preserved opt-in notification integration; removed APK installer permission")
           PY
-      # Rebuild after Kilo onboarding, Orvia rebranding, and model-preset cleanup.
       - name: Apply Orvia native feature overlay
         run: python3 native-v2/patches/apply_orvia_feature_overlay.py
 
