@@ -20,6 +20,10 @@ for the current APK.
   an API key, and omits Authorization entirely for blank-key requests.
 - China-focused chat-provider presets retired by Orvia's provider cleanup are
   hidden from the native provider picker.
+- Native overlays now add Edge Neural TTS, secure IMAP/SMTP email tools, an
+  opt-in Android accessibility phone-control service, and approval-gated device
+  tools for location, screen-time summaries and calendar events. These source
+  ports are still under CI and device validation.
 - The build overlay rebrands visible `LastChat`/font-family identifiers to Orvia,
   replaces the inherited About-page image with an orbital mark, and shows a
   lightweight, skippable orbital intro only on a cold launcher start.
@@ -31,10 +35,12 @@ for the current APK.
 ## Still not migration-complete
 
 The native preview is not a replacement for installed Flutter Orvia yet.
-Orvia-only features such as its secure IMAP/SMTP email integration and Edge TTS
-must be ported and tested before feature parity can be claimed. Existing chats,
-settings, credentials and other user data are not migrated. Device testing on a
-real phone and a stable signing/update path are also outstanding.
+Several Orvia-only features now have first native source ports, including email,
+Edge TTS, phone control, and location/screen-time/calendar tools, but their
+end-to-end behavior still needs emulator and physical-device validation.
+Existing chats, settings, credentials and other user data are not migrated.
+A stable signing/update path is also outstanding. Do not install this preview
+expecting it to update the stable Flutter package in place.
 
 ## Release safety
 
