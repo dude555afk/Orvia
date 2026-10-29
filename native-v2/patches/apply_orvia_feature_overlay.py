@@ -444,4 +444,222 @@ assert "Orvia Native Preview" in (ROOT / "app/src/dev/res/values/strings.xml").r
 assert 'if (key.isNotBlank()) put("Authorization", "Bearer $key")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/OpenAIProvider.kt").read_text(encoding="utf-8")
 assert 'if (apiKey.isNotBlank()) put("Authorization", "Bearer $apiKey")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/openai/ChatCompletionsAPI.kt").read_text(encoding="utf-8")
 assert 'if (apiKey.isNotBlank()) put("Authorization", "Bearer $apiKey")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/openai/ResponseAPI.kt").read_text(encoding="utf-8")
-print("PASS: Orvia Kilo preset and anonymous Authorization handling applied.")
+
+# Install the native Edge provider from Orvia-owned overlay sources. This keeps
+# the LastChat submodule pinned and reproducibly patches it only during CI.
+def install_native_source(source_relative: str, destination_relative: str) -> None:
+    source = Path(source_relative)
+    destination = ROOT / destination_relative
+    if not source.is_file():
+        raise SystemExit(f"Missing native overlay source: {source}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+
+
+install_native_source(
+    "native-v2/patches/native-src/EdgeSecMsGecV2.kt",
+    "tts/src/main/java/me/rerere/tts/provider/android/EdgeSecMsGecV2.kt",
+)
+install_native_source(
+    "native-v2/patches/native-src/EdgeNeuralTTSProvider.kt",
+    "tts/src/main/java/me/rerere/tts/provider/android/EdgeNeuralTTSProvider.kt",
+)
+install_native_source(
+    "native-v2/patches/native-src/EdgeSecMsGecV2Test.kt",
+    "tts/src/test/java/me/rerere/tts/provider/android/EdgeSecMsGecV2Test.kt",
+)
+
+# Model a keyless Edge provider in the native settings data, but keep the
+# transport in the Android TTS manager because LastChat's cross-platform TTS
+# manager does not expose a WebSocket abstraction.
+replace_once(
+    "tts/src/main/java/me/rerere/tts/provider/TTSProviderSetting.kt",
+    '    @Serializable\n    @SerialName("openai")\n',
+    '''    @Serializable
+    @SerialName("edge_neural")
+    data class EdgeNeural(
+        override var id: Uuid = Uuid.random(),
+        override var name: String = "Microsoft Edge TTS",
+        override val voices: List<TTSVoice> = emptyList(),
+        override val customIconUri: String? = null,
+        val voice: String = "en-US-AriaNeural",
+    ) : TTSProviderSetting() {
+        override fun copyProvider(
+            id: Uuid,
+            name: String,
+            voices: List<TTSVoice>,
+            customIconUri: String?,
+        ): TTSProviderSetting = copy(
+            id = id,
+            name = name,
+            voices = voices,
+            customIconUri = customIconUri,
+        )
+    }
+
+    @Serializable
+    @SerialName("openai")
+''',
+)
+replace_once(
+    "tts/src/main/java/me/rerere/tts/provider/TTSProviderSetting.kt",
+    "                PlayHT::class,\n",
+    "                PlayHT::class,\n                EdgeNeural::class,\n",
+)
+replace_once(
+    "tts/src/main/java/me/rerere/tts/provider/CloudTtsManager.kt",
+    '        is TTSProviderSetting.PlayHT -> playHT.generateSpeech(providerSetting, request)\n        is TTSProviderSetting.SystemTTS -> error("System TTS requires a platform provider")',
+    '        is TTSProviderSetting.PlayHT -> playHT.generateSpeech(providerSetting, request)\n        is TTSProviderSetting.EdgeNeural -> error("Microsoft Edge TTS requires the Android WebSocket transport")\n        is TTSProviderSetting.SystemTTS -> error("System TTS requires a platform provider")',
+)
+replace_once(
+    "tts/src/main/java/me/rerere/tts/provider/CloudTtsManager.kt",
+    '''            is TTSProviderSetting.MiniMax,
+            is TTSProviderSetting.Qwen,
+            is TTSProviderSetting.SystemTTS -> emptyList()''',
+    '''            is TTSProviderSetting.MiniMax,
+            is TTSProviderSetting.Qwen,
+            is TTSProviderSetting.EdgeNeural,
+            is TTSProviderSetting.SystemTTS -> emptyList()''',
+)
+replace_once(
+    "tts/src/main/java/me/rerere/tts/provider/android/TTSManager.kt",
+    "    private val systemProvider = SystemTTSProvider(context)\n",
+    "    private val systemProvider = SystemTTSProvider(context)\n    private val edgeNeuralProvider = EdgeNeuralTTSProvider()\n",
+)
+replace_once(
+    "tts/src/main/java/me/rerere/tts/provider/android/TTSManager.kt",
+    "            is TTSProviderSetting.PlayHT -> playHTProvider.generateSpeech(providerSetting, request)\n",
+    "            is TTSProviderSetting.PlayHT -> playHTProvider.generateSpeech(providerSetting, request)\n            is TTSProviderSetting.EdgeNeural -> edgeNeuralProvider.generateSpeech(providerSetting, request)\n",
+)
+replace_once(
+    "tts/src/main/java/me/rerere/tts/provider/android/TTSManager.kt",
+    "                is TTSProviderSetting.PlayHT -> playHTProvider.listModels(providerSetting)\n",
+    "                is TTSProviderSetting.PlayHT -> playHTProvider.listModels(providerSetting)\n                is TTSProviderSetting.EdgeNeural -> emptyList()\n",
+)
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/components/TTSProviderPresets.kt",
+    '''    TTSProviderPreset(
+        name = "System TTS",
+        description = "Local Android system text-to-speech engine",
+        type = TTSProviderSetting.SystemTTS::class,
+        isLocal = true,
+    ),
+''',
+    '''    TTSProviderPreset(
+        name = "System TTS",
+        description = "Local Android system text-to-speech engine",
+        type = TTSProviderSetting.SystemTTS::class,
+        isLocal = true,
+    ),
+    TTSProviderPreset(
+        name = "Microsoft Edge TTS",
+        description = "Microsoft Edge neural voices over the keyless Read Aloud service",
+        type = TTSProviderSetting.EdgeNeural::class,
+        defaultVoice = "en-US-AriaNeural",
+    ),
+''',
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/components/TTSProviderPresets.kt",
+    "    return when (type) {\n        TTSProviderSetting.OpenAI::class -> TTSProviderSetting.OpenAI(\n",
+    '''    return when (type) {
+        TTSProviderSetting.EdgeNeural::class -> TTSProviderSetting.EdgeNeural(
+            name = name,
+            voice = defaultVoice.ifBlank { "en-US-AriaNeural" },
+            customIconUri = customIconUri,
+        )
+
+        TTSProviderSetting.OpenAI::class -> TTSProviderSetting.OpenAI(
+''',
+)
+
+replace_once(
+    "tts/src/main/java/me/rerere/tts/provider/TTSVoiceResolution.kt",
+    "        is TTSProviderSetting.SystemTTS -> TTSVoice(\n",
+    '''        is TTSProviderSetting.EdgeNeural -> TTSVoice(
+            id = id(),
+            name = voice,
+            providerVoiceId = voice,
+            requiresNetwork = true,
+        )
+
+        is TTSProviderSetting.SystemTTS -> TTSVoice(
+''',
+)
+replace_once(
+    "tts/src/main/java/me/rerere/tts/provider/TTSVoiceResolution.kt",
+    "        is TTSProviderSetting.SystemTTS -> copy(\n",
+    '''        is TTSProviderSetting.EdgeNeural -> copy(
+            voice = providerVoiceId ?: voice,
+        )
+
+        is TTSProviderSetting.SystemTTS -> copy(
+''',
+)
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/components/TTSProviderConfigure.kt",
+    "            is TTSProviderSetting.SystemTTS -> SystemTTSConfiguration(setting, showVoiceFields, onValueChange)\n",
+    '''            is TTSProviderSetting.SystemTTS -> SystemTTSConfiguration(setting, showVoiceFields, onValueChange)
+            is TTSProviderSetting.EdgeNeural -> {
+                FormItem(
+                    label = { Text("Edge neural voice") },
+                    description = { Text("Use a Microsoft Edge voice ID, for example en-US-AriaNeural. No API key is required.") },
+                ) {
+                    OutlinedTextField(
+                        value = setting.voice,
+                        onValueChange = { voice -> onValueChange(setting.copy(voice = voice)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("en-US-AriaNeural") },
+                        singleLine = true,
+                        shape = me.rerere.rikkahub.ui.theme.AppShapes.InputField,
+                    )
+                }
+            }
+''',
+)
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/SecretKeyManager.kt",
+    '                is TTSProviderSetting.SystemTTS -> ""\n',
+    '                is TTSProviderSetting.SystemTTS -> ""\n                is TTSProviderSetting.EdgeNeural -> ""\n',
+    expected=2,
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/SecretKeyManager.kt",
+    "            is TTSProviderSetting.SystemTTS -> provider\n",
+    "            is TTSProviderSetting.SystemTTS -> provider\n            is TTSProviderSetting.EdgeNeural -> provider\n",
+    expected=2,
+)
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingTTSProviderDetailPage.kt",
+    "        is TTSProviderSetting.SystemTTS -> emptyList()\n",
+    '''        is TTSProviderSetting.EdgeNeural -> listOf(
+            TTSVoice(
+                name = provider.voice,
+                providerVoiceId = provider.voice,
+                requiresNetwork = true,
+            )
+        )
+        is TTSProviderSetting.SystemTTS -> emptyList()
+''',
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingTTSProviderDetailPage.kt",
+    "        is TTSProviderSetting.Cartesia,\n        is TTSProviderSetting.FishAudio,\n        is TTSProviderSetting.PlayHT -> TTSVoice(\n",
+    '''        is TTSProviderSetting.EdgeNeural -> TTSVoice(
+            name = displayName,
+            providerVoiceId = trimmedVoiceId,
+            requiresNetwork = true,
+        )
+
+        is TTSProviderSetting.Cartesia,
+        is TTSProviderSetting.FishAudio,
+        is TTSProviderSetting.PlayHT -> TTSVoice(
+''',
+)
+
+print("PASS: Orvia Kilo route plus native Edge neural TTS settings, token provider, playback dispatch, and token test are installed.")
+
