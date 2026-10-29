@@ -176,6 +176,64 @@ replace_once(
     """                enabled = (allowBlankKey || apiKey.isNotBlank()) && !loading,""",
 )
 
+
+# Apply Orvia branding to the first-run flow, About screen, and native settings.
+def replace_in_file(relative_path: str, replacements: list[tuple[str, str]]) -> None:
+    path = ROOT / relative_path
+    source = path.read_text(encoding="utf-8")
+    for old, new in replacements:
+        count = source.count(old)
+        if count != 1:
+            raise SystemExit(
+                f"{relative_path}: expected one branding marker {old!r}, found {count}; "
+                "refusing a blind replacement"
+            )
+        source = source.replace(old, new, 1)
+    path.write_text(source, encoding="utf-8")
+
+
+replace_in_file(
+    "app/src/dev/res/values/strings.xml",
+    [("<string name=\"app_name\">LastChat_dev</string>",
+      "<string name=\"app_name\">Orvia Native Preview</string>")],
+)
+replace_in_file(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingAboutPage.kt",
+    [("https://github.com/Cocolalilal/LastChat", "https://github.com/dude555afk/Orvia")],
+)
+replace_in_file(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt",
+    [
+        ("return to LastChat for the", "return to Orvia for the"),
+        ("up on LastChat!", "up on Orvia!"),
+        ("through LastChat:", "through Orvia:"),
+        ("using LastChat without", "using Orvia without"),
+        ("R.drawable.lastchat_setup_icon", "R.drawable.orvia_logo"),
+    ],
+)
+replace_in_file(
+    "app/src/main/res/values/strings.xml",
+    [
+        ("LastChat - Open Source AI Assistant", "Orvia - Private AI Assistant"),
+        ("LastChat Workspace Setup", "Orvia Workspace Setup"),
+        ("LastChat will auto-detect", "Orvia will auto-detect"),
+        ("Use LastChat on your network", "Use Orvia on your network"),
+        ("LastChat in a browser", "Orvia in a browser"),
+        ("LastChat web server", "Orvia web server"),
+        ("Ask LastChat", "Ask Orvia"),
+        ("LastChat Assistant", "Orvia Assistant"),
+        ("make LastChat your device assistant", "make Orvia your device assistant"),
+        ("LastChat is your default assistant", "Orvia is your default assistant"),
+        ('look for \\\\\"LastChat\\\\\" in the toolbar', 'look for \\\\\"Orvia\\\\\" in the toolbar'),
+        ('look for \\\\\"LastChat\\\\\" in the selection toolbar', 'look for \\\\\"Orvia\\\\\" in the selection toolbar'),
+        ("Update LastChat Catalog", "Update Orvia Catalog"),
+        (" LastChat Catalog", " Orvia Catalog"),
+        ("Fetch latest LastChat Catalog", "Fetch latest Orvia Catalog"),
+        ("Updating the LastChat Catalog...", "Updating the Orvia Catalog..."),
+        ("LastChat Catalog updated", "Orvia Catalog updated"),
+    ],
+)
+
 # The Kilo anonymous route must not receive "Authorization: Bearer " when no
 # key is configured. Keep normal Authorization headers for keyed providers.
 replace_once(
@@ -241,6 +299,9 @@ onboarding_vm = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboardin
 onboarding_page = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt").read_text(encoding="utf-8")
 assert 'Kilo Free Gateway' in onboarding_vm and 'kilo-auto/free' in onboarding_vm
 assert 'allowBlankKey = selectedGuidedProvider?.name == "Kilo Free Gateway"' in onboarding_page
+assert 'R.drawable.orvia_logo' in onboarding_page
+assert 'https://github.com/dude555afk/Orvia' in (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingAboutPage.kt").read_text(encoding="utf-8")
+assert "Orvia Native Preview" in (ROOT / "app/src/dev/res/values/strings.xml").read_text(encoding="utf-8")
 assert 'if (key.isNotBlank()) put("Authorization", "Bearer $key")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/OpenAIProvider.kt").read_text(encoding="utf-8")
 assert 'if (apiKey.isNotBlank()) put("Authorization", "Bearer $apiKey")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/openai/ChatCompletionsAPI.kt").read_text(encoding="utf-8")
 assert 'if (apiKey.isNotBlank()) put("Authorization", "Bearer $apiKey")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/openai/ResponseAPI.kt").read_text(encoding="utf-8")
