@@ -18,8 +18,8 @@ internal object EdgeSecMsGecV2 {
     private const val MASK = -1
 
     private val initial = intArrayOf(
-        0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A,
-        0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19,
+        0x6A09E667, 0xBB67AE85.toInt(), 0x3C6EF372, 0xA54FF53A.toInt(),
+        0x510E527F, 0x9B05688C.toInt(), 0x1F83D9AB, 0x5BE0CD19.toInt(),
     )
     private val seededState = intArrayOf(
         0xFD9FBEA2.toInt(), 0x91243CE7.toInt(), 0xBE499094.toInt(), 0xCD2E1E0A.toInt(),
@@ -42,7 +42,7 @@ internal object EdgeSecMsGecV2 {
         0xC6E00BF3.toInt(), 0xD5A79147.toInt(), 0x06CA6351, 0x14292967,
         0x27B70A85, 0x2E1B2138, 0x4D2C6DFC, 0x53380D13,
         0x650A7354, 0x766A0ABB.toInt(), 0x81C2C92E.toInt(), 0x92722C85.toInt(),
-        0xA2BFE8A1.toInt(), 0xA81A664B.toInt(), 0xC24B8B70, 0xC76C51A3.toInt(),
+        0xA2BFE8A1.toInt(), 0xA81A664B.toInt(), 0xC24B8B70.toInt(), 0xC76C51A3.toInt(),
         0xD192E819.toInt(), 0xD6990624.toInt(), 0xF40E3585.toInt(), 0x106AA070,
         0x19A4C116, 0x1E376C08, 0x2748774C, 0x34B0BCB5,
         0x391C0CB3, 0x4ED8AA4A, 0x5B9CCA4F, 0x682E6FF3,
