@@ -32,6 +32,16 @@ replace_once(
         description = "Anonymous Kilo AI gateway for supported free models. No API key required.",
         type = ProviderSetting.OpenAI::class,
         baseUrl = "https://ai-gateway.kilo.ai/api/v1",
+        setupRecommended = true,
+        setupOrder = 0,
+        setupDescription = "No API key required. Uses Kilo's free model router.",
+        setupModelIds = listOf("kilo-auto/free"),
+        setupDefaults = CatalogSetupDefaults(
+            chat = "kilo-auto/free",
+            title = "kilo-auto/free",
+            summarizer = "kilo-auto/free",
+            ocr = "kilo-auto/free",
+        ),
     ),
 )
 
@@ -81,6 +91,92 @@ replace_once(
         }
         withOrviaPresets.withSpecialProviderPresets().filterNot { preset ->
 """,
+)
+
+# Make Kilo a first-run guided option as well as a provider-settings preset.
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingVM.kt",
+    "import me.rerere.rikkahub.ui.pages.setting.components.ProviderPreset\n",
+    "import me.rerere.rikkahub.ui.pages.setting.components.ProviderPreset\n"
+    "import me.rerere.rikkahub.ui.pages.setting.components.ORVIA_PROVIDER_PRESETS\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingVM.kt",
+    """    fun providerPresets(snapshot: ModelCatalogSnapshot?): List<ProviderPreset> {
+        return (snapshot?.toProviderPresets() ?: emptyList())
+            .withSpecialProviderPresets()
+            .filterNot { it.type == ProviderSetting.ComfyUI::class }
+    }""",
+    """    fun providerPresets(snapshot: ModelCatalogSnapshot?): List<ProviderPreset> {
+        val catalogPresets = snapshot?.toProviderPresets() ?: emptyList()
+        val allPresets = catalogPresets + ORVIA_PROVIDER_PRESETS.filterNot { orviaPreset ->
+            catalogPresets.any { it.name.equals(orviaPreset.name, ignoreCase = true) }
+        }
+        return allPresets
+            .withSpecialProviderPresets()
+            .filterNot { it.type == ProviderSetting.ComfyUI::class }
+    }""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingVM.kt",
+    """                val providerModels = fetchProviderModels(keyedProvider)
+                val setupModels = providerModels.orderedSetupModels(preset.setupModelIds)""",
+    """                val fetchedModels = fetchProviderModels(keyedProvider)
+                val providerModels = if (
+                    preset.name.equals("Kilo Free Gateway", ignoreCase = true) &&
+                    fetchedModels.none { it.modelId == "kilo-auto/free" }
+                ) {
+                    fetchedModels + Model(modelId = "kilo-auto/free", displayName = "Kilo Auto Free")
+                } else {
+                    fetchedModels
+                }
+                val setupModels = providerModels.orderedSetupModels(preset.setupModelIds)""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt",
+    """                SetupPage.GuidedPasteKey -> PasteKeyPage(
+                    text = "Paste your API key here and
+we’ll handle the rest.",
+                    apiKey = apiKey,
+                    onApiKeyChange = { apiKey = it },
+                    loading = guidedModelsLoading,
+                    onContinue = {""",
+    """                SetupPage.GuidedPasteKey -> PasteKeyPage(
+                    text = if (selectedGuidedProvider?.name == "Kilo Free Gateway") {
+                        "Kilo Free Gateway does not need an API key.
+Continue to set up free routing."
+                    } else {
+                        "Paste your API key here and
+we’ll handle the rest."
+                    },
+                    apiKey = apiKey,
+                    onApiKeyChange = { apiKey = it },
+                    loading = guidedModelsLoading,
+                    allowBlankKey = selectedGuidedProvider?.name == "Kilo Free Gateway",
+                    onContinue = {""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt",
+    """private fun PasteKeyPage(
+    text: String,
+    apiKey: String,
+    onApiKeyChange: (String) -> Unit,
+    loading: Boolean = false,
+    onContinue: () -> Unit,
+) {""",
+    """private fun PasteKeyPage(
+    text: String,
+    apiKey: String,
+    onApiKeyChange: (String) -> Unit,
+    loading: Boolean = false,
+    allowBlankKey: Boolean = false,
+    onContinue: () -> Unit,
+) {""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt",
+    """                enabled = apiKey.isNotBlank() && !loading,""",
+    """                enabled = (allowBlankKey || apiKey.isNotBlank()) && !loading,""",
 )
 
 # The Kilo anonymous route must not receive "Authorization: Bearer " when no
@@ -144,6 +240,10 @@ provider_list = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/S
 assert 'https://ai-gateway.kilo.ai/api/v1' in presets
 assert 'kilo-auto/free' in presets
 assert 'ORVIA_PROVIDER_PRESETS' in provider_list
+onboarding_vm = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingVM.kt").read_text(encoding="utf-8")
+onboarding_page = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt").read_text(encoding="utf-8")
+assert 'Kilo Free Gateway' in onboarding_vm and 'kilo-auto/free' in onboarding_vm
+assert 'allowBlankKey = selectedGuidedProvider?.name == "Kilo Free Gateway"' in onboarding_page
 assert 'if (key.isNotBlank()) put("Authorization", "Bearer $key")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/OpenAIProvider.kt").read_text(encoding="utf-8")
 assert 'if (apiKey.isNotBlank()) put("Authorization", "Bearer $apiKey")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/openai/ChatCompletionsAPI.kt").read_text(encoding="utf-8")
 assert 'if (apiKey.isNotBlank()) put("Authorization", "Bearer $apiKey")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/openai/ResponseAPI.kt").read_text(encoding="utf-8")
