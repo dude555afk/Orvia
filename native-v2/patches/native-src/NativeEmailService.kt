@@ -214,8 +214,15 @@ class NativeEmailService(context: Context) {
         replyUid: Long? = null,
     ): JsonObject = withContext(Dispatchers.IO) {
         val account = resolve(address).first()
-        require(to.length <= 1000 && to.split(",").all { EMAIL.matches(it.trim()) }) {
+        require(to.length <= 1000 && !to.contains('\r') && !to.contains('\n')) {
             "Recipient email address is invalid."
+        }
+        if (replyUid == null) {
+            require(to.isNotBlank() && to.split(",").all { EMAIL.matches(it.trim()) }) {
+                "Recipient email address is invalid."
+            }
+        } else if (to.isNotBlank()) {
+            require(to.split(",").all { EMAIL.matches(it.trim()) }) { "Recipient email address is invalid." }
         }
         require(subject.length <= 998 && !subject.contains('\r') && !subject.contains('\n')) {
             "Subject is invalid."
