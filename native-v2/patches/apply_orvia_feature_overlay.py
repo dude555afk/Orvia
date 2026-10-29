@@ -1041,7 +1041,46 @@ def apply_orvia_brand_cleanup() -> int:
 
 
 rebranded_files = apply_orvia_brand_cleanup()
-print(f"PASS: Orvia identity cleanup updated {rebranded_files} source/resource files; legal notices and stable lowercase compatibility namespaces were preserved.")
+
+# A successful cleanup should prove that source and UI resources no longer
+# contain the inherited brand. Legal notice files and stable lowercase
+# compatibility/package IDs are intentionally excluded.
+def find_remaining_brand_tokens() -> list[str]:
+    text_suffixes = {
+        ".kt", ".kts", ".xml", ".json", ".html", ".tsx", ".ts", ".js",
+        ".css", ".swift", ".m", ".h", ".plist", ".properties", ".yaml", ".yml",
+    }
+    legal_markers = (
+        "LICENSE", "NOTICE", "COPYING", "COPYRIGHT", "THIRD_PARTY",
+        "THIRD-PARTY", "PATENTS",
+    )
+    leftovers = []
+    for source_root in (
+        ROOT / "app/src", ROOT / "ui-core/src", ROOT / "iosApp/src",
+        ROOT / "web-ui/app", ROOT / "web-ui/public", ROOT / "common/src",
+        ROOT / "ai/src", ROOT / "tts/src", ROOT / "search/src",
+        ROOT / "workspace/src", ROOT / "document/src", ROOT / "speech/src",
+        ROOT / "highlight/src", ROOT / "mcp/src",
+    ):
+        if not source_root.exists():
+            continue
+        for path in source_root.rglob("*"):
+            if not path.is_file() or path.suffix.lower() not in text_suffixes:
+                continue
+            if any(marker in path.name.upper() for marker in legal_markers):
+                continue
+            try:
+                source = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+            if "LastChat" in source or "lastChat" in source:
+                leftovers.append(str(path))
+    return leftovers
+
+
+brand_leftovers = find_remaining_brand_tokens()
+assert not brand_leftovers, f"Rebrand incomplete; inherited brand tokens remain in: {brand_leftovers[:10]}"
+print(f"PASS: Orvia identity cleanup updated {rebranded_files} source/resource files; no LastChat/lastChat tokens remain in scanned source or UI resources; legal notices and stable lowercase compatibility namespaces were preserved.")
 
 print("PASS: Orvia Kilo route plus native Edge neural TTS settings, token provider, playback dispatch, and token test are installed.")
 
