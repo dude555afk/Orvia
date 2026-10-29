@@ -45,10 +45,10 @@ class NativeEmailService(context: Context) {
         val smtpStartTls: Boolean = false,
     ) {
         fun validate() {
-            require(EMAIL.matches(address.trim())) { "Enter a valid email address." }
+            require(NativeEmailService.EMAIL.matches(address.trim())) { "Enter a valid email address." }
             require(password.isNotBlank()) { "An app password is required." }
             listOf(imapHost, smtpHost).forEach { host ->
-                require(HOST.matches(host) && !host.startsWith("-") && !host.contains("..")) {
+                require(NativeEmailService.HOST.matches(host) && !host.startsWith("-") && !host.contains("..")) {
                     "Mail server host is invalid."
                 }
             }
@@ -284,6 +284,7 @@ class NativeEmailService(context: Context) {
         val properties = Properties().apply {
             put("mail.store.protocol", "imaps"); put("mail.imaps.ssl.enable", "true")
             put("mail.imaps.connectiontimeout", "12000"); put("mail.imaps.timeout", "20000")
+            put("mail.imaps.ssl.checkserveridentity", "true")
             put("mail.imaps.peek", "true"); put("mail.imaps.partialfetch", "false")
         }
         val session = Session.getInstance(properties)
@@ -301,6 +302,7 @@ class NativeEmailService(context: Context) {
             put("mail.transport.protocol", "smtp"); put("mail.smtp.auth", "true")
             put("mail.smtp.connectiontimeout", "12000"); put("mail.smtp.timeout", "20000")
             put("mail.smtp.writetimeout", "20000")
+            put("mail.smtp.ssl.checkserveridentity", "true")
             if (account.smtpStartTls) {
                 put("mail.smtp.ssl.enable", "false"); put("mail.smtp.starttls.enable", "true")
                 put("mail.smtp.starttls.required", "true")
