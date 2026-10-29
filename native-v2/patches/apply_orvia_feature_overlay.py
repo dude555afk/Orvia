@@ -775,5 +775,60 @@ replace_once(
 email_overlay = Path("native-v2/patches/apply_orvia_email_overlay.py")
 exec(compile(email_overlay.read_text(encoding="utf-8"), str(email_overlay), "exec"))
 
+# Rebrand source-level identifiers and user-facing copy in the build checkout.
+# Keep package/deep-link namespaces and third-party legal notices stable; those
+# are compatibility identifiers, not app branding.
+def apply_orvia_brand_cleanup() -> int:
+    roots = (
+        ROOT / "app/src",
+        ROOT / "ui-core/src",
+        ROOT / "iosApp/src",
+        ROOT / "web-ui/app",
+        ROOT / "web-ui/public",
+        ROOT / "common/src",
+        ROOT / "ai/src",
+        ROOT / "tts/src",
+        ROOT / "search/src",
+        ROOT / "workspace/src",
+        ROOT / "document/src",
+        ROOT / "speech/src",
+        ROOT / "highlight/src",
+        ROOT / "mcp/src",
+    )
+    text_suffixes = {
+        ".kt", ".kts", ".xml", ".json", ".html", ".tsx", ".ts", ".js",
+        ".css", ".swift", ".m", ".h", ".plist", ".properties", ".yaml", ".yml",
+    }
+    legal_markers = (
+        "LICENSE", "NOTICE", "COPYING", "COPYRIGHT", "THIRD_PARTY",
+        "THIRD-PARTY", "PATENTS",
+    )
+    changed = 0
+    for source_root in roots:
+        if not source_root.exists():
+            continue
+        for path in source_root.rglob("*"):
+            if not path.is_file() or path.suffix.lower() not in text_suffixes:
+                continue
+            if any(marker in path.name.upper() for marker in legal_markers):
+                continue
+            try:
+                source = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+            branded = source.replace("LastChat", "Orvia").replace("lastChat", "orvia")
+            branded = branded.replace(
+                "https://github.com/Cocolalilal/Orvia",
+                "https://github.com/dude555afk/Orvia",
+            )
+            if branded != source:
+                path.write_text(branded, encoding="utf-8")
+                changed += 1
+    return changed
+
+
+rebranded_files = apply_orvia_brand_cleanup()
+print(f"PASS: Orvia identity cleanup updated {rebranded_files} source/resource files; legal notices and stable lowercase compatibility namespaces were preserved.")
+
 print("PASS: Orvia Kilo route plus native Edge neural TTS settings, token provider, playback dispatch, and token test are installed.")
 
