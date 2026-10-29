@@ -69,15 +69,23 @@ class NativeEmailService(context: Context) {
         }
 
         companion object {
-            fun fromJson(o: JsonObject) = Account(
-                address = o.stringValue("address"),
-                password = o.stringValue("password"),
-                imapHost = o.stringValue("imapHost"),
-                imapPort = o.intValue("imapPort", 993),
-                smtpHost = o.stringValue("smtpHost"),
-                smtpPort = o.intValue("smtpPort", 465),
-                smtpStartTls = o.boolValue("smtpStartTls", false),
-            )
+            fun fromJson(o: JsonObject): Account {
+                fun str(key: String, default: String = ""): String =
+                    (o[key] as? JsonPrimitive)?.content ?: default
+                fun int(key: String, default: Int): Int =
+                    (o[key] as? JsonPrimitive)?.content?.toIntOrNull() ?: default
+                fun bool(key: String, default: Boolean): Boolean =
+                    (o[key] as? JsonPrimitive)?.content?.toBooleanStrictOrNull() ?: default
+                return Account(
+                    address = str("address"),
+                    password = str("password"),
+                    imapHost = str("imapHost"),
+                    imapPort = int("imapPort", 993),
+                    smtpHost = str("smtpHost"),
+                    smtpPort = int("smtpPort", 465),
+                    smtpStartTls = bool("smtpStartTls", false),
+                )
+            }
 
             fun forAddress(address: String, password: String): Account {
                 val domain = address.substringAfterLast("@", "").trim().lowercase()
@@ -97,13 +105,6 @@ class NativeEmailService(context: Context) {
             }
         }
     }
-
-    private fun JsonObject.stringValue(key: String, default: String = ""): String =
-        (this[key] as? JsonPrimitive)?.content ?: default
-    private fun JsonObject.intValue(key: String, default: Int): Int =
-        (this[key] as? JsonPrimitive)?.content?.toIntOrNull() ?: default
-    private fun JsonObject.boolValue(key: String, default: Boolean): Boolean =
-        (this[key] as? JsonPrimitive)?.content?.toBooleanStrictOrNull() ?: default
 
     private fun loadAccounts(): List<Account> {
         val raw = preferences.getString(KEY_ACCOUNTS, null) ?: return emptyList()
@@ -157,7 +158,7 @@ class NativeEmailService(context: Context) {
         buildJsonObject {
             put("success", errors.isEmpty()); put("count", messages.size)
             put("messages", JsonArray(messages))
-            if (errors.isNotEmpty()) put("errors", JsonArray(errors.map(::JsonPrimitive)))
+            if (errors.isNotEmpty()) put("errors", JsonArray(errors.map { JsonPrimitive(it) }))
         }
     }
 
