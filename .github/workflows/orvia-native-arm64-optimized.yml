@@ -6,6 +6,8 @@ on:
       - feature/orvia-native-v2-isolated-20261015
     paths:
       - .github/workflows/orvia-native-arm64-optimized.yml
+      - native-v2/patches/apply_orvia_feature_overlay.py
+      - docs/orvia-logo.png
   workflow_dispatch:
 
 permissions:
