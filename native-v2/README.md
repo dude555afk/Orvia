@@ -15,9 +15,13 @@ for the current APK.
 - `native-v2/patches/apply_orvia_feature_overlay.py` applies asserted
   Orvia-specific changes to the pinned LastChat checkout during CI only. The
   upstream LastChat repository/submodule is not edited.
-- The overlay adds the anonymous Kilo gateway preset at
-  `https://ai-gateway.kilo.ai/api/v1`, seeds `kilo-auto/free`, and omits the
-  Authorization header when the configured API key is blank.
+- The overlay adds Kilo to settings and guided first-run setup at
+  `https://ai-gateway.kilo.ai/api/v1`, seeds `kilo-auto/free` without requiring
+  an API key, and omits Authorization entirely for blank-key requests.
+- China-focused chat-provider presets retired by Orvia's provider cleanup are
+  hidden from the native provider picker. The About/onboarding surfaces and
+  app name use Orvia branding; the upstream LastChat source remains pinned and
+  unmodified.
 
 ## Still not migration-complete
 
