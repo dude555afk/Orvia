@@ -135,19 +135,16 @@ replace_once(
 replace_once(
     "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt",
     """                SetupPage.GuidedPasteKey -> PasteKeyPage(
-                    text = "Paste your API key here and
-we’ll handle the rest.",
+                    text = "Paste your API key here and\\nwe’ll handle the rest.",
                     apiKey = apiKey,
                     onApiKeyChange = { apiKey = it },
                     loading = guidedModelsLoading,
                     onContinue = {""",
     """                SetupPage.GuidedPasteKey -> PasteKeyPage(
                     text = if (selectedGuidedProvider?.name == "Kilo Free Gateway") {
-                        "Kilo Free Gateway does not need an API key.
-Continue to set up free routing."
+                        "Kilo Free Gateway does not need an API key.\\nContinue to set up free routing."
                     } else {
-                        "Paste your API key here and
-we’ll handle the rest."
+                        "Paste your API key here and\\nwe’ll handle the rest."
                     },
                     apiKey = apiKey,
                     onApiKeyChange = { apiKey = it },
