@@ -129,7 +129,7 @@ jobs:
           tree.write(path, encoding="unicode", xml_declaration=True)
           print("Removed notification listener and APK installer permission")
           PY
-      # Rebuild after the overlay adds Kilo's keyless first-run setup path.
+      # Rebuild after Kilo onboarding, Orvia rebranding, and model-preset cleanup.
       - name: Apply Orvia native feature overlay
         run: python3 native-v2/patches/apply_orvia_feature_overlay.py
 
