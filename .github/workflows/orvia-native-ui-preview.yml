@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/orvia-native-ui-preview.yml'
       - 'tool/prepare_orvia_native.py'
+      - 'tool/patch_orvia_lastchat.py'
       - 'native-v2/catalog/**'
       - 'docs/orvia-logo.png'
       - '.gitmodules'
@@ -51,6 +52,8 @@ jobs:
 
       - name: Apply Orvia identity and settings
         run: python3 tool/prepare_orvia_native.py
+      - name: Apply Orvia provider defaults and keyless Kilo integration
+        run: python3 tool/patch_orvia_lastchat.py
 
       - name: Install bundled web UI dependencies
         working-directory: native-v2/lastchat/web-ui
