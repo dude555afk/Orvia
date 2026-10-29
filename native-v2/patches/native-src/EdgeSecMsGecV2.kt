@@ -27,8 +27,8 @@ internal object EdgeSecMsGecV2 {
     )
     private val seededSchedule = intArrayOf(
         0xEB24BF9E.toInt(), 0x1558691F, 0xA0C09EE2.toInt(), 0x0CFA32BA,
-        0xA622EE8C.toInt(), 0xD1DD9491.toInt(), 0xC0FA32BA.toInt(), 0xF9E70AB6.toInt(),
-        0xF0C31573.toInt(), 0x7058E606, 0x7188E606, 0x00E5AB33,
+        0xA622EE8C.toInt(), 0xD1DD9491.toInt(), 0xC0DD25A0.toInt(), 0xF9E70AB6.toInt(),
+        0xF0C31573.toInt(), 0x7058CE4E, 0x7188E606, 0x00E5AB33,
         0xD258B060.toInt(), 0x72766564,
     )
     private val roundConstants = intArrayOf(
@@ -218,6 +218,6 @@ internal object EdgeSecMsGecV2 {
             state = rol16(rol16(t) * 0x7C932B89) * 0xBFA49F69.toInt()
             acc += state
         }
-        return Pair(swapLast xor state, swapAcc + acc)
+        return Pair(swapLast xor state, swapAcc xor acc)
     }
 }
