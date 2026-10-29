@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/orvia-native-arm64-optimized.yml
       - native-v2/patches/apply_orvia_feature_overlay.py
+      - native-v2/patches/apply_orvia_email_overlay.py
       - native-v2/patches/native-src/**
       - docs/orvia-logo.png
   workflow_dispatch:
