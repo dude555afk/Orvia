@@ -90,7 +90,7 @@ val DEFAULT_PROVIDERS: List<ProviderSetting> = listOf(
     presets_path = root / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/components/ProviderPresets.kt"
     presets = presets_path.read_text(encoding="utf-8")
     start = presets.index("val FALLBACK_PROVIDER_PRESETS = listOf(")
-    end = presets.index("\nval SPECIAL_PROVIDER_PRESETS = listOf(", start)
+    end = presets.index("val SPECIAL_PROVIDER_PRESETS = listOf(", start)
     curated_fallbacks = r'''val FALLBACK_PROVIDER_PRESETS = listOf(
     ProviderPreset(
         name = "OpenAI",
@@ -144,7 +144,7 @@ val DEFAULT_PROVIDERS: List<ProviderSetting> = listOf(
         baseUrl = "https://api.x.ai/v1",
     ),
 )'''
-    presets = presets[:start] + curated_fallbacks + presets[end:]
+    presets = presets[:start] + curated_fallbacks + "\n\n" + presets[end:]
     old_mapper = """fun ModelCatalogSnapshot.toProviderPresets(): List<ProviderPreset> {
     return providers
         .filter { it.preset }
