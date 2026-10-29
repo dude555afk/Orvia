@@ -144,7 +144,7 @@ class OrviaPhoneControlService : AccessibilityService() {
             complete(error("SERVICE_UNAVAILABLE", "Phone control has disconnected."))
             return
         }
-        (application as? OrviaApplication)?.backgroundRuntime?.phoneControlStarted()
+        // This native preview has no Flutter BackgroundRuntime; service work is self-contained.
         val epoch = generation.get()
         var finished = false
         lateinit var reply: (JSONObject) -> Unit
