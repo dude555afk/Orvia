@@ -87,15 +87,25 @@ Map<String, String> customHeaders(
   if (_isAihubmix(cfg) && cfg.aihubmixAppCodeEnabled == true) {
     automatic.putIfAbsent('APP-Code', () => _aihubmixAppCode);
   }
-  return CustomRequestMerger.mergeHeaders(
-    base: baseHeaders,
-    assistant: assistantHeaders,
-    providerAutomatic: automatic,
-    provider: ModelOverridePayloadParser.customHeadersFromRows(
-      cfg.customHeaders,
+  final merged = Map<String, String>.from(
+    CustomRequestMerger.mergeHeaders(
+      base: baseHeaders,
+      assistant: assistantHeaders,
+      providerAutomatic: automatic,
+      provider: ModelOverridePayloadParser.customHeadersFromRows(
+        cfg.customHeaders,
+      ),
+      model: ModelOverridePayloadParser.customHeaders(ov),
     ),
-    model: ModelOverridePayloadParser.customHeaders(ov),
   );
+  // Anonymous gateways reject an empty "Bearer " header; omit it entirely.
+  for (final key in merged.keys.toList(growable: false)) {
+    final value = merged[key]?.trim().toLowerCase() ?? '';
+    if (key.toLowerCase() == 'authorization' && value == 'bearer') {
+      merged.remove(key);
+    }
+  }
+  return merged;
 }
 
 Map<String, dynamic> customBody(

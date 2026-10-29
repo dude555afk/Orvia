@@ -80,26 +80,21 @@ class SettingsProvider extends ChangeNotifier {
   static const String providerUngroupedGroupKey = '__ungrouped__';
   static const List<String> _builtInProviderKeysInOrder = [
     'OpenAI',
-    'SiliconFlow',
     'Gemini',
     'OpenRouter',
-    'OrviaIN',
-    'Tensdaq',
-    'DeepSeek',
+    'Kilo',
     'AIhubmix',
-    '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
-    'MaruCode',
-    'Aliyun',
-    'Zhipu AI',
     'Claude',
     'Grok',
-    'ByteDance',
   ];
   static const Set<String> _builtInProviderKeys = {
     ..._builtInProviderKeysInOrder,
   };
   static const String _themeModeKey = 'theme_mode_v1';
   static const String _providerConfigsKey = 'provider_configs_v1';
+  static const String _kiloDefaultAppliedKey = 'kilo_default_applied_v2';
+  static const String _providerPresetCleanupAppliedKey =
+      'provider_preset_cleanup_applied_v1';
   static const String _pinnedModelsKey = 'pinned_models_v1';
   static const String _selectedModelKey = 'selected_model_v1';
   static const String _perChatModelEnabledKey = 'per_chat_model_enabled_v1';
@@ -1443,17 +1438,92 @@ class SettingsProvider extends ChangeNotifier {
         );
       } catch (_) {}
     }
-    if (_providerConfigs.isEmpty) {
-      // Seed a couple of sensible defaults on first launch, but do not recreate
-      // providers implicitly during later reads (e.g., when switching chats).
-      ensureProviderConfig('OrviaIN', defaultName: 'OrviaIN');
-      ensureProviderConfig('Tensdaq', defaultName: 'Tensdaq');
-      ensureProviderConfig('SiliconFlow', defaultName: 'SiliconFlow');
-      ensureProviderConfig('AIhubmix', defaultName: 'AIhubmix');
-      final seededConfigs = _providerConfigs.map(
-        (key, config) => MapEntry(key, config.toJson()),
+    // Remove retired China-focused presets and the inherited OrviaIN endpoint.
+    // Keeping these out of persisted configs also prevents them reappearing as custom providers.
+    const retiredProviderKeys = <String>{
+      'OrviaIN',
+      'SiliconFlow',
+      'Tensdaq',
+      'DeepSeek',
+      '\u968f\u60f3AI\u4E2D\u8F6C\u7AD9',
+      'MaruCode',
+      'Aliyun',
+      'Zhipu AI',
+      'ByteDance',
+    };
+    final retiredProviderIds = retiredProviderKeys
+        .map((key) => key.toLowerCase())
+        .toSet();
+    final hasCleanedRetiredPresets =
+        prefs.getBool(_providerPresetCleanupAppliedKey) ?? false;
+    if (!hasCleanedRetiredPresets) {
+      for (final key in _providerConfigs.keys.toList(growable: false)) {
+        if (retiredProviderIds.contains(key.trim().toLowerCase())) {
+          await removeProviderConfig(key);
+        }
+      }
+      await prefs.setBool(_providerPresetCleanupAppliedKey, true);
+    }
+
+    var providerConfigsChanged = false;
+    final kiloConfig = _providerConfigs['Kilo'];
+    if (kiloConfig == null) {
+      ensureProviderConfig('Kilo', defaultName: 'Kilo');
+      providerConfigsChanged = true;
+    } else {
+      final kiloModels = List<String>.from(kiloConfig.models);
+      final priorOpenRouterFreeIndex = kiloModels.indexOf('openrouter/free');
+      if (priorOpenRouterFreeIndex >= 0) {
+        kiloModels[priorOpenRouterFreeIndex] = 'kilo-auto/free';
+        providerConfigsChanged = true;
+      } else if (!kiloModels.contains('kilo-auto/free')) {
+        kiloModels.insert(0, 'kilo-auto/free');
+        providerConfigsChanged = true;
+      }
+
+      final kiloOverrides = Map<String, dynamic>.from(
+        kiloConfig.modelOverrides,
       );
-      await prefs.setString(_providerConfigsKey, jsonEncode(seededConfigs));
+      final priorOverride = kiloOverrides.remove('openrouter/free');
+      if (priorOverride != null) {
+        kiloOverrides.putIfAbsent('kilo-auto/free', () => priorOverride);
+        providerConfigsChanged = true;
+      }
+      if (!kiloOverrides.containsKey('kilo-auto/free')) {
+        kiloOverrides['kilo-auto/free'] = const {'name': 'Kilo Auto Free'};
+        providerConfigsChanged = true;
+      }
+      if (providerConfigsChanged) {
+        _providerConfigs['Kilo'] = kiloConfig.copyWith(
+          models: kiloModels,
+          modelOverrides: kiloOverrides,
+        );
+      }
+    }
+    if (providerConfigsChanged) {
+      await prefs.setString(
+        _providerConfigsKey,
+        jsonEncode(
+          _providerConfigs.map((key, config) => MapEntry(key, config.toJson())),
+        ),
+      );
+    }
+
+    // Apply the requested free Kilo route once, and repair a default that points
+    // to a preset removed by this update. Later user model choices are preserved.
+    final selectedProvider = _currentModelProvider?.trim().toLowerCase();
+    final hasAppliedKiloDefault =
+        prefs.getBool(_kiloDefaultAppliedKey) ?? false;
+    if (!hasAppliedKiloDefault ||
+        selectedProvider == null ||
+        _currentModelId == null ||
+        (selectedProvider == 'kilo' && _currentModelId == 'openrouter/free')) {
+      _currentModelProvider = 'Kilo';
+      _currentModelId = 'kilo-auto/free';
+      await prefs.setString(_selectedModelKey, 'Kilo::kilo-auto/free');
+    }
+    if (!hasAppliedKiloDefault) {
+      await prefs.setBool(_kiloDefaultAppliedKey, true);
     }
 
     // kick off a one-time connectivity test for services (exclude local Bing)
@@ -6000,8 +6070,6 @@ enum ProviderKind { openai, google, claude }
 enum ChatMessageBackgroundStyle { defaultStyle, frosted, solid }
 
 class ProviderConfig {
-  static const _orviaInPublicApiKey = 'orvia';
-
   final String id;
   final bool enabled;
   final String name;
@@ -6341,8 +6409,7 @@ class ProviderConfig {
   static String _apiKeyFromJson(Map<String, dynamic> json) {
     final stored = json['apiKey'] as String? ?? '';
     if (stored.isNotEmpty) return stored;
-    final id = json['id'] as String? ?? json['name'] as String? ?? '';
-    return id.trim().toLowerCase() == 'orviain' ? _orviaInPublicApiKey : '';
+    return '';
   }
 
   static List<Map<String, String>> _customRequestRowsFromJson(
@@ -6381,7 +6448,7 @@ class ProviderConfig {
   static String _defaultBase(String key) {
     final k = key.toLowerCase();
     if (k.contains('tensdaq')) return 'https://tensdaq-api.x-aio.com/v1';
-    if (k.contains('orviain')) return 'https://text.pollinations.ai/openai';
+    if (k.contains('kilo')) return 'https://ai-gateway.kilo.ai/api/v1';
     if (k.contains('openrouter')) return 'https://openrouter.ai/api/v1';
     if (k.contains('aihubmix')) return 'https://aihubmix.com/v1';
     if (k.contains('\u968F\u60F3')) return 'https://sui-xiang.com/v1';
@@ -6428,12 +6495,10 @@ class ProviderConfig {
   static ProviderConfig defaultsFor(String key, {String? displayName}) {
     bool defaultEnabled(String k) {
       final s = k.toLowerCase();
-      if (s.contains('tensdaq')) return true;
       if (s.contains('openai')) return true;
       if (s.contains('gemini') || s.contains('google')) return true;
-      if (s.contains('silicon')) return true;
       if (s.contains('openrouter')) return true;
-      if (s.contains('orviain')) return true;
+      if (s.contains('kilo')) return true;
       return false; // others disabled by default
     }
 
@@ -6493,42 +6558,20 @@ class ProviderConfig {
           claudePromptCachingEnabled: false,
         );
       case ProviderKind.openai:
-        // Special-case OrviaIN default models and overrides
-        if (lowerKey.contains('orviain')) {
+        // Kilo's anonymous gateway supports free-model routes without an API key.
+        if (lowerKey.contains('kilo')) {
           return ProviderConfig(
             id: key,
             enabled: defaultEnabled(key),
             name: displayName ?? key,
-            apiKey: _orviaInPublicApiKey,
+            apiKey: '',
             baseUrl: _defaultBase(key),
             providerType: ProviderKind.openai,
-            chatPath:
-                null, // keep empty in UI; code uses default '/chat/completions'
+            chatPath: '/chat/completions',
             useResponseApi: false,
-            models: const [
-              // 'openai-fast',
-              'mistral',
-              'qwen-coder',
-            ],
+            models: const ['kilo-auto/free'],
             modelOverrides: const {
-              // 'openai-fast': {
-              //   'type': 'chat',
-              //   'input': ['text'],
-              //   'output': ['text'],
-              //   'abilities': ['tool'],
-              // },
-              'mistral': {
-                'type': 'chat',
-                'input': ['text'],
-                'output': ['text'],
-                'abilities': ['tool'],
-              },
-              'qwen-coder': {
-                'type': 'chat',
-                'input': ['text'],
-                'output': ['text'],
-                'abilities': ['tool'],
-              },
+              'kilo-auto/free': {'name': 'Kilo Auto Free'},
             },
             proxyEnabled: false,
             proxyHost: '',
@@ -6539,7 +6582,7 @@ class ProviderConfig {
             apiKeys: const [],
             keyManagement: const KeyManagementConfig(),
             aihubmixAppCodeEnabled: false,
-            balanceEnabled: _defaultBalanceEnabled(key),
+            balanceEnabled: false,
             balanceApiPath: _defaultBalanceApiPath(key),
             balanceResultPath: _defaultBalanceResultPath(key),
             claudePromptCachingEnabled: false,

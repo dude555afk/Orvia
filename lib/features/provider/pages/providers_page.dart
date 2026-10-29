@@ -105,7 +105,7 @@ class _ProvidersPageState extends State<ProvidersPage> {
     final l10n = AppLocalizations.of(context)!;
 
     // Base, fixed providers (recompute each build so dynamic additions reflect immediately)
-    final base = _providers(l10n: l10n);
+    final base = _providers();
 
     // Dynamic providers from settings
     final settings = context.watch<SettingsProvider>();
@@ -486,49 +486,14 @@ class _ProvidersPageState extends State<ProvidersPage> {
     );
   }
 
-  List<_Provider> _providers({required AppLocalizations l10n}) => [
+  List<_Provider> _providers() => [
     _p('OpenAI', 'OpenAI', enabled: true, models: 0),
-    _p(
-      l10n.providersPageSiliconFlowName,
-      'SiliconFlow',
-      enabled: true,
-      models: 0,
-    ),
     _p('Gemini', 'Gemini', enabled: true, models: 0),
     _p('OpenRouter', 'OpenRouter', enabled: true, models: 0),
-    _p('OrviaIN', 'OrviaIN', enabled: true, models: 0),
-    _p('Tensdaq', 'Tensdaq', enabled: false, models: 0),
-    _p('DeepSeek', 'DeepSeek', enabled: false, models: 0),
+    _p('Kilo', 'Kilo', enabled: true, models: 1),
     _p('AIhubmix', 'AIhubmix', enabled: false, models: 0),
-    _p(
-      '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
-      '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
-      enabled: false,
-      models: 0,
-    ),
-    _p('MaruCode', 'MaruCode', enabled: false, models: 0),
-    _p(l10n.providersPageAliyunName, 'Aliyun', enabled: false, models: 0),
-    _p(l10n.providersPageZhipuName, 'Zhipu AI', enabled: false, models: 0),
     _p('Claude', 'Claude', enabled: false, models: 0),
-    // _p(zh ? 'Hunyuan' : 'Hunyuan', 'Hunyuan', enabled: false, models: 0),
-    // _p('InternLM', 'InternLM', enabled: true, models: 0),
-    // _p('Kimi', 'Kimi', enabled: false, models: 0),
     _p('Grok', 'Grok', enabled: false, models: 0),
-    // _p('302.AI', '302.AI', enabled: false, models: 0),
-    // _p(zh ? 'StepFun' : 'StepFun', 'StepFun', enabled: false, models: 0),
-    // _p('MiniMax', 'MiniMax', enabled: true, models: 0),
-    _p(l10n.providersPageByteDanceName, 'ByteDance', enabled: false, models: 0),
-    // _p(zh ? 'Doubao' : 'Doubao', 'Doubao', enabled: true, models: 0),
-    // _p(zh ? 'Alibaba Cloud' : 'Alibaba Cloud', 'Alibaba Cloud', enabled: true, models: 0),
-    // _p('Meta', 'Meta', enabled: false, models: 0),
-    // _p('Mistral', 'Mistral', enabled: true, models: 0),
-    // _p('Perplexity', 'Perplexity', enabled: true, models: 0),
-    // _p('Cohere', 'Cohere', enabled: true, models: 0),
-    // _p('Gemma', 'Gemma', enabled: true, models: 0),
-    // _p('Cloudflare', 'Cloudflare', enabled: true, models: 0),
-    //  _p('AIHubMix', 'AIHubMix', enabled: false, models: 0),
-    // _p('Ollama', 'Ollama', enabled: true, models: 0),
-    // _p('GitHub', 'GitHub', enabled: false, models: 0),
   ];
 
   List<_ProviderGroupingRowVM> _buildProviderGroupingRows({
@@ -674,7 +639,7 @@ class _ProvidersPageState extends State<ProvidersPage> {
     final settingsProvider = context.read<SettingsProvider>();
     final chatService = context.read<ChatService>();
     // Skip built-in providers (default ones)
-    final builtInKeys = {for (final p in _providers(l10n: l10n)) p.keyName};
+    final builtInKeys = {for (final p in _providers()) p.keyName};
     final keysToDelete = _selected
         .where((k) => !builtInKeys.contains(k))
         .toList(growable: false);

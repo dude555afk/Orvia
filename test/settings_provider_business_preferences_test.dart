@@ -88,7 +88,7 @@ void main() {
   });
 
   test(
-    'migrated order-only provider state survives startup seeding and reload',
+    'migrated order-only provider state drops retired presets and survives reload',
     () async {
       const legacyOrder = <String>[
         'Gemini',
@@ -104,11 +104,17 @@ void main() {
         'Claude',
         'Grok',
         'ByteDance',
+        '\u968f\u60F3AI\u4E2D\u8F6C\u7AD9',
+        'MaruCode',
       ];
       const migratedOrder = <String>[
-        ...legacyOrder,
-        '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
-        'MaruCode',
+        'Gemini',
+        'OpenAI',
+        'OpenRouter',
+        'AIhubmix',
+        'Claude',
+        'Grok',
+        'Kilo',
       ];
       await repository.replaceSnapshot(
         BusinessSettingsRouter.normalizeAndRoute({
@@ -120,17 +126,19 @@ void main() {
       await settings.loaded;
       expect(settings.providersOrder, migratedOrder);
 
-      final suixiang = settings.getProviderConfig(
-        '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
-      );
-      expect(suixiang.enabled, isFalse);
-      expect(suixiang.providerType, ProviderKind.openai);
-      expect(suixiang.baseUrl, 'https://sui-xiang.com/v1');
-
-      final maruCode = settings.getProviderConfig('MaruCode');
-      expect(maruCode.enabled, isFalse);
-      expect(maruCode.providerType, ProviderKind.openai);
-      expect(maruCode.baseUrl, 'https://api.muteki.site/v1');
+      for (final retired in const <String>[
+        'SiliconFlow',
+        'OrviaIN',
+        'Tensdaq',
+        'DeepSeek',
+        'Aliyun',
+        'Zhipu AI',
+        'ByteDance',
+        '\u968f\u60F3AI\u4E2D\u8F6C\u7AD9',
+        'MaruCode',
+      ]) {
+        expect(settings.providersOrder, isNot(contains(retired)));
+      }
 
       final reloaded = SettingsProvider(BusinessPreferences(repository));
       await reloaded.loaded;
