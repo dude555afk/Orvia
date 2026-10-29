@@ -935,6 +935,98 @@ replace_once(
 )
 replace_once(
     "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    """    @Serializable
+    @SerialName("orvia_phone_control")
+    data object OrviaPhoneControl : LocalToolOption()
+""",
+    """    @Serializable
+    @SerialName("orvia_phone_control")
+    data object OrviaPhoneControl : LocalToolOption()
+
+    @Serializable
+    @SerialName("orvia_device_tools")
+    data object OrviaDeviceTools : LocalToolOption()
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    "    LocalToolOption.OrviaPhoneControl -> listOf(\n",
+    """    LocalToolOption.OrviaDeviceTools -> listOf(
+        LocalToolDefinitionPreview(
+            name = "orvia_device_tools",
+            description = "Read location, screen-time summaries, and calendar events, or create calendar events with user approval.",
+            schema = InputSchema.Obj(
+                properties = buildJsonObject {
+                    put("action", buildJsonObject { put("type", "string") })
+                    put("range", buildJsonObject { put("type", "string") })
+                    put("begin", buildJsonObject { put("type", "string") })
+                    put("end", buildJsonObject { put("type", "string") })
+                    put("query", buildJsonObject { put("type", "string") })
+                    put("title", buildJsonObject { put("type", "string") })
+                    put("start", buildJsonObject { put("type", "string") })
+                },
+                required = listOf("action"),
+            ),
+        ),
+    )
+    LocalToolOption.OrviaPhoneControl -> listOf(
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
+    "    private val orviaPhoneControlActions = setOf(\n",
+    """    private val orviaDeviceTools by lazy { OrviaDeviceTools(context) }
+
+    private val orviaDeviceToolsTool by lazy {
+        Tool(
+            name = "orvia_device_tools",
+            description = "Read Orvia's local location, screen-time and calendar data, or create calendar events. These operations use private local data and require approval.",
+            parameters = {
+                InputSchema.Obj(
+                    properties = buildJsonObject {
+                        put("action", buildJsonObject { put("type", "string"); put("description", "current_location, screen_time, calendar_query, or calendar_create") })
+                        put("range", buildJsonObject { put("type", "string"); put("description", "today, week, or month where supported") })
+                        put("begin", buildJsonObject { put("type", "string"); put("description", "Optional ISO-8601 date/time or epoch milliseconds") })
+                        put("end", buildJsonObject { put("type", "string"); put("description", "Optional end time") })
+                        put("top", buildJsonObject { put("type", "integer"); put("description", "Screen-time apps to return, 1–50") })
+                        put("limit", buildJsonObject { put("type", "integer"); put("description", "Calendar events to return, 1–100") })
+                        put("query", buildJsonObject { put("type", "string"); put("description", "Optional calendar title search") })
+                        put("title", buildJsonObject { put("type", "string"); put("description", "New calendar event title") })
+                        put("start", buildJsonObject { put("type", "string"); put("description", "New calendar event start time") })
+                        put("all_day", buildJsonObject { put("type", "boolean") })
+                        put("description", buildJsonObject { put("type", "string") })
+                        put("location", buildJsonObject { put("type", "string") })
+                        put("reminders", buildJsonObject {
+                            put("type", "array")
+                            put("items", buildJsonObject { put("type", "integer") })
+                        })
+                    },
+                    required = listOf("action"),
+                )
+            },
+            systemPrompt = { _, _ ->
+                "Use only for the user's explicit request. Location, usage history, and calendar entries are private. Before creating an event, check for conflicts where relevant and never invent missing time details."
+            },
+            approvalMode = ToolApprovalMode.RequiresApproval,
+            execute = { request ->
+                runCatching { Json.parseToJsonElement(orviaDeviceTools.execute(request.toString())) }
+                    .getOrElse { failure ->
+                        buildJsonObject {
+                            put("success", false)
+                            put("error", "device_tool_failed")
+                            put("message", failure.message ?: "Orvia device tool failed.")
+                        }
+                    }
+            },
+        )
+    }
+
+    private val orviaPhoneControlActions = setOf(
+""",
+)
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/ai/tools/LocalTools.kt",
     """        if (options.contains(LocalToolOption.Notifications)) {
             tools.addAll(getNotificationTools(assistantId, conversationId))
         }
