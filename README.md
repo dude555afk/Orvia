@@ -18,7 +18,7 @@ Orvia is a Flutter-based AI chat and workspace client built around user-controll
 
 ## Features
 
-- **Flexible model connections** — OpenAI-compatible endpoints, OpenAI, Gemini, Claude, and other supported providers, with configurable model capabilities and reasoning controls.
+- **Flexible model connections** — OpenAI-compatible endpoints, OpenAI, Gemini, Claude, and other supported providers, with configurable model capabilities and reasoning controls. Kilo's anonymous free gateway is available as a built-in provider; its availability and free-model limits depend on Kilo.
 - **Conversations and memory** — assistants, conversation branches, response versions, temporary chats, long-term memory, world books, and context compression.
 - **Tools and workspaces** — file operations, shell commands, skills, and workspace environments. Android uses PRoot; desktop workspaces use the native shell.
 - **MCP connections** — HTTP, SSE, and STDIO transports, configuration import, OAuth support, tool approval controls, and the built-in `@orvia/fetch` server.
