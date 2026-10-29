@@ -306,4 +306,21 @@ replace_once(
     "                SettingsPaneEntry(SettingsDestination.Web, R.string.setting_page_web_server, null, Icons.Rounded.Language, Screen.SettingWeb),\n",
     "                SettingsPaneEntry(SettingsDestination.Web, R.string.setting_page_web_server, null, Icons.Rounded.Language, Screen.SettingWeb),\n                SettingsPaneEntry(SettingsDestination.EmailIntegration, R.string.setting_email_integration, null, Icons.Rounded.Cloud, Screen.SettingEmailIntegration),\n",
 )
+
+# TTSProviderSetting is part of the multiplatform :tts common source set.
+# Keep iOS backup import/export exhaustive even though Edge TTS playback itself
+# is currently Android-only; iOS should safely ignore this provider.
+replace_once(
+    "iosApp/src/commonMain/kotlin/me/rerere/lastchat/ios/backup/IosBackupImport.kt",
+    "        is TTSProviderSetting.SystemTTS -> null\n",
+    "        is TTSProviderSetting.EdgeNeural -> null\n        is TTSProviderSetting.SystemTTS -> null\n",
+    expected=2,
+)
+replace_once(
+    "iosApp/src/commonMain/kotlin/me/rerere/lastchat/ios/backup/IosBackupImport.kt",
+    "                is TTSProviderSetting.SystemTTS -> Unit\n",
+    "                is TTSProviderSetting.EdgeNeural -> Unit\n                is TTSProviderSetting.SystemTTS -> Unit\n",
+)
+
 print("PASS: native IMAP/SMTP integration, encrypted account settings, assistant email tools, send approval, and settings navigation are installed.")
+
