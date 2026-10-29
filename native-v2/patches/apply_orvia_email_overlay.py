@@ -1,6 +1,10 @@
 # Native email integration overlay. Keep this isolated so the upstream LastChat
 # submodule stays pinned and every source edit remains asserted/reproducible.
 install_native_source(
+    "native-v2/patches/native-src/EDGE_TTS_LICENSE.txt",
+    "app/src/main/assets/licenses/edge-tts-LGPL-3.0.txt",
+)
+install_native_source(
     "native-v2/patches/native-src/NativeEmailService.kt",
     "app/src/main/java/me/rerere/rikkahub/data/integration/NativeEmailService.kt",
 )
