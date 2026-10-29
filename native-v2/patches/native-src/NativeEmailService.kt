@@ -124,8 +124,14 @@ class NativeEmailService(context: Context) {
 
     suspend fun connect(account: Account): JsonObject = withContext(Dispatchers.IO) {
         account.validate()
-        // Validate credentials against IMAPS before persisting them.
+        // Verify both incoming and outgoing credentials before persisting.
         withInbox(account, Folder.READ_ONLY) { _, _ -> Unit }
+        val transport = smtpSession(account).getTransport("smtp")
+        try {
+            transport.connect(account.smtpHost, account.smtpPort, account.address, account.password)
+        } finally {
+            runCatching { transport.close() }
+        }
         saveAccounts(loadAccounts().filterNot { it.address.equals(account.address, true) } + account)
         buildJsonObject {
             put("success", true); put("message", "Email account connected securely.")
