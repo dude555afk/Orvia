@@ -5,6 +5,7 @@ on:
     branches:
       - feature/orvia-native-v2-isolated-20261015
       - feature/orvia-rebrand-parity-restart-20261029
+      - feature/orvia-rebrand-parity-restart-20261029
     paths:
       - .github/workflows/orvia-native-arm64-optimized.yml
       - native-v2/patches/apply_orvia_feature_overlay.py
