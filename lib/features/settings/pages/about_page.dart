@@ -479,89 +479,10 @@ class _AboutPageState extends State<AboutPage> {
 
           const SizedBox(height: 12),
 
-          // GitHub release updates, including on-device APK installation.
+          // Subtle, animated in-app update card. Download/install stays native.
           Consumer<UpdateProvider>(
-            builder: (context, updates, _) => SectionCard(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.system_update_alt_rounded),
-                  title: const Text('App updates'),
-                  subtitle: Text(
-                    updates.checking
-                        ? 'Checking GitHub releases…'
-                        : updates.downloading
-                        ? 'Downloading update… ${((updates.downloadProgress ?? 0) * 100).round()}%'
-                        : updates.installing
-                        ? 'Opening Android installer…'
-                        : updates.available != null
-                        ? 'Version ${updates.available!.version} available'
-                        : updates.error != null
-                        ? 'Update check failed: ${updates.error}'
-                        : 'Check for the latest Orvia release',
-                  ),
-                  trailing:
-                      updates.checking ||
-                          updates.downloading ||
-                          updates.installing
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : null,
-                ),
-                if (updates.downloading)
-                  LinearProgressIndicator(value: updates.downloadProgress),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed:
-                              updates.checking ||
-                                  updates.downloading ||
-                                  updates.installing
-                              ? null
-                              : () => context
-                                    .read<UpdateProvider>()
-                                    .checkForUpdates(),
-                          child: const Text('Check for updates'),
-                        ),
-                      ),
-                      if (updates.available != null && Platform.isAndroid) ...[
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: FilledButton(
-                            onPressed: updates.downloading || updates.installing
-                                ? null
-                                : () async {
-                                    try {
-                                      await context
-                                          .read<UpdateProvider>()
-                                          .downloadAndInstallAvailable();
-                                    } catch (error) {
-                                      if (!context.mounted) return;
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Update failed: $error',
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                            child: const Text('Download & install'),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            builder: (context, updates, _) =>
+                _OrviaUpdateCard(updates: updates),
           ),
           const SizedBox(height: 12),
 
@@ -893,6 +814,205 @@ class _TactileIconButtonState extends State<_TactileIconButton> {
             child: icon,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _OrviaUpdateCard extends StatelessWidget {
+  const _OrviaUpdateCard({required this.updates});
+  final UpdateProvider updates;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final busy = updates.checking || updates.downloading || updates.installing;
+    final active = updates.available != null;
+    final progress = updates.downloadProgress;
+    final message = updates.downloading
+        ? 'Downloading update'
+        : updates.installing
+        ? 'Opening Android installer'
+        : updates.checking
+        ? 'Checking for updates'
+        : active
+        ? 'Version ${updates.available!.version} is available'
+        : updates.error != null
+        ? 'Could not check for updates'
+        : 'Stay up to date with Orvia';
+    final statusIcon = updates.downloading
+        ? Icons.downloading_rounded
+        : updates.installing
+        ? Icons.install_mobile_rounded
+        : active
+        ? Icons.auto_awesome_rounded
+        : Icons.system_update_rounded;
+
+    Future<void> startUpdate() async {
+      try {
+        await context.read<UpdateProvider>().downloadAndInstallAvailable();
+      } catch (error) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Update failed: $error')));
+      }
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.42)),
+      ),
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                height: 46,
+                width: 46,
+                decoration: BoxDecoration(
+                  color: cs.primary.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Icon(statusIcon, color: cs.primary, size: 24),
+              ),
+              const SizedBox(width: 13),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'App updates',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: Text(
+                        message,
+                        key: ValueKey(message),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: cs.onSurfaceVariant,
+                          fontSize: 12.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (updates.downloading)
+                Text(
+                  '${((progress ?? 0) * 100).clamp(0, 100).round()}%',
+                  style: TextStyle(
+                    color: cs.primary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+            ],
+          ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 240),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            child: updates.downloading || updates.installing
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 18),
+                    child: Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(99),
+                          child: TweenAnimationBuilder<double>(
+                            duration: const Duration(milliseconds: 250),
+                            tween: Tween<double>(
+                              end: updates.installing ? 1 : progress ?? 0,
+                            ),
+                            builder: (context, value, _) =>
+                                LinearProgressIndicator(
+                                  value: updates.downloading && progress == null
+                                      ? null
+                                      : value,
+                                  minHeight: 7,
+                                  backgroundColor: cs.primary.withValues(
+                                    alpha: 0.12,
+                                  ),
+                                ),
+                          ),
+                        ),
+                        const SizedBox(height: 9),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            updates.installing
+                                ? 'Almost there. Confirm the Android prompt.'
+                                : 'Downloading securely from GitHub',
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: cs.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: busy
+                      ? null
+                      : () => context.read<UpdateProvider>().checkForUpdates(),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(0, 46),
+                    shape: const StadiumBorder(),
+                  ),
+                  child: updates.checking
+                      ? const SizedBox(
+                          width: 17,
+                          height: 17,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Check updates'),
+                ),
+              ),
+              if (active && Platform.isAndroid) ...[
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: busy ? null : startUpdate,
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 46),
+                      shape: const StadiumBorder(),
+                    ),
+                    icon: const Icon(Icons.download_rounded, size: 18),
+                    label: const Text('Install'),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          if (updates.error != null && !busy)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                'Check your connection and try again.',
+                style: TextStyle(color: cs.error, fontSize: 12),
+              ),
+            ),
+        ],
       ),
     );
   }
