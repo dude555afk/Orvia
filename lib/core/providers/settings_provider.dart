@@ -1534,10 +1534,7 @@ class SettingsProvider extends ChangeNotifier {
         retiredProviderIds.contains(selectedProvider)) {
       _currentModelProvider = 'OpenRouter';
       _currentModelId = 'openrouter/free';
-      await prefs.setString(
-        _selectedModelKey,
-        'OpenRouter::openrouter/free',
-      );
+      await prefs.setString(_selectedModelKey, 'OpenRouter::openrouter/free');
     }
 
     // kick off a one-time connectivity test for services (exclude local Bing)
