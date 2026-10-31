@@ -2,7 +2,7 @@
 
 part of 'app_database.dart';
 
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, deprecated_member_use
 class $ConversationRowsTable extends ConversationRows
     with TableInfo<$ConversationRowsTable, ConversationRow> {
   @override
