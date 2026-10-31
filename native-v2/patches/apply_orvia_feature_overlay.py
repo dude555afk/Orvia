@@ -1439,6 +1439,93 @@ replace_once(
     "            preferences[MCP_SERVERS] = JsonInstant.encodeToString(normalizedSettings.mcpServers)\n"
     "            preferences[ORVIA_STICKY_MCP_SERVERS] = JsonInstant.encodeToString(normalizedSettings.orviaStickyMcpServers.orEmpty())\n",
 )
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/components/ai/McpPicker.kt",
+    "import androidx.compose.runtime.remember\n",
+    "import androidx.compose.runtime.remember\n"
+    "import androidx.compose.runtime.rememberCoroutineScope\n"
+    "import kotlinx.coroutines.launch\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/components/ai/McpPicker.kt",
+    "import me.rerere.rikkahub.data.model.Assistant\n",
+    "import me.rerere.rikkahub.data.model.Assistant\n"
+    "import me.rerere.rikkahub.data.datastore.OrviaStickyMcpSelection\n"
+    "import me.rerere.rikkahub.data.datastore.SettingsStore\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/components/ai/McpPicker.kt",
+    "    onUpdateAssistant: (Assistant) -> Unit\n) {\n    val mcpManager = koinInject<McpManager>()\n",
+    ") {\n    val mcpManager = koinInject<McpManager>()\n"
+    "    val settingsStore = koinInject<SettingsStore>()\n"
+    "    val coroutineScope = rememberCoroutineScope()\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/components/ai/McpPicker.kt",
+    """                                val validServerIds = servers.map { it.id }.toSet()
+                                val newServers = if (enabled) {
+                                    assistant.mcpServers + server.id
+                                } else {
+                                    assistant.mcpServers - server.id
+                                }
+                                onUpdateAssistant(
+                                    assistant.copy(
+                                        mcpServers = newServers.intersect(validServerIds)
+                                    )
+                                )""",
+    """                                coroutineScope.launch {
+                                    settingsStore.update { current ->
+                                        val selected = current.orviaStickyMcpServers
+                                            ?: current.assistants.firstOrNull {
+                                                it.id == current.assistantId
+                                            }?.mcpServers.orEmpty()
+                                        val next = if (enabled) {
+                                            selected + server.id
+                                        } else {
+                                            selected - server.id
+                                        }
+                                        OrviaStickyMcpSelection.select(current, next)
+                                    }
+                                }""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/components/ai/McpPicker.kt",
+    "    onUpdateAssistant: (Assistant) -> Unit\n) {\n    var showMcpPicker by remember { mutableStateOf(false) }\n",
+    "    @Suppress(\"UNUSED_PARAMETER\") onUpdateAssistant: (Assistant) -> Unit\n) {\n    var showMcpPicker by remember { mutableStateOf(false) }\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/components/ai/McpPicker.kt",
+    "                    onUpdateAssistant = {\n                        onUpdateAssistant(it)\n                    },\n",
+    "",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/components/ai/InputPickerSheets.kt",
+    "                onUpdateAssistant = onUpdateAssistant,\n",
+    "",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/assistant/detail/AssistantToolsSubPage.kt",
+    "                            onUpdateAssistant = onUpdate,\n",
+    "",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/web/WebApi.kt",
+    """            settingsStore.update { current ->
+                current.copy(
+                    assistants = current.assistants.replaceAssistant(assistantId) { assistant ->
+                        assistant.copy(mcpServers = requestedIds)
+                    }
+                )
+            }""",
+    """            settingsStore.update { current ->
+                me.rerere.rikkahub.data.datastore.OrviaStickyMcpSelection.select(
+                    current,
+                    requestedIds,
+                )
+            }""",
+)
+
 '''
 exec(compile(sticky_mcp_install, "orvia_sticky_mcp_overlay.py", "exec"))
 
