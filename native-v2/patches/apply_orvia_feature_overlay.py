@@ -1380,7 +1380,7 @@ replace_once(
     "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
     """                assistants = settings.assistants.distinctBy { it.id }.map { assistant ->
                     assistant.copy(
-                        // 过滤掉不存在的 MCP 服务器 ID
+                        // Filter out MCP server IDs that are not configured
                         mcpServers = assistant.mcpServers.filter { serverId ->
                             serverId in validMcpServerIds
                         }.toSet()
