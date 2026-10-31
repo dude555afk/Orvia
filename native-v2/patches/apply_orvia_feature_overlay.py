@@ -1398,6 +1398,21 @@ def find_remaining_brand_tokens() -> list[str]:
     return leftovers
 
 
+# Rename the inherited typography source file as well as its identifiers.
+# Kotlin compilation is package-based, so this path rename does not alter the
+# stable namespace or any binary font asset.
+legacy_font_tokens = (
+    ROOT
+    / "ui-core/src/commonMain/kotlin/me/rerere/rikkahub/ui/theme/LastChatDesignTokens.kt"
+)
+orvia_font_tokens = legacy_font_tokens.with_name("OrviaDesignTokens.kt")
+if legacy_font_tokens.exists():
+    if orvia_font_tokens.exists():
+        raise SystemExit("Both legacy and Orvia typography token files exist; refusing an ambiguous rename.")
+    legacy_font_tokens.rename(orvia_font_tokens)
+elif not orvia_font_tokens.exists():
+    raise SystemExit("Orvia typography token source was not found after branding cleanup.")
+
 brand_leftovers = find_remaining_brand_tokens()
 assert not brand_leftovers, f"Rebrand incomplete; inherited brand tokens remain in: {brand_leftovers[:10]}"
 print(f"PASS: Orvia identity cleanup updated {rebranded_files} source/resource files; no LastChat/lastChat tokens remain in scanned source or UI resources; legal notices and stable lowercase compatibility namespaces were preserved.")
