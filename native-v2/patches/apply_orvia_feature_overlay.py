@@ -53,7 +53,25 @@ fun ModelCatalogSnapshot.toProviderPresets(): List<ProviderPreset> {
     return providers
         .filter { it.preset }
         .filterNot { it.name.trim().lowercase() in ORVIA_HIDDEN_CATALOG_PROVIDER_NAMES }
-        .map { it.toProviderPreset(this) }
+        .map { catalogProvider ->
+            val preset = catalogProvider.toProviderPreset(this)
+            if (preset.name.equals("OpenRouter", ignoreCase = true)) {
+                preset.copy(
+                    setupRecommended = true,
+                    setupOrder = 0,
+                    setupDescription = "OpenRouter Free Models Router. Requires an OpenRouter API key.",
+                    setupModelIds = listOf("openrouter/free"),
+                    setupDefaults = CatalogSetupDefaults(
+                        chat = "openrouter/free",
+                        title = "openrouter/free",
+                        summarizer = "openrouter/free",
+                        ocr = "openrouter/free",
+                    ),
+                )
+            } else {
+                preset
+            }
+        }
 }""",
 )
 
@@ -64,13 +82,29 @@ replace_once(
     "val SPECIAL_PROVIDER_PRESETS = listOf(\n",
     """val ORVIA_PROVIDER_PRESETS = listOf(
     ProviderPreset(
+        name = "OpenRouter",
+        description = "OpenRouter Free Models Router. Requires an OpenRouter API key.",
+        type = ProviderSetting.OpenAI::class,
+        baseUrl = "https://openrouter.ai/api/v1",
+        setupRecommended = true,
+        setupOrder = 0,
+        setupDescription = "Start with OpenRouter's free model router. An OpenRouter API key is required.",
+        setupModelIds = listOf("openrouter/free"),
+        setupDefaults = CatalogSetupDefaults(
+            chat = "openrouter/free",
+            title = "openrouter/free",
+            summarizer = "openrouter/free",
+            ocr = "openrouter/free",
+        ),
+    ),
+    ProviderPreset(
         name = "Kilo Free Gateway",
         description = "Anonymous Kilo AI gateway for supported free models. No API key required.",
         type = ProviderSetting.OpenAI::class,
         baseUrl = "https://ai-gateway.kilo.ai/api/v1",
         setupRecommended = true,
-        setupOrder = 0,
-        setupDescription = "No API key required. Uses Kilo's free model router.",
+        setupOrder = 10,
+        setupDescription = "Optional anonymous route. No API key required.",
         setupModelIds = listOf("kilo-auto/free"),
         setupDefaults = CatalogSetupDefaults(
             chat = "kilo-auto/free",
@@ -85,6 +119,34 @@ val SPECIAL_PROVIDER_PRESETS = listOf(
 """,
 )
 
+# Put OpenRouter Free first in the fallback provider catalog as well. This is
+# the no-network / empty-catalog setup path.
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/components/ProviderPresets.kt",
+    """    ProviderPreset(
+        name = "OpenRouter",
+        description = "Access many hosted models through one OpenAI-compatible API",
+        type = ProviderSetting.OpenAI::class,
+        baseUrl = "https://openrouter.ai/api/v1",
+        balanceOption = BalanceOption(""",
+    """    ProviderPreset(
+        name = "OpenRouter",
+        description = "OpenRouter Free Models Router. Requires an OpenRouter API key.",
+        type = ProviderSetting.OpenAI::class,
+        baseUrl = "https://openrouter.ai/api/v1",
+        setupRecommended = true,
+        setupOrder = 0,
+        setupDescription = "Start with OpenRouter's free model router. An OpenRouter API key is required.",
+        setupModelIds = listOf("openrouter/free"),
+        setupDefaults = CatalogSetupDefaults(
+            chat = "openrouter/free",
+            title = "openrouter/free",
+            summarizer = "openrouter/free",
+            ocr = "openrouter/free",
+        ),
+        balanceOption = BalanceOption(""",
+)
+
 # Seed the known free router model so a user can select it before fetching
 # the live model list. Model discovery remains available in provider settings.
 replace_once(
@@ -97,10 +159,12 @@ replace_once(
     """        ProviderSetting.OpenAI::class -> ProviderSetting.OpenAI(
             id = parsedId ?: Uuid.random(),
             name = name,
-            models = if (name.equals("Kilo Free Gateway", ignoreCase = true)) {
-                listOf(Model(modelId = "kilo-auto/free", displayName = "Kilo Auto Free"))
-            } else {
-                emptyList()
+            models = when {
+                name.equals("OpenRouter", ignoreCase = true) ->
+                    listOf(Model(modelId = "openrouter/free", displayName = "OpenRouter Free"))
+                name.equals("Kilo Free Gateway", ignoreCase = true) ->
+                    listOf(Model(modelId = "kilo-auto/free", displayName = "Kilo Auto Free"))
+                else -> emptyList()
             },
             baseUrl = baseUrl,
 """,
@@ -158,11 +222,16 @@ replace_once(
     """                val providerModels = fetchProviderModels(keyedProvider)
                 val setupModels = providerModels.orderedSetupModels(preset.setupModelIds)""",
     """                val fetchedModels = fetchProviderModels(keyedProvider)
+                val seededSetupModel = when (preset.name.lowercase()) {
+                    "openrouter" -> Model(modelId = "openrouter/free", displayName = "OpenRouter Free")
+                    "kilo free gateway" -> Model(modelId = "kilo-auto/free", displayName = "Kilo Auto Free")
+                    else -> null
+                }
                 val providerModels = if (
-                    preset.name.equals("Kilo Free Gateway", ignoreCase = true) &&
-                    fetchedModels.none { it.modelId == "kilo-auto/free" }
+                    seededSetupModel != null &&
+                    fetchedModels.none { it.modelId == seededSetupModel.modelId }
                 ) {
-                    fetchedModels + Model(modelId = "kilo-auto/free", displayName = "Kilo Auto Free")
+                    fetchedModels + seededSetupModel
                 } else {
                     fetchedModels
                 }
@@ -422,11 +491,15 @@ presets = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/compone
 provider_list = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingProviderPage.kt").read_text(encoding="utf-8")
 assert 'https://ai-gateway.kilo.ai/api/v1' in presets
 assert 'kilo-auto/free' in presets
+assert 'https://openrouter.ai/api/v1' in presets
+assert 'openrouter/free' in presets
 assert 'ORVIA_HIDDEN_CATALOG_PROVIDER_NAMES' in presets
 assert 'ORVIA_PROVIDER_PRESETS' in provider_list
 onboarding_vm = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingVM.kt").read_text(encoding="utf-8")
 onboarding_page = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt").read_text(encoding="utf-8")
 assert 'Kilo Free Gateway' in onboarding_vm and 'kilo-auto/free' in onboarding_vm
+assert '"openrouter" -> Model(modelId = "openrouter/free"' in onboarding_vm
+assert 'setupOrder = 0' in presets and 'setupOrder = 10' in presets
 assert 'allowBlankKey = selectedGuidedProvider?.name == "Kilo Free Gateway"' in onboarding_page
 assert 'R.drawable.orvia_logo' in onboarding_page
 assert 'https://github.com/dude555afk/Orvia' in (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingAboutPage.kt").read_text(encoding="utf-8")
@@ -1329,5 +1402,5 @@ brand_leftovers = find_remaining_brand_tokens()
 assert not brand_leftovers, f"Rebrand incomplete; inherited brand tokens remain in: {brand_leftovers[:10]}"
 print(f"PASS: Orvia identity cleanup updated {rebranded_files} source/resource files; no LastChat/lastChat tokens remain in scanned source or UI resources; legal notices and stable lowercase compatibility namespaces were preserved.")
 
-print("PASS: Orvia Kilo route plus native Edge neural TTS settings, token provider, playback dispatch, and token test are installed.")
+print("PASS: OpenRouter Free is the first guided setup option; Kilo remains an optional keyless route. Native Edge Neural TTS and email overlays are installed.")
 
