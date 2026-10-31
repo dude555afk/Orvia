@@ -34,8 +34,7 @@ internal object OrviaStickyMcpSelection {
      * assistant snapshot. Only an explicit sticky-selection write can change it.
      */
     fun applyUpdate(previous: Settings, requested: Settings): Settings {
-        val selected = requested.orviaStickyMcpServers
-            ?: previous.orviaStickyMcpServers
+        val selected = previous.orviaStickyMcpServers
             ?: previous.assistants.firstOrNull { it.id == previous.assistantId }
                 ?.mcpServers
                 .orEmpty()
