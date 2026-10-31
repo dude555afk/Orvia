@@ -140,6 +140,10 @@ jobs:
       - name: Apply Orvia native feature overlay
         run: python3 native-v2/patches/apply_orvia_feature_overlay.py
 
+      - name: Install web UI dependencies
+        working-directory: native-v2/lastchat/web-ui
+        run: npm ci
+
       - name: Run Edge TTS token compatibility test
         working-directory: native-v2/lastchat
         run: ./gradlew :tts:testDebugUnitTest --no-daemon --stacktrace
@@ -148,9 +152,6 @@ jobs:
         working-directory: native-v2/lastchat
         run: ./gradlew :app:testDevDebugUnitTest --no-daemon --stacktrace
 
-      - name: Install web UI dependencies
-        working-directory: native-v2/lastchat/web-ui
-        run: npm ci
       - name: Build x86_64 smoke-test APK with release shrinking
         working-directory: native-v2/lastchat
         shell: bash
