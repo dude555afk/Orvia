@@ -80,20 +80,12 @@ class SettingsProvider extends ChangeNotifier {
   static const String providerUngroupedGroupKey = '__ungrouped__';
   static const List<String> _builtInProviderKeysInOrder = [
     'OpenAI',
-    'SiliconFlow',
     'Gemini',
     'OpenRouter',
-    'OrviaIN',
-    'Tensdaq',
-    'DeepSeek',
+    'Kilo',
     'AIhubmix',
-    '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
-    'MaruCode',
-    'Aliyun',
-    'Zhipu AI',
     'Claude',
     'Grok',
-    'ByteDance',
   ];
   static const Set<String> _builtInProviderKeys = {
     ..._builtInProviderKeysInOrder,
@@ -1443,17 +1435,109 @@ class SettingsProvider extends ChangeNotifier {
         );
       } catch (_) {}
     }
-    if (_providerConfigs.isEmpty) {
-      // Seed a couple of sensible defaults on first launch, but do not recreate
-      // providers implicitly during later reads (e.g., when switching chats).
-      ensureProviderConfig('OrviaIN', defaultName: 'OrviaIN');
-      ensureProviderConfig('Tensdaq', defaultName: 'Tensdaq');
-      ensureProviderConfig('SiliconFlow', defaultName: 'SiliconFlow');
-      ensureProviderConfig('AIhubmix', defaultName: 'AIhubmix');
-      final seededConfigs = _providerConfigs.map(
-        (key, config) => MapEntry(key, config.toJson()),
+    // Retire the old OrviaIN endpoint and China-focused provider presets from
+    // persisted settings. Existing user-created, non-retired providers remain.
+    const retiredProviderKeys = <String>{
+      'OrviaIN',
+      'SiliconFlow',
+      'Tensdaq',
+      'DeepSeek',
+      '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
+      'MaruCode',
+      'Aliyun',
+      'Zhipu AI',
+      'ByteDance',
+    };
+    final retiredProviderIds = retiredProviderKeys
+        .map((key) => key.toLowerCase())
+        .toSet();
+    for (final key in _providerConfigs.keys.toList(growable: false)) {
+      if (retiredProviderIds.contains(key.trim().toLowerCase())) {
+        await removeProviderConfig(key);
+      }
+    }
+
+    var providerConfigsChanged = false;
+    var openRouterConfig = _providerConfigs['OpenRouter'];
+    if (openRouterConfig == null) {
+      openRouterConfig = ensureProviderConfig(
+        'OpenRouter',
+        defaultName: 'OpenRouter',
       );
-      await prefs.setString(_providerConfigsKey, jsonEncode(seededConfigs));
+      providerConfigsChanged = true;
+    }
+    final openRouterModels = List<String>.from(openRouterConfig.models);
+    if (!openRouterModels.contains('openrouter/free')) {
+      openRouterModels.insert(0, 'openrouter/free');
+      providerConfigsChanged = true;
+    }
+    final openRouterOverrides = Map<String, dynamic>.from(
+      openRouterConfig.modelOverrides,
+    );
+    if (!openRouterOverrides.containsKey('openrouter/free')) {
+      openRouterOverrides['openrouter/free'] = const {
+        'name': 'OpenRouter Free',
+        'type': 'chat',
+        'input': ['text'],
+        'output': ['text'],
+      };
+      providerConfigsChanged = true;
+    }
+    if (providerConfigsChanged ||
+        openRouterModels.length != openRouterConfig.models.length ||
+        openRouterOverrides.length != openRouterConfig.modelOverrides.length) {
+      _providerConfigs['OpenRouter'] = openRouterConfig.copyWith(
+        models: openRouterModels,
+        modelOverrides: openRouterOverrides,
+      );
+      providerConfigsChanged = true;
+    }
+
+    var kiloConfig = _providerConfigs['Kilo'];
+    if (kiloConfig == null) {
+      kiloConfig = ensureProviderConfig('Kilo', defaultName: 'Kilo');
+      providerConfigsChanged = true;
+    }
+    final kiloModels = List<String>.from(kiloConfig.models);
+    if (!kiloModels.contains('kilo-auto/free')) {
+      kiloModels.insert(0, 'kilo-auto/free');
+      providerConfigsChanged = true;
+    }
+    final kiloOverrides = Map<String, dynamic>.from(kiloConfig.modelOverrides);
+    if (!kiloOverrides.containsKey('kilo-auto/free')) {
+      kiloOverrides['kilo-auto/free'] = const {'name': 'Kilo Auto Free'};
+      providerConfigsChanged = true;
+    }
+    if (kiloModels.length != kiloConfig.models.length ||
+        kiloOverrides.length != kiloConfig.modelOverrides.length) {
+      _providerConfigs['Kilo'] = kiloConfig.copyWith(
+        models: kiloModels,
+        modelOverrides: kiloOverrides,
+      );
+      providerConfigsChanged = true;
+    }
+    if (providerConfigsChanged) {
+      await prefs.setString(
+        _providerConfigsKey,
+        jsonEncode(
+          _providerConfigs.map((key, config) => MapEntry(key, config.toJson())),
+        ),
+      );
+    }
+
+    // Fresh installs and selections that pointed to a retired provider start
+    // on OpenRouter Free. Preserve any valid model the user already selected.
+    final selectedProvider = _currentModelProvider?.trim().toLowerCase();
+    if (_currentModelProvider == null ||
+        _currentModelId == null ||
+        selectedProvider == null ||
+        retiredProviderIds.contains(selectedProvider)) {
+      _currentModelProvider = 'OpenRouter';
+      _currentModelId = 'openrouter/free';
+      await prefs.setString(
+        _selectedModelKey,
+        'OpenRouter::openrouter/free',
+      );
     }
 
     // kick off a one-time connectivity test for services (exclude local Bing)
@@ -6000,8 +6084,6 @@ enum ProviderKind { openai, google, claude }
 enum ChatMessageBackgroundStyle { defaultStyle, frosted, solid }
 
 class ProviderConfig {
-  static const _orviaInPublicApiKey = 'orvia';
-
   final String id;
   final bool enabled;
   final String name;
@@ -6339,10 +6421,7 @@ class ProviderConfig {
   );
 
   static String _apiKeyFromJson(Map<String, dynamic> json) {
-    final stored = json['apiKey'] as String? ?? '';
-    if (stored.isNotEmpty) return stored;
-    final id = json['id'] as String? ?? json['name'] as String? ?? '';
-    return id.trim().toLowerCase() == 'orviain' ? _orviaInPublicApiKey : '';
+    return json['apiKey'] as String? ?? '';
   }
 
   static List<Map<String, String>> _customRequestRowsFromJson(
@@ -6381,7 +6460,7 @@ class ProviderConfig {
   static String _defaultBase(String key) {
     final k = key.toLowerCase();
     if (k.contains('tensdaq')) return 'https://tensdaq-api.x-aio.com/v1';
-    if (k.contains('orviain')) return 'https://text.pollinations.ai/openai';
+    if (k.contains('kilo')) return 'https://ai-gateway.kilo.ai/api/v1';
     if (k.contains('openrouter')) return 'https://openrouter.ai/api/v1';
     if (k.contains('aihubmix')) return 'https://aihubmix.com/v1';
     if (k.contains('\u968F\u60F3')) return 'https://sui-xiang.com/v1';
@@ -6428,12 +6507,10 @@ class ProviderConfig {
   static ProviderConfig defaultsFor(String key, {String? displayName}) {
     bool defaultEnabled(String k) {
       final s = k.toLowerCase();
-      if (s.contains('tensdaq')) return true;
       if (s.contains('openai')) return true;
       if (s.contains('gemini') || s.contains('google')) return true;
-      if (s.contains('silicon')) return true;
       if (s.contains('openrouter')) return true;
-      if (s.contains('orviain')) return true;
+      if (s.contains('kilo')) return true;
       return false; // others disabled by default
     }
 
@@ -6493,41 +6570,24 @@ class ProviderConfig {
           claudePromptCachingEnabled: false,
         );
       case ProviderKind.openai:
-        // Special-case OrviaIN default models and overrides
-        if (lowerKey.contains('orviain')) {
+        // OpenRouter's Free Models Router is the default chat route.
+        if (lowerKey.contains('openrouter')) {
           return ProviderConfig(
             id: key,
             enabled: defaultEnabled(key),
             name: displayName ?? key,
-            apiKey: _orviaInPublicApiKey,
+            apiKey: '',
             baseUrl: _defaultBase(key),
             providerType: ProviderKind.openai,
-            chatPath:
-                null, // keep empty in UI; code uses default '/chat/completions'
+            chatPath: '/chat/completions',
             useResponseApi: false,
-            models: const [
-              // 'openai-fast',
-              'mistral',
-              'qwen-coder',
-            ],
+            models: const ['openrouter/free'],
             modelOverrides: const {
-              // 'openai-fast': {
-              //   'type': 'chat',
-              //   'input': ['text'],
-              //   'output': ['text'],
-              //   'abilities': ['tool'],
-              // },
-              'mistral': {
+              'openrouter/free': {
+                'name': 'OpenRouter Free',
                 'type': 'chat',
                 'input': ['text'],
                 'output': ['text'],
-                'abilities': ['tool'],
-              },
-              'qwen-coder': {
-                'type': 'chat',
-                'input': ['text'],
-                'output': ['text'],
-                'abilities': ['tool'],
               },
             },
             proxyEnabled: false,
@@ -6545,8 +6605,8 @@ class ProviderConfig {
             claudePromptCachingEnabled: false,
           );
         }
-        // Special-case SiliconFlow: prefill two partnered models
-        if (lowerKey.contains('silicon')) {
+        // Kilo is the keyless alternative; OpenRouter remains the default.
+        if (lowerKey.contains('kilo')) {
           return ProviderConfig(
             id: key,
             enabled: defaultEnabled(key),
@@ -6556,20 +6616,9 @@ class ProviderConfig {
             providerType: ProviderKind.openai,
             chatPath: '/chat/completions',
             useResponseApi: false,
-            models: const ['THUDM/GLM-4-9B-0414', 'Qwen/Qwen3-8B'],
+            models: const ['kilo-auto/free'],
             modelOverrides: const {
-              'THUDM/GLM-4-9B-0414': {
-                'type': 'chat',
-                'input': ['text'],
-                'output': ['text'],
-                'abilities': ['tool'],
-              },
-              'Qwen/Qwen3-8B': {
-                'type': 'chat',
-                'input': ['text'],
-                'output': ['text'],
-                'abilities': ['tool', 'reasoning'],
-              },
+              'kilo-auto/free': {'name': 'Kilo Auto Free'},
             },
             proxyEnabled: false,
             proxyHost: '',
@@ -6580,7 +6629,7 @@ class ProviderConfig {
             apiKeys: const [],
             keyManagement: const KeyManagementConfig(),
             aihubmixAppCodeEnabled: false,
-            balanceEnabled: _defaultBalanceEnabled(key),
+            balanceEnabled: false,
             balanceApiPath: _defaultBalanceApiPath(key),
             balanceResultPath: _defaultBalanceResultPath(key),
             claudePromptCachingEnabled: false,
