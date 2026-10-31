@@ -20,32 +20,27 @@ internal object OrviaStickyMcpSelection {
         )
     }
 
+    fun select(settings: Settings, requestedSelection: Set<Uuid>): Settings {
+        val validServerIds = settings.mcpServers.map { it.id }.toSet()
+        val selected = requestedSelection.intersect(validServerIds)
+        return settings.copy(
+            orviaStickyMcpServers = selected,
+            assistants = settings.assistants.map { it.copy(mcpServers = selected) },
+        )
+    }
+
     /**
-     * Translate existing assistant-picker writes into the app-wide source of
-     * truth. A normal assistant edit made from an old snapshot must never
-     * erase a user's MCP choices.
+     * Keep a saved app-wide choice when unrelated settings arrive from an old
+     * assistant snapshot. Only an explicit sticky-selection write can change it.
      */
     fun applyUpdate(previous: Settings, requested: Settings): Settings {
-        val changedSelections = requested.assistants.mapNotNull { next ->
-            val old = previous.assistants.firstOrNull { it.id == next.id }
-                ?: return@mapNotNull null
-            next.mcpServers.takeIf { it != old.mcpServers }
-        }.distinct()
-
-        val selected = when {
-            requested.orviaStickyMcpServers != null &&
-                requested.orviaStickyMcpServers != previous.orviaStickyMcpServers ->
-                requested.orviaStickyMcpServers
-            changedSelections.size == 1 -> changedSelections.single()
-            else -> previous.orviaStickyMcpServers
-                ?: previous.assistants.firstOrNull { it.id == previous.assistantId }
-                    ?.mcpServers
-                    .orEmpty()
-        }
-
+        val selected = requested.orviaStickyMcpServers
+            ?: previous.orviaStickyMcpServers
+            ?: previous.assistants.firstOrNull { it.id == previous.assistantId }
+                ?.mcpServers
+                .orEmpty()
         val validServerIds = requested.mcpServers.map { it.id }.toSet()
         val validSelection = selected.intersect(validServerIds)
-
         return requested.copy(
             orviaStickyMcpServers = validSelection,
             assistants = requested.assistants.map { it.copy(mcpServers = validSelection) },
