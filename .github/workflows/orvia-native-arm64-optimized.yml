@@ -144,6 +144,10 @@ jobs:
         working-directory: native-v2/lastchat
         run: ./gradlew :tts:testDebugUnitTest --no-daemon --stacktrace
 
+      - name: Run Orvia persistent MCP selection regression tests
+        working-directory: native-v2/lastchat
+        run: ./gradlew :app:testDevDebugUnitTest --no-daemon --stacktrace
+
       - name: Install web UI dependencies
         working-directory: native-v2/lastchat/web-ui
         run: npm ci
