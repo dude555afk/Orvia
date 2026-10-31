@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:orvia/core/services/tts/network_tts.dart';
+import 'package:orvia/core/services/tts/edge_v2_token.dart';
+import 'package:orvia/core/services/tts/edge_modern_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -245,39 +247,30 @@ void main() {
     });
   });
 
-  group('NetworkTtsService', () {
-    test('HTTP 403 triggers Android fallback only for Edge voices', () {
-      final edge = EdgeNeuralTtsOptions(
-        enabled: true,
-        name: 'Edge',
-        voice: 'en-US-AriaNeural',
-      );
-      final openai = OpenAiTtsOptions(
-        enabled: true,
-        name: 'Other',
-        apiKey: 'key',
-        baseUrl: 'https://api.openai.com/v1',
-        model: 'gpt-4o-mini-tts',
-        voice: 'alloy',
-      );
+  group('Edge v2 protocol', () {
+    test('produces upstream captured v2 handshake token', () {
       expect(
-        isEdgeTtsAccessDenied(
-          edge,
-          StateError(
-            'EdgeTtsException(connection_failed): '
-            'websocket_upgrade_failed: HTTP 403 Forbidden',
-          ),
-        ),
-        isTrue,
-      );
-      expect(isEdgeTtsAccessDenied(edge, Exception('HTTP 500')), isFalse);
-      expect(isEdgeTtsAccessDenied(edge, Exception('Timed out')), isFalse);
-      expect(
-        isEdgeTtsAccessDenied(openai, Exception('HTTP 403 Forbidden')),
-        isFalse,
+        EdgeV2Token.generate(unixSeconds: 1791888000),
+        '492D7694A183A45E-'
+        '56E821F95D4579C5B7C7E33DC7303FF379EC36D510213555BBBB9EB17EF15876',
       );
     });
 
+    test('new and legacy endpoints use v2 auth for Edge voices', () {
+      final token = EdgeV2Token.generate(unixSeconds: 1791888000);
+      final oldUri = EdgeModernClient.endpoint(modern: false, token: token);
+      final newUri = EdgeModernClient.endpoint(modern: true, token: token);
+      expect(oldUri.host, 'speech.platform.bing.com');
+      expect(newUri.host, 'api.msedgeservices.com');
+      expect(
+        oldUri.queryParameters['Sec-MS-GEC-Version'],
+        EdgeV2Token.protocolVersion,
+      );
+      expect(newUri.queryParameters['Sec-MS-GEC'], token);
+    });
+  });
+
+  group('NetworkTtsService', () {
     test('keyless Edge synthesis uses chosen voice and MP3 payload', () async {
       final edge = EdgeNeuralTtsOptions(
         enabled: true,
