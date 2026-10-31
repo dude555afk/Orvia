@@ -24,12 +24,22 @@ class _Http {
     ProviderConfig cfg,
     Map<String, String> base,
   ) {
-    return CustomRequestMerger.mergeHeaders(
-      base: base,
-      provider: ModelOverridePayloadParser.customHeadersFromRows(
-        cfg.customHeaders,
+    final merged = Map<String, String>.from(
+      CustomRequestMerger.mergeHeaders(
+        base: base,
+        provider: ModelOverridePayloadParser.customHeadersFromRows(
+          cfg.customHeaders,
+        ),
       ),
     );
+    // Anonymous OpenAI-compatible gateways reject an empty "Bearer " value.
+    for (final key in merged.keys.toList(growable: false)) {
+      final value = merged[key]?.trim().toLowerCase() ?? '';
+      if (key.toLowerCase() == 'authorization' && value == 'bearer') {
+        merged.remove(key);
+      }
+    }
+    return merged;
   }
 }
 
