@@ -59,7 +59,7 @@ void main() {
       expect(moonshot.modelOverrides, isEmpty);
     });
 
-    test('built-in provider order does not add Kimi preset', () async {
+    test('retired provider order is cleaned and Kimi is not added', () async {
       final harness = await createBusinessTestHarness(
         initial: {
           'providers_order_v1': <String>['OpenAI', 'Zhipu AI', 'Grok'],
@@ -74,7 +74,8 @@ void main() {
       await settings.loaded;
 
       expect(settings.providersOrder, isNot(contains('Kimi')));
-      expect(settings.providersOrder.take(3), ['OpenAI', 'Zhipu AI', 'Grok']);
+      expect(settings.providersOrder, isNot(contains('Zhipu AI')));
+      expect(settings.providersOrder.take(3), ['OpenAI', 'Grok', 'Gemini']);
     });
 
     test('latest model ids infer only their documented capabilities', () {
