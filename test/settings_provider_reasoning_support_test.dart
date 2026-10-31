@@ -14,14 +14,30 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('SettingsProvider reasoning support', () {
-    test('default Claude and OpenRouter presets do not add latest models', () {
+    test('OpenRouter Free is the default route and Kilo is the keyless alternative', () {
       final claude = ProviderConfig.defaultsFor('Claude');
       final openRouter = ProviderConfig.defaultsFor('OpenRouter');
+      final kilo = ProviderConfig.defaultsFor('Kilo');
 
       expect(claude.models, isEmpty);
       expect(claude.modelOverrides, isEmpty);
-      expect(openRouter.models, isEmpty);
-      expect(openRouter.modelOverrides, isEmpty);
+
+      expect(openRouter.enabled, isTrue);
+      expect(openRouter.baseUrl, 'https://openrouter.ai/api/v1');
+      expect(openRouter.models, contains('openrouter/free'));
+      expect(
+        openRouter.modelOverrides['openrouter/free'],
+        containsPair('name', 'OpenRouter Free'),
+      );
+
+      expect(kilo.enabled, isTrue);
+      expect(kilo.apiKey, isEmpty);
+      expect(kilo.baseUrl, 'https://ai-gateway.kilo.ai/api/v1');
+      expect(kilo.models, contains('kilo-auto/free'));
+      expect(
+        kilo.modelOverrides['kilo-auto/free'],
+        containsPair('name', 'Kilo Auto Free'),
+      );
     });
 
     test('default Zhipu preset stays user-configured only', () {
