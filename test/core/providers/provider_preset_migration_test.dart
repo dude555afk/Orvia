@@ -53,11 +53,7 @@ void main() {
         initial: {
           'provider_configs_v1': jsonEncode(initialConfigs),
           'selected_model_v1': 'OrviaIN::mistral',
-          'providers_order_v1': <String>[
-            'OrviaIN',
-            'SiliconFlow',
-            'DeepSeek',
-          ],
+          'providers_order_v1': <String>['OrviaIN', 'SiliconFlow', 'DeepSeek'],
         },
       );
       final settings = SettingsProvider(harness.preferences);
@@ -80,30 +76,23 @@ void main() {
     },
   );
 
-  test(
-    'preserves a valid model already selected by the user',
-    () async {
-      final openAi = ProviderConfig.defaultsFor('OpenAI').copyWith(
-        models: const ['gpt-4o'],
-        enabled: true,
-      );
-      final harness = await createBusinessTestHarness(
-        initial: {
-          'provider_configs_v1': jsonEncode({'OpenAI': openAi.toJson()}),
-          'selected_model_v1': 'OpenAI::gpt-4o',
-        },
-      );
-      final settings = SettingsProvider(harness.preferences);
-      addTearDown(settings.dispose);
+  test('preserves a valid model already selected by the user', () async {
+    final openAi = ProviderConfig.defaultsFor(
+      'OpenAI',
+    ).copyWith(models: const ['gpt-4o'], enabled: true);
+    final harness = await createBusinessTestHarness(
+      initial: {
+        'provider_configs_v1': jsonEncode({'OpenAI': openAi.toJson()}),
+        'selected_model_v1': 'OpenAI::gpt-4o',
+      },
+    );
+    final settings = SettingsProvider(harness.preferences);
+    addTearDown(settings.dispose);
 
-      await settings.loaded;
+    await settings.loaded;
 
-      expect(settings.currentModelProvider, 'OpenAI');
-      expect(settings.currentModelId, 'gpt-4o');
-      expect(
-        harness.preferences.get('selected_model_v1'),
-        'OpenAI::gpt-4o',
-      );
-    },
-  );
+    expect(settings.currentModelProvider, 'OpenAI');
+    expect(settings.currentModelId, 'gpt-4o');
+    expect(harness.preferences.get('selected_model_v1'), 'OpenAI::gpt-4o');
+  });
 }
