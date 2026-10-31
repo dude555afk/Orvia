@@ -1305,6 +1305,143 @@ replace_once(
 """,
 )
 
+
+# Keep the upstream MCP manager and transports, but make the user's selected
+# servers app-wide and durable across assistant switches and app restarts.
+# The assistant-level list remains a compatibility cache for LastChat's
+# existing GenerationHandler/McpManager contracts.
+sticky_mcp_install = r"""
+helper_source = Path("native-v2/patches/kotlin/OrviaStickyMcpSelection.kt")
+helper_target = ROOT / "app/src/main/java/me/rerere/rikkahub/data/datastore/OrviaStickyMcpSelection.kt"
+test_source = Path("native-v2/patches/tests/OrviaStickyMcpSelectionTest.kt")
+test_target = ROOT / "app/src/test/java/me/rerere/rikkahub/data/datastore/OrviaStickyMcpSelectionTest.kt"
+for source_path, target_path in ((helper_source, helper_target), (test_source, test_target)):
+    if not source_path.is_file():
+        raise SystemExit(f"Missing Orvia overlay source: {source_path}")
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = source_path.read_text(encoding="utf-8")
+    if target_path.exists() and target_path.read_text(encoding="utf-8") != payload:
+        raise SystemExit(f"Refusing to overwrite divergent upstream file: {target_path}")
+    target_path.write_text(payload, encoding="utf-8")
+
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesModels.kt",
+    "    val mcpServers: List<McpServerConfig> = emptyList(),\n",
+    "    val mcpServers: List<McpServerConfig> = emptyList(),\n"
+    "    // Orvia: explicit app-wide MCP selection; null means migrate legacy assistant selection.\n"
+    "    val orviaStickyMcpServers: Set<Uuid>? = null,\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
+    '        val MCP_SERVERS = stringPreferencesKey("mcp_servers")\n',
+    '        val MCP_SERVERS = stringPreferencesKey("mcp_servers")\n'
+    '        val ORVIA_STICKY_MCP_SERVERS = stringPreferencesKey("orvia_sticky_mcp_servers")\n',
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
+    "    private var hasPersistedLegacySummarizerMigration = false\n",
+    "    private var hasPersistedLegacySummarizerMigration = false\n"
+    "    private var hasPersistedOrviaStickyMcpMigration = false\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
+    "                    mcpServers = decodePreferenceList(preferences[MCP_SERVERS]) ?: emptyList(),\n",
+    "                    mcpServers = decodePreferenceList(preferences[MCP_SERVERS]) ?: emptyList(),\n"
+    "                    orviaStickyMcpServers = decodePreferenceList<Uuid>(preferences[ORVIA_STICKY_MCP_SERVERS])?.toSet(),\n",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
+    """            val validMcpServerIds = settings.mcpServers.map { it.id }.toSet()
+            settings.copy(
+""",
+    """            val validMcpServerIds = settings.mcpServers.map { it.id }.toSet()
+            // First launch migrates the active assistant's prior selection.
+            // Thereafter an explicit empty set is respected as "all off".
+            val stickyMcpServerIds = (
+                settings.orviaStickyMcpServers
+                    ?: settings.assistants.firstOrNull { it.id == settings.assistantId }
+                        ?.mcpServers
+                        .orEmpty()
+                ).intersect(validMcpServerIds)
+            if (settings.orviaStickyMcpServers == null && !hasPersistedOrviaStickyMcpMigration) {
+                hasPersistedOrviaStickyMcpMigration = true
+                scope.launch(Dispatchers.IO) {
+                    dataStore.edit { preferences ->
+                        preferences[ORVIA_STICKY_MCP_SERVERS] =
+                            JsonInstant.encodeToString(stickyMcpServerIds)
+                    }
+                }
+            }
+            settings.copy(
+                orviaStickyMcpServers = stickyMcpServerIds,
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
+    """                assistants = settings.assistants.distinctBy { it.id }.map { assistant ->
+                    assistant.copy(
+                        // 过滤掉不存在的 MCP 服务器 ID
+                        mcpServers = assistant.mcpServers.filter { serverId ->
+                            serverId in validMcpServerIds
+                        }.toSet()
+                    )
+                },
+""",
+    """                // Runtime compatibility: LastChat still reads MCP selection
+                // from Assistant.mcpServers, so mirror the durable Orvia choice.
+                assistants = settings.assistants.distinctBy { it.id }.map { assistant ->
+                    assistant.copy(mcpServers = stickyMcpServerIds)
+                },
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
+    """        // Auto-update recently used assistants when assistant changes
+        val settingsToSave = if (settings.assistantId != settingsFlow.value.assistantId && 
+            !settingsFlow.value.init &&
+            settings.assistants.any { it.id == settings.assistantId }) {
+            val updatedList = buildList {
+                add(settings.assistantId)
+                settings.recentlyUsedAssistants
+                    .filter { it != settings.assistantId }
+                    .take(2)
+                    .forEach { add(it) }
+            }
+            settings.copy(recentlyUsedAssistants = updatedList)
+        } else {
+            settings
+        }
+""",
+    """        // Existing MCP picker writes are promoted to the app-wide selection.
+        // This also protects the selection from stale assistant snapshots.
+        val stickySettings = OrviaStickyMcpSelection.applyUpdate(settingsFlow.value, settings)
+
+        // Auto-update recently used assistants when assistant changes
+        val settingsToSave = if (stickySettings.assistantId != settingsFlow.value.assistantId &&
+            !settingsFlow.value.init &&
+            stickySettings.assistants.any { it.id == stickySettings.assistantId }) {
+            val updatedList = buildList {
+                add(stickySettings.assistantId)
+                stickySettings.recentlyUsedAssistants
+                    .filter { it != stickySettings.assistantId }
+                    .take(2)
+                    .forEach { add(it) }
+            }
+            stickySettings.copy(recentlyUsedAssistants = updatedList)
+        } else {
+            stickySettings
+        }
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
+    "            preferences[MCP_SERVERS] = JsonInstant.encodeToString(normalizedSettings.mcpServers)\n",
+    "            preferences[MCP_SERVERS] = JsonInstant.encodeToString(normalizedSettings.mcpServers)\n"
+    "            preferences[ORVIA_STICKY_MCP_SERVERS] = JsonInstant.encodeToString(normalizedSettings.orviaStickyMcpServers.orEmpty())\n",
+)
+"""
+exec(compile(sticky_mcp_install, "orvia_sticky_mcp_overlay.py", "exec"))
+
 email_overlay = Path("native-v2/patches/apply_orvia_email_overlay.py")
 exec(compile(email_overlay.read_text(encoding="utf-8"), str(email_overlay), "exec"))
 
