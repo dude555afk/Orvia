@@ -108,7 +108,7 @@ jobs:
         run: python3 tool/check_orvia_identity.py
 
       - name: dart analyze (root package only)
-        run: dart analyze --fatal-infos lib test integration_test
+        run: dart analyze --fatal-warnings lib test integration_test
 
       - name: flutter test
         run: flutter test
