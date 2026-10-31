@@ -497,7 +497,7 @@ assert 'ORVIA_HIDDEN_CATALOG_PROVIDER_NAMES' in presets
 assert 'ORVIA_PROVIDER_PRESETS' in provider_list
 onboarding_vm = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingVM.kt").read_text(encoding="utf-8")
 onboarding_page = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/onboarding/OnboardingPage.kt").read_text(encoding="utf-8")
-assert 'Kilo Free Gateway' in onboarding_vm and 'kilo-auto/free' in onboarding_vm
+assert 'kilo free gateway' in onboarding_vm and 'kilo-auto/free' in onboarding_vm
 assert '"openrouter" -> Model(modelId = "openrouter/free"' in onboarding_vm
 assert 'setupOrder = 0' in presets and 'setupOrder = 10' in presets
 assert 'allowBlankKey = selectedGuidedProvider?.name == "Kilo Free Gateway"' in onboarding_page
