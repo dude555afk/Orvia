@@ -9,10 +9,11 @@ import kotlin.uuid.Uuid
  */
 internal object OrviaStickyMcpSelection {
     fun normalize(settings: Settings, storedSelection: Set<Uuid>?): Settings {
-        val selected = storedSelection
+        val validServerIds = settings.mcpServers.map { it.id }.toSet()
+        val selected = (storedSelection
             ?: settings.assistants.firstOrNull { it.id == settings.assistantId }
                 ?.mcpServers
-                .orEmpty()
+                .orEmpty()).intersect(validServerIds)
         return settings.copy(
             orviaStickyMcpServers = selected,
             assistants = settings.assistants.map { it.copy(mcpServers = selected) },
