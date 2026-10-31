@@ -1378,21 +1378,10 @@ replace_once(
 )
 replace_once(
     "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
-    """                assistants = settings.assistants.distinctBy { it.id }.map { assistant ->
-                    assistant.copy(
-                        // Filter out MCP server IDs that are not configured
-                        mcpServers = assistant.mcpServers.filter { serverId ->
+    """                        mcpServers = assistant.mcpServers.filter { serverId ->
                             serverId in validMcpServerIds
-                        }.toSet()
-                    )
-                },
-""",
-    """                // Runtime compatibility: LastChat still reads MCP selection
-                // from Assistant.mcpServers, so mirror the durable Orvia choice.
-                assistants = settings.assistants.distinctBy { it.id }.map { assistant ->
-                    assistant.copy(mcpServers = stickyMcpServerIds)
-                },
-""",
+                        }.toSet()""",
+    "                        mcpServers = stickyMcpServerIds",
 )
 replace_once(
     "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
