@@ -46,16 +46,8 @@ class OrviaStickyMcpSelectionTest {
     @Test
     fun pickerChangeBecomesGlobalAndSurvivesAssistantSwitch() {
         val previous = OrviaStickyMcpSelection.normalize(settings(), setOf(github))
-        val edited = previous.copy(
-            assistantId = assistantB,
-            assistants = previous.assistants.map { assistant ->
-                if (assistant.id == assistantB) {
-                    assistant.copy(mcpServers = setOf(github, search))
-                } else {
-                    assistant
-                }
-            },
-        )
+        val selected = OrviaStickyMcpSelection.select(previous, setOf(github, search))
+        val edited = selected.copy(assistantId = assistantB)
 
         val updated = OrviaStickyMcpSelection.applyUpdate(previous, edited)
 
@@ -67,8 +59,8 @@ class OrviaStickyMcpSelectionTest {
     @Test
     fun staleAssistantEditCannotClearMcpSelection() {
         val previous = OrviaStickyMcpSelection.normalize(settings(), setOf(github, search))
-        val staleEdit = previous.copy(
-            assistants = previous.assistants.map { it.copy(name = "Renamed") },
+        val staleEdit = settings().copy(
+            assistants = settings().assistants.map { it.copy(name = "Renamed") },
         )
 
         val updated = OrviaStickyMcpSelection.applyUpdate(previous, staleEdit)
@@ -81,9 +73,7 @@ class OrviaStickyMcpSelectionTest {
     @Test
     fun explicitDisableStaysDisabled() {
         val previous = OrviaStickyMcpSelection.normalize(settings(), setOf(github))
-        val edited = previous.copy(
-            assistants = previous.assistants.map { it.copy(mcpServers = emptySet()) },
-        )
+        val edited = OrviaStickyMcpSelection.select(previous, emptySet())
 
         val updated = OrviaStickyMcpSelection.applyUpdate(previous, edited)
 
