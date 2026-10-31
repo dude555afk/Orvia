@@ -1508,7 +1508,7 @@ replace_once(
 replace_once(
     "app/src/main/java/me/rerere/rikkahub/ui/components/ai/McpPicker.kt",
     "    onUpdateAssistant: (Assistant) -> Unit\n) {\n    var showMcpPicker by remember { mutableStateOf(false) }\n",
-    "    @Suppress(\"UNUSED_PARAMETER\") onUpdateAssistant: (Assistant) -> Unit\n) {\n    var showMcpPicker by remember { mutableStateOf(false) }\n",
+    "    @Suppress(\"UNUSED_PARAMETER\") onUpdateAssistant: (Assistant) -> Unit = {}\n) {\n    var showMcpPicker by remember { mutableStateOf(false) }\n",
 )
 replace_once(
     "app/src/main/java/me/rerere/rikkahub/ui/components/ai/McpPicker.kt",
