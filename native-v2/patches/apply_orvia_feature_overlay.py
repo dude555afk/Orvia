@@ -1396,6 +1396,24 @@ replace_once(
 )
 replace_once(
     "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
+    """    suspend fun update(settings: Settings) {
+        if(settings.init) {
+""",
+    """    suspend fun update(settings: Settings) {
+        updateInternal(settings, null)
+    }
+
+    suspend fun updateStickyMcpSelection(transform: (Settings) -> Set<Uuid>) {
+        val current = settingsFlow.value
+        updateInternal(current, transform(current))
+    }
+
+    private suspend fun updateInternal(settings: Settings, stickySelection: Set<Uuid>?) {
+        if(settings.init) {
+""",
+)
+replace_once(
+    "app/src/main/java/me/rerere/rikkahub/data/datastore/PreferencesStore.kt",
     """        // Auto-update recently used assistants when assistant changes
         val settingsToSave = if (settings.assistantId != settingsFlow.value.assistantId && 
             !settingsFlow.value.init &&
@@ -1414,7 +1432,11 @@ replace_once(
 """,
     """        // Existing MCP picker writes are promoted to the app-wide selection.
         // This also protects the selection from stale assistant snapshots.
-        val stickySettings = OrviaStickyMcpSelection.applyUpdate(settingsFlow.value, settings)
+        val stickySettings = if (stickySelection != null) {
+            OrviaStickyMcpSelection.select(settings, stickySelection)
+        } else {
+            OrviaStickyMcpSelection.applyUpdate(settingsFlow.value, settings)
+        }
 
         // Auto-update recently used assistants when assistant changes
         val settingsToSave = if (stickySettings.assistantId != settingsFlow.value.assistantId &&
@@ -1475,17 +1497,12 @@ replace_once(
                                     )
                                 )""",
     """                                coroutineScope.launch {
-                                    settingsStore.update { current ->
+                                    settingsStore.updateStickyMcpSelection { current ->
                                         val selected = current.orviaStickyMcpServers
                                             ?: current.assistants.firstOrNull {
                                                 it.id == current.assistantId
                                             }?.mcpServers.orEmpty()
-                                        val next = if (enabled) {
-                                            selected + server.id
-                                        } else {
-                                            selected - server.id
-                                        }
-                                        OrviaStickyMcpSelection.select(current, next)
+                                        if (enabled) selected + server.id else selected - server.id
                                     }
                                 }""",
 )
@@ -1518,12 +1535,7 @@ replace_once(
                     }
                 )
             }""",
-    """            settingsStore.update { current ->
-                me.rerere.rikkahub.data.datastore.OrviaStickyMcpSelection.select(
-                    current,
-                    requestedIds,
-                )
-            }""",
+    """            settingsStore.updateStickyMcpSelection { requestedIds }""",
 )
 
 '''
