@@ -1310,7 +1310,7 @@ replace_once(
 # servers app-wide and durable across assistant switches and app restarts.
 # The assistant-level list remains a compatibility cache for LastChat's
 # existing GenerationHandler/McpManager contracts.
-sticky_mcp_install = r"""
+sticky_mcp_install = r'''
 helper_source = Path("native-v2/patches/kotlin/OrviaStickyMcpSelection.kt")
 helper_target = ROOT / "app/src/main/java/me/rerere/rikkahub/data/datastore/OrviaStickyMcpSelection.kt"
 test_source = Path("native-v2/patches/tests/OrviaStickyMcpSelectionTest.kt")
@@ -1439,7 +1439,7 @@ replace_once(
     "            preferences[MCP_SERVERS] = JsonInstant.encodeToString(normalizedSettings.mcpServers)\n"
     "            preferences[ORVIA_STICKY_MCP_SERVERS] = JsonInstant.encodeToString(normalizedSettings.orviaStickyMcpServers.orEmpty())\n",
 )
-"""
+'''
 exec(compile(sticky_mcp_install, "orvia_sticky_mcp_overlay.py", "exec"))
 
 email_overlay = Path("native-v2/patches/apply_orvia_email_overlay.py")
