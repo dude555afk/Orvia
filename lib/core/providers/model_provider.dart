@@ -352,7 +352,7 @@ class ProviderManager {
         // Merge custom headers overrides
         final apiKey = _effectiveApiKey(cfg);
         final headers = <String, String>{
-          'Authorization': 'Bearer $apiKey',
+          if (apiKey.isNotEmpty) 'Authorization': 'Bearer $apiKey',
           'Content-Type': 'application/json',
           ...?providerSessionHeaders(cfg),
         };
