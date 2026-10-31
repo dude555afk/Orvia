@@ -67,6 +67,7 @@ jobs:
             lib/features/provider/pages/providers_page.dart \
             lib/features/settings/pages/tts_services_page.dart \
             test/core/providers/provider_preset_migration_test.dart \
+            test/core/services/api/chat_api_helpers_anonymous_headers_test.dart \
             test/core/services/tts/network_tts_test.dart \
             test/settings_provider_reasoning_support_test.dart
 
