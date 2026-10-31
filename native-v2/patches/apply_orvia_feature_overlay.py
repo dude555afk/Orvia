@@ -99,12 +99,12 @@ replace_once(
     ),
     ProviderPreset(
         name = "Kilo Free Gateway",
-        description = "Anonymous Kilo AI gateway for supported free models. No API key required.",
+        description = "Anonymous Kilo free-model route. No key required; upstream providers may log prompts.",
         type = ProviderSetting.OpenAI::class,
         baseUrl = "https://ai-gateway.kilo.ai/api/v1",
         setupRecommended = true,
         setupOrder = 10,
-        setupDescription = "Optional anonymous route. No API key required.",
+        setupDescription = "No key required for free models. Rate-limited; upstream providers may log prompts, so avoid sensitive data.",
         setupModelIds = listOf("kilo-auto/free"),
         setupDefaults = CatalogSetupDefaults(
             chat = "kilo-auto/free",
