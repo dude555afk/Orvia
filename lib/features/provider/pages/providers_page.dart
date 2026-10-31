@@ -639,7 +639,7 @@ class _ProvidersPageState extends State<ProvidersPage> {
     final settingsProvider = context.read<SettingsProvider>();
     final chatService = context.read<ChatService>();
     // Skip built-in providers (default ones)
-    final builtInKeys = {for (final p in _providers(l10n: l10n)) p.keyName};
+    final builtInKeys = {for (final p in _providers()) p.keyName};
     final keysToDelete = _selected
         .where((k) => !builtInKeys.contains(k))
         .toList(growable: false);
