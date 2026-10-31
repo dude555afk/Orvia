@@ -46,10 +46,8 @@ class OrviaStickyMcpSelectionTest {
     @Test
     fun pickerChangeBecomesGlobalAndSurvivesAssistantSwitch() {
         val previous = OrviaStickyMcpSelection.normalize(settings(), setOf(github))
-        val selected = OrviaStickyMcpSelection.select(previous, setOf(github, search))
-        val edited = selected.copy(assistantId = assistantB)
-
-        val updated = OrviaStickyMcpSelection.applyUpdate(previous, edited)
+        val updated = OrviaStickyMcpSelection.select(previous, setOf(github, search))
+            .copy(assistantId = assistantB)
 
         assertEquals(setOf(github, search), updated.orviaStickyMcpServers)
         assertEquals(setOf(github, search), updated.assistants[0].mcpServers)
@@ -71,11 +69,20 @@ class OrviaStickyMcpSelectionTest {
     }
 
     @Test
+    fun staleStoredSelectionCannotOverrideNewerStickyChoice() {
+        val previous = OrviaStickyMcpSelection.normalize(settings(), setOf(github, search))
+        val stale = settings(selection = setOf(github))
+
+        val updated = OrviaStickyMcpSelection.applyUpdate(previous, stale)
+
+        assertEquals(setOf(github, search), updated.orviaStickyMcpServers)
+        assertEquals(setOf(github, search), updated.assistants[1].mcpServers)
+    }
+
+    @Test
     fun explicitDisableStaysDisabled() {
         val previous = OrviaStickyMcpSelection.normalize(settings(), setOf(github))
-        val edited = OrviaStickyMcpSelection.select(previous, emptySet())
-
-        val updated = OrviaStickyMcpSelection.applyUpdate(previous, edited)
+        val updated = OrviaStickyMcpSelection.select(previous, emptySet())
 
         assertEquals(emptySet<Uuid>(), updated.orviaStickyMcpServers)
         assertEquals(emptySet<Uuid>(), updated.assistants[0].mcpServers)
