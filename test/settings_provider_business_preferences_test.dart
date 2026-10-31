@@ -106,9 +106,13 @@ void main() {
         'ByteDance',
       ];
       const migratedOrder = <String>[
-        ...legacyOrder,
-        '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
-        'MaruCode',
+        'Gemini',
+        'OpenAI',
+        'OpenRouter',
+        'AIhubmix',
+        'Claude',
+        'Grok',
+        'Kilo',
       ];
       await repository.replaceSnapshot(
         BusinessSettingsRouter.normalizeAndRoute({
@@ -119,22 +123,14 @@ void main() {
       final settings = SettingsProvider(BusinessPreferences(repository));
       await settings.loaded;
       expect(settings.providersOrder, migratedOrder);
-
-      final suixiang = settings.getProviderConfig(
-        '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
-      );
-      expect(suixiang.enabled, isFalse);
-      expect(suixiang.providerType, ProviderKind.openai);
-      expect(suixiang.baseUrl, 'https://sui-xiang.com/v1');
-
-      final maruCode = settings.getProviderConfig('MaruCode');
-      expect(maruCode.enabled, isFalse);
-      expect(maruCode.providerType, ProviderKind.openai);
-      expect(maruCode.baseUrl, 'https://api.muteki.site/v1');
+      expect(settings.currentModelProvider, 'OpenRouter');
+      expect(settings.currentModelId, 'openrouter/free');
 
       final reloaded = SettingsProvider(BusinessPreferences(repository));
       await reloaded.loaded;
       expect(reloaded.providersOrder, migratedOrder);
+      expect(reloaded.currentModelProvider, 'OpenRouter');
+      expect(reloaded.currentModelId, 'openrouter/free');
     },
   );
 
