@@ -1473,7 +1473,6 @@ replace_once(
     "app/src/main/java/me/rerere/rikkahub/ui/components/ai/McpPicker.kt",
     "import me.rerere.rikkahub.data.model.Assistant\n",
     "import me.rerere.rikkahub.data.model.Assistant\n"
-    "import me.rerere.rikkahub.data.datastore.OrviaStickyMcpSelection\n"
     "import me.rerere.rikkahub.data.datastore.SettingsStore\n",
 )
 replace_once(
