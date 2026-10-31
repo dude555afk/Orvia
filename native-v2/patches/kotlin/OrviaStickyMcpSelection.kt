@@ -32,8 +32,9 @@ internal object OrviaStickyMcpSelection {
         }.distinct()
 
         val selected = when {
-            requested.orviaStickyMcpServers != previous.orviaStickyMcpServers ->
-                requested.orviaStickyMcpServers.orEmpty()
+            requested.orviaStickyMcpServers != null &&
+                requested.orviaStickyMcpServers != previous.orviaStickyMcpServers ->
+                requested.orviaStickyMcpServers
             changedSelections.size == 1 -> changedSelections.single()
             else -> previous.orviaStickyMcpServers
                 ?: previous.assistants.firstOrNull { it.id == previous.assistantId }
@@ -41,9 +42,12 @@ internal object OrviaStickyMcpSelection {
                     .orEmpty()
         }
 
+        val validServerIds = requested.mcpServers.map { it.id }.toSet()
+        val validSelection = selected.intersect(validServerIds)
+
         return requested.copy(
-            orviaStickyMcpServers = selected,
-            assistants = requested.assistants.map { it.copy(mcpServers = selected) },
+            orviaStickyMcpServers = validSelection,
+            assistants = requested.assistants.map { it.copy(mcpServers = validSelection) },
         )
     }
 }
