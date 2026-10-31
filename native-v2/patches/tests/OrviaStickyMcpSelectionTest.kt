@@ -1,6 +1,8 @@
 package me.rerere.rikkahub.data.datastore
 
 import kotlin.uuid.Uuid
+import me.rerere.rikkahub.data.ai.mcp.McpCommonOptions
+import me.rerere.rikkahub.data.ai.mcp.McpServerConfig
 import me.rerere.rikkahub.data.model.Assistant
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -14,6 +16,18 @@ class OrviaStickyMcpSelectionTest {
     private fun settings(selection: Set<Uuid>? = null) = Settings(
         assistantId = assistantA,
         orviaStickyMcpServers = selection,
+        mcpServers = listOf(
+            McpServerConfig.StreamableHTTPServer(
+                id = github,
+                commonOptions = McpCommonOptions(name = "GitHub"),
+                url = "https://github.example/mcp",
+            ),
+            McpServerConfig.StreamableHTTPServer(
+                id = search,
+                commonOptions = McpCommonOptions(name = "Search"),
+                url = "https://search.example/mcp",
+            ),
+        ),
         assistants = listOf(
             Assistant(id = assistantA, name = "A", mcpServers = setOf(github)),
             Assistant(id = assistantB, name = "B"),
