@@ -742,6 +742,17 @@ install_native_source(
     "app/src/main/java/me/rerere/rikkahub/ui/components/OrviaOrbitalSplash.kt",
 )
 
+# Ship tests for cold-start routing, restored activities, deep links, and timing.
+intro_test_source = Path("native-v2/patches/tests/OrviaIntroPolicyTest.kt")
+intro_test_target = ROOT / "app/src/test/java/me/rerere/rikkahub/ui/components/OrviaIntroPolicyTest.kt"
+if not intro_test_source.is_file():
+    raise SystemExit(f"Missing Orvia intro policy test: {intro_test_source}")
+intro_test_target.parent.mkdir(parents=True, exist_ok=True)
+intro_test_payload = intro_test_source.read_text(encoding="utf-8")
+if intro_test_target.exists() and intro_test_target.read_text(encoding="utf-8") != intro_test_payload:
+    raise SystemExit(f"Refusing to overwrite divergent upstream file: {intro_test_target}")
+intro_test_target.write_text(intro_test_payload, encoding="utf-8")
+
 replace_once(
     "app/src/main/java/me/rerere/rikkahub/RouteActivity.kt",
     "import androidx.compose.runtime.mutableStateOf\n",
@@ -750,7 +761,7 @@ replace_once(
 replace_once(
     "app/src/main/java/me/rerere/rikkahub/RouteActivity.kt",
     "import me.rerere.rikkahub.ui.components.ui.AppToasterHost\n",
-    "import me.rerere.rikkahub.ui.components.ui.AppToasterHost\nimport me.rerere.rikkahub.ui.components.OrviaOrbitalSplash\n",
+    "import me.rerere.rikkahub.ui.components.ui.AppToasterHost\nimport me.rerere.rikkahub.ui.components.OrviaOrbitalSplash\nimport me.rerere.rikkahub.ui.components.OrviaIntroPolicy\n",
 )
 replace_once(
     "app/src/main/java/me/rerere/rikkahub/RouteActivity.kt",
@@ -758,9 +769,11 @@ replace_once(
     """                RikkahubTheme {
                     var showOrviaIntro by remember {
                         mutableStateOf(
-                            savedInstanceState == null &&
-                                intent.action == Intent.ACTION_MAIN &&
-                                intent.categories?.contains(Intent.CATEGORY_LAUNCHER) == true
+                            OrviaIntroPolicy.shouldShow(
+                                savedStatePresent = savedInstanceState != null,
+                                action = intent.action,
+                                categories = intent.categories.orEmpty(),
+                            )
                         )
                     }
                     val startScreen = initialChatScreen
@@ -1636,6 +1649,12 @@ if legacy_font_tokens.exists():
     legacy_font_tokens.rename(orvia_font_tokens)
 elif not orvia_font_tokens.exists():
     raise SystemExit("Orvia typography token source was not found after branding cleanup.")
+
+# Verify the skip control and automatic path still share one dismiss callback.
+intro_source = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/components/OrviaOrbitalSplash.kt").read_text(encoding="utf-8")
+assert "TextButton(" in intro_source and "onClick = onDismiss" in intro_source
+assert "delay(OrviaIntroPolicy.settleDelayMillis)" in intro_source
+assert "OrviaIntroPolicy.animationDurationMillis" in intro_source
 
 brand_leftovers = find_remaining_brand_tokens()
 assert not brand_leftovers, f"Rebrand incomplete; inherited brand tokens remain in: {brand_leftovers[:10]}"
