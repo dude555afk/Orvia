@@ -86,6 +86,11 @@ void main() {
         );
         expect(entityCounts['conversations'], 1);
         expect(entityCounts['messages'], 1);
+      } finally {
+        if (await directory.exists()) {
+          await directory.delete(recursive: true);
+        }
+      }
       },
     );
 
