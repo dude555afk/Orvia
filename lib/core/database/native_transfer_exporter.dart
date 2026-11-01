@@ -357,6 +357,20 @@ final class NativeTransferExporter {
     path: 'root',
   );
 
+  static bool _isSensitiveKey(String normalized) {
+    return _sensitiveKeys.contains(normalized) ||
+        normalized.endsWith('token') ||
+        normalized.endsWith('apikey') ||
+        normalized.endsWith('password') ||
+        normalized.endsWith('authorization') ||
+        normalized.endsWith('privatekey') ||
+        normalized.endsWith('credential') ||
+        normalized.endsWith('credentials') ||
+        normalized == 'secret' ||
+        normalized.endsWith('secret') ||
+        normalized.startsWith('secret');
+  }
+
   static Object? _redactSecrets(
     Object? value, {
     required List<String> redactedFields,
@@ -370,7 +384,7 @@ final class NativeTransferExporter {
           RegExp(r'[^a-z0-9]'),
           '',
         );
-        if (_sensitiveKeys.contains(normalized)) {
+        if (_isSensitiveKey(normalized)) {
           redactedFields.add('$path.$key');
           continue;
         }
