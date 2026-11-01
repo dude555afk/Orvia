@@ -257,7 +257,6 @@ final class NativeTransferExporter {
           entries: entries,
           unsupported: unsupported,
         );
-        assetCount += exportedAssets.metadata.length;
 
         final safeParts = <Map<String, Object?>>[
           for (final part in partRows)
@@ -319,6 +318,7 @@ final class NativeTransferExporter {
         await rowsDatabase.close();
       }
 
+      assetCount = entries.keys.where((path) => path.startsWith('assets/')).length;
       if (redactedFields.isNotEmpty) {
         unsupported.add('credential_fields_redacted:${redactedFields.length}');
       }
@@ -461,14 +461,25 @@ final class NativeTransferExporter {
   }) {
     if (row['kind'] != 'image' && row['kind'] != 'file') return row;
     final payload = row['payload'];
-    if (payload is! String) return row;
+    if (payload is! String) {
+      unsupported.add('malformed_attachment_part');
+      return _unavailableAttachmentPart(row);
+    }
 
     try {
       final decoded = jsonDecode(payload);
-      if (decoded is! Map) return row;
+      if (decoded is! Map) {
+        unsupported.add('malformed_attachment_part');
+        return _unavailableAttachmentPart(row, sourcePayload: payload);
+      }
       final safePayload = Map<String, Object?>.from(decoded);
       final assetId = safePayload['assetId'];
       final uri = safePayload['uri'];
+      if (row['kind'] == 'file' &&
+          (safePayload['name'] is! String ||
+              (safePayload['name'] as String).isEmpty)) {
+        safePayload['name'] = 'Unavailable attachment';
+      }
       if (assetId is String && assetId.trim().isNotEmpty) {
         safePayload['uri'] = 'asset://${assetId.trim()}';
         if (!availableAssetIds.contains(assetId.trim())) {
@@ -491,11 +502,30 @@ final class NativeTransferExporter {
         'payload': jsonEncode(safePayload),
       };
     } catch (_) {
-      // Keep malformed payload bytes losslessly. The importer must treat a
-      // malformed known attachment part as unavailable, never as a file path.
+      // Preserve a stable fingerprint without copying a malformed payload
+      // that could contain a machine-local file path.
       unsupported.add('malformed_attachment_part');
-      return row;
+      return _unavailableAttachmentPart(row, sourcePayload: payload);
     }
+  }
+
+  static Map<String, Object?> _unavailableAttachmentPart(
+    Map<String, Object?> row, {
+    String? sourcePayload,
+  }) {
+    final payload = <String, Object?>{
+      'uri': 'orvia-unavailable://attachment',
+      'unavailable': true,
+      if (row['kind'] == 'file') 'name': 'Unavailable attachment',
+      if (sourcePayload != null)
+        'sourcePayloadSha256': sha256
+            .convert(utf8.encode(sourcePayload))
+            .toString(),
+    };
+    return <String, Object?>{
+      ...row,
+      'payload': jsonEncode(payload),
+    };
   }
 
   static Future<_ExportedAssets> _exportAssets({
@@ -573,7 +603,6 @@ final class NativeTransferExporter {
         'width': row['width'],
         'height': row['height'],
         'createdAt': row['created_at'],
-        'extrasJson': row['extras_json'],
         'available': available,
       });
     }
