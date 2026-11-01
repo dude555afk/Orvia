@@ -107,6 +107,8 @@ final class NativeTransferExporter {
       late final BusinessSnapshot businessSnapshot;
       late final List<Map<String, Object?>> conversations;
       late final List<Map<String, Object?>> assetRows;
+      late final List<Map<String, Object?>> extensionEntityRows;
+      late final List<Map<String, Object?>> tombstoneRows;
 
       try {
         // This modifies only the temporary snapshot. It removes linked
@@ -122,6 +124,14 @@ final class NativeTransferExporter {
         assetRows = await _selectRows(
           snapshotDatabase,
           'SELECT * FROM asset_rows;',
+        );
+        extensionEntityRows = await _selectRows(
+          snapshotDatabase,
+          'SELECT * FROM extension_entity_rows ORDER BY kind, sort_order, id;',
+        );
+        tombstoneRows = await _selectRows(
+          snapshotDatabase,
+          'SELECT * FROM tombstone_rows ORDER BY scope, entity_id;',
         );
       } finally {
         await snapshotDatabase.close();
@@ -143,7 +153,8 @@ final class NativeTransferExporter {
 
       final businessCounts = <String, int>{};
       for (final kind in BusinessEntityKind.values) {
-        final rows = businessSnapshot.entities[kind]!;
+        final rows =
+            businessSnapshot.entities[kind] ?? const <BusinessEntityValue>[];
         businessCounts[kind.sourceKey] = rows.length;
         if (kind == BusinessEntityKind.assistant ||
             kind == BusinessEntityKind.provider) {
@@ -179,6 +190,25 @@ final class NativeTransferExporter {
           ),
         );
       }
+
+      entries['business-data/extension_entities.json'] = utf8.encode(
+        jsonEncode(
+          _serializeExtensionEntities(
+            extensionEntityRows,
+            redactedFields: redactedFields,
+            unsupported: unsupported,
+          ),
+        ),
+      );
+      entries['business-data/tombstones.json'] = utf8.encode(
+        jsonEncode(
+          _serializeTombstones(
+            tombstoneRows,
+            redactedFields: redactedFields,
+            unsupported: unsupported,
+          ),
+        ),
+      );
 
       final assetRowsById = <String, Map<String, Object?>>{
         for (final row in assetRows)
@@ -334,6 +364,8 @@ final class NativeTransferExporter {
           'conversations': conversations.length,
           'messages': messageCount,
           'assets': assetCount,
+          'extensionEntities': extensionEntityRows.length,
+          'tombstones': tombstoneRows.length,
           ...businessCounts,
         },
         unsupportedRecords: unsupported,
@@ -456,6 +488,108 @@ final class NativeTransferExporter {
       });
     }
     return output;
+  }
+
+  static List<Map<String, Object?>> _serializeExtensionEntities(
+    List<Map<String, Object?>> rows, {
+    required List<String> redactedFields,
+    required List<String> unsupported,
+  }) {
+    final output = <Map<String, Object?>>[];
+    for (final row in rows) {
+      final payload = row['payload'];
+      if (payload is! String) {
+        unsupported.add('invalid_extension_entity_payload');
+        continue;
+      }
+      try {
+        final decoded = jsonDecode(payload);
+        output.add({
+          'kind': row['kind'],
+          'id': row['id'],
+          'sortOrder': row['sort_order'],
+          if (row['owner_id'] != null) 'ownerId': row['owner_id'],
+          'updatedAt': row['updated_at'],
+          'data': _redactDevicePaths(
+            _redactSecrets(
+              decoded,
+              redactedFields: redactedFields,
+              path: 'extension/${row['kind']}/${row['id']}',
+            ),
+          ),
+        });
+      } catch (_) {
+        unsupported.add('malformed_extension_entity_payload');
+      }
+    }
+    return output;
+  }
+
+  static List<Map<String, Object?>> _serializeTombstones(
+    List<Map<String, Object?>> rows, {
+    required List<String> redactedFields,
+    required List<String> unsupported,
+  }) {
+    final output = <Map<String, Object?>>[];
+    for (final row in rows) {
+      final payload = row['payload'];
+      if (payload is! String) {
+        unsupported.add('invalid_tombstone_payload');
+        continue;
+      }
+      try {
+        final decoded = jsonDecode(payload);
+        output.add({
+          'scope': row['scope'],
+          'entityId': row['entity_id'],
+          'deletedAt': row['deleted_at'],
+          'data': _redactDevicePaths(
+            _redactSecrets(
+              decoded,
+              redactedFields: redactedFields,
+              path: 'tombstone/${row['scope']}/${row['entity_id']}',
+            ),
+          ),
+        });
+      } catch (_) {
+        unsupported.add('malformed_tombstone_payload');
+      }
+    }
+    return output;
+  }
+
+  static Object? _redactDevicePaths(Object? value) {
+    const devicePathKeys = {
+      'path',
+      'filepath',
+      'absolutepath',
+      'hostpath',
+      'rootpath',
+      'cwd',
+      'workingdirectory',
+      'mountpath',
+      'mountpoint',
+      'externalmounts',
+      'localpath',
+    };
+    if (value is Map) {
+      return <String, Object?>{
+        for (final entry in value.entries)
+          if (!devicePathKeys.contains(
+            entry.key.toString().toLowerCase().replaceAll(
+              RegExp(r'[^a-z0-9]'),
+              '',
+            ),
+          ))
+            entry.key.toString(): _redactDevicePaths(entry.value),
+      };
+    }
+    if (value is List) {
+      return <Object?>[
+        for (final item in value) _redactDevicePaths(item),
+      ];
+    }
+    return value;
   }
 
   static Future<List<Map<String, Object?>>> _selectRows(
