@@ -70,10 +70,10 @@ class NativeEmailServiceTest {
     fun rejectsMalformedAddressHostAndPorts() {
         val account = validAccount()
         assertInvalid {
-            account.copy(address = "user@example.com\\r\\nBcc:attacker@example.com").validate()
+            account.copy(address = "user@example.com\r\nBcc:attacker@example.com").validate()
         }
         assertInvalid {
-            account.copy(imapHost = "imap.example.com\\r\\nattacker").validate()
+            account.copy(imapHost = "imap.example.com\r\nattacker").validate()
         }
         assertInvalid { account.copy(imapPort = 0).validate() }
         assertInvalid { account.copy(smtpPort = 65536).validate() }
