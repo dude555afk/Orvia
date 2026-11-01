@@ -155,9 +155,38 @@ jobs:
         working-directory: native-v2/lastchat
         run: ./gradlew :tts:testDebugUnitTest --no-daemon --stacktrace
 
+      - name: Diagnose inherited localization resource paths
+        working-directory: native-v2/lastchat
+        run: |
+          pwd
+          for path in \
+            app/src/main/res/values \
+            app/src/main/res/values-ar \
+            app/src/main/res/values-b+zh+Hans \
+            search/src/main/res/values \
+            search/src/main/res/values-ar \
+            search/src/main/res/values-b+zh+Hans; do
+            if [ -d "$path" ]; then
+              echo "PRESENT $path"
+              find "$path" -maxdepth 1 -type f -name 'strings*.xml' -printf '  %f\\n'
+            else
+              echo "MISSING $path"
+            fi
+          done
+
       - name: Run Orvia persistent MCP selection regression tests
         working-directory: native-v2/lastchat
-        run: ./gradlew :app:testDevDebugUnitTest --no-daemon --stacktrace
+        shell: bash
+        run: |
+          set +e
+          ./gradlew :app:testDevDebugUnitTest --no-daemon --stacktrace
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            echo "::group::Localization audit result details"
+            find app/build/test-results/testDevDebugUnitTest -maxdepth 1 -name '*LocalizationAuditTest*.xml' -print -exec cat {} \\;
+            echo "::endgroup::"
+          fi
+          exit "$status"
 
       - name: Build x86_64 smoke-test APK with release shrinking
         working-directory: native-v2/lastchat
