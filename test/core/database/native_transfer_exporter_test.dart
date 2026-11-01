@@ -8,7 +8,8 @@ void main() {
       final result = NativeTransferExporter.redactSecretsForTesting(
         <String, Object?>{
           'provider_api_key': 'provider-secret',
-          'rawConfig': '{"apiKey":"nested-secret","baseUrl":"https://example.invalid"}',
+          'rawConfig':
+              '{"apiKey":"nested-secret","baseUrl":"https://example.invalid"}',
           'apiBaseUrl': 'https://example.invalid/v1',
           'tokenCount': 12,
           'settings': <String, Object?>{
