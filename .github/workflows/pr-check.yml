@@ -34,6 +34,9 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
+      - name: Show canonical exporter test formatting
+        run: dart format --output=show test/core/database/native_transfer_exporter_test.dart
+
       - name: Dart format (changed files only)
         shell: bash
         run: |
