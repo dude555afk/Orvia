@@ -411,13 +411,78 @@ replace_once(
     "painterResource(Res.drawable.orvia_logo)",
 )
 
-# Strip Chinese-locale resources from this native preview; other locales fall
-# back to the English resource set rather than shipping untranslated Chinese.
+# Keep inherited locale resource folders structurally valid without
+# shipping Chinese UI text. For every locale below, add only missing English
+# fallback strings and mark them non-translatable. Existing Arabic translations
+# are preserved; devices with Chinese locales receive English strings.
+import copy
 import shutil
+import xml.etree.ElementTree as ET
+
+
+def ensure_english_fallbacks(module_relative: str, locale_relative: str) -> None:
+    module_root = ROOT / module_relative
+    base_dir = module_root / "src/main/res/values"
+    target_dir = module_root / "src/main/res" / locale_relative
+    if not base_dir.is_dir():
+        raise SystemExit(f"Missing base Android resources: {base_dir}")
+
+    def read_named_strings(directory: Path) -> dict[str, ET.Element]:
+        result: dict[str, ET.Element] = {}
+        for source_file in sorted(directory.glob("strings*.xml")):
+            tree = ET.parse(source_file)
+            for element in tree.getroot().findall("string"):
+                name = element.get("name")
+                if name:
+                    result[name] = element
+        return result
+
+    base_strings = {
+        name: element
+        for name, element in read_named_strings(base_dir).items()
+        if element.get("translatable", "true") != "false"
+    }
+    target_strings = read_named_strings(target_dir) if target_dir.is_dir() else {}
+    missing = sorted(base_strings.keys() - target_strings.keys())
+    if not missing:
+        target_dir.mkdir(parents=True, exist_ok=True)
+        return
+
+    target_dir.mkdir(parents=True, exist_ok=True)
+    fallback_path = target_dir / "strings_orvia_fallback.xml"
+    if fallback_path.exists():
+        fallback_root = ET.parse(fallback_path).getroot()
+    else:
+        fallback_root = ET.Element("resources")
+
+    for name in missing:
+        fallback = copy.deepcopy(base_strings[name])
+        fallback.set("translatable", "false")
+        fallback_root.append(fallback)
+
+    ET.indent(fallback_root, space="    ")
+    ET.ElementTree(fallback_root).write(
+        fallback_path,
+        encoding="utf-8",
+        xml_declaration=True,
+    )
+    print(
+        f"Added {len(missing)} English non-translatable fallbacks: "
+        f"{module_relative}/{locale_relative}"
+    )
+
+
+for module, locale in (
+    ("app", "values-ar"),
+    ("app", "values-b+zh+Hans"),
+    ("search", "values-ar"),
+    ("search", "values-b+zh+Hans"),
+):
+    ensure_english_fallbacks(module, locale)
+
+# Traditional Chinese resources are not shipped in this preview.
 for relative in (
-    "app/src/main/res/values-b+zh+Hans",
     "app/src/main/res/values-zh-rTW",
-    "search/src/main/res/values-b+zh+Hans",
     "search/src/main/res/values-zh-rTW",
 ):
     locale_dir = ROOT / relative
@@ -509,9 +574,11 @@ assert 'Res.drawable.orvia_logo' in about_component
 tts_presets = (ROOT / "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/components/TTSProviderPresets.kt").read_text(encoding="utf-8")
 assert 'ORVIA_HIDDEN_TTS_PROVIDER_NAMES' in tts_presets
 assert 'it.name.equals("MiniMax", ignoreCase = true)' in tts_presets
+assert (ROOT / "app/src/main/res/values-b+zh+Hans/strings_orvia_fallback.xml").is_file()
+assert (ROOT / "search/src/main/res/values-b+zh+Hans/strings_orvia_fallback.xml").is_file()
 assert not any((ROOT / relative).exists() for relative in (
-    "app/src/main/res/values-b+zh+Hans", "app/src/main/res/values-zh-rTW",
-    "search/src/main/res/values-b+zh+Hans", "search/src/main/res/values-zh-rTW",
+    "app/src/main/res/values-zh-rTW",
+    "search/src/main/res/values-zh-rTW",
 ))
 assert "Orvia Native Preview" in (ROOT / "app/src/dev/res/values/strings.xml").read_text(encoding="utf-8")
 assert 'if (key.isNotBlank()) put("Authorization", "Bearer $key")' in (ROOT / "ai/src/main/java/me/rerere/ai/provider/providers/OpenAIProvider.kt").read_text(encoding="utf-8")
