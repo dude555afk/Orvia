@@ -52,7 +52,10 @@ void main() {
       );
       expect(result.manifest['format'], NativeTransferArchive.formatId);
       expect(result.manifest['version'], NativeTransferArchive.formatVersion);
-      expect(result.manifest['entityCounts'], {'conversations': 1, 'assistants': 2});
+      expect(result.manifest['entityCounts'], {
+        'conversations': 1,
+        'assistants': 2,
+      });
     });
 
     test('rejects traversal and absolute archive paths on export', () {
