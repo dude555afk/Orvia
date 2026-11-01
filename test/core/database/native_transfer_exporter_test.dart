@@ -7,7 +7,8 @@ void main() {
       final redactedFields = <String>[];
       final result = NativeTransferExporter.redactSecretsForTesting(
         <String, Object?>{
-          'api_key': 'provider-secret',
+          'provider_api_key': 'provider-secret',
+          'rawConfig': '{"apiKey":"nested-secret","baseUrl":"https://example.invalid"}',
           'apiBaseUrl': 'https://example.invalid/v1',
           'tokenCount': 12,
           'settings': <String, Object?>{
@@ -27,6 +28,7 @@ void main() {
 
       expect(result, {
         'apiBaseUrl': 'https://example.invalid/v1',
+        'rawConfig': '{"baseUrl":"https://example.invalid"}',
         'tokenCount': 12,
         'settings': {'theme': 'dark'},
         'tools': [
@@ -37,7 +39,7 @@ void main() {
       expect(
         redactedFields,
         containsAll([
-          'root.api_key',
+          'root.provider_api_key',
           'root.settings.accessToken',
           'root.settings.refresh_token',
           'root.tools[0].authorization',
