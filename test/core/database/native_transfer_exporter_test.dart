@@ -22,38 +22,44 @@ void main() {
         final createdAt = DateTime.utc(2026, 10, 1, 12);
 
         try {
-          await database.into(database.conversationRows).insert(
-            ConversationRowsCompanion.insert(
-              id: 'conversation-one',
-              title: 'Migration fixture',
-              createdAt: createdAt,
-              updatedAt: createdAt,
-              assistantId: const Value('assistant-one'),
-              versionSelectionsJson: const Value('{"group-one":1}'),
-            ),
-          );
-          await database.into(database.messageRows).insert(
-            MessageRowsCompanion.insert(
-              id: 'message-one',
-              conversationId: 'conversation-one',
-              role: 'user',
-              timestamp: createdAt,
-              messageOrder: 0,
-              groupId: const Value('group-one'),
-              version: const Value(1),
-            ),
-          );
-          await database.into(database.messagePartRows).insert(
-            MessagePartRowsCompanion.insert(
-              conversationId: 'conversation-one',
-              revisionId: 'message-one',
-              ordinal: 0,
-              kind: 'text',
-              payload: 'Hello from Flutter Orvia',
-              createdAt: createdAt,
-              updatedAt: createdAt,
-            ),
-          );
+          await database
+              .into(database.conversationRows)
+              .insert(
+                ConversationRowsCompanion.insert(
+                  id: 'conversation-one',
+                  title: 'Migration fixture',
+                  createdAt: createdAt,
+                  updatedAt: createdAt,
+                  assistantId: const Value('assistant-one'),
+                  versionSelectionsJson: const Value('{"group-one":1}'),
+                ),
+              );
+          await database
+              .into(database.messageRows)
+              .insert(
+                MessageRowsCompanion.insert(
+                  id: 'message-one',
+                  conversationId: 'conversation-one',
+                  role: 'user',
+                  timestamp: createdAt,
+                  messageOrder: 0,
+                  groupId: const Value('group-one'),
+                  version: const Value(1),
+                ),
+              );
+          await database
+              .into(database.messagePartRows)
+              .insert(
+                MessagePartRowsCompanion.insert(
+                  conversationId: 'conversation-one',
+                  revisionId: 'message-one',
+                  ordinal: 0,
+                  kind: 'text',
+                  payload: 'Hello from Flutter Orvia',
+                  createdAt: createdAt,
+                  updatedAt: createdAt,
+                ),
+              );
         } finally {
           await database.close();
         }
@@ -69,9 +75,9 @@ void main() {
               .toList();
 
           expect(conversationEntries, hasLength(1));
-          final payload = jsonDecode(
-            utf8.decode(conversationEntries.single.value),
-          ) as Map<String, dynamic>;
+          final payload =
+              jsonDecode(utf8.decode(conversationEntries.single.value))
+                  as Map<String, dynamic>;
           expect(payload['conversation']['id'], 'conversation-one');
           expect(payload['messages'], hasLength(1));
           expect(payload['messages'].single['id'], 'message-one');
