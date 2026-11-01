@@ -1,11 +1,16 @@
 name: Publish Optimized Orvia Native ARM64 Preview
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/release-native-arm64-preview.yml'
   workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: Successful "Orvia Native ARM64 Optimized APK" workflow run ID
+        required: true
+        type: string
+      expected_sha:
+        description: Exact 40-character commit SHA used by that build
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -21,22 +26,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify pinned successful optimized build
+      - name: Verify exact successful native build
+        id: verify
         env:
           GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+        shell: bash
         run: |
           set -euo pipefail
-          RUN=38683346396
-          EXPECTED_SHA=7941d09eb6ebb2445b939dd117245a7f518cbf0a
-          test "$(gh run view "$RUN" -R "$GITHUB_REPOSITORY" --json headSha --jq .headSha)" = "$EXPECTED_SHA"
-          test "$(gh run view "$RUN" -R "$GITHUB_REPOSITORY" --json conclusion --jq .conclusion)" = "success"
-      - name: Download, verify and name ARM64 APK
+          [[ "$SOURCE_RUN_ID" =~ ^[0-9]+$ ]] || { echo "Invalid run ID"; exit 1; }
+          [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "Expected SHA must be 40 lowercase hex characters"; exit 1; }
+          RUN_SHA="$(gh run view "$SOURCE_RUN_ID" -R "$GITHUB_REPOSITORY" --json headSha --jq .headSha)"
+          CONCLUSION="$(gh run view "$SOURCE_RUN_ID" -R "$GITHUB_REPOSITORY" --json conclusion --jq .conclusion)"
+          WORKFLOW="$(gh run view "$SOURCE_RUN_ID" -R "$GITHUB_REPOSITORY" --json workflowName --jq .workflowName)"
+          test "$RUN_SHA" = "$EXPECTED_SHA" || { echo "Artifact run SHA does not match expected SHA"; exit 1; }
+          test "$CONCLUSION" = "success" || { echo "Native build did not succeed"; exit 1; }
+          test "$WORKFLOW" = "Orvia Native ARM64 Optimized APK" || { echo "Run is not from the native ARM64 build workflow"; exit 1; }
+          echo "Verified native ARM64 build $SOURCE_RUN_ID at $EXPECTED_SHA"
+      - name: Download and verify ARM64 APK
         env:
           GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+        shell: bash
         run: |
           set -euo pipefail
           mkdir -p dist
-          gh run download 38683346396 -R "$GITHUB_REPOSITORY" \
+          gh run download "$SOURCE_RUN_ID" -R "$GITHUB_REPOSITORY" \
             --name orvia-v2-native-arm64-optimized --dir dist
           python3 - <<'PY'
           from pathlib import Path
@@ -55,25 +71,29 @@ jobs:
           apk.rename("Orvia-2-Native-ARM64-Preview.apk")
           PY
       - name: Prepare release notes
+        env:
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+        shell: bash
         run: |
-          cat > release-notes.md <<'EOF'
-          ## Orvia 2.0 Native UI Preview 2 (ARM64 optimized)
+          cat > release-notes.md <<EOF
+          ## Orvia 2.0 Native UI Preview (ARM64 optimized)
 
-          - Uses the LastChat Kotlin / Jetpack Compose app source as a pinned submodule.
+          - Uses the pinned LastChat Kotlin / Jetpack Compose source with Orvia overlays.
           - Android ARM64 only; excludes other CPU architectures.
           - R8 code shrinking and Android resource shrinking enabled.
           - Independent package ID: com.dude555afk.orvia.nativev2.dev.
-          - Debug signing fallback used for this preview build.
+          - Built from commit: ${EXPECTED_SHA}.
+          - Debug signing fallback; this is not an in-place update.
 
-          **Preview only:** No Orvia chat/data migration, and no device UI
-          regression verification. Not an in-place update for the existing
-          Flutter Orvia app. The earlier native preview may need to be
-          uninstalled first due to temporary signing keys. Back up test
-          data before uninstalling. Required upstream AGPL notices remain.
+          **Preview only:** Orvia chat/data migration and full feature parity are not
+          complete. Back up test data before uninstalling any previous preview.
+          Required upstream AGPL notices remain.
           EOF
       - name: Publish GitHub prerelease
         env:
           GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+        shell: bash
         run: |
           set -euo pipefail
           TAG=v2.0.0-native-ui-preview.2
@@ -83,7 +103,7 @@ jobs:
           fi
           gh release create "$TAG" Orvia-2-Native-ARM64-Preview.apk \
             --repo "$GITHUB_REPOSITORY" \
-            --target "$GITHUB_SHA" \
-            --title "Orvia 2.0 Native UI Preview 2 (ARM64)" \
+            --target "$EXPECTED_SHA" \
+            --title "Orvia 2.0 Native UI Preview (ARM64)" \
             --prerelease \
             --notes-file release-notes.md
