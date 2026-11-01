@@ -6,12 +6,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:orvia/core/database/app_database.dart';
 import 'package:orvia/core/database/native_transfer_archive.dart';
 import 'package:orvia/core/database/native_transfer_exporter.dart';
-import 'package:orvia/core/database/native_transfer_exporter.dart';
 
 void main() {
   group('NativeTransferExporter', () {
-
-    test('exports a consistent Drift snapshot with conversation revisions', () async {
+    test(
+      'exports a consistent Drift snapshot with conversation revisions',
+      () async {
       final directory = await Directory.systemTemp.createTemp(
         'orvia-native-export-test-',
       );
@@ -86,12 +86,8 @@ void main() {
         );
         expect(entityCounts['conversations'], 1);
         expect(entityCounts['messages'], 1);
-      } finally {
-        if (await directory.exists()) {
-          await directory.delete(recursive: true);
-        }
-      }
-    });
+      },
+    );
 
     test('redacts nested credentials but preserves ordinary settings', () {
       final redactedFields = <String>[];
