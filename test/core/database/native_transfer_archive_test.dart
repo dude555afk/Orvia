@@ -114,7 +114,7 @@ void main() {
           'unsupportedRecords': <String>[],
           'entries': {
             'conversations/chat_01.json': {
-              'sha256': '0' * 64,
+              'sha256': List<String>.filled(64, '0').join(),
               'sizeBytes': payload.length,
             },
           },
@@ -141,7 +141,7 @@ void main() {
           'unsupportedRecords': <String>[],
           'entries': <String, Object?>{
             'conversations/chat_01.json': {
-              'sha256': '0' * 64,
+              'sha256': List<String>.filled(64, '0').join(),
               'sizeBytes': payload.length,
             },
           },
