@@ -131,7 +131,7 @@ final class NativeTransferArchive {
         throw StateError('native_transfer_total_size_limit');
       }
       final content = file.content;
-      if (content is! List<int> || content.length != file.size) {
+      if (content.length != file.size) {
         throw const FormatException('native_transfer_entry_content_invalid');
       }
       files[file.name] = Uint8List.fromList(content);
