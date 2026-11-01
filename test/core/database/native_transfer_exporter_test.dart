@@ -49,6 +49,27 @@ void main() {
       );
     });
 
+
+    test('removes local device paths inside nested JSON settings', () {
+      final result = NativeTransferExporter.redactDevicePathsForTesting(
+        <String, Object?>{
+          'workspace': <String, Object?>{
+            'name': 'Project',
+            'rootPath': '/data/user/0/com.example/files/project',
+          },
+          'serializedMounts':
+              '[{"name":"shared","mountPath":"/storage/emulated/0"}]',
+          'apiBaseUrl': 'https://example.invalid/v1',
+        },
+      );
+
+      expect(result, {
+        'workspace': {'name': 'Project'},
+        'serializedMounts': '[{"name":"shared"}]',
+        'apiBaseUrl': 'https://example.invalid/v1',
+      });
+    });
+
     test('redacts credential containers recursively in lists', () {
       final redactedFields = <String>[];
       final result = NativeTransferExporter.redactSecretsForTesting(
