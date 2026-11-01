@@ -73,16 +73,16 @@ final class NativeTransferExporter {
   }) async {
     final root = appDataDirectory ?? await AppDirectories.getAppDataDirectory();
     if (!await root.exists()) {
-      throw FileSystemException('Orvia app data directory is missing', root.path);
+      throw FileSystemException(
+        'Orvia app data directory is missing',
+        root.path,
+      );
     }
 
     final sourceDatabase = File(
       p.join(root.path, AppDatabase.databaseFileName),
     );
-    if (await FileSystemEntity.type(
-          sourceDatabase.path,
-          followLinks: false,
-        ) !=
+    if (await FileSystemEntity.type(sourceDatabase.path, followLinks: false) !=
         FileSystemEntityType.file) {
       throw FileSystemException(
         'Orvia database is missing or is not a regular file',
@@ -222,138 +222,141 @@ final class NativeTransferExporter {
 
       try {
         for (final conversation in conversations) {
-        final conversationId = conversation['id'];
-        if (conversationId is! String || conversationId.isEmpty) {
-          unsupported.add('conversation_without_valid_id');
-          continue;
-        }
-
-        final conversationVariables = <Variable<Object>>[
-          Variable<String>(conversationId),
-        ];
-        final messageRows = await _selectRows(
-          rowsDatabase,
-          'SELECT * FROM message_rows WHERE conversation_id = ? '
-          'ORDER BY message_order, id;',
-          variables: conversationVariables,
-        );
-        final partRows = await _selectRows(
-          rowsDatabase,
-          'SELECT * FROM message_part_rows WHERE conversation_id = ? '
-          'ORDER BY revision_id, ordinal;',
-          variables: conversationVariables,
-        );
-        final mcpLinks = await _selectRows(
-          rowsDatabase,
-          'SELECT * FROM conversation_mcp_server_rows '
-          'WHERE conversation_id = ? ORDER BY ordinal, server_id;',
-          variables: conversationVariables,
-        );
-        final generationRows = await _selectRows(
-          rowsDatabase,
-          'SELECT * FROM generation_run_rows WHERE conversation_id = ? '
-          'ORDER BY created_at, id;',
-          variables: conversationVariables,
-        );
-        final artifactRows = await _selectRows(
-          rowsDatabase,
-          'SELECT * FROM provider_artifact_rows WHERE conversation_id = ? '
-          'ORDER BY revision_id, kind;',
-          variables: conversationVariables,
-        );
-        final promptRows = await _selectRows(
-          rowsDatabase,
-          'SELECT * FROM message_prompt_rows WHERE conversation_id = ? '
-          'ORDER BY created_at, revision_id;',
-          variables: conversationVariables,
-        );
-        final messageAssetRows = await _selectRows(
-          rowsDatabase,
-          'SELECT * FROM message_asset_rows WHERE conversation_id = ? '
-          'ORDER BY revision_id, asset_id, kind;',
-          variables: conversationVariables,
-        );
-
-        final referencedAssetIds = <String>{
-          for (final row in messageAssetRows)
-            if (row['asset_id'] is String) row['asset_id']! as String,
-          for (final row in partRows)
-            ..._assetIdsFromPart(row),
-        };
-        final exportedAssets = await _exportAssets(
-          rootPath: rootPath,
-          assetIds: referencedAssetIds,
-          assetRowsById: assetRowsById,
-          entries: entries,
-          unsupported: unsupported,
-        );
-
-        final safeParts = <Map<String, Object?>>[
-          for (final part in partRows)
-            _portableMessagePart(
-              part,
-              availableAssetIds: exportedAssets.availableIds,
-              unsupported: unsupported,
-            ),
-        ];
-
-        final safeMessages = <Map<String, Object?>>[
-          for (final row in messageRows)
-            <String, Object?>{
-              ...row,
-              if (row['is_streaming'] == true || row['is_streaming'] == 1)
-                'is_streaming': false,
-            },
-        ];
-
-        final safeGenerationRows = <Map<String, Object?>>[];
-        for (final row in generationRows) {
-          final state = row['state'];
-          if (state is String && _activeGenerationStates.contains(state)) {
-            activeGenerationCount++;
-            safeGenerationRows.add({
-              ...row,
-              'state': 'interrupted',
-              'terminal_at': DateTime.now().toUtc().microsecondsSinceEpoch,
-              'error_code': 'native_transfer_not_resumable',
-            });
-          } else {
-            safeGenerationRows.add(row);
+          final conversationId = conversation['id'];
+          if (conversationId is! String || conversationId.isEmpty) {
+            unsupported.add('conversation_without_valid_id');
+            continue;
           }
-        }
 
-        final payload = <String, Object?>{
-          'format': 'orvia.flutter-conversation',
-          'version': 1,
-          'sourceId': conversationId,
-          'conversation': conversation,
-          'mcpServerLinks': mcpLinks,
-          'messages': safeMessages,
-          'messageParts': safeParts,
-          'generationRuns': safeGenerationRows,
-          'providerArtifacts': artifactRows,
-          'messagePrompts': promptRows,
-          'messageAssets': messageAssetRows,
-          'assets': exportedAssets.metadata,
-        };
-        final archiveName = sha256
-            .convert(utf8.encode(conversationId))
-            .toString();
-        entries['conversations/$archiveName.json'] = utf8.encode(
-          jsonEncode(payload),
-        );
+          final conversationVariables = <Variable<Object>>[
+            Variable<String>(conversationId),
+          ];
+          final messageRows = await _selectRows(
+            rowsDatabase,
+            'SELECT * FROM message_rows WHERE conversation_id = ? '
+            'ORDER BY message_order, id;',
+            variables: conversationVariables,
+          );
+          final partRows = await _selectRows(
+            rowsDatabase,
+            'SELECT * FROM message_part_rows WHERE conversation_id = ? '
+            'ORDER BY revision_id, ordinal;',
+            variables: conversationVariables,
+          );
+          final mcpLinks = await _selectRows(
+            rowsDatabase,
+            'SELECT * FROM conversation_mcp_server_rows '
+            'WHERE conversation_id = ? ORDER BY ordinal, server_id;',
+            variables: conversationVariables,
+          );
+          final generationRows = await _selectRows(
+            rowsDatabase,
+            'SELECT * FROM generation_run_rows WHERE conversation_id = ? '
+            'ORDER BY created_at, id;',
+            variables: conversationVariables,
+          );
+          final artifactRows = await _selectRows(
+            rowsDatabase,
+            'SELECT * FROM provider_artifact_rows WHERE conversation_id = ? '
+            'ORDER BY revision_id, kind;',
+            variables: conversationVariables,
+          );
+          final promptRows = await _selectRows(
+            rowsDatabase,
+            'SELECT * FROM message_prompt_rows WHERE conversation_id = ? '
+            'ORDER BY created_at, revision_id;',
+            variables: conversationVariables,
+          );
+          final messageAssetRows = await _selectRows(
+            rowsDatabase,
+            'SELECT * FROM message_asset_rows WHERE conversation_id = ? '
+            'ORDER BY revision_id, asset_id, kind;',
+            variables: conversationVariables,
+          );
+
+          final referencedAssetIds = <String>{
+            for (final row in messageAssetRows)
+              if (row['asset_id'] is String) row['asset_id']! as String,
+            for (final row in partRows) ..._assetIdsFromPart(row),
+          };
+          final exportedAssets = await _exportAssets(
+            rootPath: rootPath,
+            assetIds: referencedAssetIds,
+            assetRowsById: assetRowsById,
+            entries: entries,
+            unsupported: unsupported,
+          );
+
+          final safeParts = <Map<String, Object?>>[
+            for (final part in partRows)
+              _portableMessagePart(
+                part,
+                availableAssetIds: exportedAssets.availableIds,
+                unsupported: unsupported,
+              ),
+          ];
+
+          final safeMessages = <Map<String, Object?>>[
+            for (final row in messageRows)
+              <String, Object?>{
+                ...row,
+                if (row['is_streaming'] == true || row['is_streaming'] == 1)
+                  'is_streaming': false,
+              },
+          ];
+
+          final safeGenerationRows = <Map<String, Object?>>[];
+          for (final row in generationRows) {
+            final state = row['state'];
+            if (state is String && _activeGenerationStates.contains(state)) {
+              activeGenerationCount++;
+              safeGenerationRows.add({
+                ...row,
+                'state': 'interrupted',
+                'terminal_at': DateTime.now().toUtc().microsecondsSinceEpoch,
+                'error_code': 'native_transfer_not_resumable',
+              });
+            } else {
+              safeGenerationRows.add(row);
+            }
+          }
+
+          final payload = <String, Object?>{
+            'format': 'orvia.flutter-conversation',
+            'version': 1,
+            'sourceId': conversationId,
+            'conversation': conversation,
+            'mcpServerLinks': mcpLinks,
+            'messages': safeMessages,
+            'messageParts': safeParts,
+            'generationRuns': safeGenerationRows,
+            'providerArtifacts': artifactRows,
+            'messagePrompts': promptRows,
+            'messageAssets': messageAssetRows,
+            'assets': exportedAssets.metadata,
+          };
+          final archiveName = sha256
+              .convert(utf8.encode(conversationId))
+              .toString();
+          entries['conversations/$archiveName.json'] = utf8.encode(
+            jsonEncode(payload),
+          );
           messageCount += safeMessages.length;
         }
       } finally {
         await rowsDatabase.close();
       }
 
-      assetCount = entries.keys.where((path) => path.startsWith('assets/')).length;
+      assetCount = entries.keys
+          .where((path) => path.startsWith('assets/'))
+          .length;
       if (redactedFields.isNotEmpty) {
         unsupported.add('credential_fields_redacted:${redactedFields.length}');
       }
       if (activeGenerationCount > 0) {
-        unsupported.add('active_generation_runs_marked_interrupted:$activeGenerationCount');
+        unsupported.add(
+          'active_generation_runs_marked_interrupted:$activeGenerationCount',
+        );
       }
 
       return NativeTransferArchive.encode(
@@ -383,11 +386,7 @@ final class NativeTransferExporter {
   static Object? redactSecretsForTesting(
     Object? value, {
     required List<String> redactedFields,
-  }) => _redactSecrets(
-    value,
-    redactedFields: redactedFields,
-    path: 'root',
-  );
+  }) => _redactSecrets(value, redactedFields: redactedFields, path: 'root');
 
   static bool _isSensitiveKey(String normalized) {
     return _sensitiveKeys.contains(normalized) ||
@@ -473,7 +472,9 @@ final class NativeTransferExporter {
       try {
         decoded = jsonDecode(row.payload);
       } catch (_) {
-        unsupported.add('malformed_business_payload:${kind.sourceKey}:${row.id}');
+        unsupported.add(
+          'malformed_business_payload:${kind.sourceKey}:${row.id}',
+        );
         continue;
       }
       output.add({
@@ -585,9 +586,7 @@ final class NativeTransferExporter {
       };
     }
     if (value is List) {
-      return <Object?>[
-        for (final item in value) _redactDevicePaths(item),
-      ];
+      return <Object?>[for (final item in value) _redactDevicePaths(item)];
     }
     return value;
   }
@@ -597,10 +596,7 @@ final class NativeTransferExporter {
     String sql, {
     List<Variable<Object>> variables = const <Variable<Object>>[],
   }) async {
-    final rows = await database.customSelect(
-      sql,
-      variables: variables,
-    ).get();
+    final rows = await database.customSelect(sql, variables: variables).get();
     return <Map<String, Object?>>[
       for (final row in rows) Map<String, Object?>.from(row.data),
     ];
@@ -665,10 +661,7 @@ final class NativeTransferExporter {
         safePayload['unavailable'] = true;
         unsupported.add('attachment_local_path_redacted');
       }
-      return <String, Object?>{
-        ...row,
-        'payload': jsonEncode(safePayload),
-      };
+      return <String, Object?>{...row, 'payload': jsonEncode(safePayload)};
     } catch (_) {
       // Preserve a stable fingerprint without copying a malformed payload
       // that could contain a machine-local file path.
@@ -690,10 +683,7 @@ final class NativeTransferExporter {
             .convert(utf8.encode(sourcePayload))
             .toString(),
     };
-    return <String, Object?>{
-      ...row,
-      'payload': jsonEncode(payload),
-    };
+    return <String, Object?>{...row, 'payload': jsonEncode(payload)};
   }
 
   static Future<_ExportedAssets> _exportAssets({
@@ -709,10 +699,7 @@ final class NativeTransferExporter {
       final row = assetRowsById[assetId];
       if (row == null) {
         unsupported.add('attachment_asset_metadata_missing');
-        metadata.add({
-          'id': assetId,
-          'available': false,
-        });
+        metadata.add({'id': assetId, 'available': false});
         continue;
       }
 
@@ -729,7 +716,9 @@ final class NativeTransferExporter {
           byteSize <= NativeTransferArchive.maxSingleEntryBytes) {
         try {
           final candidatePath = p.normalize(
-            p.isAbsolute(storedPath) ? storedPath : p.join(rootPath, storedPath),
+            p.isAbsolute(storedPath)
+                ? storedPath
+                : p.join(rootPath, storedPath),
           );
           if (p.isWithin(rootPath, candidatePath)) {
             final candidate = File(candidatePath);
@@ -745,10 +734,7 @@ final class NativeTransferExporter {
                   final bytes = await candidate.readAsBytes();
                   final actualHash = sha256.convert(bytes).toString();
                   if (actualHash == hash) {
-                    entries.putIfAbsent(
-                      'assets/$hash',
-                      () => bytes,
-                    );
+                    entries.putIfAbsent('assets/$hash', () => bytes);
                     available = true;
                     availableIds.add(assetId);
                   }
@@ -775,18 +761,12 @@ final class NativeTransferExporter {
       });
     }
 
-    return _ExportedAssets(
-      metadata: metadata,
-      availableIds: availableIds,
-    );
+    return _ExportedAssets(metadata: metadata, availableIds: availableIds);
   }
 }
 
 final class _ExportedAssets {
-  const _ExportedAssets({
-    required this.metadata,
-    required this.availableIds,
-  });
+  const _ExportedAssets({required this.metadata, required this.availableIds});
 
   final List<Map<String, Object?>> metadata;
   final Set<String> availableIds;
