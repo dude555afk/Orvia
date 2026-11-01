@@ -81,14 +81,11 @@ void main() {
           payload['messageParts'].single['payload'],
           'Hello from Flutter Orvia',
         );
-        expect(
-          transfer.manifest['entityCounts']['conversations'],
-          1,
+        final entityCounts = Map<String, Object?>.from(
+          transfer.manifest['entityCounts']! as Map,
         );
-        expect(
-          transfer.manifest['entityCounts']['messages'],
-          1,
-        );
+        expect(entityCounts['conversations'], 1);
+        expect(entityCounts['messages'], 1);
       } finally {
         if (await directory.exists()) {
           await directory.delete(recursive: true);
