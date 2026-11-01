@@ -1,6 +1,6 @@
 # Orvia Flutter → native LastChat data migration contract
 
-**Status:** design contract only. No migration is implemented by the native preview yet.
+**Status:** the version-1 ZIP container/manifest codec exists in `lib/core/database/native_transfer_archive.dart`, with checksum, size, path and format validation tests. The live Drift exporter, typed Flutter-to-Room converter, native importer and UI are still not implemented.
 
 ## Why this is a separate migration
 
@@ -13,6 +13,15 @@ The two applications do not share a database schema and their SQLite files must 
 The migration therefore needs an explicit model-to-model converter. A raw SQLite restore, table rename, or copying the database file is prohibited.
 
 ## Transfer archive
+
+The Flutter-side codec currently enforces:
+- format ID `orvia.native-transfer`, version 1;
+- a strict path allowlist for conversations, business data, assistants, providers, settings and SHA-256-addressed assets;
+- SHA-256 and exact byte-size verification for every payload, plus ZIP CRC verification;
+- bounds of 64 MiB compressed archive, 128 MiB aggregate uncompressed payload, 32 MiB per entry and 10,000 payload entries;
+- rejection of absolute paths, parent traversal, backslashes, drive prefixes, duplicate entries, unknown formats and mismatched manifest entries.
+
+This layer only packages and validates byte entries. It does not yet read the live Drift database or write to LastChat Room. In particular, a passing codec test is not evidence that Orvia messages or business data can already be exported or imported.
 
 Use a versioned, self-describing ZIP archive, independent of either application's live database:
 
