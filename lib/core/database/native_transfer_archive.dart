@@ -101,7 +101,7 @@ final class NativeTransferArchive {
 
     final Archive archive;
     try {
-      archive = ZipDecoder().decodeBytes(zipBytes);
+      archive = ZipDecoder().decodeBytes(zipBytes, verify: true);
     } catch (_) {
       throw const FormatException('native_transfer_archive_invalid');
     }
