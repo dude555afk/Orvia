@@ -181,8 +181,9 @@ final class NativeTransferArchive {
         DateTime.tryParse(exportedAt) == null ||
         counts is! Map ||
         unsupported is! List ||
-        unsupported.any((item) =>
-            item is! String || item.trim().isEmpty || item.length > 512) ||
+        unsupported.any(
+          (item) => item is! String || item.trim().isEmpty || item.length > 512,
+        ) ||
         descriptors is! Map ||
         descriptors.length > maxEntries) {
       throw const FormatException('native_transfer_manifest_invalid');
@@ -277,7 +278,8 @@ final class NativeTransferArchive {
       throw const FormatException('native_transfer_entry_path_invalid');
     }
 
-    final allowed = path == 'assistants.json' ||
+    final allowed =
+        path == 'assistants.json' ||
         path == 'providers.json' ||
         path == 'settings.json' ||
         RegExp(r'^conversations/[A-Za-z0-9_-]{1,128}\.json$').hasMatch(path) ||
