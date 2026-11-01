@@ -559,6 +559,10 @@ final class NativeTransferExporter {
     return output;
   }
 
+  @visibleForTesting
+  static Object? redactDevicePathsForTesting(Object? value) =>
+      _redactDevicePaths(value);
+
   static Object? _redactDevicePaths(Object? value) {
     const devicePathKeys = {
       'path',
@@ -572,6 +576,12 @@ final class NativeTransferExporter {
       'mountpoint',
       'externalmounts',
       'localpath',
+      'workingdir',
+      'localuri',
+      'fileuri',
+      'mountroot',
+      'storagepath',
+      'termuxpath',
     };
     if (value is Map) {
       return <String, Object?>{
@@ -587,6 +597,19 @@ final class NativeTransferExporter {
     }
     if (value is List) {
       return <Object?>[for (final item in value) _redactDevicePaths(item)];
+    }
+    if (value is String) {
+      final trimmed = value.trim();
+      if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+        try {
+          final decoded = jsonDecode(value);
+          if (decoded is Map || decoded is List) {
+            return jsonEncode(_redactDevicePaths(decoded));
+          }
+        } catch (_) {
+          // Preserve normal text and malformed JSON as-is.
+        }
+      }
     }
     return value;
   }
