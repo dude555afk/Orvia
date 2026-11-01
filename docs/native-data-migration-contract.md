@@ -1,6 +1,6 @@
 # Orvia Flutter → native LastChat data migration contract
 
-**Status:** the version-1 ZIP container/manifest codec exists in `lib/core/database/native_transfer_archive.dart`, with checksum, size, path and format validation tests. The live Drift exporter, typed Flutter-to-Room converter, native importer and UI are still not implemented.
+**Status:** the version-1 ZIP codec and a Flutter-side snapshot exporter exist. The exporter uses a consistent temporary SQLite snapshot, applies `BackupPortability` only to that snapshot, serializes conversations/business data/assets, and redacts credentials and device paths. The codec and redaction helpers have unit tests. A typed Flutter-to-Room converter, native importer, importer UI, and end-to-end exporter fixture tests are still outstanding.
 
 ## Why this is a separate migration
 
@@ -21,13 +21,13 @@ The Flutter-side codec currently enforces:
 - bounds of 64 MiB compressed archive, 128 MiB aggregate uncompressed payload, 32 MiB per entry and 10,000 payload entries;
 - rejection of absolute paths, parent traversal, backslashes, drive prefixes, duplicate entries, unknown formats and mismatched manifest entries.
 
-This layer only packages and validates byte entries. It does not yet read the live Drift database or write to LastChat Room. In particular, a passing codec test is not evidence that Orvia messages or business data can already be exported or imported.
+The codec only packages and validates byte entries; `NativeTransferExporter` is the separate read-only Drift snapshot exporter. It does not write to LastChat Room. The exporter currently preserves source rows and relationships in versioned JSON documents rather than converting them to native `MessageNode` values. A passing codec/redaction test is not evidence that native import is ready.
 
 Use a versioned, self-describing ZIP archive, independent of either application's live database:
 
 ```text
 manifest.json
-conversations/<source-id>.json
+conversations/<sha256-of-source-id>.json
 assistants.json
 providers.json
 business-data/<kind>.json
@@ -38,10 +38,10 @@ The manifest must declare:
 - format identifier `orvia.native-transfer` and format version;
 - source application version and Drift schema version;
 - export timestamp and selected content categories;
-- entity counts and SHA-256 hashes for every payload and asset;
+- entity counts, unsupported-record diagnostics, and SHA-256 hashes plus byte sizes for every payload and asset;
 - required importer capabilities and any unsupported source record counts.
 
-Each conversation export must contain its original ID, title, assistant reference, created/updated timestamps, pin/fork state, truncation/context metadata, ordered message groups, every stored revision, selected revision, message parts, provider artifacts, and asset references. Preserve message ordering and version relationships. Flutter timestamps are microseconds since epoch; native LastChat timestamps are milliseconds, so conversion must be explicit and deterministic.
+The exporter stores each conversation's original ID, title, assistant reference, created/updated timestamps, pin state, truncation/summary metadata, message rows, every stored revision, version-selection JSON, message parts, per-conversation MCP links, generation runs, provider artifacts, message prompts, and asset references. It preserves the source Drift row values and relationships without converting them to native nodes. Flutter timestamps are microseconds since epoch; native LastChat timestamps are milliseconds, so the future converter must handle conversion explicitly and deterministically.
 
 Message conversion must be type-specific. Text, reasoning, tool calls/results, image, document, audio and video parts may only be imported when their payload and attachment semantics have a tested native mapping. Unknown or malformed parts must be reported and must not silently disappear. If a conversation cannot be represented without losing content, mark it as requiring review and exclude it from automatic import.
 
@@ -82,6 +82,13 @@ The initial native migration must be **append-only**:
 6. Leave the original Flutter app and its database untouched. A failed import must roll back and leave the native database unchanged.
 
 No replace-all/overwrite mode is permitted in the first migration release. Re-importing the same archive must be idempotent and must not duplicate chats or business entities.
+
+## Current exporter limitations
+
+- Unit tests cover archive validation, recursive credential redaction, and nested device-path scrubbing. A fixture-based end-to-end snapshot/export test is still needed.
+- Attachments over 32 MiB and transfers exceeding the archive limits are rejected by the codec; unsupported or unavailable attachment data is reported rather than copying arbitrary host paths.
+- Provider credentials are intentionally omitted. Reconnecting providers/MCP servers on the destination remains a user action.
+- The exported source rows have not yet been transformed into LastChat `Conversation` / `MessageNode` / `UIMessage` objects.
 
 ## Required tests before enabling the importer
 
