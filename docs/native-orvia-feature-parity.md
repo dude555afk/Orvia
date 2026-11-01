@@ -12,7 +12,7 @@
 | Kilo anonymous gateway | Provider preset, onboarding entry, default `kilo-auto/free` model, blank-key request behavior | Live model discovery and prompt/streaming requests on device/network |
 | Provider cleanup | Orvia-retired China-focused presets are filtered from the provider picker | Verify every provider category and imported/custom provider behavior |
 | Edge Neural TTS | Native Edge provider, token utility, settings/playback overlay; token compatibility unit test | Real-device playback, interruptions, background audio, language/voice list, and failure handling |
-| Email integration | Native IMAP/SMTP service, encrypted account settings, settings page, assistant email tools, approval gate for sending | End-to-end connect, TLS verification, inbox/search/read, compose approval, send, reply, multi-account, and credential lifecycle |
+| Email integration | Native IMAP/SMTP service, encrypted account settings, settings page, assistant email tools, approval gate for sending; CI unit tests cover password redaction, account serialization round-trip, provider TLS defaults, and input validation | End-to-end connect, live TLS verification, inbox/search/read, compose approval, send, reply, multi-account, and credential lifecycle |
 
 The latest existing native workflow run before this restart completed its build and emulator smoke-test jobs. That proves packaging/startup for that revision, not full feature parity or the end-to-end flows listed above.
 
