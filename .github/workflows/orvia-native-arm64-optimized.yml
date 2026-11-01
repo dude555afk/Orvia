@@ -1,15 +1,22 @@
 name: Orvia Native ARM64 Optimized APK
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/orvia-native-arm64-optimized.yml
+      - .gitmodules
+      - native-v2/**
+      - docs/orvia-logo.png
   push:
     branches:
       - feature/orvia-native-v2-isolated-20261015
       - feature/orvia-rebrand-parity-restart-20261029
     paths:
       - .github/workflows/orvia-native-arm64-optimized.yml
-      - native-v2/patches/apply_orvia_feature_overlay.py
-      - native-v2/patches/apply_orvia_email_overlay.py
-      - native-v2/patches/native-src/**
+      - .gitmodules
+      - native-v2/**
       - docs/orvia-logo.png
   workflow_dispatch:
 
