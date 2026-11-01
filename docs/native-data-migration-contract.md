@@ -85,7 +85,7 @@ No replace-all/overwrite mode is permitted in the first migration release. Re-im
 
 ## Current exporter limitations
 
-- Unit tests cover archive validation, recursive credential redaction, and nested device-path scrubbing. A fixture-based end-to-end snapshot/export test is still needed.
+- Unit tests cover archive validation, recursive credential redaction, and nested device-path scrubbing. A fixture-based Drift snapshot/export round-trip test has been added; it must pass CI before the exporter is treated as verified.
 - Attachments over 32 MiB and transfers exceeding the archive limits are rejected by the codec; unsupported or unavailable attachment data is reported rather than copying arbitrary host paths.
 - Provider credentials are intentionally omitted. Reconnecting providers/MCP servers on the destination remains a user action.
 - The exported source rows have not yet been transformed into LastChat `Conversation` / `MessageNode` / `UIMessage` objects.
