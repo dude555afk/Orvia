@@ -73,7 +73,9 @@ void main() {
             exportedAt: DateTime.utc(2026),
             entityCounts: const {},
             unsupportedRecords: const [],
-            entries: {path: const [1, 2, 3]},
+            entries: {
+              path: const [1, 2, 3],
+            },
           ),
           throwsFormatException,
           reason: path,
@@ -97,10 +99,7 @@ void main() {
         },
       );
 
-      expect(
-        () => NativeTransferArchive.decode(zip),
-        throwsFormatException,
-      );
+      expect(() => NativeTransferArchive.decode(zip), throwsFormatException);
     });
 
     test('rejects payload hash or size tampering', () {
@@ -124,10 +123,7 @@ void main() {
         },
       );
 
-      expect(
-        () => NativeTransferArchive.decode(zip),
-        throwsFormatException,
-      );
+      expect(() => NativeTransferArchive.decode(zip), throwsFormatException);
     });
 
     test('rejects unrecognized format versions', () {
@@ -151,10 +147,7 @@ void main() {
         },
       );
 
-      expect(
-        () => NativeTransferArchive.decode(zip),
-        throwsFormatException,
-      );
+      expect(() => NativeTransferArchive.decode(zip), throwsFormatException);
     });
 
     test('rejects empty entries and unsafe asset names', () {
@@ -176,7 +169,9 @@ void main() {
           exportedAt: DateTime.utc(2026),
           entityCounts: const {},
           unsupportedRecords: const [],
-          entries: {'assets/not-a-sha256': const [1]},
+          entries: {
+            'assets/not-a-sha256': const [1],
+          },
         ),
         throwsFormatException,
       );
