@@ -235,7 +235,9 @@ final class NativeTransferArchive {
       throw ArgumentError.value(sourceSchemaVersion, 'sourceSchemaVersion');
     }
     for (final entry in entityCounts.entries) {
-      if (entry.key.trim().isEmpty || entry.key.length > 128 || entry.value < 0) {
+      if (entry.key.trim().isEmpty ||
+          entry.key.length > 128 ||
+          entry.value < 0) {
         throw ArgumentError.value(entry, 'entityCounts');
       }
     }
