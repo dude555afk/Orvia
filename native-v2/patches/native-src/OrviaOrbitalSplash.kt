@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.ui.components
 
+import android.content.Intent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -38,6 +39,26 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
+ * Pure launch policy so cold-start routing and intro timing can be unit-tested
+ * without a device or Compose runtime.
+ */
+internal object OrviaIntroPolicy {
+    const val animationDurationMillis = 1_050
+    const val settleDelayMillis = 220L
+
+    fun shouldShow(
+        savedStatePresent: Boolean,
+        action: String?,
+        categories: Set<String>,
+    ): Boolean = !savedStatePresent &&
+        action == Intent.ACTION_MAIN &&
+        Intent.CATEGORY_LAUNCHER in categories
+
+    val totalDurationMillis: Long
+        get() = animationDurationMillis.toLong() + settleDelayMillis
+}
+
+/**
  * Lightweight one-shot launch overlay for Orvia.
  *
  * The mark is drawn with Compose Canvas: no bitmap animation, Lottie payload,
@@ -50,9 +71,9 @@ fun OrviaOrbitalSplash(onDismiss: () -> Unit) {
     LaunchedEffect(Unit) {
         progress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 1_050, easing = FastOutSlowInEasing),
+            animationSpec = tween(durationMillis = OrviaIntroPolicy.animationDurationMillis, easing = FastOutSlowInEasing),
         )
-        delay(220)
+        delay(OrviaIntroPolicy.settleDelayMillis)
         onDismiss()
     }
 
