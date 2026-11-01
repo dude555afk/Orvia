@@ -49,7 +49,6 @@ void main() {
       );
     });
 
-
     test('removes local device paths inside nested JSON settings', () {
       final result = NativeTransferExporter.redactDevicePathsForTesting(
         <String, Object?>{
