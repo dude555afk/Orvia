@@ -168,7 +168,7 @@ jobs:
             search/src/main/res/values-b+zh+Hans; do
             if [ -d "$path" ]; then
               echo "PRESENT $path"
-              find "$path" -maxdepth 1 -type f -name 'strings*.xml' -printf '  %f\\n'
+              find "$path" -maxdepth 1 -type f -name 'strings*.xml' -printf '  %f\n'
             else
               echo "MISSING $path"
             fi
@@ -183,7 +183,7 @@ jobs:
           status=$?
           if [ "$status" -ne 0 ]; then
             echo "::group::Localization audit result details"
-            find app/build/test-results/testDevDebugUnitTest -maxdepth 1 -name '*LocalizationAuditTest*.xml' -print -exec cat {} \\;
+            find app/build/test-results/testDevDebugUnitTest -maxdepth 1 -name '*LocalizationAuditTest*.xml' -print -exec cat {} +
             echo "::endgroup::"
           fi
           exit "$status"
