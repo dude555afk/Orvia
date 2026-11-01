@@ -35,11 +35,12 @@ void main() {
           {'name': 'calendar'},
         ],
       });
-      expect(redactedFields, hasLength(4));
+      expect(redactedFields, hasLength(5));
       expect(
         redactedFields,
         containsAll([
           'root.provider_api_key',
+          'root.rawConfig.apiKey',
           'root.settings.accessToken',
           'root.settings.refresh_token',
           'root.tools[0].authorization',
