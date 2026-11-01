@@ -83,6 +83,10 @@ final class NativeTransferArchive {
       archive.addFile(ArchiveFile(entry.key, entry.value.length, entry.value));
     }
     final manifestBytes = utf8.encode(jsonEncode(manifest));
+    _validateEntrySize(manifestPath, manifestBytes.length);
+    if (totalBytes + manifestBytes.length > maxTotalEntryBytes) {
+      throw StateError('native_transfer_total_size_limit');
+    }
     archive.addFile(
       ArchiveFile(manifestPath, manifestBytes.length, manifestBytes),
     );
@@ -170,14 +174,17 @@ final class NativeTransferArchive {
     final descriptors = manifest['entries'];
     if (appVersion is! String ||
         appVersion.trim().isEmpty ||
+        appVersion.length > 64 ||
         schemaVersion is! int ||
         schemaVersion < 1 ||
         exportedAt is! String ||
         DateTime.tryParse(exportedAt) == null ||
         counts is! Map ||
         unsupported is! List ||
-        unsupported.any((item) => item is! String) ||
-        descriptors is! Map) {
+        unsupported.any((item) =>
+            item is! String || item.trim().isEmpty || item.length > 512) ||
+        descriptors is! Map ||
+        descriptors.length > maxEntries) {
       throw const FormatException('native_transfer_manifest_invalid');
     }
 
@@ -185,6 +192,7 @@ final class NativeTransferArchive {
     for (final entry in counts.entries) {
       if (entry.key is! String ||
           (entry.key as String).trim().isEmpty ||
+          (entry.key as String).length > 128 ||
           entry.value is! int ||
           (entry.value as int) < 0) {
         throw const FormatException('native_transfer_entity_counts_invalid');
