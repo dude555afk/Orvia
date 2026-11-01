@@ -396,6 +396,26 @@ final class NativeTransferExporter {
       }
       return out;
     }
+    if (value is String) {
+      final trimmed = value.trim();
+      if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+        try {
+          final decoded = jsonDecode(value);
+          if (decoded is Map || decoded is List) {
+            return jsonEncode(
+              _redactSecrets(
+                decoded,
+                redactedFields: redactedFields,
+                path: path,
+              ),
+            );
+          }
+        } catch (_) {
+          // Preserve ordinary strings and malformed JSON verbatim.
+        }
+      }
+      return value;
+    }
     if (value is List) {
       return <Object?>[
         for (var index = 0; index < value.length; index++)
