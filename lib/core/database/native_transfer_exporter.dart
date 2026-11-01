@@ -143,10 +143,12 @@ final class NativeTransferExporter {
 
       entries['settings.json'] = utf8.encode(
         jsonEncode(
-          _redactSecrets(
-            businessSnapshot.preferences,
-            redactedFields: redactedFields,
-            path: 'settings',
+          _redactDevicePaths(
+            _redactSecrets(
+              businessSnapshot.preferences,
+              redactedFields: redactedFields,
+              path: 'settings',
+            ),
           ),
         ),
       );
@@ -325,13 +327,31 @@ final class NativeTransferExporter {
             'format': 'orvia.flutter-conversation',
             'version': 1,
             'sourceId': conversationId,
-            'conversation': conversation,
+            'conversation': _sanitizeStructuredRecord(
+              conversation,
+              redactedFields: redactedFields,
+              path: 'conversation/$conversationId',
+            ),
             'mcpServerLinks': mcpLinks,
             'messages': safeMessages,
             'messageParts': safeParts,
             'generationRuns': safeGenerationRows,
-            'providerArtifacts': artifactRows,
-            'messagePrompts': promptRows,
+            'providerArtifacts': [
+              for (final row in artifactRows)
+                _sanitizeStructuredRecord(
+                  row,
+                  redactedFields: redactedFields,
+                  path: 'provider-artifact/$conversationId',
+                ),
+            ],
+            'messagePrompts': [
+              for (final row in promptRows)
+                _sanitizeStructuredRecord(
+                  row,
+                  redactedFields: redactedFields,
+                  path: 'message-prompt/$conversationId',
+                ),
+            ],
             'messageAssets': messageAssetRows,
             'assets': exportedAssets.metadata,
           };
@@ -460,6 +480,23 @@ final class NativeTransferExporter {
     return value;
   }
 
+  static Map<String, Object?> _sanitizeStructuredRecord(
+    Map<String, Object?> record, {
+    required List<String> redactedFields,
+    required String path,
+  }) {
+    return <String, Object?>{
+      for (final entry in record.entries)
+        entry.key: _redactDevicePaths(
+          _redactSecrets(
+            entry.value,
+            redactedFields: redactedFields,
+            path: '$path.${entry.key}',
+          ),
+        ),
+    };
+  }
+
   static List<Map<String, Object?>> _serializeBusinessRows(
     BusinessEntityKind kind,
     List<BusinessEntityValue> rows, {
@@ -481,10 +518,12 @@ final class NativeTransferExporter {
         'id': row.id,
         'sortOrder': row.sortOrder,
         if (row.assistantId != null) 'assistantId': row.assistantId,
-        'data': _redactSecrets(
-          decoded,
-          redactedFields: redactedFields,
-          path: '${kind.sourceKey}/${row.id}',
+        'data': _redactDevicePaths(
+          _redactSecrets(
+            decoded,
+            redactedFields: redactedFields,
+            path: '${kind.sourceKey}/${row.id}',
+          ),
         ),
       });
     }
