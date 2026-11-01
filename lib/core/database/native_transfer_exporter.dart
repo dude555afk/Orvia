@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:path/path.dart' as p;
 
@@ -187,8 +188,10 @@ final class NativeTransferExporter {
       var messageCount = 0;
       var assetCount = 0;
       var activeGenerationCount = 0;
+      final rowsDatabase = AppDatabase.open(file: snapshotFile);
 
-      for (final conversation in conversations) {
+      try {
+        for (final conversation in conversations) {
         final conversationId = conversation['id'];
         if (conversationId is! String || conversationId.isEmpty) {
           unsupported.add('conversation_without_valid_id');
@@ -199,43 +202,43 @@ final class NativeTransferExporter {
           Variable<String>(conversationId),
         ];
         final messageRows = await _selectRows(
-          snapshotDatabaseForReadOnlyRows(snapshotFile),
+          rowsDatabase,
           'SELECT * FROM message_rows WHERE conversation_id = ? '
           'ORDER BY message_order, id;',
           variables: conversationVariables,
         );
         final partRows = await _selectRows(
-          snapshotDatabaseForReadOnlyRows(snapshotFile),
+          rowsDatabase,
           'SELECT * FROM message_part_rows WHERE conversation_id = ? '
           'ORDER BY revision_id, ordinal;',
           variables: conversationVariables,
         );
         final mcpLinks = await _selectRows(
-          snapshotDatabaseForReadOnlyRows(snapshotFile),
+          rowsDatabase,
           'SELECT * FROM conversation_mcp_server_rows '
           'WHERE conversation_id = ? ORDER BY ordinal, server_id;',
           variables: conversationVariables,
         );
         final generationRows = await _selectRows(
-          snapshotDatabaseForReadOnlyRows(snapshotFile),
+          rowsDatabase,
           'SELECT * FROM generation_run_rows WHERE conversation_id = ? '
           'ORDER BY created_at, id;',
           variables: conversationVariables,
         );
         final artifactRows = await _selectRows(
-          snapshotDatabaseForReadOnlyRows(snapshotFile),
+          rowsDatabase,
           'SELECT * FROM provider_artifact_rows WHERE conversation_id = ? '
           'ORDER BY revision_id, kind;',
           variables: conversationVariables,
         );
         final promptRows = await _selectRows(
-          snapshotDatabaseForReadOnlyRows(snapshotFile),
+          rowsDatabase,
           'SELECT * FROM message_prompt_rows WHERE conversation_id = ? '
           'ORDER BY created_at, revision_id;',
           variables: conversationVariables,
         );
         final messageAssetRows = await _selectRows(
-          snapshotDatabaseForReadOnlyRows(snapshotFile),
+          rowsDatabase,
           'SELECT * FROM message_asset_rows WHERE conversation_id = ? '
           'ORDER BY revision_id, asset_id, kind;',
           variables: conversationVariables,
@@ -310,7 +313,10 @@ final class NativeTransferExporter {
         entries['conversations/$archiveName.json'] = utf8.encode(
           jsonEncode(payload),
         );
-        messageCount += safeMessages.length;
+          messageCount += safeMessages.length;
+        }
+      } finally {
+        await rowsDatabase.close();
       }
 
       if (redactedFields.isNotEmpty) {
@@ -431,12 +437,6 @@ final class NativeTransferExporter {
       for (final row in rows) Map<String, Object?>.from(row.data),
     ];
   }
-
-  // Opens a short-lived read-only connection to the already-sanitized
-  // consistent snapshot for raw row export. It is deliberately isolated from
-  // the live application's ChatDatabaseGateway.
-  static AppDatabase snapshotDatabaseForReadOnlyRows(File snapshotFile) =>
-      AppDatabase.open(file: snapshotFile);
 
   static Set<String> _assetIdsFromPart(Map<String, Object?> row) {
     if (row['kind'] != 'image' && row['kind'] != 'file') {
