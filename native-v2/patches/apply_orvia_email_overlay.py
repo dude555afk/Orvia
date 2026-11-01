@@ -12,6 +12,10 @@ install_native_source(
     "native-v2/patches/native-src/SettingEmailIntegrationPage.kt",
     "app/src/main/java/me/rerere/rikkahub/ui/pages/setting/SettingEmailIntegrationPage.kt",
 )
+install_native_source(
+    "native-v2/patches/native-src/NativeEmailServiceTest.kt",
+    "app/src/test/java/me/rerere/rikkahub/data/integration/NativeEmailServiceTest.kt",
+)
 
 replace_once(
     "app/build.gradle.kts",
