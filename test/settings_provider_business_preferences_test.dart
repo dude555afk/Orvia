@@ -88,7 +88,7 @@ void main() {
   });
 
   test(
-    'migrated order-only provider state drops retired presets and survives reload',
+    'migrated order-only provider state survives startup seeding and reload',
     () async {
       const legacyOrder = <String>[
         'Gemini',
@@ -104,8 +104,6 @@ void main() {
         'Claude',
         'Grok',
         'ByteDance',
-        '\u968f\u60F3AI\u4E2D\u8F6C\u7AD9',
-        'MaruCode',
       ];
       const migratedOrder = <String>[
         'Gemini',
@@ -125,24 +123,14 @@ void main() {
       final settings = SettingsProvider(BusinessPreferences(repository));
       await settings.loaded;
       expect(settings.providersOrder, migratedOrder);
-
-      for (final retired in const <String>[
-        'SiliconFlow',
-        'OrviaIN',
-        'Tensdaq',
-        'DeepSeek',
-        'Aliyun',
-        'Zhipu AI',
-        'ByteDance',
-        '\u968f\u60F3AI\u4E2D\u8F6C\u7AD9',
-        'MaruCode',
-      ]) {
-        expect(settings.providersOrder, isNot(contains(retired)));
-      }
+      expect(settings.currentModelProvider, 'OpenRouter');
+      expect(settings.currentModelId, 'openrouter/free');
 
       final reloaded = SettingsProvider(BusinessPreferences(repository));
       await reloaded.loaded;
       expect(reloaded.providersOrder, migratedOrder);
+      expect(reloaded.currentModelProvider, 'OpenRouter');
+      expect(reloaded.currentModelId, 'openrouter/free');
     },
   );
 

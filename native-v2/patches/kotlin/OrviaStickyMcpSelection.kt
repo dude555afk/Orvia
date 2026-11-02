@@ -1,0 +1,48 @@
+package me.rerere.rikkahub.data.datastore
+
+import kotlin.uuid.Uuid
+
+/**
+ * Keeps the user's MCP selection independent of the currently selected
+ * assistant. Assistant.mcpServers remains the runtime compatibility cache
+ * consumed by LastChat's MCP manager.
+ */
+internal object OrviaStickyMcpSelection {
+    fun normalize(settings: Settings, storedSelection: Set<Uuid>?): Settings {
+        val validServerIds = settings.mcpServers.map { it.id }.toSet()
+        val selected = (storedSelection
+            ?: settings.assistants.firstOrNull { it.id == settings.assistantId }
+                ?.mcpServers
+                .orEmpty()).intersect(validServerIds)
+        return settings.copy(
+            orviaStickyMcpServers = selected,
+            assistants = settings.assistants.map { it.copy(mcpServers = selected) },
+        )
+    }
+
+    fun select(settings: Settings, requestedSelection: Set<Uuid>): Settings {
+        val validServerIds = settings.mcpServers.map { it.id }.toSet()
+        val selected = requestedSelection.intersect(validServerIds)
+        return settings.copy(
+            orviaStickyMcpServers = selected,
+            assistants = settings.assistants.map { it.copy(mcpServers = selected) },
+        )
+    }
+
+    /**
+     * Keep a saved app-wide choice when unrelated settings arrive from an old
+     * assistant snapshot. Only an explicit sticky-selection write can change it.
+     */
+    fun applyUpdate(previous: Settings, requested: Settings): Settings {
+        val selected = previous.orviaStickyMcpServers
+            ?: previous.assistants.firstOrNull { it.id == previous.assistantId }
+                ?.mcpServers
+                .orEmpty()
+        val validServerIds = requested.mcpServers.map { it.id }.toSet()
+        val validSelection = selected.intersect(validServerIds)
+        return requested.copy(
+            orviaStickyMcpServers = validSelection,
+            assistants = requested.assistants.map { it.copy(mcpServers = validSelection) },
+        )
+    }
+}

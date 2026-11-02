@@ -92,9 +92,6 @@ class SettingsProvider extends ChangeNotifier {
   };
   static const String _themeModeKey = 'theme_mode_v1';
   static const String _providerConfigsKey = 'provider_configs_v1';
-  static const String _kiloDefaultAppliedKey = 'kilo_default_applied_v2';
-  static const String _providerPresetCleanupAppliedKey =
-      'provider_preset_cleanup_applied_v1';
   static const String _pinnedModelsKey = 'pinned_models_v1';
   static const String _selectedModelKey = 'selected_model_v1';
   static const String _perChatModelEnabledKey = 'per_chat_model_enabled_v1';
@@ -1438,14 +1435,14 @@ class SettingsProvider extends ChangeNotifier {
         );
       } catch (_) {}
     }
-    // Remove retired China-focused presets and the inherited OrviaIN endpoint.
-    // Keeping these out of persisted configs also prevents them reappearing as custom providers.
+    // Retire the old OrviaIN endpoint and China-focused provider presets from
+    // persisted settings. Existing user-created, non-retired providers remain.
     const retiredProviderKeys = <String>{
       'OrviaIN',
       'SiliconFlow',
       'Tensdaq',
       'DeepSeek',
-      '\u968f\u60f3AI\u4E2D\u8F6C\u7AD9',
+      '\u968F\u60F3AI\u4E2D\u8F6C\u7AD9',
       'MaruCode',
       'Aliyun',
       'Zhipu AI',
@@ -1454,51 +1451,70 @@ class SettingsProvider extends ChangeNotifier {
     final retiredProviderIds = retiredProviderKeys
         .map((key) => key.toLowerCase())
         .toSet();
-    final hasCleanedRetiredPresets =
-        prefs.getBool(_providerPresetCleanupAppliedKey) ?? false;
-    if (!hasCleanedRetiredPresets) {
-      for (final key in _providerConfigs.keys.toList(growable: false)) {
-        if (retiredProviderIds.contains(key.trim().toLowerCase())) {
-          await removeProviderConfig(key);
-        }
+    for (final key in _providerConfigs.keys.toList(growable: false)) {
+      if (retiredProviderIds.contains(key.trim().toLowerCase())) {
+        await removeProviderConfig(key);
       }
-      await prefs.setBool(_providerPresetCleanupAppliedKey, true);
     }
 
     var providerConfigsChanged = false;
-    final kiloConfig = _providerConfigs['Kilo'];
-    if (kiloConfig == null) {
-      ensureProviderConfig('Kilo', defaultName: 'Kilo');
-      providerConfigsChanged = true;
-    } else {
-      final kiloModels = List<String>.from(kiloConfig.models);
-      final priorOpenRouterFreeIndex = kiloModels.indexOf('openrouter/free');
-      if (priorOpenRouterFreeIndex >= 0) {
-        kiloModels[priorOpenRouterFreeIndex] = 'kilo-auto/free';
-        providerConfigsChanged = true;
-      } else if (!kiloModels.contains('kilo-auto/free')) {
-        kiloModels.insert(0, 'kilo-auto/free');
-        providerConfigsChanged = true;
-      }
-
-      final kiloOverrides = Map<String, dynamic>.from(
-        kiloConfig.modelOverrides,
+    var openRouterConfig = _providerConfigs['OpenRouter'];
+    if (openRouterConfig == null) {
+      openRouterConfig = ensureProviderConfig(
+        'OpenRouter',
+        defaultName: 'OpenRouter',
       );
-      final priorOverride = kiloOverrides.remove('openrouter/free');
-      if (priorOverride != null) {
-        kiloOverrides.putIfAbsent('kilo-auto/free', () => priorOverride);
-        providerConfigsChanged = true;
-      }
-      if (!kiloOverrides.containsKey('kilo-auto/free')) {
-        kiloOverrides['kilo-auto/free'] = const {'name': 'Kilo Auto Free'};
-        providerConfigsChanged = true;
-      }
-      if (providerConfigsChanged) {
-        _providerConfigs['Kilo'] = kiloConfig.copyWith(
-          models: kiloModels,
-          modelOverrides: kiloOverrides,
-        );
-      }
+      providerConfigsChanged = true;
+    }
+    final openRouterModels = List<String>.from(openRouterConfig.models);
+    if (!openRouterModels.contains('openrouter/free')) {
+      openRouterModels.insert(0, 'openrouter/free');
+      providerConfigsChanged = true;
+    }
+    final openRouterOverrides = Map<String, dynamic>.from(
+      openRouterConfig.modelOverrides,
+    );
+    if (!openRouterOverrides.containsKey('openrouter/free')) {
+      openRouterOverrides['openrouter/free'] = const {
+        'name': 'OpenRouter Free',
+        'type': 'chat',
+        'input': ['text'],
+        'output': ['text'],
+      };
+      providerConfigsChanged = true;
+    }
+    if (providerConfigsChanged ||
+        openRouterModels.length != openRouterConfig.models.length ||
+        openRouterOverrides.length != openRouterConfig.modelOverrides.length) {
+      _providerConfigs['OpenRouter'] = openRouterConfig.copyWith(
+        models: openRouterModels,
+        modelOverrides: openRouterOverrides,
+      );
+      providerConfigsChanged = true;
+    }
+
+    var kiloConfig = _providerConfigs['Kilo'];
+    if (kiloConfig == null) {
+      kiloConfig = ensureProviderConfig('Kilo', defaultName: 'Kilo');
+      providerConfigsChanged = true;
+    }
+    final kiloModels = List<String>.from(kiloConfig.models);
+    if (!kiloModels.contains('kilo-auto/free')) {
+      kiloModels.insert(0, 'kilo-auto/free');
+      providerConfigsChanged = true;
+    }
+    final kiloOverrides = Map<String, dynamic>.from(kiloConfig.modelOverrides);
+    if (!kiloOverrides.containsKey('kilo-auto/free')) {
+      kiloOverrides['kilo-auto/free'] = const {'name': 'Kilo Auto Free'};
+      providerConfigsChanged = true;
+    }
+    if (kiloModels.length != kiloConfig.models.length ||
+        kiloOverrides.length != kiloConfig.modelOverrides.length) {
+      _providerConfigs['Kilo'] = kiloConfig.copyWith(
+        models: kiloModels,
+        modelOverrides: kiloOverrides,
+      );
+      providerConfigsChanged = true;
     }
     if (providerConfigsChanged) {
       await prefs.setString(
@@ -1509,21 +1525,16 @@ class SettingsProvider extends ChangeNotifier {
       );
     }
 
-    // Apply the requested free Kilo route once, and repair a default that points
-    // to a preset removed by this update. Later user model choices are preserved.
+    // Fresh installs and selections that pointed to a retired provider start
+    // on OpenRouter Free. Preserve any valid model the user already selected.
     final selectedProvider = _currentModelProvider?.trim().toLowerCase();
-    final hasAppliedKiloDefault =
-        prefs.getBool(_kiloDefaultAppliedKey) ?? false;
-    if (!hasAppliedKiloDefault ||
-        selectedProvider == null ||
+    if (_currentModelProvider == null ||
         _currentModelId == null ||
-        (selectedProvider == 'kilo' && _currentModelId == 'openrouter/free')) {
-      _currentModelProvider = 'Kilo';
-      _currentModelId = 'kilo-auto/free';
-      await prefs.setString(_selectedModelKey, 'Kilo::kilo-auto/free');
-    }
-    if (!hasAppliedKiloDefault) {
-      await prefs.setBool(_kiloDefaultAppliedKey, true);
+        selectedProvider == null ||
+        retiredProviderIds.contains(selectedProvider)) {
+      _currentModelProvider = 'OpenRouter';
+      _currentModelId = 'openrouter/free';
+      await prefs.setString(_selectedModelKey, 'OpenRouter::openrouter/free');
     }
 
     // kick off a one-time connectivity test for services (exclude local Bing)
@@ -6407,9 +6418,7 @@ class ProviderConfig {
   );
 
   static String _apiKeyFromJson(Map<String, dynamic> json) {
-    final stored = json['apiKey'] as String? ?? '';
-    if (stored.isNotEmpty) return stored;
-    return '';
+    return json['apiKey'] as String? ?? '';
   }
 
   static List<Map<String, String>> _customRequestRowsFromJson(
@@ -6558,7 +6567,42 @@ class ProviderConfig {
           claudePromptCachingEnabled: false,
         );
       case ProviderKind.openai:
-        // Kilo's anonymous gateway supports free-model routes without an API key.
+        // OpenRouter's Free Models Router is the default chat route.
+        if (lowerKey.contains('openrouter')) {
+          return ProviderConfig(
+            id: key,
+            enabled: defaultEnabled(key),
+            name: displayName ?? key,
+            apiKey: '',
+            baseUrl: _defaultBase(key),
+            providerType: ProviderKind.openai,
+            chatPath: '/chat/completions',
+            useResponseApi: false,
+            models: const ['openrouter/free'],
+            modelOverrides: const {
+              'openrouter/free': {
+                'name': 'OpenRouter Free',
+                'type': 'chat',
+                'input': ['text'],
+                'output': ['text'],
+              },
+            },
+            proxyEnabled: false,
+            proxyHost: '',
+            proxyPort: '8080',
+            proxyUsername: '',
+            proxyPassword: '',
+            multiKeyEnabled: false,
+            apiKeys: const [],
+            keyManagement: const KeyManagementConfig(),
+            aihubmixAppCodeEnabled: false,
+            balanceEnabled: _defaultBalanceEnabled(key),
+            balanceApiPath: _defaultBalanceApiPath(key),
+            balanceResultPath: _defaultBalanceResultPath(key),
+            claudePromptCachingEnabled: false,
+          );
+        }
+        // Kilo is the keyless alternative; OpenRouter remains the default.
         if (lowerKey.contains('kilo')) {
           return ProviderConfig(
             id: key,
@@ -6583,47 +6627,6 @@ class ProviderConfig {
             keyManagement: const KeyManagementConfig(),
             aihubmixAppCodeEnabled: false,
             balanceEnabled: false,
-            balanceApiPath: _defaultBalanceApiPath(key),
-            balanceResultPath: _defaultBalanceResultPath(key),
-            claudePromptCachingEnabled: false,
-          );
-        }
-        // Special-case SiliconFlow: prefill two partnered models
-        if (lowerKey.contains('silicon')) {
-          return ProviderConfig(
-            id: key,
-            enabled: defaultEnabled(key),
-            name: displayName ?? key,
-            apiKey: '',
-            baseUrl: _defaultBase(key),
-            providerType: ProviderKind.openai,
-            chatPath: '/chat/completions',
-            useResponseApi: false,
-            models: const ['THUDM/GLM-4-9B-0414', 'Qwen/Qwen3-8B'],
-            modelOverrides: const {
-              'THUDM/GLM-4-9B-0414': {
-                'type': 'chat',
-                'input': ['text'],
-                'output': ['text'],
-                'abilities': ['tool'],
-              },
-              'Qwen/Qwen3-8B': {
-                'type': 'chat',
-                'input': ['text'],
-                'output': ['text'],
-                'abilities': ['tool', 'reasoning'],
-              },
-            },
-            proxyEnabled: false,
-            proxyHost: '',
-            proxyPort: '8080',
-            proxyUsername: '',
-            proxyPassword: '',
-            multiKeyEnabled: false,
-            apiKeys: const [],
-            keyManagement: const KeyManagementConfig(),
-            aihubmixAppCodeEnabled: false,
-            balanceEnabled: _defaultBalanceEnabled(key),
             balanceApiPath: _defaultBalanceApiPath(key),
             balanceResultPath: _defaultBalanceResultPath(key),
             claudePromptCachingEnabled: false,
