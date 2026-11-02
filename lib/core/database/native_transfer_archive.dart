@@ -279,6 +279,7 @@ final class NativeTransferArchive {
     }
 
     final allowed =
+        path == manifestPath ||
         path == 'assistants.json' ||
         path == 'providers.json' ||
         path == 'settings.json' ||
