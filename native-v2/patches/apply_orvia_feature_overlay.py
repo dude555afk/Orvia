@@ -1612,6 +1612,37 @@ exec(compile(sticky_mcp_install, "orvia_sticky_mcp_overlay.py", "exec"))
 email_overlay = Path("native-v2/patches/apply_orvia_email_overlay.py")
 exec(compile(email_overlay.read_text(encoding="utf-8"), str(email_overlay), "exec"))
 
+# Re-run locale parity after all Orvia overlays have added their strings.
+# The earlier pass handles upstream rebrand strings; email and device-tool
+# overlays add further keys later in this same script.
+for module, locale in (
+    ("app", "values-ar"),
+    ("app", "values-b+zh+Hans"),
+    ("search", "values-ar"),
+    ("search", "values-b+zh+Hans"),
+):
+    ensure_english_fallbacks(module, locale)
+
+# The inherited Arabic translation for this formatted label omitted its
+# positional placeholder. Preserve the translation and restore the argument.
+arabic_dir = ROOT / "app/src/main/res/values-ar"
+placeholder_key = "chat_message_tool_workspace_view_image"
+placeholder_matches = []
+for resource_file in sorted(arabic_dir.glob("strings*.xml")):
+    tree = ET.parse(resource_file)
+    for element in tree.getroot().findall("string"):
+        if element.get("name") == placeholder_key:
+            placeholder_matches.append((resource_file, tree, element))
+if len(placeholder_matches) != 1:
+    raise SystemExit(
+        f"Expected one Arabic {placeholder_key} resource, found {len(placeholder_matches)}"
+    )
+resource_file, tree, element = placeholder_matches[0]
+if "%1$s" not in "".join(element.itertext()):
+    element.text = (element.text or "").rstrip() + " %1$s"
+    tree.write(resource_file, encoding="utf-8", xml_declaration=True)
+    print(f"Restored %1$s placeholder in {resource_file}")
+
 # Rebrand source-level identifiers and user-facing copy in the build checkout.
 # Keep package/deep-link namespaces and third-party legal notices stable; those
 # are compatibility identifiers, not app branding.
